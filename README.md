@@ -17,7 +17,7 @@ For full usage details, see the [Wiki](https://github.com/checkout/checkout-sdk-
 ### Installation with Composer (Recommended)
 Either run the following command in the root directory of your project:
 ```bash
-composer require checkout/checkout-php-api
+composer require checkout/checkout-sdk-php
 ```
 
 Or require the Checkout.com package inside the composer.json file of your project:

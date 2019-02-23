@@ -115,9 +115,18 @@ final class CheckoutApi
      * @param int    $sandbox
      * @param string $public
      */
-    public function __construct($secret = '', $sandbox = -1, $public = '')
+    public function __construct(
+        $secret = '',
+        $sandbox = -1,
+        $public = '',
+        $configs = []
+    )
     {
-        $configs = Utilities::loadConfig(__DIR__ . DIRECTORY_SEPARATOR . 'config.ini');
+        $configs = array_merge(
+            Utilities::loadConfig(__DIR__ . DIRECTORY_SEPARATOR . 'config.ini'),
+            $configs
+        );
+        
         if (isset($configs['channel'])) {
             $this->loadChannel($configs['channel'], $secret, $sandbox, $public);
         }

@@ -151,7 +151,7 @@ class Payment extends Model
     }
 
     /**
-     * Verify if
+     * Verify if the payment is risky.
      *
      * @return bool
      */

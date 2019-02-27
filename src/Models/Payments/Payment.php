@@ -151,6 +151,23 @@ class Payment extends Model
     }
 
     /**
+     * Verify if the payment is risky.
+     *
+     * @return bool
+     */
+    public function isFlagged()
+    {
+        $flagged = false;
+        $risk = $this->getValue('risk');
+
+        if (isset($risk['flagged'])) {
+            $flagged = $risk['flagged'];
+        }
+
+        return $flagged;
+    }
+
+    /**
      * Convert array into model.
      *
      * @param  array $arr

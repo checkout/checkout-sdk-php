@@ -26,6 +26,7 @@ class Payments
     {
         $payment = new Payment(static::generateCardSource(), $currency);
         $payment->approved = true;
+        $payment->risk['flagged'] = false;
         $payment->_links['redirect']['href'] = HttpHandlers::generateURL();
         $payment->{'3ds'} = Payments::generateTheeDS();
         return $payment;

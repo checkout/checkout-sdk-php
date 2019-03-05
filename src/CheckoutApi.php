@@ -315,7 +315,7 @@ final class CheckoutApi
     private function loadLogs (array &$configs)
     {
 
-        $defaults = array(static::CONFIG_LOGGING       => true,
+        $defaults = array(static::CONFIG_LOGGING       => false,
                           static::CONFIG_LOG_REQUEST   => 'request.log',
                           static::CONFIG_LOG_RESPONSE  => 'response.log',
                           static::CONFIG_LOG_ERROR     => 'error.log');

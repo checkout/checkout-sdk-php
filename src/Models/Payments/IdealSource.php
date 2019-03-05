@@ -50,11 +50,13 @@ class IdealSource extends IdSource
 
     /**
      * Initialise source.
-     * @param string $id
+     * @param string $bic
+     * @param string $description
      */
-    public function __construct($id)
+    public function __construct($bic, $description)
     {
         $this->type = static::MODEL_NAME;
-        $this->issuer_id = $id;
+        $this->bic = $bic;
+        $this->description = $description;
     }
 }

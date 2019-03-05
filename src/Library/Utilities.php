@@ -64,7 +64,7 @@ class Utilities
      */
     public static function isEmpty(&$value)
     {
-        return $value === null || $value === '' || !sizeof($value);
+        return $value === null || $value === '' || (array) $value === array() ;
     }
 
     /**
@@ -121,7 +121,7 @@ class Utilities
     public static function loadConfig($path)
     {
         $config = array();
-        if (file_exists($path)) {
+        if (is_readable($path)) {
             $config = parse_ini_file($path, true);
         }
 

@@ -35,53 +35,53 @@ class CheckoutApiTest extends TestCase
         $this->assertEquals($public, $configuration->getPublicKey());
     }
 
-    public function testLoadLogs()
-    {
-        $class = new ReflectionClass('Checkout\CheckoutApi');
-        $method = $class->getMethod('loadLogs');
-        $method->setAccessible(true);
+    // public function testLoadLogs()
+    // {
+    //     $class = new ReflectionClass('Checkout\CheckoutApi');
+    //     $method = $class->getMethod('loadLogs');
+    //     $method->setAccessible(true);
 
-        $checkout = $class->newInstanceWithoutConstructor();
-        $method->invokeArgs($checkout, array(array(CheckoutApi::CONFIG_LOGGING => false)));
+    //     $checkout = $class->newInstanceWithoutConstructor();
+    //     $method->invokeArgs($checkout, array(CheckoutApi::CONFIG_SECTION_LOGS => array(CheckoutApi::CONFIG_LOGGING => false)));
 
-        $this->assertNull(LogHandler::$error);
-        $this->assertNull(LogHandler::$request);
-        $this->assertNull(LogHandler::$response);
-    }
+    //     $this->assertNull(LogHandler::$error);
+    //     $this->assertNull(LogHandler::$request);
+    //     $this->assertNull(LogHandler::$response);
+    // }
 
-    public function testLoadAliases()
-    {
-        $class = new ReflectionClass('Checkout\CheckoutApi');
-        $method = $class->getMethod('loadAliases');
-        $method->setAccessible(true);
+    // public function testLoadAliases()
+    // {
+    //     $class = new ReflectionClass('Checkout\CheckoutApi');
+    //     $method = $class->getMethod('loadAliases');
+    //     $method->setAccessible(true);
 
-        $checkout = $class->newInstanceWithoutConstructor();
-        $method->invokeArgs($checkout, array(array('threeDs' => '3ds')));
+    //     $checkout = $class->newInstanceWithoutConstructor();
+    //     $method->invokeArgs($checkout, array(array('threeDs' => '3ds')));
 
-        $this->assertArrayHasKey('threeDs', Model::$aliases);
-    }
+    //     $this->assertArrayHasKey('threeDs', Model::$aliases);
+    // }
 
-    public function testLoadCurl()
-    {
-        $class = new ReflectionClass('Checkout\CheckoutApi');
-        $method = $class->getMethod('loadCurl');
-        $method->setAccessible(true);
+    // public function testLoadCurl()
+    // {
+    //     $class = new ReflectionClass('Checkout\CheckoutApi');
+    //     $method = $class->getMethod('loadCurl');
+    //     $method->setAccessible(true);
 
-        $checkout = $class->newInstanceWithoutConstructor();
-        $method->invokeArgs($checkout, array(array('CURLOPT_SSL_VERIFYPEER' => 1)));
+    //     $checkout = $class->newInstanceWithoutConstructor();
+    //     $method->invokeArgs($checkout, array(array('CURLOPT_SSL_VERIFYPEER' => 1)));
 
-        $this->assertArrayHasKey('CURLOPT_SSL_VERIFYPEER', HttpHandler::$config);
-    }
+    //     $this->assertArrayHasKey('CURLOPT_SSL_VERIFYPEER', HttpHandler::$config);
+    // }
 
-    public function testHttp()
-    {
-        $class = new ReflectionClass('Checkout\CheckoutApi');
-        $method = $class->getMethod('loadHttp');
-        $method->setAccessible(true);
+    // public function testLoadHttp()
+    // {
+    //     $class = new ReflectionClass('Checkout\CheckoutApi');
+    //     $method = $class->getMethod('loadHttp');
+    //     $method->setAccessible(true);
 
-        $checkout = $class->newInstanceWithoutConstructor();
-        $method->invokeArgs($checkout, array(array('exceptions' => false)));
+    //     $checkout = $class->newInstanceWithoutConstructor();
+    //     $method->invokeArgs($checkout, array(array('exceptions' => false)));
 
-        $this->assertFalse(HttpHandler::$throw);
-    }
+    //     $this->assertFalse(HttpHandler::$throw);
+    // }
 }

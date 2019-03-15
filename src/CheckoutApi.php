@@ -285,7 +285,7 @@ final class CheckoutApi
 
         $defaults = array(static::CONFIG_SECRET         => '',
                           static::CONFIG_PUBLIC         => '',
-                          CheckoutConfiguration::ENVIRONMENT_SANDBOX => true);
+                          CheckoutConfiguration::ENVIRONMENT_SANDBOX => false);
 
         $this->safelyArrayMerge(static::CONFIG_SECTION_CHANNEL, $defaults, $configs);
 

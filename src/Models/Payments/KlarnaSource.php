@@ -59,9 +59,9 @@ class KlarnaSource extends IdSource
      * Initialise payment
      *
      * @param      string   $token     Klarna authentication token, obtained by the merchant during client transaction authorization.
-     * @param      Address  $billing   The billing
-     * @param      integer   $tax       The tax
-     * @param      array    $products  The products
+     * @param      Address  $billing   Customer's billing address.
+     * @param      integer   $tax       Total tax amount of the order.
+     * @param      array    $products  This object is passed directly to Klarna as order_lines.
      */
     public function __construct($token, Address $billing, $tax, array $products)
     {

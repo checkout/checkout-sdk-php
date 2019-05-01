@@ -61,6 +61,8 @@ class KlarnaSource extends IdSource
      * Initialise payment
      *
      * @param      string   $token     Klarna authentication token, obtained by the merchant during client transaction authorization.
+     * @param      string  $currency  The currency in which the payment is being made (three-letter ISO 4217 code)
+     * @param      string  $locale    The customer's locale (RFC 1766 code).
      * @param      Address  $billing   Customer's billing address.
      * @param      integer   $tax       Total tax amount of the order.
      * @param      array    $products  This object is passed directly to Klarna as order_lines.

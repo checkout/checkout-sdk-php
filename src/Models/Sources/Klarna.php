@@ -18,6 +18,7 @@
 namespace Checkout\Models\Sources;
 
 use Checkout\Library\Model;
+use Checkout\Library\Utilities;
 
 /**
  * Model for sources.
@@ -78,6 +79,25 @@ class Klarna extends Source
         $this->products = $products;
     }
 
+    /**
+     * Factory.
+     *
+     * @note   Some classes will have to override this function.
+     * @param  array $response
+     * @return Model
+     */
+    protected static function create(array $response)
+    {
+        return new self(
+            Utilities::getValueFromArray($response, 'purchase_country', ''),
+            Utilities::getValueFromArray($response, 'currency', ''),
+            Utilities::getValueFromArray($response, 'locale', ''),
+            Utilities::getValueFromArray($response, 'amount', 0),
+            Utilities::getValueFromArray($response, 'tax_amount', 0),
+            Utilities::getValueFromArray($response, 'products', array())
+        );
+    }
+
 
     /**
      * Setters and Getters
@@ -111,6 +131,17 @@ class Klarna extends Source
     public function getPaymentMethods()
     {
         return $this->getValue('payment_method_categories');
+    }
+
+    /**
+     * Get list of errors.
+     *
+     * @return array
+     */
+    public function getErrors()
+    {
+        $errors = $this->getValue('klarna_validation_errors');
+        return $errors ? $errors : array();
     }
 
 }

@@ -17,6 +17,8 @@
 
 namespace Checkout\Models\Payments;
 
+use Checkout\Models\Address;
+
 /**
  * Payment method Klarna.
  *
@@ -63,11 +65,13 @@ class KlarnaSource extends IdSource
      * @param      integer   $tax       Total tax amount of the order.
      * @param      array    $products  This object is passed directly to Klarna as order_lines.
      */
-    public function __construct($token, Address $billing, $tax, array $products)
+    public function __construct($token, $country, $locale, Address $billing, $tax, array $products)
     {
         $this->type = static::MODEL_NAME;
         $this->authorization_token = $token;
         $this->billing_address = $billing;
+        $this->purchase_country = $country;
+        $this->locale = $locale;
         $this->tax_amount = $tax;
         $this->products = $products;
     }

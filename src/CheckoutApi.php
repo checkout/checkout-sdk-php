@@ -147,14 +147,14 @@ final class CheckoutApi
      * Initialise Checkout API SDK.
      *
      * @param string $secret
-     * @param int    $sandbox
+     * @param boolean $sandbox
      * @param string $public
-     * @param string $path    Path to custom configuration.
+     * @param mixed $config    Path or array of custom configuration.
      */
-    public function __construct ($secret = '', $sandbox = -1, $public = '', $path = __DIR__ . DIRECTORY_SEPARATOR . 'config.ini')
+    public function __construct ($secret = '', $sandbox = -1, $public = '', $config = __DIR__ . DIRECTORY_SEPARATOR . 'config.ini')
     {
 
-        $configs = Utilities::loadConfig($path);
+        $configs = Utilities::loadConfig($config);
 
         $this->loadChannel($configs, $secret, $sandbox, $public);
         $this->loadLogs($configs);

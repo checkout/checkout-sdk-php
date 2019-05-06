@@ -224,7 +224,17 @@ abstract class Model
      */
     public function isSuccessful()
     {
-        return $this->getValue('http_code') < 400;
+        return $this->getValue('http_code') <= 400;
+    }
+
+    /**
+     * Get error type.
+     *
+     * @return string
+     */
+    public function getErrorType()
+    {
+        return $this->getValue('error_type');
     }
 
     /**

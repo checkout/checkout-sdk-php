@@ -65,7 +65,7 @@ class KlarnaSource extends IdSource
      * @param      string  $locale    The customer's locale (RFC 1766 code).
      * @param      Address  $billing   Customer's billing address.
      * @param      integer   $tax       Total tax amount of the order.
-     * @param      array    $products  This object is passed directly to Klarna as order_lines.
+     * @param      Product[]    $products  This object is passed directly to Klarna as order_lines.
      */
     public function __construct($token, $country, $locale, Address $billing, $tax, array $products)
     {

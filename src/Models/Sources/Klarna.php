@@ -66,7 +66,7 @@ class Klarna extends Source
      * @param      string  $locale    The customer's locale (RFC 1766 code).
      * @param      integer  $amount    The total amount of the order, including tax and any discounts.
      * @param      integer  $tax       The total tax amount of the order.
-     * @param      array   $products  The order details. This object is passed directly to Klarna as order_lines.
+     * @param      Product[]   $products  The order details. This object is passed directly to Klarna as order_lines.
      */
     public function __construct($country, $currency, $locale, $amount, $tax, array $products)
     {

@@ -20,17 +20,15 @@ namespace Checkout\Models\Sources;
 use Checkout\Models\Address;
 
 /**
- * Billing Address for SEPA source ONLY.
+ * Billing Address for SEPA source.
  *
  * @category SDK
  * @package  Checkout.com
  * @author   Platforms Development Team <platforms@checkout.com>
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
- *
- * @deprecated 1.0.3    Use Checkout\Models\Sources\SepaAddress instead.
  */
-class BillingAddress extends Address
+class SepaAddress extends Address
 {
 
     /**
@@ -53,21 +51,17 @@ class BillingAddress extends Address
      */
 
     /**
-     * Initialize billing address for source.
+     * Initialize billing address for SEPA source.
      *
      * @param string $address1
-     * @param string $address2
      * @param string $city
-     * @param string $state
      * @param string $zip
      * @param string $country
      */
-    public function __construct($address1, $address2, $city, $state, $zip, $country)
+    public function __construct($address1, $city, $zip, $country)
     {
         $this->address_line1 = $address1;
-        $this->address_line2 = $address2;
         $this->city = $city;
-        $this->state = $state;
         $this->zip = $zip;
         $this->country = $country;
     }

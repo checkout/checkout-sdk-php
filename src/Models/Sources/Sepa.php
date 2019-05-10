@@ -18,6 +18,7 @@
 namespace Checkout\Models\Sources;
 
 use Checkout\Library\Model;
+use Checkout\Models\Address;
 
 /**
  * Model for sources.
@@ -56,7 +57,7 @@ class Sepa extends Source
      * @param BillingAddress $address
      * @param SepaData       $data
      */
-    public function __construct(BillingAddress $address, SepaData $data)
+    public function __construct(Address $address, SepaData $data)
     {
         $this->type = static::MODEL_NAME;
         $this->billing_address = $address;
@@ -72,7 +73,7 @@ class Sepa extends Source
     protected static function create(array $response)
     {
         return new self(
-            new BillingAddress('', '', '', '', '', ''),
+            new SepaAddress('', '', '', ''),
             new SepaData('', '', '', '', '', '')
         );
     }

@@ -18,13 +18,14 @@ require_once "../../checkout.php";
  */
 
 use Checkout\CheckoutApi;
+use Checkout\Models\Payments\Payment;
+use Checkout\Models\Payments\EpsSource;
+use Checkout\Models\Payments\PoliSource;
+use Checkout\Models\Payments\IdealSource;
 use Checkout\Models\Payments\AlipaySource;
 use Checkout\Models\Payments\BoletoSource;
-use Checkout\Models\Payments\GiropaySource;
-use Checkout\Models\Payments\IdealSource;
-use Checkout\Models\Payments\Payment;
-use Checkout\Models\Payments\PoliSource;
 use Checkout\Models\Payments\SofortSource;
+use Checkout\Models\Payments\GiropaySource;
 
 /**
  * Create new instance of Checkout
@@ -42,7 +43,7 @@ $payment = $checkout->payments()->request($giropay);
 
 
 // iDEAL
-$ideal = new Payment(new IdealSource('issuer_id'), 'EUR');
+$ideal = new Payment(new IdealSource('bic', 'description'), 'EUR');
 $ideal->capture = false;
 $ideal->amount = 999;
 $payment = $checkout->payments()->request($ideal);
@@ -74,3 +75,10 @@ $payment = $checkout->payments()->request($alipay);
 $sofort = new Payment(new SofortSource(), 'EUR');
 $sofort->amount = 999;
 $payment = $checkout->payments()->request($sofort);
+
+
+
+// EPS
+$eps = new Payment(new EpsSource(), 'EUR');
+$eps->amount = 999;
+$payment = $checkout->payments()->request($eps);

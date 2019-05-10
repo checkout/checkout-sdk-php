@@ -324,7 +324,7 @@ class HttpHandler
 
         $code = $this->getCode();
         if ($code >= 400) {
-            $ex = (new CheckoutHttpException('The endpoint did not accepted the request.', $code))->setBody($this->response);
+            $ex = (new CheckoutHttpException('The endpoint did not accept the request.', $code))->setBody($this->response);
         }
 
         return $ex;

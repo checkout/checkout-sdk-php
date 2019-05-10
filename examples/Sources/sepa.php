@@ -19,9 +19,9 @@ require_once "../../checkout.php";
  */
 
 use Checkout\CheckoutApi;
-use Checkout\Models\Sources\BillingAddress;
 use Checkout\Models\Sources\Sepa;
 use Checkout\Models\Sources\SepaData;
+use Checkout\Models\Sources\SepaAddress;
 
 /**
  * Create new instance of Checkout
@@ -32,7 +32,10 @@ $checkout = new CheckoutApi('secret_key_goes_here'); // SEPA enabled sandbox acc
 /**
  * Add new SEPA source.
  */
-$address = new BillingAddress('address_line_1', 'address_line_2', 'city', 'state', 'post_code', 'country_code');
+
+
+//$address = new BillingAddress('address_line_1', 'address_line_2', 'city', 'state', 'post_code', 'country_code'); @note: deprecated
+$address = new SepaAddress('address_line_1', 'city', 'post_code', 'country_code');
 $data = new SepaData('first_name', 'surname', 'iban', 'bic', 'descriptor', 'mandate');
 $source = new Sepa($address, $data);
 $details = $checkout->sources()->add($source);

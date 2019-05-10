@@ -9,7 +9,7 @@ class IdealSourceTest extends TestCase
 {
     public function testCreate()
     {
-        $model = new IdealSource('{iDEAL_issuer}');
+        $model = new IdealSource('{iDEAL_BIC}', '{iDEAL_DESC}');
         $this->assertEquals($model::MODEL_NAME, $model->type);
     }
 }

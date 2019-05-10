@@ -115,17 +115,18 @@ class Utilities
     /**
      * Load configuration file.
      *
-     * @param  string $path
+     * @param  mixed $config
      * @return array
      */
-    public static function loadConfig($path)
+    public static function loadConfig($config = array())
     {
-        $config = array();
-        if (is_readable($path)) {
-            $config = parse_ini_file($path, true);
+
+        if (is_string($config) && is_readable($config)) {
+            $config = parse_ini_file($config, true);
         }
 
         return $config;
+
     }
 
     /**

@@ -228,6 +228,16 @@ abstract class Model
     }
 
     /**
+     * Get error type.
+     *
+     * @return string
+     */
+    public function getErrorType()
+    {
+        return $this->getValue('error_type');
+    }
+
+    /**
      * Get list of errors.
      *
      * @return array

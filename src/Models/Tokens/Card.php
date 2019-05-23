@@ -28,6 +28,7 @@ use Checkout\Library\Utilities;
  * @author   Platforms Development Team <platforms@checkout.com>
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
+ * @note     This class will be removed in the future. You MUST avoid using this class.
  */
 class Card extends Token
 {

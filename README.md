@@ -48,14 +48,8 @@ $secretKey = 'sk_test_key';
 $checkout = new CheckoutApi($secretKey);
 
 
-// Create a Card token
-$card = new Card('4242424242424242', 12, 2020);
-$card->cvv = 100;
-$token = $checkout->tokens()->request($card);
-
-
 // Create a payment method instance with card details
-$method = new TokenSource($token->getId());
+$method = new TokenSource('tok_key_goes_here');
 
 // Prepare the payment parameters
 $payment = new Payment($method, 'GBP');

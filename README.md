@@ -33,6 +33,8 @@ git clone git@github.com:checkout/checkout-sdk-php.git
 
 ## Quickstart
 
+A card token can be obtained using one of Checkout.com's JavaScript frontend solutions such as [Frames](https://docs.checkout.com/docs/frames "Frames") or any of the [mobile SDKs](https://docs.checkout.com/docs/sdks#section-mobile-sdk-libraries "Mobile SDKs")
+
 Include a `checkout-sdk-php/checkout.php` to access the operations for each API:
 
 ```php
@@ -48,14 +50,8 @@ $secretKey = 'sk_test_key';
 $checkout = new CheckoutApi($secretKey);
 
 
-// Create a Card token
-$card = new Card('4242424242424242', 12, 2020);
-$card->cvv = 100;
-$token = $checkout->tokens()->request($card);
-
-
 // Create a payment method instance with card details
-$method = new TokenSource($token->getId());
+$method = new TokenSource('tok_key_goes_here');
 
 // Prepare the payment parameters
 $payment = new Payment($method, 'GBP');

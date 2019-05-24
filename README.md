@@ -33,6 +33,8 @@ git clone git@github.com:checkout/checkout-sdk-php.git
 
 ## Quickstart
 
+A card token can be obtained using one of Checkout.com's JavaScript frontend solutions such as [Frames](https://docs.checkout.com/docs/frames "Frames") or any of the [mobile SDKs](https://docs.checkout.com/docs/sdks#section-mobile-sdk-libraries "Mobile SDKs")
+
 Include a `checkout-sdk-php/checkout.php` to access the operations for each API:
 
 ```php

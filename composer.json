@@ -2,7 +2,7 @@
     "name": "checkout/checkout-sdk-php",
     "description": "Checkout.com SDK for PHP",
     "homepage": "https://github.com/checkout/checkout-sdk-php",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "type": "library",
     "license": "MIT",
     "keywords": ["checkout.com","payment","gateway","checkout","checkoutcom","GW3","CKO", "Reboot", "SDK", "Library", "PHP", "API"],
@@ -27,6 +27,6 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.0"
+        "phpunit/phpunit": "^6"
     }
 }

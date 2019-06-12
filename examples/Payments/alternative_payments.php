@@ -82,3 +82,29 @@ $payment = $checkout->payments()->request($sofort);
 $eps = new Payment(new EpsSource(), 'EUR');
 $eps->amount = 999;
 $payment = $checkout->payments()->request($eps);
+
+
+
+// Fawry
+$product = new Product();
+$product->product_id = 'id';
+$product->quantity = 1;
+$product->price = 999;
+$product->description = 'description';
+$fawry = new Payment(new FawrySource('customer_email', 'customer_mobile', 'description', array($product)), 'EGP');
+$fawry->amount = 999;
+$payment = $checkout->payments()->request($fawry);
+
+
+
+// Bancontact
+$bancontact = new Payment(new BancontactSource('account_holder_name', 'payment_country'), 'EUR');
+$bancontact->amount = 999;
+$payment = $checkout->payments()->request($bancontact);
+
+
+
+// KNet
+$knet = new Payment(new KnetSource('en'), 'KWD');
+$knet->amount = 999;
+$payment = $checkout->payments()->request($knet);

@@ -18,7 +18,7 @@
 namespace Checkout\Models\Payments;
 
 /**
- * Payment method Ideal.
+ * Payment method QPay.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class IdealSource extends IdSource
+class QpaySource extends IdSource
 {
 
     /**
@@ -37,18 +37,18 @@ class IdealSource extends IdSource
     const QUALIFIED_NAME = __CLASS__;
 
     /**
+     * Qualified namespace of the class.
+     *
+     * @var string
+     */
+    const QUALIFIED_NAMESPACE = __NAMESPACE__;
+
+    /**
      * Name of the model.
      *
      * @var string
      */
-    const MODEL_NAME = 'ideal';
-
-    /**
-     * API Request banks URL.
-     *
-     * @var string
-     */
-    const MODEL_REQUEST_BANKS_URL = 'ideal-external/issuers';
+    const MODEL_NAME = 'qpay';
 
 
     /**
@@ -57,13 +57,12 @@ class IdealSource extends IdSource
 
     /**
      * Initialise source.
-     * @param string $bic
-     * @param string $description
+     *
+     * @param      string   $description A description of the payment.
      */
-    public function __construct($bic, $description)
+    public function __construct($description)
     {
         $this->type = static::MODEL_NAME;
-        $this->bic = $bic;
         $this->description = $description;
     }
 }

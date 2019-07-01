@@ -49,6 +49,13 @@ class GiropaySource extends IdSource
      * @var string
      */
     const MODEL_NAME = 'giropay';
+    
+    /**
+     * API Request banks URL.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_BANKS_URL = 'giropay/banks';
 
 
     /**

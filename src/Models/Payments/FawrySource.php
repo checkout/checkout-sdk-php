@@ -17,7 +17,7 @@
 
 namespace Checkout\Models\Payments;
 
-use Checkout\Models\Address;
+use Checkout\Models\Product;
 
 /**
  * Payment method Fawry.

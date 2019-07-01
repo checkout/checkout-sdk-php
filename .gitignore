@@ -5,5 +5,6 @@ vendor/
 nbproject/
 
 index.php
+phpunit/
 
 *.log

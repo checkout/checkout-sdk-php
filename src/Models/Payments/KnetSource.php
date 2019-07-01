@@ -58,7 +58,7 @@ class KnetSource extends IdSource
     /**
      * Initialise KNET.
      *
-     * @param string   $purpose     2-letter language code in accordance with ISO 639-1
+     * @param string   $language     2-letter language code in accordance with ISO 639-1
      */
     public function __construct($language)
     {

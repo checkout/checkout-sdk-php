@@ -17,8 +17,6 @@
 
 namespace Checkout\Models\Payments;
 
-use Checkout\Models\Address;
-
 /**
  * Payment method EPS.
  *
@@ -51,6 +49,13 @@ class EpsSource extends IdSource
      * @var string
      */
     const MODEL_NAME = 'eps';
+    
+    /**
+     * API Request banks URL.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_BANKS_URL = 'giropay/eps/banks';
 
 
     /**
@@ -60,7 +65,7 @@ class EpsSource extends IdSource
     /**
      * Initialise payment
      *
-     * @param      string   $token A description of the payment.
+     * @param      string   $purpose A description of the payment.
      */
     public function __construct($purpose)
     {

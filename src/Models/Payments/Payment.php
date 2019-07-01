@@ -75,13 +75,14 @@ class Payment extends Model
      */
 
     /**
-     * Initialise source
+     * Initialise payment handler.
      *
-     * @param IdSource $method
-     * @param string   $currency
+     * @param Method    $method
+     * @param string    $currency
      */
-    public function __construct(IdSource $method, $currency)
+    public function __construct(Method $method, $currency)
     {
+        $this->{$method::METHOD_TYPE} = $method;
         $this->source = $method;
         $this->currency = $currency;
     }

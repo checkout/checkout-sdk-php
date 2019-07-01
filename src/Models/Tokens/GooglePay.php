@@ -40,13 +40,6 @@ class GooglePay extends Token
     const QUALIFIED_NAME = __CLASS__;
 
     /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
-
-    /**
      * Name of the model.
      *
      * @var string

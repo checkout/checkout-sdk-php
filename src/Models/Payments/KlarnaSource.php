@@ -28,7 +28,7 @@ use Checkout\Models\Address;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class KlarnaSource extends IdSource
+class KlarnaSource extends Source
 {
 
     /**
@@ -37,13 +37,6 @@ class KlarnaSource extends IdSource
      * @var string
      */
     const QUALIFIED_NAME = __CLASS__;
-
-    /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
 
     /**
      * Name of the model.

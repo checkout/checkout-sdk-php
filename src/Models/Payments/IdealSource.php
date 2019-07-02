@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class IdealSource extends IdSource
+class IdealSource extends Source
 {
 
     /**

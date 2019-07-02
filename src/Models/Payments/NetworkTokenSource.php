@@ -17,8 +17,6 @@
 
 namespace Checkout\Models\Payments;
 
-use Checkout\Models\Tokens\Token;
-
 /**
  * Payment method.
  *
@@ -28,7 +26,7 @@ use Checkout\Models\Tokens\Token;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class NetworkTokenSource extends Token
+class NetworkTokenSource extends Source
 {
 
     /**

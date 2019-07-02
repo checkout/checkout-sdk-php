@@ -17,8 +17,10 @@
 
 namespace Checkout\Models\Payments;
 
+use Checkout\Library\Model;
+
 /**
- * Payment method KNET.
+ * Parent class for Source and Destination.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +28,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class KnetSource extends Source
+abstract class Method extends Model
 {
 
     /**
@@ -35,27 +37,12 @@ class KnetSource extends Source
      * @var string
      */
     const QUALIFIED_NAME = __CLASS__;
-
+    
     /**
-     * Name of the model.
+     * Method type.
      *
      * @var string
      */
-    const MODEL_NAME = 'knet';
+    const METHOD_TYPE = '';
 
-
-    /**
-     * Magic Methods
-     */
-
-    /**
-     * Initialise KNET.
-     *
-     * @param string   $language     2-letter language code in accordance with ISO 639-1.
-     */
-    public function __construct($language)
-    {
-        $this->type = static::MODEL_NAME;
-        $this->language = $language;
-    }
 }

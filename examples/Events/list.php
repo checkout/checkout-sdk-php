@@ -16,6 +16,7 @@ require_once "../../checkout.php";
 /**
  * Used namespaces.
  */
+
 use Checkout\CheckoutApi;
 
 /**
@@ -27,6 +28,6 @@ $checkout = new CheckoutApi('secret_key_goes_here');
 /**
  * Get all events
  */
-$events = $checkout->events()->retrieve();
+$events = $checkout->events()->retrieve(array('skip' => 5, 'limit' => 1));
 
 var_dump($events);

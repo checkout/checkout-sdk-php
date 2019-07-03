@@ -83,7 +83,6 @@ class Payment extends Model
     public function __construct(Method $method, $currency)
     {
         $this->{$method::METHOD_TYPE} = $method;
-        $this->source = $method;
         $this->currency = $currency;
     }
 

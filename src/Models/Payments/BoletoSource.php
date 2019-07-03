@@ -51,9 +51,9 @@ class BoletoSource extends Source
     /**
      * Initialise Boleto source.
      *
-     * @param string $name
-     * @param string $birthdate
-     * @param string $cpf
+     * @param string $name      The customer's name.
+     * @param string $birthdate The date of birth (YYYY-MM-DD).
+     * @param string $cpf       The Brazilian personal tax identifier (Cadastro de Pessoas Físicas).
      */
     public function __construct($name, $birthdate, $cpf)
     {

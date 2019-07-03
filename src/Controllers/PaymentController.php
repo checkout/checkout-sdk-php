@@ -188,7 +188,7 @@ class PaymentController extends Controller
     }
     
     /**
-     * Retrieve supported issuers. Alias for $this->banks.
+     * Retrieve supported issuers. Alias for $this->banks().
      * 
      * @param  string $model
      * @return array

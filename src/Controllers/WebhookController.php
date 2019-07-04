@@ -20,6 +20,7 @@ namespace Checkout\Controllers;
 use Checkout\Library\Controller;
 use Checkout\Library\Exceptions\CheckoutModelException;
 use Checkout\Library\HttpHandler;
+use Checkout\Library\Utilities;
 use Checkout\Models\Response;
 use Checkout\Models\Webhooks\Webhook;
 
@@ -108,15 +109,13 @@ class WebhookController extends Controller
     public function register(Webhook $webhook, array $events = array(), $mode = HttpHandler::MODE_EXECUTE)
     {
         $body = $webhook->getValues();
-
-        if ((!isset($body[static::FIELD_EVENTS]) || (isset($body[static::FIELD_EVENTS]) && !$body[static::FIELD_EVENTS])) && !$events) {
+        $body[static::FIELD_EVENTS] = Utilities::getValueFromArray($body, static::FIELD_EVENTS, array());
+        
+        if(!$events && !$body[static::FIELD_EVENTS]) {
             throw new CheckoutModelException('Field "event_types" is required to register a new webhook.');
-        } elseif (!isset($body[static::FIELD_EVENTS])) {
-            $body[static::FIELD_EVENTS] = array();
+        } else {
+            $body[static::FIELD_EVENTS] = $body[static::FIELD_EVENTS] + $events;
         }
-
-        $merged = array_merge($body[static::FIELD_EVENTS], $events);
-        $body[static::FIELD_EVENTS] = array_values($merged);
 
         unset($body[static::FIELD_ID]); // Remove ID from the body.
         $response = $this->requestAPI($webhook->getEndpoint())
@@ -136,9 +135,16 @@ class WebhookController extends Controller
     public function update(Webhook $webhook, $partially = false, $mode = HttpHandler::MODE_EXECUTE)
     {
         $body = $webhook->getValues();
-        if (!isset($body[static::FIELD_ID]) || !$body[static::FIELD_ID]) {
+        $body[static::FIELD_EVENTS] = Utilities::getValueFromArray($body, static::FIELD_EVENTS, array());
+        $body[static::FIELD_ID] = Utilities::getValueFromArray($body, static::FIELD_ID, 0);
+        
+        if(!$body[static::FIELD_EVENTS]) {
+            throw new CheckoutModelException('Field "event_types" is required to register a new webhook.');
+        }
+        if (!$body[static::FIELD_ID]) {
             throw new CheckoutModelException('Field "id" is required for webhook update.');
         }
+
         unset($body[static::FIELD_ID]); // Remove id from the body.
         $response = $this->requestAPI($webhook->getEndpoint())
             ->setBody($body)

@@ -385,13 +385,13 @@ class HttpHandler
     }
 
     /**
-     * Serialise http client.
+     * Serialise HTTP client.
      *
      * @return array
      */
     public function serialize()
     {
-        return array('url'      => $this->getUrl(),
+        return array('url'      => $this->getUrl() . $this->getQueryParameters(true),
                      'header'   => $this->getHeaders(),
                      'method'   => $this->method,
                      'body'     => $this->body);

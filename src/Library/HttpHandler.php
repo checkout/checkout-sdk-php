@@ -616,9 +616,12 @@ class HttpHandler
      */
     public function getQueryParameters($query = false)
     {
-        if ($query) {
+        $result = '';
+        if($query && $this->params) {
             $result = '?' . http_build_query($this->params);
-        } else {
+        }
+        
+        if(!$query) {
             $result = $this->params;
         }
 

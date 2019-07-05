@@ -23,6 +23,7 @@ use Checkout\Library\HttpHandler;
 use Checkout\Library\Utilities;
 use Checkout\Models\Response;
 use Checkout\Models\Webhooks\Webhook;
+use Checkout\Models\Webhooks\WebhookHeaders;
 
 /**
  * Webhook controller.
@@ -134,6 +135,10 @@ class WebhookController extends Controller
      */
     public function update(Webhook $webhook, $partially = false, $mode = HttpHandler::MODE_EXECUTE)
     {
+        if(isset($webhook->headers) && !($webhook->headers instanceof WebhookHeaders)) {
+            throw new CheckoutModelException('Field "headers" must be instance of WebhookHeaders.');
+        }
+
         $body = $webhook->getValues();
         $body[static::FIELD_EVENTS] = Utilities::getValueFromArray($body, static::FIELD_EVENTS, array());
         $body[static::FIELD_ID] = Utilities::getValueFromArray($body, static::FIELD_ID, 0);

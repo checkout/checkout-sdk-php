@@ -110,7 +110,7 @@ class WebhookController extends Controller
     {
         $body = $webhook->getValues();
         $body[static::FIELD_EVENTS] = Utilities::getValueFromArray($body, static::FIELD_EVENTS, array());
-        
+
         if(!$events && !$body[static::FIELD_EVENTS]) {
             throw new CheckoutModelException('Field "event_types" is required to register a new webhook.');
         } else {
@@ -137,18 +137,27 @@ class WebhookController extends Controller
         $body = $webhook->getValues();
         $body[static::FIELD_EVENTS] = Utilities::getValueFromArray($body, static::FIELD_EVENTS, array());
         $body[static::FIELD_ID] = Utilities::getValueFromArray($body, static::FIELD_ID, 0);
-        
+
         if(!$body[static::FIELD_EVENTS]) {
             throw new CheckoutModelException('Field "event_types" is required to register a new webhook.');
         }
         if (!$body[static::FIELD_ID]) {
             throw new CheckoutModelException('Field "id" is required for webhook update.');
         }
+        if (!$partially && !isset($body['active'])) {
+            throw new CheckoutModelException('Field "active" is required for webhook update.');
+        }
+        if (!$partially && !isset($body['headers'])) {
+            throw new CheckoutModelException('Field "headers" is required for webhook update.');
+        }
+        if (!$partially && !isset($body['content_type'])) {
+            throw new CheckoutModelException('Field "content_type" is required for webhook update.');
+        }
 
         unset($body[static::FIELD_ID]); // Remove id from the body.
         $response = $this->requestAPI($webhook->getEndpoint())
             ->setBody($body)
-            ->setMethod(!$partially ? HttpHandler::METHOD_PUT : HttpHandler::METHOD_PATCH);
+            ->setMethod($partially ? HttpHandler::METHOD_PATCH : HttpHandler::METHOD_PUT);
 
         return $this->response($response, Webhook::QUALIFIED_NAME, $mode);
     }

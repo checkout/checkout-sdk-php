@@ -37,18 +37,18 @@ class GiropaySource extends IdSource
     const QUALIFIED_NAME = __CLASS__;
 
     /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
-
-    /**
      * Name of the model.
      *
      * @var string
      */
     const MODEL_NAME = 'giropay';
+    
+    /**
+     * API Request banks URL.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_BANKS_URL = 'giropay/banks';
 
 
     /**

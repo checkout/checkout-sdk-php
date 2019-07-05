@@ -25,6 +25,7 @@ use Checkout\Models\Payments\Details;
 use Checkout\Models\Payments\Payment;
 use Checkout\Models\Payments\Refund;
 use Checkout\Models\Payments\Voids;
+use Checkout\Models\Response;
 
 /**
  * Make payments.
@@ -160,6 +161,40 @@ class PaymentController extends Controller
             ->setIdempotencyKey($payment->getIdempotencyKey());
 
         return parent::response($response, Payment::QUALIFIED_NAME, $mode);
+    }
+    
+    /**
+     * Extra methods.
+     */
+    
+    /**
+     * Retrieve supported banks.
+     * 
+     * @param  string $class Qualified name of the class.
+     * @return Response
+     */
+    public function banks($class, $mode = HttpHandler::MODE_EXECUTE)
+    { 
+        
+        $banks = new Response();
+        $url = $class::MODEL_REQUEST_BANKS_URL;
+       
+        if($url) {
+            $response = $this->requestAPI($url);
+            $banks = $this->response($response, Response::QUALIFIED_NAME, $mode);
+        }
+        
+        return $banks;
+    }
+    
+    /**
+     * Retrieve supported issuers. Alias for $this->banks().
+     * 
+     * @param  string $model
+     * @return array
+     */
+    public function issuers($class, $mode = HttpHandler::MODE_EXECUTE) {
+        return $this->banks($class, $mode);
     }
 
     /**

@@ -17,8 +17,6 @@
 
 namespace Checkout\Models\Payments;
 
-use Checkout\Library\Model;
-
 /**
  * Payment Method base class.
  *
@@ -28,7 +26,7 @@ use Checkout\Library\Model;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class IdSource extends Model
+class IdSource extends Source
 {
 
     /**

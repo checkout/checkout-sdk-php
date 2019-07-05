@@ -37,6 +37,13 @@ abstract class Model
      * @var string
      */
     const MODEL_REQUEST_URL = '';
+    
+    /**
+     * API Request banks URL.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_BANKS_URL = '';
 
     /**
      * API Request Method.
@@ -144,24 +151,47 @@ abstract class Model
     /**
      * Get a specific field.
      *
-     * @param  string $key
+     * @param  mixed $key
+     * @param  array  $values For recursion purposes.
      * @return mixed
      */
-    public function getValue($key)
+    public function getValue($key, array $values = array())
+    {
+        $arr = (array) $key;
+        $index = array_shift($arr);
+        
+        if($values) {
+            $value = isset($values[$index]) ? $values[$index] : $this->getValueAliased($index, $values);
+        } else {
+            $value = isset($this->{$index}) ? $this->{$index} : $this->getValueAliased($index);
+        }
+
+        if($arr) {
+            $value = $this->getValue($arr, (array) $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Gets the value aliased.
+     *
+     * @param      string  $key     The key
+     * @param      array   $values  The values
+     *
+     * @return     mixed  The value aliased.
+     */
+    protected function getValueAliased($key, array &$values = array())
     {
         $value = null;
 
-        if (isset($this->{$key})) {
-            $value = $this->{$key};
-        } else {
-            $index = array_search($key, static::$aliases);
-            if ($index && isset($this->{$index})) {
+        $index = array_search($key, static::$aliases);
+        if($index !== false) {
+            if($values && isset($values[$key])) {
+                $value = $value[$key];
+            } else if(isset($this->{$index})) {
                 $value = $this->{$index};
             }
-        }
-
-        if ($value instanceof Model) {
-            $value = $value->getValues();
         }
 
         return $value;
@@ -266,11 +296,10 @@ abstract class Model
      */
     public function getLink($key)
     {
-        $link = '';
-        $types = $this->getValue('_links');
-        if (isset($types[$key])) {
-            $link = $types[$key]['href'];
-        }
+        $link = $this->getValue(array('_links', $key, 'href'));
+        if(!$link) {
+            $link = '';
+        }  
 
         return $link;
     }

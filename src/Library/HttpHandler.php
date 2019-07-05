@@ -385,13 +385,13 @@ class HttpHandler
     }
 
     /**
-     * Serialise http client.
+     * Serialise HTTP client.
      *
      * @return array
      */
     public function serialize()
     {
-        return array('url'      => $this->getUrl(),
+        return array('url'      => $this->getUrl() . $this->getQueryParameters(true),
                      'header'   => $this->getHeaders(),
                      'method'   => $this->method,
                      'body'     => $this->body);
@@ -616,9 +616,12 @@ class HttpHandler
      */
     public function getQueryParameters($query = false)
     {
-        if ($query) {
+        $result = '';
+        if($query && $this->params) {
             $result = '?' . http_build_query($this->params);
-        } else {
+        }
+        
+        if(!$query) {
             $result = $this->params;
         }
 

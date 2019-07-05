@@ -40,13 +40,6 @@ class GooglePay extends Token
     const QUALIFIED_NAME = __CLASS__;
 
     /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
-
-    /**
      * Name of the model.
      *
      * @var string
@@ -61,9 +54,12 @@ class GooglePay extends Token
     /**
      * Initialise Google Pay.
      *
-     * @param string $protocolVersion
-     * @param string $signature
-     * @param string $signedMessage
+     * @param string $protocolVersion   Identifies which encryption/signing scheme this message has been created.
+     *                                  In this way, the protocol can evolve over time if needed. If it is not set, assume ECv0.
+     * @param string $signature         Verifies the message came from Google.
+     *                                  The signature is created using ECDSA.
+     * @param string $signedMessage     A serialized JSON string containing the encryptedMessage, ephemeralPublicKey and tag.
+     *                                  To simplify the signature verification process, this value is serialized.
      */
     public function __construct($protocolVersion, $signature, $signedMessage)
     {

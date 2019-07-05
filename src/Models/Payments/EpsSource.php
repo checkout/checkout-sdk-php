@@ -17,8 +17,6 @@
 
 namespace Checkout\Models\Payments;
 
-use Checkout\Models\Address;
-
 /**
  * Payment method EPS.
  *
@@ -28,7 +26,7 @@ use Checkout\Models\Address;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class EpsSource extends IdSource
+class EpsSource extends Source
 {
 
     /**
@@ -39,18 +37,18 @@ class EpsSource extends IdSource
     const QUALIFIED_NAME = __CLASS__;
 
     /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
-
-    /**
      * Name of the model.
      *
      * @var string
      */
     const MODEL_NAME = 'eps';
+    
+    /**
+     * API Request banks URL.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_BANKS_URL = 'giropay/eps/banks';
 
 
     /**
@@ -60,7 +58,7 @@ class EpsSource extends IdSource
     /**
      * Initialise payment
      *
-     * @param      string   $token A description of the payment.
+     * @param      string   $purpose A description of the payment.
      */
     public function __construct($purpose)
     {

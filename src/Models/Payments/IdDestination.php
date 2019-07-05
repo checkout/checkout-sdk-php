@@ -18,7 +18,7 @@
 namespace Checkout\Models\Payments;
 
 /**
- * Payment method KNET.
+ * Payment destination field model.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class KnetSource extends Source
+class IdDestination extends Destination
 {
 
     /**
@@ -41,7 +41,7 @@ class KnetSource extends Source
      *
      * @var string
      */
-    const MODEL_NAME = 'knet';
+    const MODEL_NAME = 'id';
 
 
     /**
@@ -49,13 +49,17 @@ class KnetSource extends Source
      */
 
     /**
-     * Initialise KNET.
+     * Initialise destination.
      *
-     * @param string   $language     2-letter language code in accordance with ISO 639-1.
+     * @param string $id        The payment source identifier for example, a card source identifier.
+     * @param string $first     The payment destination owner's first name.
+     * @param string $last      The payment destination owner's last name. 
      */
-    public function __construct($language)
+    public function __construct($id, $first, $last)
     {
         $this->type = static::MODEL_NAME;
-        $this->language = $language;
+        $this->id = $id;
+        $this->first_name = $first;
+        $this->last_name = $last;
     }
 }

@@ -17,7 +17,7 @@
 
 namespace Checkout\Models\Payments;
 
-use Checkout\Models\Address;
+use Checkout\Models\Product;
 
 /**
  * Payment method Fawry.
@@ -28,7 +28,7 @@ use Checkout\Models\Address;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class FawrySource extends IdSource
+class FawrySource extends Source
 {
 
     /**
@@ -37,13 +37,6 @@ class FawrySource extends IdSource
      * @var string
      */
     const QUALIFIED_NAME = __CLASS__;
-
-    /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
 
     /**
      * Name of the model.
@@ -60,9 +53,9 @@ class FawrySource extends IdSource
     /**
      * Initialise payment Fawry.
      *
-     * @param      string       $email          The customer's email address
-     * @param      string       $mobile         The customer's mobile number
-     * @param      string       $description    The description of the payment
+     * @param      string       $email          The customer's email address.
+     * @param      string       $mobile         The customer's mobile number.
+     * @param      string       $description    The description of the payment.
      * @param      Product[]    $products       This object is passed directly to Fawry as products.
      */
     public function __construct($email, $mobile, $description, array $products)

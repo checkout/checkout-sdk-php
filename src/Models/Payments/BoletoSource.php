@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends IdSource
+class BoletoSource extends Source
 {
 
     /**
@@ -35,13 +35,6 @@ class BoletoSource extends IdSource
      * @var string
      */
     const QUALIFIED_NAME = __CLASS__;
-
-    /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
 
     /**
      * Name of the model.
@@ -58,9 +51,9 @@ class BoletoSource extends IdSource
     /**
      * Initialise Boleto source.
      *
-     * @param string $name
-     * @param string $birthdate
-     * @param string $cpf
+     * @param string $name      The customer's name.
+     * @param string $birthdate The date of birth (YYYY-MM-DD).
+     * @param string $cpf       The Brazilian personal tax identifier (Cadastro de Pessoas Físicas).
      */
     public function __construct($name, $birthdate, $cpf)
     {

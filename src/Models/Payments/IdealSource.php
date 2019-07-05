@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class IdealSource extends IdSource
+class IdealSource extends Source
 {
 
     /**
@@ -42,6 +42,13 @@ class IdealSource extends IdSource
      * @var string
      */
     const MODEL_NAME = 'ideal';
+
+    /**
+     * API Request banks URL.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_BANKS_URL = 'ideal-external/issuers';
 
 
     /**

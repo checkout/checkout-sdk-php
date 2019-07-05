@@ -18,7 +18,7 @@
 namespace Checkout\Models\Payments;
 
 /**
- * Payment method KNET.
+ * Payment method QPay.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class KnetSource extends Source
+class QpaySource extends Source
 {
 
     /**
@@ -41,7 +41,7 @@ class KnetSource extends Source
      *
      * @var string
      */
-    const MODEL_NAME = 'knet';
+    const MODEL_NAME = 'qpay';
 
 
     /**
@@ -49,13 +49,13 @@ class KnetSource extends Source
      */
 
     /**
-     * Initialise KNET.
+     * Initialise source.
      *
-     * @param string   $language     2-letter language code in accordance with ISO 639-1.
+     * @param      string   $description A description of the payment.
      */
-    public function __construct($language)
+    public function __construct($description)
     {
         $this->type = static::MODEL_NAME;
-        $this->language = $language;
+        $this->description = $description;
     }
 }

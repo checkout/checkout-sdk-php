@@ -18,14 +18,19 @@ require_once "../../checkout.php";
  */
 
 use Checkout\CheckoutApi;
-use Checkout\Models\Payments\Payment;
-use Checkout\Models\Payments\EpsSource;
-use Checkout\Models\Payments\PoliSource;
-use Checkout\Models\Payments\IdealSource;
 use Checkout\Models\Payments\AlipaySource;
+use Checkout\Models\Payments\BancontactSource;
 use Checkout\Models\Payments\BoletoSource;
-use Checkout\Models\Payments\SofortSource;
+use Checkout\Models\Payments\EpsSource;
+use Checkout\Models\Payments\FawrySource;
 use Checkout\Models\Payments\GiropaySource;
+use Checkout\Models\Payments\IdealSource;
+use Checkout\Models\Payments\KnetSource;
+use Checkout\Models\Payments\Payment;
+use Checkout\Models\Payments\PoliSource;
+use Checkout\Models\Payments\QpaySource;
+use Checkout\Models\Payments\SofortSource;
+use Checkout\Models\Product;
 
 /**
  * Create new instance of Checkout
@@ -108,3 +113,9 @@ $payment = $checkout->payments()->request($bancontact);
 $knet = new Payment(new KnetSource('en'), 'KWD');
 $knet->amount = 999;
 $payment = $checkout->payments()->request($knet);
+
+
+// QPay
+$qpay = new Payment(new QpaySource('description'), 'KWD');
+$qpay->amount = 999;
+$payment = $checkout->payments()->request($qpay);

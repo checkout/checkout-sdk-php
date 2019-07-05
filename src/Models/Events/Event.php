@@ -80,12 +80,14 @@ class Event extends Model
      * @return Model
      */
     protected static function create(array $response)
-    {
+    {      
         $code = Utilities::getValueFromArray($response, 'http_code', 0);
-        if ($code === 204 || Utilities::getValueFromArray($response, 'total_count', false)) { // List of Events
+        if ($code === 204 || Utilities::getValueFromArray($response, 'total_count', 0)) {
 
             $obj = new Response();
-            foreach ($response['data'] as &$event) {
+            $obj->list = array();
+            
+            foreach (Utilities::getValueFromArray($response, 'data', array()) as &$event) {
                 $obj->list []= static::arrayToModel($event, static::QUALIFIED_NAME);
             }
 

@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BancontactSource extends IdSource
+class BancontactSource extends Source
 {
 
     /**
@@ -35,13 +35,6 @@ class BancontactSource extends IdSource
      * @var string
      */
     const QUALIFIED_NAME = __CLASS__;
-
-    /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
 
     /**
      * Name of the model.

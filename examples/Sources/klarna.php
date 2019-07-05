@@ -70,9 +70,9 @@ $address->country = '';
 
 
 
-
-$source = new KlarnaSource(/* `authorization_token` from Klarna JS SDK*/, 'GB', 'en-GB', $address, 1, array($product));
-$payment = new Payment($source, 'GBP');
+/* `authorization_token` from Klarna JS SDK*/
+$method = new KlarnaSource($klarnaAuthToken, 'GB', 'en-GB', $address, 1, array($product));
+$payment = new Payment($method, 'GBP');
 $payment->amount = 999;
 
 $res = $checkout->payments()->request($payment);

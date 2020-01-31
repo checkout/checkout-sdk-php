@@ -23,7 +23,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Checkout\\tests\\": "tests/"
+            "Checkout\\Tests\\": "tests/"
         }
     },
     "require-dev": {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Checkout\tests\Models\Payments;
+namespace Checkout\Tests\Models\Payments;
 
 use Checkout\Models\Payments\Voids;
-use Checkout\tests\Helpers\Payments;
+use Checkout\Tests\Helpers\Payments;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

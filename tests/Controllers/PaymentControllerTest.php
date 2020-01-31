@@ -1,12 +1,12 @@
 <?php
 
-namespace Checkout\tests\Controllers;
+namespace Checkout\Tests\Controllers;
 
 use Checkout\CheckoutApi;
 use Checkout\Library\HttpHandler;
 use Checkout\Models\Response;
-use Checkout\tests\Helpers\HttpHandlers;
-use Checkout\tests\Helpers\Payments;
+use Checkout\Tests\Helpers\HttpHandlers;
+use Checkout\Tests\Helpers\Payments;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

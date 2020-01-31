@@ -1,10 +1,10 @@
 <?php
 
-namespace Checkout\tests\Controllers;
+namespace Checkout\Tests\Controllers;
 
 use Checkout\CheckoutApi;
 use Checkout\Library\HttpHandler;
-use Checkout\tests\Helpers\Sources;
+use Checkout\Tests\Helpers\Sources;
 use PHPUnit\Framework\TestCase;
 
 class SourceControllerTest extends TestCase

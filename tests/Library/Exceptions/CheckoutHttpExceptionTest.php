@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\tests\Library;
+namespace Checkout\Tests\Library;
 
 use Checkout\Library\Exceptions\CheckoutHttpException;
 use PHPUnit\Framework\TestCase;

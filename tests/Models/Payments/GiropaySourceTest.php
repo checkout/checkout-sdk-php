@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\tests\Models\Payments;
+namespace Checkout\Tests\Models\Payments;
 
 use Checkout\Models\Payments\GiropaySource;
 use PHPUnit\Framework\TestCase;

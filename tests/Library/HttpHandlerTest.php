@@ -1,10 +1,10 @@
 <?php
 
-namespace Checkout\tests\Library;
+namespace Checkout\Tests\Library;
 
 use Checkout\Library\Exceptions\CheckoutHttpException;
 use Checkout\Library\HttpHandler;
-use Checkout\tests\Helpers\HttpHandlers;
+use Checkout\Tests\Helpers\HttpHandlers;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Checkout\tests\Models\Payments;
+namespace Checkout\Tests\Models\Payments;
 
 use Checkout\Models\Response;
 use Checkout\Models\Webhooks\Webhook;
-use Checkout\tests\Helpers\Webhooks;
+use Checkout\Tests\Helpers\Webhooks;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

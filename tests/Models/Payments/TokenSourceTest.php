@@ -1,9 +1,9 @@
 <?php
 
-namespace Checkout\tests\Models\Payments;
+namespace Checkout\Tests\Models\Payments;
 
 use Checkout\Models\Payments\TokenSource;
-use Checkout\tests\Helpers\Tokens;
+use Checkout\Tests\Helpers\Tokens;
 use PHPUnit\Framework\TestCase;
 
 class TokenSourceTest extends TestCase

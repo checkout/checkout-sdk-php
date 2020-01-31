@@ -1,9 +1,9 @@
 <?php
 
-namespace Checkout\tests\Models\Payments;
+namespace Checkout\Tests\Models\Payments;
 
 use Checkout\Models\Payments\NetworkTokenSource;
-use Checkout\tests\Helpers\Tokens;
+use Checkout\Tests\Helpers\Tokens;
 use PHPUnit\Framework\TestCase;
 
 class NetworkTokenSourceTest extends TestCase

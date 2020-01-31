@@ -1,9 +1,9 @@
 <?php
 
-namespace Checkout\tests\Library;
+namespace Checkout\Tests\Library;
 
 use Checkout\Library\CheckoutConfiguration;
-use Checkout\tests\Helpers\CheckoutConfigurations;
+use Checkout\Tests\Helpers\CheckoutConfigurations;
 use PHPUnit\Framework\TestCase;
 
 class CheckoutConfigurationTest extends TestCase

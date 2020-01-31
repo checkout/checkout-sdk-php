@@ -1,12 +1,12 @@
 <?php
 
-namespace Checkout\tests;
+namespace Checkout\Tests;
 
 use Checkout\CheckoutApi;
 use Checkout\Library\HttpHandler;
 use Checkout\Library\LogHandler;
 use Checkout\Library\Model;
-use Checkout\tests\Helpers\CheckoutConfigurations;
+use Checkout\Tests\Helpers\CheckoutConfigurations;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

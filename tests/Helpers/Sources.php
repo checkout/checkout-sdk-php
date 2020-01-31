@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\tests\Helpers;
+namespace Checkout\Tests\Helpers;
 
 use Checkout\Models\Sources\BillingAddress;
 use Checkout\Models\Sources\Sepa;

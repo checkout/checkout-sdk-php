@@ -1,10 +1,10 @@
 <?php
 
-namespace Checkout\tests\Controllers;
+namespace Checkout\Tests\Controllers;
 
 use Checkout\CheckoutApi;
 use Checkout\Library\HttpHandler;
-use Checkout\tests\Helpers\Tokens;
+use Checkout\Tests\Helpers\Tokens;
 use PHPUnit\Framework\TestCase;
 
 class TokenControllerTest extends TestCase

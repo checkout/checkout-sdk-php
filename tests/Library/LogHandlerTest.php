@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\tests\Library;
+namespace Checkout\Tests\Library;
 
 use Checkout\Library\LogHandler;
 use PHPUnit\Framework\TestCase;

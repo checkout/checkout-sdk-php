@@ -1,10 +1,10 @@
 <?php
 
-namespace Checkout\tests\Controllers;
+namespace Checkout\Tests\Controllers;
 
 use Checkout\CheckoutApi;
 use Checkout\Library\HttpHandler;
-use Checkout\tests\Helpers\Webhooks;
+use Checkout\Tests\Helpers\Webhooks;
 use PHPUnit\Framework\TestCase;
 
 class WebhookControllerTest extends TestCase

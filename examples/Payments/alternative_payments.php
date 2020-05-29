@@ -30,6 +30,7 @@ use Checkout\Models\Payments\Payment;
 use Checkout\Models\Payments\PoliSource;
 use Checkout\Models\Payments\QpaySource;
 use Checkout\Models\Payments\SofortSource;
+use Checkout\Models\Payments\PaypalSource;
 use Checkout\Models\Product;
 
 /**
@@ -119,3 +120,8 @@ $payment = $checkout->payments()->request($knet);
 $qpay = new Payment(new QpaySource('description'), 'KWD');
 $qpay->amount = 999;
 $payment = $checkout->payments()->request($qpay);
+
+// PayPal
+$paypal = new Payment(new PaypalSource('invoice_number'), 'EUR');
+$paypal->amount = 999;
+$payment = $checkout->payments()->request($paypal);

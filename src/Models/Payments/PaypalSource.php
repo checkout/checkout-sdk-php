@@ -51,7 +51,7 @@ class PaypalSource extends Source
     /**
      * Initialise PayPal.
      *
-     * @param string   $language     2-letter language code in accordance with ISO 639-1.
+     * @param string   $invoice_number     Your unique internal invoice number or tracking ID.
      */
     public function __construct($invoice_number)
     {

@@ -69,7 +69,7 @@ class TokenController extends Controller
      */
 
     /**
-     * Request a token new token. Valid for 15min.
+     * Request a new token. Valid for 15 min.
      *
      * @param  Token $token
      * @param  bool  $mode

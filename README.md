@@ -46,7 +46,7 @@ use Checkout\Models\Payments\Payment;
 // Set the secret key
 $secretKey = 'sk_test_key';
 
-// Initialize the Checkout API
+// Initialize the Checkout API in Sandbox mode. Use new CheckoutApi($liveSecretKey, false); for production
 $checkout = new CheckoutApi($secretKey);
 
 

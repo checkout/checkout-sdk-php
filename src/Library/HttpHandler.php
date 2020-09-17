@@ -345,7 +345,7 @@ class HttpHandler
         }
 
         // Set Body
-        if ($this->method === static::METHOD_POST) {
+        if ($this->method === static::METHOD_POST || $this->method === static::METHOD_PUT || $this->method === static::METHOD_PATCH) {
             curl_setopt($curl, CURLOPT_POSTFIELDS, $this->body);
         }
     }

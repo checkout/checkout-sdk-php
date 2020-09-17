@@ -121,8 +121,17 @@ class WebhookController extends Controller
         unset($body[static::FIELD_ID]); // Remove ID from the body.
         $response = $this->requestAPI($webhook->getEndpoint())
             ->setBody($body);
+        
+        $response = $this->response($response, Webhook::QUALIFIED_NAME, $mode);
 
-        return $this->response($response, Webhook::QUALIFIED_NAME, $mode);
+        if (isset($response->headers)) {
+            $headers = new WebhookHeaders();
+            foreach ($response->headers as $header => $value) {
+                $headers->{lcfirst($header)} = $value;
+            }
+            $response->headers = $headers;
+        }
+        return $response;
     }
 
     /**
@@ -164,7 +173,16 @@ class WebhookController extends Controller
             ->setBody($body)
             ->setMethod($partially ? HttpHandler::METHOD_PATCH : HttpHandler::METHOD_PUT);
 
-        return $this->response($response, Webhook::QUALIFIED_NAME, $mode);
+        $response = $this->response($response, Webhook::QUALIFIED_NAME, $mode);
+
+        if (isset($response->headers)) {
+            $headers = new WebhookHeaders();
+            foreach ($response->headers as $header => $value) {
+                $headers->{lcfirst($header)} = $value;
+            }
+            $response->headers = $headers;
+        }
+        return $response;
     }
 
     /**

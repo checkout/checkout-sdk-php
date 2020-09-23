@@ -82,7 +82,8 @@ class PaymentController extends Controller
     public function refund(Refund $refund, $mode = HttpHandler::MODE_EXECUTE)
     {
         $response = $this->requestAPI($refund->getEndpoint())
-            ->setBody($refund->getValues());
+            ->setBody($refund->getValues())
+            ->setIdempotencyKey($payment->getIdempotencyKey());
 
         return $this->response($response, Refund::QUALIFIED_NAME, $mode, $refund->id);
     }
@@ -127,7 +128,8 @@ class PaymentController extends Controller
     public function void(Voids $void, $mode = HttpHandler::MODE_EXECUTE)
     {
         $response = $this->requestAPI($void->getEndpoint())
-            ->setBody($void->getValues());
+            ->setBody($void->getValues())
+            ->setIdempotencyKey($payment->getIdempotencyKey());
 
         return $this->response($response, Voids::QUALIFIED_NAME, $mode, $void->id);
     }
@@ -142,7 +144,8 @@ class PaymentController extends Controller
     public function capture(Capture $capture, $mode = HttpHandler::MODE_EXECUTE)
     {
         $response = $this->requestAPI($capture->getEndpoint())
-            ->setBody($capture->getValues());
+            ->setBody($capture->getValues())
+            ->setIdempotencyKey($payment->getIdempotencyKey());
 
         return $this->response($response, Capture::QUALIFIED_NAME, $mode, $capture->id);
     }

@@ -184,18 +184,6 @@ class Payment extends Idempotence
      */
 
     /**
-     * Get all field values.
-     *
-     * @return array $values
-     */
-    public function getValues()
-    {
-        $values = parent::getValues();
-        unset($values['idempotency']);
-        return $values;
-    }
-
-    /**
      * Get redirection of payment response.
      *
      * @return string

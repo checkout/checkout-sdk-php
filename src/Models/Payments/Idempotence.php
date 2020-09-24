@@ -58,6 +58,18 @@ abstract class Idempotence extends Model
      */
 
     /**
+     * Get all field values.
+     *
+     * @return array $values
+     */
+    public function getValues()
+    {
+        $values = parent::getValues();
+        unset($values['idempotency']);
+        return $values;
+    }
+
+    /**
      * Set Idempotency key.
      *
      * @note    Be cautious when using idempotency keys.

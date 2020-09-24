@@ -18,7 +18,6 @@
 namespace Checkout\Models\Payments;
 
 use Checkout\Library\HttpHandler;
-use Checkout\Library\Model;
 use Checkout\Library\Utilities;
 
 /**
@@ -30,7 +29,7 @@ use Checkout\Library\Utilities;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class Voids extends Model
+class Voids extends Idempotency
 {
 
     /**

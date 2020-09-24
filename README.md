@@ -1,4 +1,4 @@
-<p align="center"><img src="https://www.checkout.com/static/img/checkout-logo/logo.svg" width="380"></p>
+<p align="center"><img src="https://www.checkout.com/static/img/logos/cko/logos/checkout.svg" width="380"></p>
 
 
 The **Checkout SDK for PHP** enables developers to easily work with Checkout.com APIs.

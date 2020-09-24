@@ -30,7 +30,7 @@ use Checkout\Models\Response;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class Payment extends Idempotence
+class Payment extends Idempotency
 {
 
     /**

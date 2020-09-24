@@ -28,7 +28,7 @@ use Checkout\Library\Model;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-abstract class Idempotence extends Model
+abstract class Idempotency extends Model
 {
 
     /**

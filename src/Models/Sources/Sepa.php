@@ -57,6 +57,7 @@ class Sepa extends Source
      *
      * @param BillingAddress $address
      * @param SepaData       $data
+     * @param Customer|null  $customer
      */
     public function __construct(Address $address, SepaData $data, Customer $customer = null)
     {

@@ -63,7 +63,9 @@ class Sepa extends Source
         $this->type = static::MODEL_NAME;
         $this->billing_address = $address;
         $this->source_data = $data;
-        $this->customer = $customer;
+        if ($customer) {
+            $this->customer = $customer;
+        }
     }
 
     /**

@@ -76,8 +76,7 @@ class Sepa extends Source
     {
         return new self(
             new SepaAddress('', '', '', ''),
-            new SepaData('', '', '', '', '', ''),
-            new Customer('', '')
+            new SepaData('', '', '', '', '', '')
         );
     }
 

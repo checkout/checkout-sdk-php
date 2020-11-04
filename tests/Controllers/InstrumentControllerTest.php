@@ -4,7 +4,6 @@ namespace Checkout\tests\Controllers;
 
 use Checkout\CheckoutApi;
 use Checkout\Library\HttpHandler;
-use Checkout\tests\Helpers\Instruments;
 use Checkout\Models\Tokens\Card;
 use Checkout\Models\Instruments\Instrument;
 use PHPUnit\Framework\TestCase;

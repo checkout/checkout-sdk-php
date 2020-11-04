@@ -20,7 +20,6 @@ namespace Checkout\Controllers;
 use Checkout\Library\Controller;
 use Checkout\Library\HttpHandler;
 use Checkout\Models\Instruments\Instrument;
-use Checkout\Models\Payments\IdSource;
 
 /**
  * Handle event controller.

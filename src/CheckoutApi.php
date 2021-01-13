@@ -156,7 +156,7 @@ final class CheckoutApi
 
         $configs = Utilities::loadConfig($config);
 
-        $this->loadChannel($configs, $secret, $sandbox, $public);
+        $this->loadChannel($secret, $sandbox, $public, $configs);
         $this->loadLogs($configs);
         $this->loadAliases($configs);
         $this->loadCurl($configs);
@@ -280,7 +280,7 @@ final class CheckoutApi
      * @param  string $public
      * @return void
      */
-    private function loadChannel (array &$configs = array(), $secret, $sandbox, $public)
+    private function loadChannel ($secret, $sandbox, $public, array &$configs = array())
     {
 
         $defaults = array(static::CONFIG_SECRET         => '',

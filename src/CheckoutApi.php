@@ -18,6 +18,7 @@
 namespace Checkout;
 
 use Checkout\Controllers\EventController;
+use Checkout\Controllers\InstrumentController;
 use Checkout\Controllers\FileController;
 use Checkout\Controllers\PaymentController;
 use Checkout\Controllers\SourceController;
@@ -233,6 +234,17 @@ final class CheckoutApi
     public function events (CheckoutConfiguration $configuration = null)
     {
         return $this->controller(EventController::QUALIFIED_NAME, $configuration);
+    }
+
+    /**
+     * Handle instruments controller.
+     *
+     * @param  CheckoutConfiguration $configuration
+     * @return InstrumentController
+     */
+    public function instruments (CheckoutConfiguration $configuration = null)
+    {
+        return $this->controller(InstrumentController::QUALIFIED_NAME, $configuration);
     }
 
 

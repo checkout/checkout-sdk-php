@@ -31,6 +31,7 @@ use Checkout\Models\Payments\PoliSource;
 use Checkout\Models\Payments\QpaySource;
 use Checkout\Models\Payments\SofortSource;
 use Checkout\Models\Payments\PaypalSource;
+use Checkout\Models\Payments\Payer;
 use Checkout\Models\Product;
 
 /**
@@ -57,7 +58,7 @@ $payment = $checkout->payments()->request($ideal);
 
 
 // Boleto
-$boleto = new Payment(new BoletoSource('customer_name', 'year-month-day', 'cpf'), 'BRL');
+$boleto = new Payment(new BoletoSource('redirect', 'BR', new Payer('customer_name', 'customer_email', 'cpf')), 'BRL');
 $boleto->amount = 999;
 $payment = $checkout->payments()->request($boleto);
 

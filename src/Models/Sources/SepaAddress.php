@@ -15,10 +15,12 @@
  * @link      https://docs.checkout.com/
  */
 
-namespace Checkout\Models\Payments;
+namespace Checkout\Models\Sources;
+
+use Checkout\Models\Address;
 
 /**
- * Payment method Boleto.
+ * Billing Address for SEPA source.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +28,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends Source
+class SepaAddress extends Address
 {
 
     /**
@@ -41,7 +43,7 @@ class BoletoSource extends Source
      *
      * @var string
      */
-    const MODEL_NAME = 'boleto';
+    const MODEL_NAME = 'billing_address';
 
 
     /**
@@ -49,22 +51,18 @@ class BoletoSource extends Source
      */
 
     /**
-     * Initialise Boleto source.
+     * Initialize billing address for SEPA source.
      *
-     * @param string $integrationType   The type of integration. Either direct or redirect.
-     * @param string $country           The billing country.
-     * @param object $payer             The payer.
-     * @param string $description       A description of the order.
+     * @param string $address1
+     * @param string $city
+     * @param string $zip
+     * @param string $country
      */
-    public function __construct($integrationType, $country, $payer, $description = '')
+    public function __construct($address1, $city, $zip, $country)
     {
-        $this->type = static::MODEL_NAME;
-        $this->integration_type = $integrationType;
+        $this->address_line1 = $address1;
+        $this->city = $city;
+        $this->zip = $zip;
         $this->country = $country;
-        $this->payer = $payer;
-        
-        if ($description) {
-            $this->description = $description;
-        }
     }
 }

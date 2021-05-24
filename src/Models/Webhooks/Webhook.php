@@ -41,13 +41,6 @@ class Webhook extends Model
     const QUALIFIED_NAME = __CLASS__;
 
     /**
-     * Qualified namespace of the class.
-     *
-     * @var string
-     */
-    const QUALIFIED_NAMESPACE = __NAMESPACE__;
-
-    /**
      * Name of the model.
      *
      * @var string
@@ -90,12 +83,11 @@ class Webhook extends Model
         if ($code === 204 || is_int(key($response))) { // List of webhooks
 
             $obj = new Response();
+            $obj->list = array();
+            
             foreach ($response as $key => $webhook) {
                 if (is_int($key)) {
-                    $obj->list []= static::arrayToModel(
-                        $webhook,
-                                                        static::QUALIFIED_NAME
-                    );
+                    $obj->list []= static::arrayToModel($webhook, static::QUALIFIED_NAME);
                 }
             }
         } else {

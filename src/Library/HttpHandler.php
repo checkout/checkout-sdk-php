@@ -324,7 +324,7 @@ class HttpHandler
 
         $code = $this->getCode();
         if ($code >= 400) {
-            $ex = (new CheckoutHttpException('The endpoint did not accepted the request.', $code))->setBody($this->response);
+            $ex = (new CheckoutHttpException('The endpoint did not accept the request.', $code))->setBody($this->response);
         }
 
         return $ex;
@@ -345,7 +345,7 @@ class HttpHandler
         }
 
         // Set Body
-        if ($this->method === static::METHOD_POST) {
+        if (in_array($this->method, array(static::METHOD_POST, static::METHOD_PUT, static::METHOD_PATCH))) {
             curl_setopt($curl, CURLOPT_POSTFIELDS, $this->body);
         }
     }
@@ -385,13 +385,13 @@ class HttpHandler
     }
 
     /**
-     * Serialise http client.
+     * Serialise HTTP client.
      *
      * @return array
      */
     public function serialize()
     {
-        return array('url'      => $this->getUrl(),
+        return array('url'      => $this->getUrl() . $this->getQueryParameters(true),
                      'header'   => $this->getHeaders(),
                      'method'   => $this->method,
                      'body'     => $this->body);
@@ -616,9 +616,12 @@ class HttpHandler
      */
     public function getQueryParameters($query = false)
     {
-        if ($query) {
+        $result = '';
+        if($query && $this->params) {
             $result = '?' . http_build_query($this->params);
-        } else {
+        }
+        
+        if(!$query) {
             $result = $this->params;
         }
 

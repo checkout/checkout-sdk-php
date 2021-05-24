@@ -64,7 +64,7 @@ class Utilities
      */
     public static function isEmpty(&$value)
     {
-        return $value === null || $value === '' || !sizeof($value);
+        return $value === null || $value === '' || (array) $value === array() ;
     }
 
     /**
@@ -115,17 +115,18 @@ class Utilities
     /**
      * Load configuration file.
      *
-     * @param  string $path
+     * @param  mixed $config
      * @return array
      */
-    public static function loadConfig($path)
+    public static function loadConfig($config = array())
     {
-        $config = array();
-        if (file_exists($path)) {
-            $config = parse_ini_file($path, true);
+
+        if (is_string($config) && is_readable($config)) {
+            $config = parse_ini_file($config, true);
         }
 
         return $config;
+
     }
 
     /**

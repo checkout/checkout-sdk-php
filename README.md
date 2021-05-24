@@ -1,4 +1,4 @@
-<p align="center"><img src="https://www.checkout.com/static/img/checkout-logo/logo.svg" width="380"></p>
+<p align="center"><img src="https://www.checkout.com/static/img/logos/cko/logos/checkout.svg" width="380"></p>
 
 
 The **Checkout SDK for PHP** enables developers to easily work with Checkout.com APIs.
@@ -17,7 +17,7 @@ For full usage details, see the [Wiki](https://github.com/checkout/checkout-sdk-
 ### Installation with Composer (Recommended)
 Either run the following command in the root directory of your project:
 ```bash
-composer require checkout/checkout-php-api
+composer require checkout/checkout-sdk-php
 ```
 
 Or require the Checkout.com package inside the composer.json file of your project:
@@ -33,6 +33,8 @@ git clone git@github.com:checkout/checkout-sdk-php.git
 
 ## Quickstart
 
+A card token can be obtained using one of Checkout.com's JavaScript frontend solutions such as [Frames](https://docs.checkout.com/docs/frames "Frames") or any of the [mobile SDKs](https://docs.checkout.com/docs/sdks#section-mobile-sdk-libraries "Mobile SDKs")
+
 Include a `checkout-sdk-php/checkout.php` to access the operations for each API:
 
 ```php
@@ -44,18 +46,12 @@ use Checkout\Models\Payments\Payment;
 // Set the secret key
 $secretKey = 'sk_test_key';
 
-// Initialize the Checkout API
+// Initialize the Checkout API in Sandbox mode. Use new CheckoutApi($liveSecretKey, false); for production
 $checkout = new CheckoutApi($secretKey);
 
 
-// Create a Card token
-$card = new Card('4242424242424242', 12, 2020);
-$card->cvv = 100;
-$token = $checkout->tokens()->request($card);
-
-
 // Create a payment method instance with card details
-$method = new TokenSource($token->getId());
+$method = new TokenSource('tok_key_goes_here');
 
 // Prepare the payment parameters
 $payment = new Payment($method, 'GBP');

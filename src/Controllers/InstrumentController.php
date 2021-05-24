@@ -10,15 +10,19 @@
  * @category  SDK
  * @package   Checkout.com
  * @author    Platforms Development Team <platforms@checkout.com>
- * @copyright 2010-2019 Checkout.com
+ * @copyright 2010-2021 Checkout.com
  * @license   https://opensource.org/licenses/mit-license.html MIT License
  * @link      https://docs.checkout.com/
  */
 
-namespace Checkout\Models\Payments;
+namespace Checkout\Controllers;
+
+use Checkout\Library\Controller;
+use Checkout\Library\HttpHandler;
+use Checkout\Models\Instruments\Instrument;
 
 /**
- * Payment method Boleto.
+ * Handle event controller.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +30,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends Source
+class InstrumentController extends Controller
 {
 
     /**
@@ -37,34 +41,28 @@ class BoletoSource extends Source
     const QUALIFIED_NAME = __CLASS__;
 
     /**
-     * Name of the model.
+     * Name of the controller.
      *
      * @var string
      */
-    const MODEL_NAME = 'boleto';
+    const CONTROLLER_NAME = 'instrument';
 
 
     /**
-     * Magic Methods
+     * Methods
      */
 
     /**
-     * Initialise Boleto source.
+     * Create an instrument
      *
-     * @param string $integrationType   The type of integration. Either direct or redirect.
-     * @param string $country           The billing country.
-     * @param object $payer             The payer.
-     * @param string $description       A description of the order.
+     * @param  Instrument $instrument
+     * @return mixed
      */
-    public function __construct($integrationType, $country, $payer, $description = '')
+    public function add($instrument, $mode = HttpHandler::MODE_EXECUTE)
     {
-        $this->type = static::MODEL_NAME;
-        $this->integration_type = $integrationType;
-        $this->country = $country;
-        $this->payer = $payer;
-        
-        if ($description) {
-            $this->description = $description;
-        }
+        $response = $this->requestAPI($instrument->getEndpoint())
+            ->setBody($instrument->getValues());
+
+        return $this->response($response, $instrument::QUALIFIED_NAME, $mode);
     }
 }

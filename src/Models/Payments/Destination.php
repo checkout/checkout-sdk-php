@@ -17,10 +17,8 @@
 
 namespace Checkout\Models\Payments;
 
-use Checkout\Library\Model;
-
 /**
- * Payment destination field model.
+ * Parent class for Destinations.
  *
  * @category SDK
  * @package  Checkout.com
@@ -28,7 +26,7 @@ use Checkout\Library\Model;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class Destination extends Model
+abstract class Destination extends Method
 {
 
     /**
@@ -37,28 +35,12 @@ class Destination extends Model
      * @var string
      */
     const QUALIFIED_NAME = __CLASS__;
-
+    
     /**
-     * Name of the model.
+     * Method type.
      *
      * @var string
      */
-    const MODEL_NAME = 'destination';
+    const METHOD_TYPE = 'destination';
 
-
-    /**
-     * Magic Methods
-     */
-
-    /**
-     * Initialise Payment recipients.
-     *
-     * @param string $id
-     * @param int    $amount
-     */
-    public function __construct($id, $amount)
-    {
-        $this->id = $id;
-        $this->amount = $amount;
-    }
 }

@@ -17,8 +17,10 @@
 
 namespace Checkout\Models\Payments;
 
+use Checkout\Models\Product;
+
 /**
- * Payment method Boleto.
+ * Payment method Fawry.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +28,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends Source
+class FawrySource extends Source
 {
 
     /**
@@ -41,7 +43,7 @@ class BoletoSource extends Source
      *
      * @var string
      */
-    const MODEL_NAME = 'boleto';
+    const MODEL_NAME = 'fawry';
 
 
     /**
@@ -49,22 +51,19 @@ class BoletoSource extends Source
      */
 
     /**
-     * Initialise Boleto source.
+     * Initialise payment Fawry.
      *
-     * @param string $integrationType   The type of integration. Either direct or redirect.
-     * @param string $country           The billing country.
-     * @param object $payer             The payer.
-     * @param string $description       A description of the order.
+     * @param      string       $email          The customer's email address.
+     * @param      string       $mobile         The customer's mobile number.
+     * @param      string       $description    The description of the payment.
+     * @param      Product[]    $products       This object is passed directly to Fawry as products.
      */
-    public function __construct($integrationType, $country, $payer, $description = '')
+    public function __construct($email, $mobile, $description, array $products)
     {
         $this->type = static::MODEL_NAME;
-        $this->integration_type = $integrationType;
-        $this->country = $country;
-        $this->payer = $payer;
-        
-        if ($description) {
-            $this->description = $description;
-        }
+        $this->customer_email = $email;
+        $this->customer_mobile = $mobile;
+        $this->description = $description;
+        $this->products = $products;
     }
 }

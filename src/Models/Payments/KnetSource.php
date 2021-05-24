@@ -18,7 +18,7 @@
 namespace Checkout\Models\Payments;
 
 /**
- * Payment method Boleto.
+ * Payment method KNET.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends Source
+class KnetSource extends Source
 {
 
     /**
@@ -41,7 +41,7 @@ class BoletoSource extends Source
      *
      * @var string
      */
-    const MODEL_NAME = 'boleto';
+    const MODEL_NAME = 'knet';
 
 
     /**
@@ -49,22 +49,13 @@ class BoletoSource extends Source
      */
 
     /**
-     * Initialise Boleto source.
+     * Initialise KNET.
      *
-     * @param string $integrationType   The type of integration. Either direct or redirect.
-     * @param string $country           The billing country.
-     * @param object $payer             The payer.
-     * @param string $description       A description of the order.
+     * @param string   $language     2-letter language code in accordance with ISO 639-1.
      */
-    public function __construct($integrationType, $country, $payer, $description = '')
+    public function __construct($language)
     {
         $this->type = static::MODEL_NAME;
-        $this->integration_type = $integrationType;
-        $this->country = $country;
-        $this->payer = $payer;
-        
-        if ($description) {
-            $this->description = $description;
-        }
+        $this->language = $language;
     }
 }

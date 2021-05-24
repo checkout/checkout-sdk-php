@@ -18,7 +18,6 @@
 namespace Checkout\Models\Payments;
 
 use Checkout\Library\HttpHandler;
-use Checkout\Library\Model;
 use Checkout\Library\Utilities;
 use Checkout\Models\Response;
 
@@ -31,7 +30,7 @@ use Checkout\Models\Response;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class Payment extends Model
+class Payment extends Idempotency
 {
 
     /**
@@ -62,27 +61,20 @@ class Payment extends Model
      */
     const MODEL_REQUEST_METHOD = HttpHandler::METHOD_POST;
 
-    /**
-     * Idempotency key.
-     *
-     * @var string
-     */
-    protected $idempotency = '';
-
 
     /**
      * Magic Methods
      */
 
     /**
-     * Initialise source
+     * Initialise payment handler.
      *
-     * @param IdSource $method
-     * @param string   $currency
+     * @param Method    $method
+     * @param string    $currency
      */
-    public function __construct(IdSource $method, $currency)
+    public function __construct(Method $method, $currency)
     {
-        $this->source = $method;
+        $this->{$method::METHOD_TYPE} = $method;
         $this->currency = $currency;
     }
 
@@ -151,6 +143,23 @@ class Payment extends Model
     }
 
     /**
+     * Verify if the payment is risky.
+     *
+     * @return bool
+     */
+    public function isFlagged()
+    {
+        $flagged = false;
+        $risk = $this->getValue('risk');
+
+        if (isset($risk['flagged'])) {
+            $flagged = $risk['flagged'];
+        }
+
+        return $flagged;
+    }
+
+    /**
      * Convert array into model.
      *
      * @param  array $arr
@@ -173,54 +182,6 @@ class Payment extends Model
     /**
      * Setters and Getters
      */
-
-    /**
-     * Get all field values.
-     *
-     * @return array $values
-     */
-    public function getValues()
-    {
-        $values = parent::getValues();
-        unset($values['idempotency']);
-        return $values;
-    }
-
-    /**
-     * Set Idempotency key.
-     *
-     * @note    Be cautious when using idempotency keys.
-     *          If we detect concurrent requests with the same idempotency key,
-     *          only one request will be processed and the other requests
-     *          will return a 429 - Too Many Requests response.
-     * @param  string $key
-     * @return self $this
-     */
-    public function setIdempotencyKey($key)
-    {
-        $this->idempotency = $key;
-        return $this;
-    }
-
-    /**
-     * Get Idempotency key.
-     *
-     * @return string $key
-     */
-    public function getIdempotencyKey()
-    {
-        return $this->idempotency;
-    }
-
-    /**
-     * Remove idempotency key from the object.
-     *
-     * @return void
-     */
-    public function removeIdempotencyKey()
-    {
-        unset($this->idempotency);
-    }
 
     /**
      * Get redirection of payment response.

@@ -18,6 +18,7 @@
 namespace Checkout;
 
 use Checkout\Controllers\EventController;
+use Checkout\Controllers\InstrumentController;
 use Checkout\Controllers\FileController;
 use Checkout\Controllers\PaymentController;
 use Checkout\Controllers\SourceController;
@@ -47,7 +48,14 @@ final class CheckoutApi
      *
      * @var string
      */
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.14';
+
+    /**
+     * Channel section.
+     *
+     * @var string
+     */
+    const CONFIG_SECTION_CHANNEL = 'channel';
 
     /**
      * Secret key.
@@ -62,6 +70,13 @@ final class CheckoutApi
      * @var string
      */
     const CONFIG_PUBLIC = 'public_key';
+
+    /**
+     * Log section.
+     *
+     * @var string
+     */
+    const CONFIG_SECTION_LOGS = 'logs';
 
     /**
      * Logging.
@@ -91,6 +106,27 @@ final class CheckoutApi
      */
     const CONFIG_LOG_ERROR = 'error';
 
+    /**
+     * Aliases section.
+     *
+     * @var string
+     */
+    const CONFIG_SECTION_ALIASES = 'aliases';
+
+    /**
+     * CURL section.
+     *
+     * @var string
+     */
+    const CONFIG_SECTION_CURL = 'curl';
+
+    /**
+     * HTTP section.
+     *
+     * @var string
+     */
+    const CONFIG_SECTION_HTTP = 'http';
+
 
     /**
      * Properties
@@ -112,31 +148,21 @@ final class CheckoutApi
      * Initialise Checkout API SDK.
      *
      * @param string $secret
-     * @param int    $sandbox
+     * @param boolean $sandbox
      * @param string $public
+     * @param mixed $config    Path or array of custom configuration.
      */
-    public function __construct($secret = '', $sandbox = -1, $public = '')
+    public function __construct ($secret = '', $sandbox = -1, $public = '', $config = __DIR__ . DIRECTORY_SEPARATOR . 'config.ini')
     {
-        $configs = Utilities::loadConfig(__DIR__ . DIRECTORY_SEPARATOR . 'config.ini');
-        if (isset($configs['channel'])) {
-            $this->loadChannel($configs['channel'], $secret, $sandbox, $public);
-        }
 
-        if (isset($configs['logs'])) {
-            $this->loadLogs($configs['logs']);
-        }
+        $configs = Utilities::loadConfig($config);
 
-        if (isset($configs['aliases'])) {
-            $this->loadAliases($configs['aliases']);
-        }
+        $this->loadChannel($secret, $sandbox, $public, $configs);
+        $this->loadLogs($configs);
+        $this->loadAliases($configs);
+        $this->loadCurl($configs);
+        $this->loadHttp($configs);
 
-        if (isset($configs['curl'])) {
-            $this->loadCurl($configs['curl']);
-        }
-
-        if (isset($configs['http'])) {
-            $this->loadHttp($configs['http']);
-        }
     }
 
 
@@ -150,7 +176,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return PaymentController
      */
-    public function payments(CheckoutConfiguration $configuration = null)
+    public function payments (CheckoutConfiguration $configuration = null)
     {
         return $this->controller(PaymentController::QUALIFIED_NAME, $configuration);
     }
@@ -161,7 +187,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return TokenController
      */
-    public function tokens(CheckoutConfiguration $configuration = null)
+    public function tokens (CheckoutConfiguration $configuration = null)
     {
         return $this->controller(TokenController::QUALIFIED_NAME, $configuration);
     }
@@ -172,7 +198,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return SourceController
      */
-    public function sources(CheckoutConfiguration $configuration = null)
+    public function sources (CheckoutConfiguration $configuration = null)
     {
         return $this->controller(SourceController::QUALIFIED_NAME, $configuration);
     }
@@ -183,7 +209,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return FileController
      */
-    public function files(CheckoutConfiguration $configuration = null)
+    public function files (CheckoutConfiguration $configuration = null)
     {
         return $this->controller(FileController::QUALIFIED_NAME, $configuration);
     }
@@ -194,7 +220,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return WebhookController
      */
-    public function webhooks(CheckoutConfiguration $configuration = null)
+    public function webhooks (CheckoutConfiguration $configuration = null)
     {
         return $this->controller(WebhookController::QUALIFIED_NAME, $configuration);
     }
@@ -205,9 +231,20 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return EventController
      */
-    public function events(CheckoutConfiguration $configuration = null)
+    public function events (CheckoutConfiguration $configuration = null)
     {
         return $this->controller(EventController::QUALIFIED_NAME, $configuration);
+    }
+
+    /**
+     * Handle instruments controller.
+     *
+     * @param  CheckoutConfiguration $configuration
+     * @return InstrumentController
+     */
+    public function instruments (CheckoutConfiguration $configuration = null)
+    {
+        return $this->controller(InstrumentController::QUALIFIED_NAME, $configuration);
     }
 
 
@@ -221,7 +258,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return CheckoutConfiguration
      */
-    public function configuration(CheckoutConfiguration $configuration = null)
+    public function configuration (CheckoutConfiguration $configuration = null)
     {
         return $this->configurator = ($configuration ? $configuration : $this->configurator);
     }
@@ -238,7 +275,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return Controller
      */
-    private function controller($qualified, CheckoutConfiguration $configuration = null)
+    private function controller ($qualified, CheckoutConfiguration $configuration = null)
     {
         if ($configuration === null) {
             $configuration = $this->configurator;
@@ -255,15 +292,14 @@ final class CheckoutApi
      * @param  string $public
      * @return void
      */
-    private function loadChannel(array $configs, $secret, $sandbox, $public)
+    private function loadChannel ($secret, $sandbox, $public, array &$configs = array())
     {
+
         $defaults = array(static::CONFIG_SECRET         => '',
                           static::CONFIG_PUBLIC         => '',
                           CheckoutConfiguration::ENVIRONMENT_SANDBOX => true);
 
-        foreach ($configs as $key => $value) {
-            $defaults[$key] = $value;
-        }
+        $this->safelyArrayMerge(static::CONFIG_SECTION_CHANNEL, $defaults, $configs);
 
         if ($secret) { // Override secret
             $defaults[static::CONFIG_SECRET] = $secret;
@@ -286,17 +322,17 @@ final class CheckoutApi
      * Load configuration for logging.
      *
      * @param array $configs
+     * @param void
      */
-    private function loadLogs(array $configs)
+    private function loadLogs (array &$configs)
     {
-        $defaults = array(static::CONFIG_LOGGING       => true,
+
+        $defaults = array(static::CONFIG_LOGGING       => false,
                           static::CONFIG_LOG_REQUEST   => 'request.log',
                           static::CONFIG_LOG_RESPONSE  => 'response.log',
                           static::CONFIG_LOG_ERROR     => 'error.log');
 
-        foreach ($configs as $key => $value) {
-            $defaults[$key] = $value;
-        }
+        $this->safelyArrayMerge(static::CONFIG_SECTION_LOGS, $defaults, $configs);
 
         if ($defaults[static::CONFIG_LOGGING]) {
             LogHandler::$error = $defaults[static::CONFIG_LOG_ERROR];
@@ -314,13 +350,12 @@ final class CheckoutApi
      *
      * @param array $configs
      */
-    private function loadAliases(array $configs)
+    private function loadAliases (array &$configs)
     {
+
         $defaults = array('threeDs' => '3ds');
 
-        foreach ($configs as $key => $value) {
-            $defaults[$key] = $value;
-        }
+        $this->safelyArrayMerge(static::CONFIG_SECTION_ALIASES, $defaults, $configs);
 
         Model::$aliases = $defaults;
     }
@@ -330,15 +365,13 @@ final class CheckoutApi
      *
      * @param array $configs
      */
-    private function loadCurl(array $configs)
+    private function loadCurl (array &$configs)
     {
         $defaults = array('CURLOPT_FAILONERROR' => false,
                           'CURLOPT_RETURNTRANSFER' => true,
                           'CURLOPT_CONNECTTIMEOUT' => 60);
 
-        foreach ($configs as $key => $value) {
-            $defaults[$key] = $value;
-        }
+        $this->safelyArrayMerge(static::CONFIG_SECTION_CURL, $defaults, $configs);
 
         HttpHandler::$config = $defaults;
     }
@@ -348,14 +381,35 @@ final class CheckoutApi
      *
      * @param array $configs
      */
-    private function loadHttp(array $configs)
+    private function loadHttp (array &$configs)
     {
         $defaults = array('exceptions' => true);
 
-        foreach ($configs as $key => $value) {
-            $defaults[$key] = $value;
-        }
+        $this->safelyArrayMerge(static::CONFIG_SECTION_HTTP, $defaults, $configs);
 
         HttpHandler::$throw = $defaults['exceptions'];
+    }
+
+
+
+    /**
+     * Helper Methods
+     */
+
+    /**
+     * Safely merge arrays.
+     * @param array $a
+     * @param array $b
+     * @param void
+     */
+    private function safelyArrayMerge ($key, array &$a, array &$b) {
+
+        if (isset($b[$key])) {
+
+            $a = array_merge($a, $b[$key]);
+            unset($b[$key]);
+
+        }
+
     }
 }

@@ -10,18 +10,19 @@
  * @category  SDK
  * @package   Checkout.com
  * @author    Platforms Development Team <platforms@checkout.com>
- * @copyright 2010-2019 Checkout.com
+ * @copyright 2010-2021 Checkout.com
  * @license   https://opensource.org/licenses/mit-license.html MIT License
  * @link      https://docs.checkout.com/
  */
 
-namespace Checkout\Models\Payments;
+namespace Checkout\Models\Instruments;
 
-use Checkout\Library\HttpHandler;
+use Checkout\Library\Model;
 use Checkout\Library\Utilities;
+use Checkout\Models\Response;
 
 /**
- * Capture payment.
+ * Instrument model.
  *
  * @category SDK
  * @package  Checkout.com
@@ -29,7 +30,7 @@ use Checkout\Library\Utilities;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class Capture extends Idempotency
+class Instrument extends Model
 {
 
     /**
@@ -44,56 +45,59 @@ class Capture extends Idempotency
      *
      * @var string
      */
-    const MODEL_NAME = 'capture';
+    const MODEL_NAME = 'instrument';
 
     /**
      * API Request URL.
      *
      * @var string
      */
-    const MODEL_REQUEST_URL = 'payments/{id}/captures';
+    const MODEL_REQUEST_URL = 'instruments';
+
 
     /**
-     * API Request Method.
+     * Methods
+     */
+
+    /**
+     * Initialize instrument.
      *
-     * @var string
+     * @param  Instrument $instrument
      */
-    const MODEL_REQUEST_METHOD = HttpHandler::METHOD_POST;
-
-
-    /**
-     * Magic Methods
-     */
-
-    /**
-     * Initialise Voids
-     *
-     * @param string   $id
-     * @param int      $amount
-     * @param string   $reference
-     * @param Metadata $meta
-     */
-    public function __construct($id, $amount = null, $reference = null, Metadata $meta = null)
+    public function __construct($type, $token)
     {
-        $this->id = $id;
-        $this->amount = $amount;
-        $this->reference = $reference;
-        $this->metadata = $meta;
+        if ($type === '') {
+            $type = null;
+        }
+
+        if ($token === '') {
+            $token = null;
+        }
+
+        $this->type = $type;
+        $this->token = $token;
     }
 
     /**
-     * Create Capture object.
+     * Create response object.
      *
      * @param  array $response
      * @return Model
      */
     protected static function create(array $response)
     {
-        return new self(
-            Utilities::getValueFromArray($response, 'id', ''),
-            Utilities::getValueFromArray($response, 'amount', null),
-            Utilities::getValueFromArray($response, 'reference', ''),
-            Utilities::getValueFromArray($response, 'metadata', new Metadata)
-        );
+        if (is_int(key($response))) { // List of versions
+
+            $obj = new Response();
+            foreach ($response as $key => $type) {
+                if (is_int($key)) {
+                    $obj->list[] = static::arrayToModel($type, static::QUALIFIED_NAME);
+                }
+            }
+        } else {
+            $obj = new self(Utilities::getValueFromArray($response, 'type'), Utilities::getValueFromArray($response, 'token'));
+        }
+
+        return $obj;
     }
 }

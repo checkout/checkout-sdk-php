@@ -18,7 +18,7 @@
 namespace Checkout\Models\Payments;
 
 /**
- * Payment method Boleto.
+ * Payment method Bancontact.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends Source
+class BancontactSource extends Source
 {
 
     /**
@@ -41,7 +41,7 @@ class BoletoSource extends Source
      *
      * @var string
      */
-    const MODEL_NAME = 'boleto';
+    const MODEL_NAME = 'bancontact';
 
 
     /**
@@ -49,22 +49,17 @@ class BoletoSource extends Source
      */
 
     /**
-     * Initialise Boleto source.
+     * Initialise bancontact.
      *
-     * @param string $integrationType   The type of integration. Either direct or redirect.
-     * @param string $country           The billing country.
-     * @param object $payer             The payer.
-     * @param string $description       A description of the order.
+     * @param      string  $name        The account_holder_name
+     * @param      string  $country     The payment_country
+     * @param      string  $descriptor  The billing_descriptor
      */
-    public function __construct($integrationType, $country, $payer, $description = '')
+    public function __construct($name, $country, $descriptor = '')
     {
         $this->type = static::MODEL_NAME;
-        $this->integration_type = $integrationType;
-        $this->country = $country;
-        $this->payer = $payer;
-        
-        if ($description) {
-            $this->description = $description;
-        }
+        $this->account_holder_name = $name;
+        $this->payment_country = $country;
+        $this->billing_descriptor = $descriptor;
     }
 }

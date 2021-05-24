@@ -10,7 +10,7 @@
  * @category  SDK
  * @package   Checkout.com
  * @author    Platforms Development Team <platforms@checkout.com>
- * @copyright 2010-2019 Checkout.com
+ * @copyright 2010-2021 Checkout.com
  * @license   https://opensource.org/licenses/mit-license.html MIT License
  * @link      https://docs.checkout.com/
  */
@@ -18,7 +18,7 @@
 namespace Checkout\Models\Payments;
 
 /**
- * Payment method Boleto.
+ * Payer model.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends Source
+class Payer extends Source
 {
 
     /**
@@ -41,30 +41,23 @@ class BoletoSource extends Source
      *
      * @var string
      */
-    const MODEL_NAME = 'boleto';
-
+    const MODEL_NAME = 'payer';
 
     /**
      * Magic Methods
      */
-
+    
     /**
-     * Initialise Boleto source.
+     * Initialise payer.
      *
-     * @param string $integrationType   The type of integration. Either direct or redirect.
-     * @param string $country           The billing country.
-     * @param object $payer             The payer.
-     * @param string $description       A description of the order.
+     * @param string $name      The customer's name.
+     * @param string $email     The customer's email.
+     * @param string $document  The document.
      */
-    public function __construct($integrationType, $country, $payer, $description = '')
+    public function __construct($name, $email, $document)
     {
-        $this->type = static::MODEL_NAME;
-        $this->integration_type = $integrationType;
-        $this->country = $country;
-        $this->payer = $payer;
-        
-        if ($description) {
-            $this->description = $description;
-        }
+        $this->name = $name;
+        $this->email = $email;
+        $this->document = $document;
     }
 }

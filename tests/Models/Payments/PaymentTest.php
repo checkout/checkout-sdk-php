@@ -59,4 +59,10 @@ class PaymentTest extends TestCase
         $model = Payments::generateModel();
         $this->assertTrue(is_bool($model->isValid()));
     }
+
+    public function testIsFlagged()
+    {
+        $model = Payments::generateModel();
+        $this->assertTrue(is_bool($model->isFlagged()));
+    }
 }

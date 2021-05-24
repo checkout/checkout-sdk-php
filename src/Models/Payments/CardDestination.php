@@ -18,7 +18,7 @@
 namespace Checkout\Models\Payments;
 
 /**
- * Payment method Boleto.
+ * Payment destination field model.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends Source
+class CardDestination extends Destination
 {
 
     /**
@@ -35,13 +35,13 @@ class BoletoSource extends Source
      * @var string
      */
     const QUALIFIED_NAME = __CLASS__;
-
+    
     /**
      * Name of the model.
      *
      * @var string
      */
-    const MODEL_NAME = 'boleto';
+    const MODEL_NAME = 'card';
 
 
     /**
@@ -49,22 +49,21 @@ class BoletoSource extends Source
      */
 
     /**
-     * Initialise Boleto source.
+     * Initialise destination.
      *
-     * @param string $integrationType   The type of integration. Either direct or redirect.
-     * @param string $country           The billing country.
-     * @param object $payer             The payer.
-     * @param string $description       A description of the order.
+     * @param string $number    The card number.
+     * @param int    $month     The two-digit expiry month of the card.
+     * @param int    $year      The four-digit expiry year of the card.
+     * @param string $first     The payment destination owner's first name.
+     * @param string $last      The payment destination owner's last name.
      */
-    public function __construct($integrationType, $country, $payer, $description = '')
+    public function __construct($number, $month, $year, $first, $last)
     {
         $this->type = static::MODEL_NAME;
-        $this->integration_type = $integrationType;
-        $this->country = $country;
-        $this->payer = $payer;
-        
-        if ($description) {
-            $this->description = $description;
-        }
+        $this->number = $number;
+        $this->expiry_month = $month;
+        $this->expiry_year = $year;
+        $this->first_name = $first;
+        $this->last_name = $last;
     }
 }

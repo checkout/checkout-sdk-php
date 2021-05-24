@@ -2,14 +2,14 @@
 
 namespace Checkout\tests\Models\Payments;
 
-use Checkout\Models\Payments\IdealSource;
+use Checkout\Models\Payments\PaypalSource;
 use PHPUnit\Framework\TestCase;
 
-class IdealSourceTest extends TestCase
+class PaypalSourceTest extends TestCase
 {
     public function testCreate()
     {
-        $model = new IdealSource('{iDEAL_BIC}', '{iDEAL_DESC}');
+        $model = new PaypalSource('{PayPal_invoice_number}');
         $this->assertEquals($model::MODEL_NAME, $model->type);
     }
 }

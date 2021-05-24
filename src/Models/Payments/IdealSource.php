@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class IdealSource extends IdSource
+class IdealSource extends Source
 {
 
     /**
@@ -43,6 +43,13 @@ class IdealSource extends IdSource
      */
     const MODEL_NAME = 'ideal';
 
+    /**
+     * API Request banks URL.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_BANKS_URL = 'ideal-external/issuers';
+
 
     /**
      * Magic Methods
@@ -50,11 +57,13 @@ class IdealSource extends IdSource
 
     /**
      * Initialise source.
-     * @param string $id
+     * @param string $bic
+     * @param string $description
      */
-    public function __construct($id)
+    public function __construct($bic, $description)
     {
         $this->type = static::MODEL_NAME;
-        $this->issuer_id = $id;
+        $this->bic = $bic;
+        $this->description = $description;
     }
 }

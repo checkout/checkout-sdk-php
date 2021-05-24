@@ -20,8 +20,10 @@ namespace Checkout\Controllers;
 use Checkout\Library\Controller;
 use Checkout\Library\Exceptions\CheckoutModelException;
 use Checkout\Library\HttpHandler;
+use Checkout\Library\Utilities;
 use Checkout\Models\Response;
 use Checkout\Models\Webhooks\Webhook;
+use Checkout\Models\Webhooks\WebhookHeaders;
 
 /**
  * Webhook controller.
@@ -108,21 +110,28 @@ class WebhookController extends Controller
     public function register(Webhook $webhook, array $events = array(), $mode = HttpHandler::MODE_EXECUTE)
     {
         $body = $webhook->getValues();
+        $body[static::FIELD_EVENTS] = Utilities::getValueFromArray($body, static::FIELD_EVENTS, array());
 
-        if ((!isset($body[static::FIELD_EVENTS]) || (isset($body[static::FIELD_EVENTS]) && !$body[static::FIELD_EVENTS])) && !$events) {
+        if(!$events && !$body[static::FIELD_EVENTS]) {
             throw new CheckoutModelException('Field "event_types" is required to register a new webhook.');
-        } elseif (!isset($body[static::FIELD_EVENTS])) {
-            $body[static::FIELD_EVENTS] = array();
+        } else {
+            $body[static::FIELD_EVENTS] = $body[static::FIELD_EVENTS] + $events;
         }
-
-        $merged = array_merge($body[static::FIELD_EVENTS], $events);
-        $body[static::FIELD_EVENTS] = array_values($merged);
 
         unset($body[static::FIELD_ID]); // Remove ID from the body.
         $response = $this->requestAPI($webhook->getEndpoint())
             ->setBody($body);
+        
+        $response = $this->response($response, Webhook::QUALIFIED_NAME, $mode);
 
-        return $this->response($response, Webhook::QUALIFIED_NAME, $mode);
+        if (isset($response->headers)) {
+            $headers = new WebhookHeaders();
+            foreach ($response->headers as $header => $value) {
+                $headers->{lcfirst($header)} = $value;
+            }
+            $response->headers = $headers;
+        }
+        return $response;
     }
 
     /**
@@ -135,16 +144,45 @@ class WebhookController extends Controller
      */
     public function update(Webhook $webhook, $partially = false, $mode = HttpHandler::MODE_EXECUTE)
     {
+        if(isset($webhook->headers) && !($webhook->headers instanceof WebhookHeaders)) {
+            throw new CheckoutModelException('Field "headers" must be instance of WebhookHeaders.');
+        }
+
         $body = $webhook->getValues();
-        if (!isset($body[static::FIELD_ID]) || !$body[static::FIELD_ID]) {
+        $body[static::FIELD_EVENTS] = Utilities::getValueFromArray($body, static::FIELD_EVENTS, array());
+        $body[static::FIELD_ID] = Utilities::getValueFromArray($body, static::FIELD_ID, 0);
+
+        if(!$body[static::FIELD_EVENTS]) {
+            throw new CheckoutModelException('Field "event_types" is required to register a new webhook.');
+        }
+        if (!$body[static::FIELD_ID]) {
             throw new CheckoutModelException('Field "id" is required for webhook update.');
         }
+        if (!$partially && !isset($body['active'])) {
+            throw new CheckoutModelException('Field "active" is required for webhook update.');
+        }
+        if (!$partially && !isset($body['headers'])) {
+            throw new CheckoutModelException('Field "headers" is required for webhook update.');
+        }
+        if (!$partially && !isset($body['content_type'])) {
+            throw new CheckoutModelException('Field "content_type" is required for webhook update.');
+        }
+
         unset($body[static::FIELD_ID]); // Remove id from the body.
         $response = $this->requestAPI($webhook->getEndpoint())
             ->setBody($body)
-            ->setMethod(!$partially ? HttpHandler::METHOD_PUT : HttpHandler::METHOD_PATCH);
+            ->setMethod($partially ? HttpHandler::METHOD_PATCH : HttpHandler::METHOD_PUT);
 
-        return $this->response($response, Webhook::QUALIFIED_NAME, $mode);
+        $response = $this->response($response, Webhook::QUALIFIED_NAME, $mode);
+
+        if (isset($response->headers)) {
+            $headers = new WebhookHeaders();
+            foreach ($response->headers as $header => $value) {
+                $headers->{lcfirst($header)} = $value;
+            }
+            $response->headers = $headers;
+        }
+        return $response;
     }
 
     /**

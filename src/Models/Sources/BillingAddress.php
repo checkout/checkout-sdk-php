@@ -20,13 +20,15 @@ namespace Checkout\Models\Sources;
 use Checkout\Models\Address;
 
 /**
- * Billing Address source.
+ * Billing Address for SEPA source ONLY.
  *
  * @category SDK
  * @package  Checkout.com
  * @author   Platforms Development Team <platforms@checkout.com>
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
+ *
+ * @deprecated 1.0.3    Use Checkout\Models\Sources\SepaAddress instead.
  */
 class BillingAddress extends Address
 {

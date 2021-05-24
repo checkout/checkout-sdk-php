@@ -3,3 +3,8 @@
 composer.lock
 vendor/
 nbproject/
+
+index.php
+phpunit/
+
+*.log

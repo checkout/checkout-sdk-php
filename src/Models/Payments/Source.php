@@ -18,7 +18,7 @@
 namespace Checkout\Models\Payments;
 
 /**
- * Payment method Boleto.
+ * Parent class for Source.
  *
  * @category SDK
  * @package  Checkout.com
@@ -26,7 +26,7 @@ namespace Checkout\Models\Payments;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class BoletoSource extends Source
+abstract class Source extends Method
 {
 
     /**
@@ -35,36 +35,12 @@ class BoletoSource extends Source
      * @var string
      */
     const QUALIFIED_NAME = __CLASS__;
-
+    
     /**
-     * Name of the model.
+     * Method type.
      *
      * @var string
      */
-    const MODEL_NAME = 'boleto';
+    const METHOD_TYPE = 'source';
 
-
-    /**
-     * Magic Methods
-     */
-
-    /**
-     * Initialise Boleto source.
-     *
-     * @param string $integrationType   The type of integration. Either direct or redirect.
-     * @param string $country           The billing country.
-     * @param object $payer             The payer.
-     * @param string $description       A description of the order.
-     */
-    public function __construct($integrationType, $country, $payer, $description = '')
-    {
-        $this->type = static::MODEL_NAME;
-        $this->integration_type = $integrationType;
-        $this->country = $country;
-        $this->payer = $payer;
-        
-        if ($description) {
-            $this->description = $description;
-        }
-    }
 }

@@ -56,13 +56,15 @@ class Recipient extends Model
      * @param string $dob
      * @param string $account
      * @param string $zip
-     * @param string $surname
+     * @param string $first_name
+     * @param string $last_name
      */
-    public function __construct($dob, $account, $zip, $surname)
+    public function __construct($dob, $account, $zip, $first_name, $last_name)
     {
         $this->dob = $dob;
         $this->account_number = $account;
         $this->zip = $zip;
-        $this->last_name = $surname;
+        $this->first_name = $first_name;
+        $this->last_name = $last_name;
     }
 }

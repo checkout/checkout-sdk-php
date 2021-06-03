@@ -9,7 +9,7 @@ class RecipientTest extends TestCase
 {
     public function testCreate()
     {
-        $model = new Recipient('{dob}', '{account}', '{zip}', '{first_name}', '{last_name}');
+        $model = new Recipient('{dob}', '{account}', '{zip}', '{first_name}', '{last_name}','{country}');
         $this->assertInstanceOf(Recipient::class, $model);
     }
 }

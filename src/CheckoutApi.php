@@ -24,6 +24,8 @@ use Checkout\Controllers\PaymentController;
 use Checkout\Controllers\SourceController;
 use Checkout\Controllers\TokenController;
 use Checkout\Controllers\WebhookController;
+use Checkout\Controllers\CustomerController;
+
 use Checkout\Library\CheckoutConfiguration;
 use Checkout\Library\Controller;
 use Checkout\Library\HttpHandler;
@@ -152,7 +154,7 @@ final class CheckoutApi
      * @param string $public
      * @param mixed $config    Path or array of custom configuration.
      */
-    public function __construct ($secret = '', $sandbox = -1, $public = '', $config = __DIR__ . DIRECTORY_SEPARATOR . 'config.ini')
+    public function __construct($secret = '', $sandbox = -1, $public = '', $config = __DIR__ . DIRECTORY_SEPARATOR . 'config.ini')
     {
 
         $configs = Utilities::loadConfig($config);
@@ -176,7 +178,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return PaymentController
      */
-    public function payments (CheckoutConfiguration $configuration = null)
+    public function payments(CheckoutConfiguration $configuration = null)
     {
         return $this->controller(PaymentController::QUALIFIED_NAME, $configuration);
     }
@@ -187,7 +189,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return TokenController
      */
-    public function tokens (CheckoutConfiguration $configuration = null)
+    public function tokens(CheckoutConfiguration $configuration = null)
     {
         return $this->controller(TokenController::QUALIFIED_NAME, $configuration);
     }
@@ -198,7 +200,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return SourceController
      */
-    public function sources (CheckoutConfiguration $configuration = null)
+    public function sources(CheckoutConfiguration $configuration = null)
     {
         return $this->controller(SourceController::QUALIFIED_NAME, $configuration);
     }
@@ -209,7 +211,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return FileController
      */
-    public function files (CheckoutConfiguration $configuration = null)
+    public function files(CheckoutConfiguration $configuration = null)
     {
         return $this->controller(FileController::QUALIFIED_NAME, $configuration);
     }
@@ -220,7 +222,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return WebhookController
      */
-    public function webhooks (CheckoutConfiguration $configuration = null)
+    public function webhooks(CheckoutConfiguration $configuration = null)
     {
         return $this->controller(WebhookController::QUALIFIED_NAME, $configuration);
     }
@@ -231,7 +233,7 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return EventController
      */
-    public function events (CheckoutConfiguration $configuration = null)
+    public function events(CheckoutConfiguration $configuration = null)
     {
         return $this->controller(EventController::QUALIFIED_NAME, $configuration);
     }
@@ -242,11 +244,21 @@ final class CheckoutApi
      * @param  CheckoutConfiguration $configuration
      * @return InstrumentController
      */
-    public function instruments (CheckoutConfiguration $configuration = null)
+    public function instruments(CheckoutConfiguration $configuration = null)
     {
         return $this->controller(InstrumentController::QUALIFIED_NAME, $configuration);
     }
 
+    /**
+     * Handle customers controller.
+     *
+     * @param  CheckoutConfiguration $configuration
+     * @return CustomerController
+     */
+    public function customers(CheckoutConfiguration $configuration = null)
+    {
+        return $this->controller(CustomerController::QUALIFIED_NAME, $configuration);
+    }
 
     /**
      * Setters and Getters

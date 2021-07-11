@@ -15,12 +15,12 @@
  * @link      https://docs.checkout.com/
  */
 
-namespace Checkout\Models\Payments;
+namespace Checkout\Models\Customers;
 
 use Checkout\Library\Model;
 
 /**
- * 3DS model for payment.
+ * Customer model.
  *
  * @category SDK
  * @package  Checkout.com
@@ -28,7 +28,7 @@ use Checkout\Library\Model;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class ThreeDs extends Model
+class Customer extends Model
 {
 
     /**
@@ -43,21 +43,5 @@ class ThreeDs extends Model
      *
      * @var string
      */
-    const MODEL_NAME = '3ds';
-
-
-    /**
-     * Magic Methods
-     */
-
-    /**
-     * Initialise source
-     *
-     * @param bool $enabled
-     */
-    public function __construct($enabled)
-    {
-        $this->enabled = $enabled;
-        $this->attempt_n3d = $enabled;
-    }
+    const MODEL_NAME = 'customer';
 }

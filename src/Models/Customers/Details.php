@@ -15,12 +15,13 @@
  * @link      https://docs.checkout.com/
  */
 
-namespace Checkout\Models\Payments;
+namespace Checkout\Models\Customers;
 
+use Checkout\Library\HttpHandler;
 use Checkout\Library\Model;
 
 /**
- * 3DS model for payment.
+ * Instrument Details model.
  *
  * @category SDK
  * @package  Checkout.com
@@ -28,7 +29,7 @@ use Checkout\Library\Model;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class ThreeDs extends Model
+class Details extends Model
 {
 
     /**
@@ -43,7 +44,21 @@ class ThreeDs extends Model
      *
      * @var string
      */
-    const MODEL_NAME = '3ds';
+    const MODEL_NAME = 'details';
+
+    /**
+     * API Request URL.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_URL = 'customers/{id}';
+
+    /**
+     * API Request Method.
+     *
+     * @var string
+     */
+    const MODEL_REQUEST_METHOD = HttpHandler::METHOD_GET;
 
 
     /**
@@ -51,13 +66,12 @@ class ThreeDs extends Model
      */
 
     /**
-     * Initialise source
+     * Initialise Details
      *
-     * @param bool $enabled
+     * @param string $id
      */
-    public function __construct($enabled)
+    public function __construct($id)
     {
-        $this->enabled = $enabled;
-        $this->attempt_n3d = $enabled;
+        $this->id = $id;
     }
 }

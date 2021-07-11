@@ -10,17 +10,20 @@
  * @category  SDK
  * @package   Checkout.com
  * @author    Platforms Development Team <platforms@checkout.com>
- * @copyright 2010-2019 Checkout.com
+ * @copyright 2010-2021 Checkout.com
  * @license   https://opensource.org/licenses/mit-license.html MIT License
  * @link      https://docs.checkout.com/
  */
 
-namespace Checkout\Models\Payments;
+namespace Checkout\Controllers;
 
-use Checkout\Library\Model;
+use Checkout\Library\Controller;
+use Checkout\Library\HttpHandler;
+use Checkout\Models\Customer\Cust;
+use Checkout\Models\Instruments\Details;
 
 /**
- * 3DS model for payment.
+ * Handle event controller.
  *
  * @category SDK
  * @package  Checkout.com
@@ -28,7 +31,7 @@ use Checkout\Library\Model;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-class ThreeDs extends Model
+class CustomerController extends Controller
 {
 
     /**
@@ -39,25 +42,30 @@ class ThreeDs extends Model
     const QUALIFIED_NAME = __CLASS__;
 
     /**
-     * Name of the model.
+     * Name of the controller.
      *
      * @var string
      */
-    const MODEL_NAME = '3ds';
+    const CONTROLLER_NAME = 'customer';
 
 
     /**
-     * Magic Methods
+     * Methods
      */
 
+
     /**
-     * Initialise source
+     * Get details.
      *
-     * @param bool $enabled
+     * @param  string   id
+     * @param  integer  $mode
+     * @return mixed
      */
-    public function __construct($enabled)
+    public function details($id, $mode = HttpHandler::MODE_EXECUTE)
     {
-        $this->enabled = $enabled;
-        $this->attempt_n3d = $enabled;
+        $details = new Details($id);
+        $response = $this->requestAPI($details->getEndpoint());
+
+        return $this->response($response, Instrument::QUALIFIED_NAME, $mode);
     }
 }

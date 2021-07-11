@@ -20,6 +20,7 @@ namespace Checkout\Controllers;
 use Checkout\Library\Controller;
 use Checkout\Library\HttpHandler;
 use Checkout\Models\Instruments\Instrument;
+use Checkout\Models\Instruments\Details;
 
 /**
  * Handle event controller.
@@ -64,5 +65,20 @@ class InstrumentController extends Controller
             ->setBody($instrument->getValues());
 
         return $this->response($response, $instrument::QUALIFIED_NAME, $mode);
+    }
+
+    /**
+     * Get details.
+     *
+     * @param  string   id
+     * @param  integer  $mode
+     * @return mixed
+     */
+    public function details($id, $mode = HttpHandler::MODE_EXECUTE)
+    {
+        $details = new Details($id);
+        $response = $this->requestAPI($details->getEndpoint());
+
+        return $this->response($response, Instrument::QUALIFIED_NAME, $mode);
     }
 }

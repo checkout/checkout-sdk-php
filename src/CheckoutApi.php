@@ -40,7 +40,7 @@ use Checkout\Library\Utilities;
  * @license  https://opensource.org/licenses/mit-license.html MIT License
  * @link     https://docs.checkout.com/
  */
-final class CheckoutApi
+class CheckoutApi
 {
 
     /**
@@ -48,7 +48,7 @@ final class CheckoutApi
      *
      * @var string
      */
-    const VERSION = '1.0.16';
+    const VERSION = '1.0.17';
 
     /**
      * Channel section.

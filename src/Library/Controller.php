@@ -95,4 +95,14 @@ abstract class Controller
 
         return $response;
     }
+
+    /**
+     * Return if the environment is Sandbox
+     *
+     * @return int getSandbox
+     */
+    protected function getSandbox()
+    {
+        return $this->configuration->getSandbox();
+    }
 }

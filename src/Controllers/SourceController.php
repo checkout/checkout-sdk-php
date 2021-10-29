@@ -63,6 +63,13 @@ class SourceController extends Controller
      */
     public function add(Source $source, $mode = HttpHandler::MODE_EXECUTE)
     {
+        $endpoint = $source->getEndpoint();
+        // For Klarna, use a different different endpoint for production
+        if (strpos($endpoint, 'klarna') !== false) {
+            if(!$this->getSandbox()) {
+                $endpoint = 'klarna/credit-sessions';
+            }
+        }
         $response = $this->requestAPI($source->getEndpoint())
             ->setBody($source->getValues());
 

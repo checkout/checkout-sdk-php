@@ -212,7 +212,6 @@ abstract class Model
     public function getEndpoint()
     {
         $url = $this->endpointModifier(static::MODEL_REQUEST_URL);
-        //$url = static::MODEL_REQUEST_URL;
         $arr = array();
         preg_match_all('/{(\w+)}/i', $url, $arr);
 
@@ -221,13 +220,12 @@ abstract class Model
                 $url = str_replace($value, $this->getValue($arr[1][$key]), $url);
             }
         }
-
         return $url;
     }
 
     /**
      * Modify API URL for the model. -- (for instance it is just being used for Klarna)
-     *
+     * Overriden in Klarna.php
      * @return string
      */
     protected function endpointModifier($url)

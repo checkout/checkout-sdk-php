@@ -18,6 +18,7 @@
 namespace Checkout\Library;
 
 use Checkout\Library\HttpHandler;
+use Checkout\Library\CheckoutConfiguration;
 
 /**
  * Parent class of Model.
@@ -31,6 +32,12 @@ use Checkout\Library\HttpHandler;
 abstract class Model
 {
 
+     /**
+     * Target channel.
+     *
+     * @var CheckoutConfiguration
+     */
+    protected $configuration;
     /**
      * API Request URL.
      *
@@ -204,7 +211,8 @@ abstract class Model
      */
     public function getEndpoint()
     {
-        $url = static::MODEL_REQUEST_URL;
+        $url = $this->endpointModifier(static::MODEL_REQUEST_URL);
+        //$url = static::MODEL_REQUEST_URL;
         $arr = array();
         preg_match_all('/{(\w+)}/i', $url, $arr);
 
@@ -214,6 +222,16 @@ abstract class Model
             }
         }
 
+        return $url;
+    }
+
+    /**
+     * Modify API URL for the model. -- (for instance it is just being used for Klarna)
+     *
+     * @return string
+     */
+    protected function endpointModifier($url)
+    {      
         return $url;
     }
 
@@ -302,5 +320,15 @@ abstract class Model
         }  
 
         return $link;
+    }
+
+    /**
+     * Set Config.
+     *
+     * @return string
+     */
+    public function setCheckoutConfiguration(CheckoutConfiguration $config)
+    {
+        $this->configuration = $config;
     }
 }

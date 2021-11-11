@@ -63,6 +63,7 @@ class SourceController extends Controller
      */
     public function add(Source $source, $mode = HttpHandler::MODE_EXECUTE)
     {
+        $source->setCheckoutConfiguration($this->configuration);
         $response = $this->requestAPI($source->getEndpoint())
             ->setBody($source->getValues());
 

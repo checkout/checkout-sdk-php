@@ -48,7 +48,7 @@ class CheckoutApi
      *
      * @var string
      */
-    const VERSION = '1.0.17';
+    const VERSION = '1.0.18';
 
     /**
      * Channel section.

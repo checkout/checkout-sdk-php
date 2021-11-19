@@ -19,6 +19,8 @@ namespace Checkout\Models\Sources;
 
 use Checkout\Library\Model;
 use Checkout\Library\Utilities;
+use Checkout\Library\CheckoutConfiguration;
+use Checkout\Library\Controller;
 
 /**
  * Model for sources.
@@ -31,7 +33,7 @@ use Checkout\Library\Utilities;
  */
 class Klarna extends Source
 {
-
+    
     /**
      * Qualified name of the class.
      *
@@ -51,7 +53,7 @@ class Klarna extends Source
      *
      * @var string
      */
-    const MODEL_REQUEST_URL = 'klarna-external/credit-sessions';
+    const MODEL_REQUEST_URL =  'klarna-external/credit-sessions';
 
 
     /**
@@ -142,6 +144,16 @@ class Klarna extends Source
     {
         $errors = $this->getValue('klarna_validation_errors');
         return $errors ? $errors : array();
+    }
+
+    /**
+     * Modify API URL for the model. -- (for instance it is just being used for Klarna)
+     *
+     * @return string
+     */
+    protected function endpointModifier($url)
+    {   
+        return isset($this->configuration) && $this->configuration->getSandbox() ? $url : 'klarna/credit-sessions';       
     }
 
 }

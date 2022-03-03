@@ -1,0 +1,51 @@
+name: build-pull-request
+on:
+    pull_request:
+        branches:
+            - master
+jobs:
+    build:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            max-parallel: 1
+            fail-fast: false
+            matrix:
+                os: [ ubuntu-latest, windows-latest ]
+                php-versions: [ "7.4" ]
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-versions }}
+                    extensions: fileinfo
+                    coverage: none
+            -   name: Installed versions
+                run: php -v
+            -   name: Install Composer dependencies
+                uses: ramsey/composer-install@v1
+            -   name: Run phpstan
+                run: vendor/bin/phpstan analyse --no-progress
+            -   name: Run phpunit
+                env:
+                    CHECKOUT_SECRET_KEY: ${{ secrets.IT_CHECKOUT_SECRET_KEY }}
+                    CHECKOUT_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_PUBLIC_KEY }}
+                    CHECKOUT_FOUR_SECRET_KEY: ${{ secrets.IT_CHECKOUT_FOUR_SECRET_KEY }}
+                    CHECKOUT_FOUR_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_FOUR_PUBLIC_KEY }}
+                    CHECKOUT_FOUR_OAUTH_CLIENT_ID: ${{ secrets.IT_CHECKOUT_FOUR_OAUTH_CLIENT_ID }}
+                    CHECKOUT_FOUR_OAUTH_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_FOUR_OAUTH_CLIENT_SECRET }}
+                run: vendor/bin/phpunit --verbose --testdox
+    sonarcloud:
+        name: SonarCloud
+        if: ${{ false }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - name: SonarCloud Scan
+              uses: SonarSource/sonarcloud-github-action@master
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+

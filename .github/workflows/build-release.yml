@@ -1,0 +1,52 @@
+name: build-release
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - version.json
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Setup PHP 7.4
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: "7.4"
+                    extensions: fileinfo
+                    coverage: none
+            -   name: List installed PHP versions
+                run: php -v
+            -   name: Install composer dependencies
+                uses: ramsey/composer-install@v1
+            -   name: Run phpstan
+                run: vendor/bin/phpstan analyse --no-progress
+            -   name: Run phpunit
+                env:
+                    CHECKOUT_SECRET_KEY: ${{ secrets.IT_CHECKOUT_SECRET_KEY }}
+                    CHECKOUT_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_PUBLIC_KEY }}
+                    CHECKOUT_FOUR_SECRET_KEY: ${{ secrets.IT_CHECKOUT_FOUR_SECRET_KEY }}
+                    CHECKOUT_FOUR_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_FOUR_PUBLIC_KEY }}
+                    CHECKOUT_FOUR_OAUTH_CLIENT_ID: ${{ secrets.IT_CHECKOUT_FOUR_OAUTH_CLIENT_ID }}
+                    CHECKOUT_FOUR_OAUTH_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_FOUR_OAUTH_CLIENT_SECRET }}
+                run: vendor/bin/phpunit --verbose --testdox
+            -   name: Read release version
+                uses: HardNorth/github-version-generate@v1.1.1
+                with:
+                    version-source: file
+                    version-file: 'version.json'
+                    version-file-extraction-pattern: '"version":\s*"([^"]+)"'
+            -   name: Print release version
+                run: echo "Releasing $CURRENT_VERSION"
+            -   name: Create GitHub release
+                uses: actions/create-release@v1
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                with:
+                    tag_name: ${{ env.CURRENT_VERSION }}
+                    release_name: ${{ env.CURRENT_VERSION }}
+                    body: ${{ github.event.head_commit.message }}
+                    draft: false
+                    prerelease: false

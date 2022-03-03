@@ -1,10 +1,9 @@
-.idea
-.DS_Store
+.php_cs.cache
+phpunit.xml
+.phpunit.result.cache
 composer.lock
-vendor/
-nbproject/
-
-index.php
-phpunit/
-
+composer.phar
+vendor/*
+*.iml
+.idea
 *.log

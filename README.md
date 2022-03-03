@@ -1,66 +1,120 @@
-<p align="center"><img src="https://www.checkout.com/static/img/logos/cko/logos/checkout.svg" width="380"></p>
+# Checkout.com PHP SDK
 
+![build-master](https://github.com/checkout/checkout-sdk-php/workflows/build-master/badge.svg)
+[![GitHub license](https://img.shields.io/github/license/checkout/checkout-sdk-php.svg)](https://github.com/checkout/checkout-sdk-php/blob/master/LICENSE.md)
+[![GitHub release](https://img.shields.io/github/release/checkout/checkout-sdk-php.svg)](https://GitHub.com/checkout/checkout-sdk-php/releases/)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=checkout_checkout-sdk-php-beta&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=checkout_checkout-sdk-php-beta)
 
-The **Checkout SDK for PHP** enables developers to easily work with Checkout.com APIs.
-It requires PHP 5.6.
+## Getting started
 
-## Getting Help
+Packages and sources are available from [Packagist](https://packagist.org/packages/checkout/checkout-sdk-php).
 
-If you encounter a bug with Checkout SDK for PHP please search the existing issues and try to make sure your problem doesn’t already exist before opening a new issue.
-The GitHub issues are intended for bug reports and feature requests. For help and questions with using Checkout SDK for PHP please contact our integration support team.
+#### Composer
 
-For full usage details, see the [Wiki](https://github.com/checkout/checkout-sdk-php/wiki).
-
-
-## Installation
-
-### Installation with Composer (Recommended)
-Either run the following command in the root directory of your project:
-```bash
-composer require checkout/checkout-sdk-php
+```json
+"require": {
+    "php": ">=7.4",
+    "checkout/checkout-sdk-php": "version"
+}
 ```
 
-Or require the Checkout.com package inside the composer.json file of your project:
+Please check in [GitHub releases](https://github.com/checkout/checkout-sdk-php/releases) for all the versions available.
+
+## How to use the SDK
+
+This SDK can be used with two different pair of API keys provided by Checkout. However, using different API keys imply using specific API features. Please find in the table below the types of keys that can be used within this SDK.
+
+| Account System | Public Key (example)                    | Secret Key (example)                    |
+|----------------|-----------------------------------------|-----------------------------------------|
+| default        | pk_g650ff27-7c42-4ce1-ae90-5691a188ee7b | sk_gk3517a8-3z01-45fq-b4bd-4282384b0a64 |
+| Four           | pk_pkhpdtvabcf7hdgpwnbhw7r2uic          | sk_m73dzypy7cf3gf5d2xr4k7sxo4e          |
+
+Note: sandbox keys have a `test_` or `sbox_` identifier, for Default and Four accounts respectively.
+
+**PLEASE NEVER SHARE OR PUBLISH YOUR CHECKOUT CREDENTIALS.**
+
+If you don't have your own API keys, you can sign up for a test account [here](https://www.checkout.com/get-test-account).
+
+## Default
+
+Default keys client instantiation can be done as follows:
+
 ```php
-"require": { "php": ">=5.6", "checkout/checkout-sdk-php": "1.0.0"}.
+$builder = CheckoutDefaultSdk::staticKeys();
+$builder->setPublicKey("public_key");
+$builder->setSecretKey("secret_key");
+$builder->setEnvironment(Environment::sandbox()); // or production()
+$builder->setHttpClientBuilder(); // optional, for a custom HTTP client
+$defaultApi = $builder->build();
+
+$paymentsClient = $defaultApi->getPaymentsClient();
+$paymentsClient->refundPayment("payment_id");
 ```
 
-### Clone repository
-Alternatively you can clone the repository from GitHub with git clone
-```bash
-git clone git@github.com:checkout/checkout-sdk-php.git
-```
+### Four
 
-## Quickstart
-
-A card token can be obtained using one of Checkout.com's JavaScript frontend solutions such as [Frames](https://docs.checkout.com/docs/frames "Frames") or any of the [mobile SDKs](https://docs.checkout.com/docs/sdks#section-mobile-sdk-libraries "Mobile SDKs")
-
-Include a `checkout-sdk-php/checkout.php` to access the operations for each API:
+If your pair of keys matches the Four type, this is how the SDK should be used:
 
 ```php
-use Checkout\CheckoutApi;
-use Checkout\Models\Tokens\Card;
-use Checkout\Models\Payments\TokenSource;
-use Checkout\Models\Payments\Payment;
+$builder = CheckoutFourSdk::staticKeys();
+$builder->setPublicKey("public_key");
+$builder->setSecretKey("secret_key");
+$builder->setEnvironment(Environment::sandbox()); // or production()
+$builder->setHttpClientBuilder(); // optional, for a custom HTTP client
+$fourApi = $builder->build();
 
-// Set the secret key
-$secretKey = 'sk_test_key';
-
-// Initialize the Checkout API in Sandbox mode. Use new CheckoutApi($liveSecretKey, false); for production
-$checkout = new CheckoutApi($secretKey);
-
-
-// Create a payment method instance with card details
-$method = new TokenSource('tok_key_goes_here');
-
-// Prepare the payment parameters
-$payment = new Payment($method, 'GBP');
-$payment->amount = 1000; // = 10.00
-
-// Send the request and retrieve the response
-$response = $checkout->payments()->request($payment);
+$paymentsClient = $fourApi->getPaymentsClient();
+$paymentsClient->refundPayment("payment_id");
 ```
 
+The SDK supports client credentials OAuth, when initialized as follows:
 
-## Tests
-Install PHPUnit by running `composer require --dev phpunit/phpunit` and execute the tests with `./vendor/bin/phpunit`.
+```php
+$builder = CheckoutFourSdk::oAuth();
+$builder->clientCredentials("client_id", "client_secret");
+$builder->scopes([FourOAuthScope::$Files, FourOAuthScope::$Flow]); // array of scopes
+$builder->setEnvironment(Environment::sandbox()); // or production()
+$builder->setHttpClientBuilder(); // optional, for a custom HTTP client
+$fourApi = $builder->build();
+
+$paymentsClient = $fourApi->getPaymentsClient();
+$paymentsClient->refundPayment("payment_id");
+```
+
+### PHP Settings
+
+For operations that require file upload (Disputes or Marketplace) the configuration `extension=fileinfo` must be enabled in the `php.ini`.
+
+## Exception handling
+
+All the API responses that do not fall in the 2** status codes will cause a `CheckoutApiException`. The exception encapsulates
+the `requestId`, `httpStatusCode` and a map of `errorDetails`, if available.
+
+More documentation related to Checkout API and the SDK is available at:
+
+* [Official Docs (Default)](https://docs.checkout.com/)
+* [Official Docs (Four)](https://docs.checkout.com/four)
+* [API Reference (Default)](https://api-reference.checkout.com/)
+* [API Reference (Four)](https://api-reference.checkout.com/preview/crusoe/)
+
+## Building from source
+
+Once you checkout the code from GitHub, the project can be built using composer:
+
+```
+composer update
+```
+
+The execution of integration tests require the following environment variables set in your system:
+
+* For Default account systems: `CHECKOUT_PUBLIC_KEY` & `CHECKOUT_SECRET_KEY`
+* For Four account systems: `CHECKOUT_FOUR_PUBLIC_KEY` & `CHECKOUT_FOUR_SECRET_KEY`
+* For Four account systems (OAuth): `CHECKOUT_FOUR_OAUTH_CLIENT_ID` & `CHECKOUT_FOUR_OAUTH_CLIENT_SECRET`
+
+## Code of Conduct
+
+Please refer to [Code of Conduct](CODE_OF_CONDUCT.md)
+
+## Licensing
+
+[MIT](LICENSE.md)

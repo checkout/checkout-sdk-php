@@ -7,7 +7,7 @@ use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutDefaultSdk;
 use Checkout\CheckoutFourSdk;
 use Checkout\Environment;
-use Checkout\FourOAuthScope;
+use Checkout\Four\FourOAuthScope;
 use Checkout\PlatformType;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;

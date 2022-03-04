@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout;
+namespace Checkout\Four;
 
 class FourOAuthScope
 {

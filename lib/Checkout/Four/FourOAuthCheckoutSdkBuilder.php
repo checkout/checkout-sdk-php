@@ -1,12 +1,20 @@
 <?php
 
-namespace Checkout;
+namespace Checkout\Four;
+
+use Checkout\AbstractCheckoutSdkBuilder;
+use Checkout\ApiClient;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutConfiguration;
+use Checkout\CheckoutException;
+use Checkout\Four;
+use Checkout\SdkCredentialsInterface;
 
 class FourOAuthCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
 {
 
-    protected string $clientId;
-    protected string $clientSecret;
+    protected ?string $clientId = null;
+    protected ?string $clientSecret = null;
     protected ?string $authorizationUri = null;
     protected array $scopes = array();
 
@@ -37,9 +45,12 @@ class FourOAuthCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
      */
     protected function getSdkCredentials(): SdkCredentialsInterface
     {
-        if (is_null($this->authorizationUri)) {
+        if (empty($this->clientId) || empty($this->clientSecret)) {
+            throw new CheckoutArgumentException("Invalid configuration. Please specify valid 'client_id' and 'client_secret' configurations.");
+        }
+        if (empty($this->authorizationUri)) {
             if (is_null($this->environment)) {
-                throw new CheckoutArgumentException("Invalid configuration. Please specify an Environment or a specific OAuth authorizationURI.");
+                throw new CheckoutArgumentException("Invalid configuration. Please specify an Environment or a specific OAuth authorization URI.");
             }
             $this->authorizationUri = $this->environment->getAuthorizationUri();
         }

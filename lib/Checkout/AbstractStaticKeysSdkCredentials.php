@@ -1,8 +1,6 @@
 <?php
 
-namespace Checkout\Four;
-
-use Checkout\SdkCredentialsInterface;
+namespace Checkout;
 
 abstract class AbstractStaticKeysSdkCredentials implements SdkCredentialsInterface
 {

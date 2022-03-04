@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests;
 
+use Checkout\CheckoutApiException;
 use Checkout\CheckoutFourSdk;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
@@ -27,6 +28,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldMakePaymentWithOAuth(): void
     {

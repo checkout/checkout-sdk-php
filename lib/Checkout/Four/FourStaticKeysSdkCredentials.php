@@ -2,6 +2,7 @@
 
 namespace Checkout\Four;
 
+use Checkout\AbstractStaticKeysSdkCredentials;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\PlatformType;

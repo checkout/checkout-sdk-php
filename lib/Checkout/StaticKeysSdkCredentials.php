@@ -2,8 +2,6 @@
 
 namespace Checkout;
 
-use Checkout\Four\AbstractStaticKeysSdkCredentials;
-
 class StaticKeysSdkCredentials extends AbstractStaticKeysSdkCredentials
 {
 

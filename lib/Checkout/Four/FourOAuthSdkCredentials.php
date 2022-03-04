@@ -1,7 +1,14 @@
 <?php
 
-namespace Checkout;
+namespace Checkout\Four;
 
+use Checkout\AuthorizationType;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
+use Checkout\HttpClientBuilderInterface;
+use Checkout\PlatformType;
+use Checkout\SdkAuthorization;
+use Checkout\SdkCredentialsInterface;
 use DateInterval;
 use DateTime;
 use GuzzleHttp\ClientInterface;

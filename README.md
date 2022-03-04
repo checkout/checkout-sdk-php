@@ -3,7 +3,7 @@
 ![build-master](https://github.com/checkout/checkout-sdk-php/workflows/build-master/badge.svg)
 [![GitHub license](https://img.shields.io/github/license/checkout/checkout-sdk-php.svg)](https://github.com/checkout/checkout-sdk-php/blob/master/LICENSE.md)
 [![GitHub release](https://img.shields.io/github/release/checkout/checkout-sdk-php.svg)](https://GitHub.com/checkout/checkout-sdk-php/releases/)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=checkout_checkout-sdk-php-beta&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=checkout_checkout-sdk-php-beta)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=checkout_checkout-sdk-php&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=checkout_checkout-sdk-php)
 
 ## Getting started
 

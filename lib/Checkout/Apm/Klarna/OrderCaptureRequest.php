@@ -17,7 +17,7 @@ class OrderCaptureRequest
 
     public string $reference;
 
-    public array $Metadata;
+    public array $metadata;
 
     public Klarna $klarna;
 

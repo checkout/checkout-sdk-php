@@ -23,7 +23,6 @@ class IdealIntegrationTest extends SandboxTestFixture
      */
     public function shouldGetInfo(): void
     {
-        $this->markTestSkipped("unavailable");
         $response = $this->defaultApi->getIdealClient()->getInfo();
         $this->assertResponse($response,
             "_links",

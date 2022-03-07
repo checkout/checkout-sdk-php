@@ -10,7 +10,7 @@ class Klarna
     public array $products;
 
     //KlarnaShippingInfo
-    public array $shippingInfo;
+    public array $shipping_info;
 
     public int $shipping_delay;
 }

@@ -41,7 +41,7 @@ class KlarnaIntegrationTest extends SandboxTestFixture
         $creditSessionRequest->locale = "en-GB";
         $creditSessionRequest->amount = 1000;
         $creditSessionRequest->tax_amount = 1;
-        $creditSessionRequest->products = array($klarnaProduct);;
+        $creditSessionRequest->products = array($klarnaProduct);
 
         $creditSessionResponse = $this->defaultApi->getKlarnaClient()->createCreditSession($creditSessionRequest);
 

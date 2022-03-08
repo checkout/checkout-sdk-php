@@ -39,7 +39,7 @@
         "phpstan/extension-installer": "^1.1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0.0",
         "phpunit/phpunit": "^9.5.10",
-        "symfony/phpunit-bridge": "^6.0.0",
+        "symfony/phpunit-bridge": "^5.4|^6.0.0",
         "mockery/mockery": "^1.4"
     },
     "autoload": {

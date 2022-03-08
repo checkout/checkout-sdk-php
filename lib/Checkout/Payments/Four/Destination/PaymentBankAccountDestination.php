@@ -21,6 +21,8 @@ class PaymentBankAccountDestination extends PaymentRequestDestination
 
     public string $bank_code;
 
+    public string $branch_code;
+
     public string $iban;
 
     public string $swift_bic;

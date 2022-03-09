@@ -6,6 +6,9 @@ use Checkout\CheckoutApi;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutDefaultSdk;
 use Checkout\CheckoutFourSdk;
+use Checkout\Common\Address;
+use Checkout\Common\Country;
+use Checkout\Common\Phone;
 use Checkout\Environment;
 use Checkout\Four\FourOAuthScope;
 use Checkout\PlatformType;
@@ -103,6 +106,32 @@ abstract class SandboxTestFixture extends TestCase
     public static function getCheckoutFilePath(): string
     {
         return __DIR__ . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR . "checkout.jpeg";
+    }
+
+    /**
+     * @return Address
+     */
+    protected function getAddress(): Address
+    {
+        $address = new Address();
+        $address->address_line1 = "CheckoutSdk.com";
+        $address->address_line2 = "90 Tottenham Court Road";
+        $address->city = "London";
+        $address->state = "London";
+        $address->zip = "W1T 4TJ";
+        $address->country = Country::$GB;
+        return $address;
+    }
+
+    /**
+     * @return Phone
+     */
+    protected function getPhone(): Phone
+    {
+        $phone = new Phone();
+        $phone->country_code = "1";
+        $phone->number = "4155552671";
+        return $phone;
     }
 
     /**

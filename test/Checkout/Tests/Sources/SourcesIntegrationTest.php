@@ -26,19 +26,6 @@ class SourcesIntegrationTest extends SandboxTestFixture
      */
     public function shouldSepaSource(): void
     {
-
-        $phone = new Phone();
-        $phone->country_code = "44";
-        $phone->number = "020 222333";
-
-        $address = new Address();
-        $address->address_line1 = "CheckoutSdk.com";
-        $address->address_line2 = "90 Tottenham Court Road";
-        $address->city = "London";
-        $address->state = "London";
-        $address->zip = "W1T 4TJ";
-        $address->country = Country::$GB;
-
         $sourceData = new SourceData();
         $sourceData->first_name = "Marcus";
         $sourceData->last_name = "Barrilius Maximus";
@@ -48,8 +35,8 @@ class SourcesIntegrationTest extends SandboxTestFixture
         $sourceData->mandate_type = "single";
 
         $sepaSourceRequest = new SepaSourceRequest();
-        $sepaSourceRequest->billing_address = $address;
-        $sepaSourceRequest->phone = $phone;
+        $sepaSourceRequest->billing_address = $this->getAddress();
+        $sepaSourceRequest->phone = $this->getPhone();
         $sepaSourceRequest->reference = ".NET SDK test";
         $sepaSourceRequest->source_data = $sourceData;
 

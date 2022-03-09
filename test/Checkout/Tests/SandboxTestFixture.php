@@ -9,10 +9,11 @@ use Checkout\CheckoutFourSdk;
 use Checkout\Environment;
 use Checkout\Four\FourOAuthScope;
 use Checkout\PlatformType;
+use Exception;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Runner\Exception;
 use Psr\Log\LoggerInterface;
 use function PHPUnit\Framework\assertNotEmpty;
 use function PHPUnit\Framework\assertNotNull;
@@ -122,13 +123,13 @@ abstract class SandboxTestFixture extends TestCase
                 if ($predicate($response)) {
                     return $response;
                 }
-            } catch (\Exception $ex) {
+            } catch (Exception $ex) {
                 $this->logger->warning("Request/Predicate failed with error '${ex}' - retry ${currentAttempt}/${maxAttempts}");
             }
             $currentAttempt++;
             sleep(2);
         }
-        throw new Exception("Max attempts reached!");
+        throw new AssertionFailedError("Max attempts reached!");
     }
 
 }

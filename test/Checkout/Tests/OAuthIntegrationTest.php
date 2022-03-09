@@ -13,7 +13,7 @@ use Checkout\Payments\Four\Request\PaymentRequest;
 use Checkout\Payments\Four\Request\Source\RequestCardSource;
 use Checkout\Payments\Four\Sender\PaymentIndividualSender;
 use Checkout\PlatformType;
-use Exception;
+use Throwable;
 
 class OAuthIntegrationTest extends SandboxTestFixture
 {
@@ -85,7 +85,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
             $builder->setFilesEnvironment(Environment::sandbox());
             $this->fourApi = $builder->build();
             self::fail("shouldn't get here");
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->assertEquals("Client error: `POST https://access.sandbox.checkout.com/connect/token` resulted in a `400 Bad Request` response:\n{\"error\":\"invalid_client\"}\n", $e->getMessage());
         }
 
@@ -104,7 +104,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
             $builder->setFilesEnvironment(Environment::sandbox());
             $this->fourApi = $builder->build();
             self::fail("shouldn't get here");
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->assertEquals("cURL error 6: Could not resolve host: test.checkout.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://test.checkout.com", $e->getMessage());
         }
 

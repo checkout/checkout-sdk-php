@@ -5,7 +5,7 @@ namespace Checkout;
 use Checkout\Common\AbstractQueryFilter;
 use Checkout\Files\FileRequest;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -166,8 +166,8 @@ class ApiClient
             return json_decode($response->getBody(), true);
         } catch (Throwable $e) {
             $this->logger->error($path . " error: " . $e->getMessage());
-            if ($e instanceof ClientException) {
-                throw new CheckoutApiException("The API response status code (" . $e->getCode() . ") does not indicate success.");
+            if ($e instanceof RequestException) {
+                throw CheckoutApiException::from($e);
             }
             throw new CheckoutApiException($e);
         }
@@ -194,8 +194,8 @@ class ApiClient
             ]);
         } catch (Throwable $e) {
             $this->logger->error($path . " error: " . $e->getMessage());
-            if ($e instanceof ClientException) {
-                throw new CheckoutApiException("The API response status code (" . $e->getCode() . ") does not indicate success.");
+            if ($e instanceof RequestException) {
+                throw CheckoutApiException::from($e);
             }
             throw new CheckoutApiException($e);
         }
@@ -205,7 +205,6 @@ class ApiClient
     {
         return $this->baseUri . $path;
     }
-
 
     /**
      * @param SdkAuthorization $authorization

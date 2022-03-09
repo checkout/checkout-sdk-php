@@ -14,7 +14,6 @@ use Checkout\Instruments\UpdateInstrumentRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 use Checkout\Tokens\CardTokenRequest;
-use Exception;
 
 class InstrumentsIntegrationTest extends SandboxTestFixture
 {
@@ -100,7 +99,7 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
         try {
             $this->defaultApi->getInstrumentsClient()->delete($instrument["id"]);
             self::fail("shouldn't get here!");
-        } catch (Exception $e) {
+        } catch (CheckoutApiException $e) {
             self::assertEquals(self::MESSAGE_404, $e->getMessage());
         }
 

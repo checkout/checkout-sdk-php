@@ -19,7 +19,7 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $refundRequest = new RefundRequest();
         $refundRequest->reference = uniqid();
 
-        $response = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"]));
+        $response = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest));
 
         $this->assertResponse($response,
             "action_id",

@@ -23,17 +23,16 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
         try {
             $this->fourApi->getSessionsClient()->completeSession($sessionId);
             self::fail("shouldn't get here!");
-        } catch (\Exception $e) {
+        } catch (CheckoutApiException $e) {
             self::assertEquals(self::MESSAGE_403, $e->getMessage());
         }
 
         try {
             $this->fourApi->getSessionsClient()->completeSession($sessionId, $sessionSecret);
             self::fail("shouldn't get here!");
-        } catch (\Exception $e) {
+        } catch (CheckoutApiException $e) {
             self::assertEquals(self::MESSAGE_403, $e->getMessage());
         }
-
 
     }
 }

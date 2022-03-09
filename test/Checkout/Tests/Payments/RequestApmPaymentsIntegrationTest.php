@@ -29,6 +29,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeBalotoPayment(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestBalotoSource();
         $requestSource->country = Country::$CO;
         $requestSource->description = "simulate Via Baloto Demo Payment";
@@ -62,6 +63,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeBoletoPayment_Redirect(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestBoletoSource();
         $requestSource->country = Country::$BR;
         $requestSource->description = "boleto payment";
@@ -95,6 +97,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeBoletoPayment_Direct(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestBoletoSource();
         $requestSource->country = Country::$BR;
         $requestSource->description = "boleto payment";
@@ -128,6 +131,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeFawryPayment(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestFawrySource();
         $requestSource->description = "Fawry Demo Payment";
         $requestSource->customer_email = "bruce@wayne-enterprises.com";
@@ -162,6 +166,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeGiropayPayment(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestGiropaySource();
         $requestSource->purpose = "CKO Giropay test";
 
@@ -187,6 +192,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeIdealPayment(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestIdealSource();
         $requestSource->bic = "INGBNL2A";
         $requestSource->description = "ORD50234E89";
@@ -214,6 +220,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeOxxoPayment(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestOxxoSource();
         $requestSource->country = Country::$MX;
         $requestSource->description = "ORD50234E89";
@@ -246,6 +253,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakePagoFacilPayment(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestPagoFacilSource();
         $requestSource->country = Country::$AR;
         $requestSource->description = "simulate Via Pago Facil Demo Payment";
@@ -278,6 +286,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeRapiPagoPayment(): void
     {
+        $this->markTestSkipped("unstable");
         $requestSource = new RequestRapiPagoSource();
         $requestSource->country = Country::$AR;
         $requestSource->description = "simulate Via Rapi Pago Demo Payment";

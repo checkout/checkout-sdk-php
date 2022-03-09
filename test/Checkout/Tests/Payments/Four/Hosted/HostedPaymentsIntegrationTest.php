@@ -4,12 +4,10 @@ namespace Checkout\Tests\Payments\Four\Hosted;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutAuthorizationException;
-use Checkout\Common\Address;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Common\PaymentSourceType;
-use Checkout\Common\Phone;
 use Checkout\Common\Product;
 use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
@@ -85,29 +83,17 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
 
     private function createHostedPaymentsRequest(): HostedPaymentsSessionRequest
     {
-        $phone = new Phone();
-        $phone->country_code = "44";
-        $phone->number = "020 222333";
-
-        $address = new Address();
-        $address->address_line1 = "CheckoutSdk.com";
-        $address->address_line2 = "90 Tottenham Court Road";
-        $address->city = "London";
-        $address->state = "London";
-        $address->zip = "W1T 4TJ";
-        $address->country = Country::$GB;
-
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
         $customerRequest->name = "Customer";
 
         $billingInformation = new BillingInformation();
-        $billingInformation->address = $address;
-        $billingInformation->phone = $phone;
+        $billingInformation->address = $this->getAddress();
+        $billingInformation->phone = $this->getPhone();
 
         $shippingDetails = new ShippingDetails();
-        $shippingDetails->address = $address;
-        $shippingDetails->phone = $phone;
+        $shippingDetails->address = $this->getAddress();
+        $shippingDetails->phone = $this->getPhone();
 
         $recipient = new PaymentRecipient();
         $recipient->account_number = "1234567";

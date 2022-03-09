@@ -4,8 +4,6 @@ namespace Checkout\Tests;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutFourSdk;
-use Checkout\Common\Address;
-use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\MarketplaceData;
 use Checkout\Environment;
@@ -40,18 +38,10 @@ class OAuthIntegrationTest extends SandboxTestFixture
         $requestCardSource->expiry_month = TestCardSource::$VisaExpiryMonth;
         $requestCardSource->cvv = TestCardSource::$VisaCvv;
 
-        $address = new Address();
-        $address->address_line1 = "CheckoutSdk.com";
-        $address->address_line2 = "90 Tottenham Court Road";
-        $address->city = "London";
-        $address->state = "London";
-        $address->zip = "W1T 4TJ";
-        $address->country = Country::$GB;
-
         $paymentIndividualSender = new PaymentIndividualSender();
         $paymentIndividualSender->fist_name = "Mr";
         $paymentIndividualSender->last_name = "Test";
-        $paymentIndividualSender->address = $address;
+        $paymentIndividualSender->address = $this->getAddress();
 
         $marketplace = new MarketplaceData();
         $marketplace->sub_entity_id = "ent_ocw5i74vowfg2edpy66izhts2u";

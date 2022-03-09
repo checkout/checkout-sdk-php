@@ -2,9 +2,6 @@
 
 namespace Checkout\Tests\Marketplace;
 
-use Checkout\Common\Address;
-use Checkout\Common\Country;
-use Checkout\Common\Phone;
 use Checkout\Marketplace\ContactDetails;
 use Checkout\Marketplace\DateOfBirth;
 use Checkout\Marketplace\Identification;
@@ -34,7 +31,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         $onboardEntityRequest = new OnboardEntityRequest();
         $onboardEntityRequest->reference = uniqid();
         $onboardEntityRequest->contact_details = new ContactDetails();
-        $onboardEntityRequest->contact_details->phone = $this->getTestPhone();
+        $onboardEntityRequest->contact_details->phone = $this->getPhone();
         $onboardEntityRequest->profile = new Profile();
         $onboardEntityRequest->profile->urls = array("https://www.superheroexample.com");
         $onboardEntityRequest->profile->mccs = array("0742");
@@ -42,7 +39,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         $onboardEntityRequest->individual->first_name = "Bruce";
         $onboardEntityRequest->individual->last_name = "Wayne";
         $onboardEntityRequest->individual->trading_name = "Batman's Super Hero Masks";
-        $onboardEntityRequest->individual->registered_address = $this->getTestAddress();
+        $onboardEntityRequest->individual->registered_address = $this->getAddress();
         $onboardEntityRequest->individual->national_tax_id = "TAX123456";
         $onboardEntityRequest->individual->date_of_birth = $this->getDateOfBirth();
         $onboardEntityRequest->individual->identification = $this->getTestIdentification();
@@ -89,27 +86,6 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         $response = $this->fourApi->getMarketplaceClient()->submitFile($fileRequest);
 
         $this->assertResponse($response, "id");
-    }
-
-    private function getTestPhone(): Phone
-    {
-        $phone = new Phone();
-        $phone->number = "020222333";
-
-        return $phone;
-    }
-
-    private function getTestAddress(): Address
-    {
-        $address = new Address();
-        $address->address_line1 = "CheckoutSdk.com";
-        $address->address_line2 = "90 Tottenham Court Road";
-        $address->city = "London";
-        $address->state = "London";
-        $address->zip = "W1T 4TJ";
-        $address->country = Country::$GB;
-
-        return $address;
     }
 
     private function getDateOfBirth(): DateOfBirth

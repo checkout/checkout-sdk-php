@@ -154,21 +154,13 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
         $phone->country_code = "44";
         $phone->number = "020 222333";
 
-        $address = new Address();
-        $address->address_line1 = "CheckoutSdk.com";
-        $address->address_line2 = "90 Tottenham Court Road";
-        $address->city = "London";
-        $address->state = "London";
-        $address->zip = "W1T 4TJ";
-        $address->country = Country::$GB;
-
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = "Mr. Test";
         $cardTokenRequest->number = "4242424242424242";
         $cardTokenRequest->expiry_year = 2025;
         $cardTokenRequest->expiry_month = 6;
         $cardTokenRequest->cvv = "100";
-        $cardTokenRequest->billing_address = $address;
+        $cardTokenRequest->billing_address = $this->getAddress();
         $cardTokenRequest->phone = $phone;
 
         return $this->defaultApi->getTokensClient()->requestCardToken($cardTokenRequest);

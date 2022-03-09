@@ -4,11 +4,8 @@ namespace Checkout\Tests\Payments;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutAuthorizationException;
-use Checkout\Common\Address;
-use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
-use Checkout\Common\Phone;
 use Checkout\Payments\PaymentRequest;
 use Checkout\Payments\Source\RequestCardSource;
 use Checkout\Payments\Source\RequestTokenSource;
@@ -153,27 +150,6 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
 
         return $paymentResponse;
 
-    }
-
-    protected function getPhone(): Phone
-    {
-        $phone = new Phone();
-        $phone->country_code = "1";
-        $phone->number = "4155552671";
-        return $phone;
-    }
-
-
-    protected function getAddress(): Address
-    {
-        $address = new Address();
-        $address->address_line1 = "CheckoutSdk.com";
-        $address->address_line2 = "90 Tottenham Court Road";
-        $address->city = "London";
-        $address->state = "London";
-        $address->zip = "W1T 4TJ";
-        $address->country = Country::$GB;
-        return $address;
     }
 
 }

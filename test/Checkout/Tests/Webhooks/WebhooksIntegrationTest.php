@@ -2,10 +2,10 @@
 
 namespace Checkout\Tests\Webhooks;
 
+use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 use Checkout\Webhooks\WebhookRequest;
-use Exception;
 
 class WebhooksIntegrationTest extends SandboxTestFixture
 {
@@ -84,7 +84,7 @@ class WebhooksIntegrationTest extends SandboxTestFixture
         try {
             $this->defaultApi->getWebhooksClient()->retrieveWebhook($webhookId);
             self::fail("shouldn't get here!");
-        } catch (Exception $e) {
+        } catch (CheckoutApiException $e) {
             self::assertEquals(self::MESSAGE_404, $e->getMessage());
         }
 

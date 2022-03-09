@@ -7,6 +7,7 @@ use Checkout\CheckoutFourSdk;
 use Checkout\Environment;
 use Checkout\HttpClientBuilderInterface;
 use Exception;
+use Throwable;
 
 class CheckoutFourSdkTest extends UnitTestFixture
 {
@@ -52,7 +53,7 @@ class CheckoutFourSdkTest extends UnitTestFixture
             $builder->setEnvironment(Environment::sandbox());
             $this->assertNotNull($builder->build());
             self::fail();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             self::assertTrue($e instanceof CheckoutArgumentException);
             self::assertEquals("invalid secret key", $e->getMessage());
         }

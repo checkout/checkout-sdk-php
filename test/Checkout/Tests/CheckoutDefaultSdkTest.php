@@ -6,7 +6,7 @@ use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutDefaultSdk;
 use Checkout\Environment;
 use Checkout\HttpClientBuilderInterface;
-use Exception;
+use Throwable;
 
 class CheckoutDefaultSdkTest extends UnitTestFixture
 {
@@ -40,7 +40,7 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
             $builder->setEnvironment(Environment::sandbox());
             $this->assertNotNull($builder->build());
             self::fail();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             self::assertTrue($e instanceof CheckoutArgumentException);
             self::assertEquals("invalid public key", $e->getMessage());
         }
@@ -52,7 +52,7 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
             $builder->setEnvironment(Environment::sandbox());
             $this->assertNotNull($builder->build());
             self::fail();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             self::assertTrue($e instanceof CheckoutArgumentException);
             self::assertEquals("invalid secret key", $e->getMessage());
         }

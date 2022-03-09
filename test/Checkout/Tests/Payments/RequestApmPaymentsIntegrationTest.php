@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Payments;
 
-use Checkout\CheckoutApiException;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Payments\PaymentRequest;

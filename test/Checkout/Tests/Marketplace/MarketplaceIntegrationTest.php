@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Marketplace;
 
+use Checkout\CheckoutApiException;
 use Checkout\Marketplace\ContactDetails;
 use Checkout\Marketplace\DateOfBirth;
 use Checkout\Marketplace\Identification;
@@ -9,6 +10,10 @@ use Checkout\Marketplace\Individual;
 use Checkout\Marketplace\MarketplaceFileRequest;
 use Checkout\Marketplace\OnboardEntityRequest;
 use Checkout\Marketplace\Profile;
+use Checkout\Marketplace\Transfer\CreateTransferRequest;
+use Checkout\Marketplace\Transfer\TransferDestination;
+use Checkout\Marketplace\Transfer\TransferSource;
+use Checkout\Marketplace\Transfer\TransferType;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 
@@ -86,6 +91,29 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         $response = $this->fourApi->getMarketplaceClient()->submitFile($fileRequest);
 
         $this->assertResponse($response, "id");
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldInitiateTransferOfFunds(): void
+    {
+        $transferSource = new TransferSource();
+        $transferSource->id = "ent_kidtcgc3ge5unf4a5i6enhnr5m";
+        $transferSource->amount = 100;
+
+        $transferDestination = new TransferDestination();
+        $transferDestination->id = "ent_w4jelhppmfiufdnatam37wrfc4";
+
+        $transferRequest = new CreateTransferRequest();
+        $transferRequest->transfer_type = TransferType::$commission;
+        $transferRequest->source = $transferSource;
+        $transferRequest->destination = $transferDestination;
+
+        $response = $this->fourApi->getMarketplaceClient()->initiateTransferOfFunds($transferRequest);
+
+        $this->assertResponse($response, "id", "status");
     }
 
     private function getDateOfBirth(): DateOfBirth

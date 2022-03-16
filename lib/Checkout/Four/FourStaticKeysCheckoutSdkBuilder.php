@@ -38,7 +38,6 @@ class FourStaticKeysCheckoutSdkBuilder extends AbstractStaticKeysCheckoutSdkBuil
     public function build(): CheckoutApi
     {
         $configuration = new CheckoutConfiguration($this->getSdkCredentials(), $this->environment, $this->httpClientBuilder, $this->logger);
-        $apiClient = new ApiClient($configuration);
-        return new CheckoutApi($apiClient, $configuration);
+        return new CheckoutApi($configuration);
     }
 }

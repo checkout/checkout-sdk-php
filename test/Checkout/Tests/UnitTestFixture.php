@@ -50,7 +50,7 @@ abstract class UnitTestFixture extends MockeryTestCase
         $checkoutLog->pushHandler(new StreamHandler("php://stderr"));
         $checkoutLog->pushHandler(new StreamHandler("checkout-sdk-test-php.log"));
 
-        $this->configuration = new CheckoutConfiguration($sdkCredentials, Environment::sandbox(), $httpBuilder, $checkoutLog, Environment::sandbox());
+        $this->configuration = new CheckoutConfiguration($sdkCredentials, Environment::sandbox(), $httpBuilder, $checkoutLog);
 
         $this->apiClient = $this->createStub(ApiClient::class);
 

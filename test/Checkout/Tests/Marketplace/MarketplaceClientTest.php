@@ -3,11 +3,11 @@
 namespace Checkout\Tests\Marketplace;
 
 use Checkout\CheckoutApiException;
-use Checkout\CheckoutFileException;
 use Checkout\Marketplace\MarketplaceClient;
 use Checkout\Marketplace\MarketplaceFileRequest;
 use Checkout\Marketplace\MarketplacePaymentInstrument;
 use Checkout\Marketplace\OnboardEntityRequest;
+use Checkout\Marketplace\Transfer\CreateTransferRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -21,7 +21,7 @@ class MarketplaceClientTest extends UnitTestFixture
     public function init(): void
     {
         $this->initMocks(PlatformType::$fourOAuth);
-        $this->client = new MarketplaceClient($this->apiClient, $this->apiClient, $this->configuration);
+        $this->client = new MarketplaceClient($this->apiClient, $this->apiClient, $this->apiClient, $this->configuration);
     }
 
     /**
@@ -86,7 +86,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException|CheckoutFileException
+     * @throws CheckoutApiException
      */
     public function shouldSubmitFile(): void
     {
@@ -100,6 +100,23 @@ class MarketplaceClientTest extends UnitTestFixture
         $fileRequest->content_type = "image/jpeg";
 
         $response = $this->client->submitFile($fileRequest);
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldInitiateTransferOfFunds(): void
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn("response");
+
+        $transferRequest = new CreateTransferRequest();
+
+        $response = $this->client->initiateTransferOfFunds($transferRequest);
 
         $this->assertNotNull($response);
     }

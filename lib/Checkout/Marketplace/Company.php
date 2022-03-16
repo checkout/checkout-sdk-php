@@ -16,5 +16,8 @@ class Company
 
     public Address $registered_address;
 
+    public EntityDocument $document;
+
+    # Representative
     public array $representatives;
 }

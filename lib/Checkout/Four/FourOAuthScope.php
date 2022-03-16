@@ -35,4 +35,7 @@ class FourOAuthScope
     public static string $Risk = "risk";
     public static string $RiskAssessment = "risk:assessment";
     public static string $RiskSettings = "risk:settings";
+    public static string $Transfers = "transfers";
+    public static string $TransfersCreate = "transfers:create";
+    public static string $TransfersView = "transfers:view";
 }

@@ -6,8 +6,8 @@ use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
-use Checkout\CheckoutFileException;
 use Checkout\Files\FilesClient;
+use Checkout\Marketplace\Transfer\CreateTransferRequest;
 
 class MarketplaceClient extends FilesClient
 {
@@ -15,13 +15,19 @@ class MarketplaceClient extends FilesClient
     private const INSTRUMENT_PATH = "instruments";
     private const FILES_PATH = "files";
     private const ENTITIES_PATH = "entities";
+    private const TRANSFERS_PATH = "transfers";
 
-    private ?ApiClient $filesApiClient;
+    private ApiClient $filesApiClient;
+    private ApiClient $transfersApiClient;
 
-    public function __construct(ApiClient $apiClient, ?ApiClient $filesApiClient, CheckoutConfiguration $configuration)
+    public function __construct(ApiClient             $apiClient,
+                                ApiClient             $filesApiClient,
+                                ApiClient             $transfersApiClient,
+                                CheckoutConfiguration $configuration)
     {
         parent::__construct($apiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
         $this->filesApiClient = $filesApiClient;
+        $this->transfersApiClient = $transfersApiClient;
     }
 
     /**
@@ -69,15 +75,21 @@ class MarketplaceClient extends FilesClient
     /**
      * @param MarketplaceFileRequest $marketplaceFileRequest
      * @return mixed
-     * @throws CheckoutApiException|CheckoutFileException
+     * @throws CheckoutApiException
      */
     public function submitFile(MarketplaceFileRequest $marketplaceFileRequest)
     {
-        if (is_null($this->filesApiClient)) {
-            throw new CheckoutFileException(
-                "Files API is not enabled in this client. It must be enabled in CheckoutFourSdk configuration.");
-        }
         return $this->filesApiClient->submitFileFilesApi(self::FILES_PATH, $marketplaceFileRequest, $this->sdkAuthorization());
+    }
+
+    /**
+     * @param CreateTransferRequest $transferRequest
+     * @return mixed
+     * @throws CheckoutApiException
+     */
+    public function initiateTransferOfFunds(CreateTransferRequest $transferRequest)
+    {
+        return $this->transfersApiClient->post(self::TRANSFERS_PATH, $transferRequest, $this->sdkAuthorization());
     }
 
 }

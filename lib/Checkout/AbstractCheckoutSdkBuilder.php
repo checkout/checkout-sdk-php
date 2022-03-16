@@ -10,7 +10,6 @@ abstract class AbstractCheckoutSdkBuilder
 {
 
     protected ?Environment $environment;
-    protected ?Environment $filesEnvironment = null;
     protected HttpClientBuilderInterface $httpClientBuilder;
     protected LoggerInterface $logger;
 
@@ -26,11 +25,6 @@ abstract class AbstractCheckoutSdkBuilder
         $this->environment = $environment;
     }
 
-    public function setFilesEnvironment(Environment $environment): void
-    {
-        $this->filesEnvironment = $environment;
-    }
-
     public function setHttpClientBuilder(HttpClientBuilderInterface $httpClientBuilder): void
     {
         $this->httpClientBuilder = $httpClientBuilder;
@@ -44,7 +38,7 @@ abstract class AbstractCheckoutSdkBuilder
     protected function getCheckoutConfiguration(): CheckoutConfiguration
     {
         return new CheckoutConfiguration($this->getSdkCredentials(), $this->environment,
-            $this->httpClientBuilder, $this->logger, $this->filesEnvironment);
+            $this->httpClientBuilder, $this->logger);
     }
 
     private function setDefaultLogger(): void

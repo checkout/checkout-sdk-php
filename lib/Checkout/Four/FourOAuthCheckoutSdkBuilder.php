@@ -64,8 +64,7 @@ class FourOAuthCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
      */
     public function build(): Four\CheckoutApi
     {
-        $configuration = new CheckoutConfiguration($this->getSdkCredentials(), $this->environment, $this->httpClientBuilder, $this->logger, $this->filesEnvironment);
-        $apiClient = new ApiClient($configuration);
-        return new Four\CheckoutApi($apiClient, $configuration);
+        $configuration = new CheckoutConfiguration($this->getSdkCredentials(), $this->environment, $this->httpClientBuilder, $this->logger);
+        return new Four\CheckoutApi($configuration);
     }
 }

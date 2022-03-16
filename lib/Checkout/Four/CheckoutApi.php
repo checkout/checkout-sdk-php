@@ -30,25 +30,24 @@ final class CheckoutApi extends CheckoutApmApi
     private PaymentLinksClient $paymentLinksClient;
     private RiskClient $riskClient;
 
-    public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
+    public function __construct(CheckoutConfiguration $configuration)
     {
-        parent::__construct($apiClient, $configuration);
-        $this->tokensClient = new TokensClient($apiClient, $configuration);
-        $this->customersClient = new CustomersClient($apiClient, $configuration);
-        $this->paymentsClient = new PaymentsClient($apiClient, $configuration);
-        $this->instrumentsClient = new InstrumentsClient($apiClient, $configuration);
-        $this->forexClient = new ForexClient($apiClient, $configuration);
-        $this->disputesClient = new DisputesClient($apiClient, $configuration);
-        $this->sessionsClient = new SessionsClient($apiClient, $configuration);
-        $this->hostedPaymentsClient = new HostedPaymentsClient($apiClient, $configuration);
-        $this->paymentLinksClient = new PaymentLinksClient($apiClient, $configuration);
-        $fileApiConfig = $configuration->getFilesConfiguration();
-        $this->marketplaceClient = new MarketplaceClient($apiClient, null, $configuration);
-        if ($fileApiConfig != null) {
-            $apiFilesClient = new ApiClient($configuration, $fileApiConfig->getEnvironment()->getFilesBaseUri());
-            $this->marketplaceClient = new MarketplaceClient($apiClient, $apiFilesClient, $configuration);
-        }
-        $this->riskClient = new RiskClient($apiClient, $configuration);
+        $baseApiClient = $this->getBaseApiClient($configuration);
+        parent::__construct($baseApiClient, $configuration);
+        $this->tokensClient = new TokensClient($baseApiClient, $configuration);
+        $this->customersClient = new CustomersClient($baseApiClient, $configuration);
+        $this->paymentsClient = new PaymentsClient($baseApiClient, $configuration);
+        $this->instrumentsClient = new InstrumentsClient($baseApiClient, $configuration);
+        $this->forexClient = new ForexClient($baseApiClient, $configuration);
+        $this->disputesClient = new DisputesClient($baseApiClient, $configuration);
+        $this->sessionsClient = new SessionsClient($baseApiClient, $configuration);
+        $this->hostedPaymentsClient = new HostedPaymentsClient($baseApiClient, $configuration);
+        $this->paymentLinksClient = new PaymentLinksClient($baseApiClient, $configuration);
+        $this->riskClient = new RiskClient($baseApiClient, $configuration);
+        $this->marketplaceClient = new MarketplaceClient($baseApiClient,
+            $this->getFilesApiClient($configuration),
+            $this->getTransfersApiClient($configuration),
+            $configuration);
     }
 
     public function getTokensClient(): TokensClient
@@ -106,5 +105,19 @@ final class CheckoutApi extends CheckoutApmApi
         return $this->riskClient;
     }
 
+    private function getBaseApiClient(CheckoutConfiguration $configuration): ApiClient
+    {
+        return new ApiClient($configuration, $configuration->getEnvironment()->getBaseUri());
+    }
+
+    private function getFilesApiClient(CheckoutConfiguration $configuration): ApiClient
+    {
+        return new ApiClient($configuration, $configuration->getEnvironment()->getFilesBaseUri());
+    }
+
+    private function getTransfersApiClient(CheckoutConfiguration $configuration): ApiClient
+    {
+        return new ApiClient($configuration, $configuration->getEnvironment()->getTransfersUri());
+    }
 
 }

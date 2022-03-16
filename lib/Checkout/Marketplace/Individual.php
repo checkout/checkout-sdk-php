@@ -12,8 +12,6 @@ class Individual
 
     public string $last_name;
 
-    public string $legal_name;
-
     public string $trading_name;
 
     public string $national_tax_id;

@@ -72,7 +72,6 @@ class OAuthIntegrationTest extends SandboxTestFixture
             $builder = CheckoutFourSdk::oAuth();
             $builder->clientCredentials("fake", "fake");
             $builder->setEnvironment(Environment::sandbox());
-            $builder->setFilesEnvironment(Environment::sandbox());
             $this->fourApi = $builder->build();
             self::fail("shouldn't get here");
         } catch (Throwable $e) {
@@ -91,7 +90,6 @@ class OAuthIntegrationTest extends SandboxTestFixture
             $builder->clientCredentials("fake", "fake");
             $builder->authorizationUri("https://test.checkout.com");
             $builder->setEnvironment(Environment::sandbox());
-            $builder->setFilesEnvironment(Environment::sandbox());
             $this->fourApi = $builder->build();
             self::fail("shouldn't get here");
         } catch (Throwable $e) {

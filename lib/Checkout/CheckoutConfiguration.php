@@ -14,21 +14,15 @@ final class CheckoutConfiguration
 
     private LoggerInterface $logger;
 
-    private ?CheckoutFilesConfiguration $filesConfiguration = null;
-
     public function __construct(SdkCredentialsInterface    $sdkCredentials,
                                 Environment                $environment,
                                 HttpClientBuilderInterface $httpClientBuilder,
-                                LoggerInterface            $logger,
-                                Environment                $filesEnvironment = null)
+                                LoggerInterface            $logger)
     {
         $this->sdkCredentials = $sdkCredentials;
         $this->environment = $environment;
         $this->httpClientBuilder = $httpClientBuilder;
         $this->logger = $logger;
-        if ($filesEnvironment) {
-            $this->filesConfiguration = new CheckoutFilesConfiguration($filesEnvironment);
-        }
     }
 
     public function getSdkCredentials(): SdkCredentialsInterface
@@ -49,11 +43,6 @@ final class CheckoutConfiguration
     public function getLogger(): LoggerInterface
     {
         return $this->logger;
-    }
-
-    public function getFilesConfiguration(): ?CheckoutFilesConfiguration
-    {
-        return $this->filesConfiguration;
     }
 
 }

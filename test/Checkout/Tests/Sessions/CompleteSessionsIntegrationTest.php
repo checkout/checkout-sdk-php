@@ -25,6 +25,8 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
             self::fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
             self::assertEquals(self::MESSAGE_403, $e->getMessage());
+            self::assertNotEmpty($e->request_id);
+            self::assertNotNull($e->error_details);
         }
 
         try {
@@ -32,6 +34,8 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
             self::fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
             self::assertEquals(self::MESSAGE_403, $e->getMessage());
+            self::assertNotEmpty($e->request_id);
+            self::assertNotNull($e->error_details);
         }
 
     }

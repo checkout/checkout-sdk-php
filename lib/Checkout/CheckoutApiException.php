@@ -20,7 +20,7 @@ class CheckoutApiException extends CheckoutException
     {
         $body = json_decode($requestException->getResponse()->getBody()->getContents(), true);
         $ex = new CheckoutApiException("The API response status code (" . $requestException->getCode() . ") does not indicate success.");
-        $ex->request_id = $body != null ? $body["request_id"] : null;
+        $ex->request_id = $body["request_id"] ?? null;
         $ex->http_status_code = $requestException->getCode();
         $ex->error_details = $body;
         return $ex;

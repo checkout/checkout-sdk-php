@@ -4,10 +4,10 @@ namespace Checkout\Payments;
 
 class RefundRequest
 {
-    public int $amount;
+    public $amount;
 
-    public string $reference;
+    public $reference;
 
-    public array $metadata;
+    public $metadata;
 
 }

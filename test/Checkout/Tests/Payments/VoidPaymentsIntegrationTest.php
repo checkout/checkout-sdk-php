@@ -12,14 +12,17 @@ class VoidPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldVoidCardPayment(): void
+    public function shouldVoidCardPayment()
     {
         $paymentResponse = $this->makeCardPayment();
 
         $voidRequest = new VoidRequest();
         $voidRequest->reference = uniqid("shouldVoidCardPayment");
 
-        $response = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest));
+        $response = $this->retriable(
+            function () use (&$paymentResponse, &$voidRequest) {
+                return $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest);
+            });
 
         $this->assertResponse($response,
             "action_id",
@@ -30,7 +33,7 @@ class VoidPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldVoidCardPayment_Idempotent(): void
+    public function shouldVoidCardPayment_Idempotent()
     {
         $paymentResponse = $this->makeCardPayment();
 
@@ -39,15 +42,21 @@ class VoidPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $idempotencyKey = $this->idempotencyKey();
 
-        $response1 = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest, $idempotencyKey));
+        $response1 = $this->retriable(
+            function () use (&$paymentResponse, &$voidRequest, &$idempotencyKey) {
+                return $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest, $idempotencyKey);
+            });
 
-        self::assertNotNull($response1);
+        $this->assertNotNull($response1);
 
-        $response2 = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest, $idempotencyKey));
+        $response2 = $this->retriable(
+            function () use (&$paymentResponse, &$voidRequest, &$idempotencyKey) {
+                return $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest, $idempotencyKey);
+            });
 
-        self::assertNotNull($response2);
+        $this->assertNotNull($response2);
 
-        self::assertEquals($response1["action_id"], $response2["action_id"]);
+        $this->assertEquals($response1["action_id"], $response2["action_id"]);
     }
 
 }

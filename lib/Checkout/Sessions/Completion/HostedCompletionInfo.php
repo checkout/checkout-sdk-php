@@ -9,10 +9,10 @@ class HostedCompletionInfo extends CompletionInfo
         parent::__construct(CompletionInfoType::$hosted);
     }
 
-    public string $callback_url;
+    public $callback_url;
 
-    public string $success_url;
+    public $success_url;
 
-    public string $failure_url;
+    public $failure_url;
 
 }

@@ -5,12 +5,14 @@ namespace Checkout\Instruments;
 class CreateInstrumentRequest
 {
 
-    public string $type;
+    public $type;
 
-    public string $token;
+    public $token;
 
-    public InstrumentAccountHolder $account_holder;
+    // InstrumentAccountHolder
+    public $account_holder;
 
-    public InstrumentCustomerRequest $customer;
+    // InstrumentCustomerRequest
+    public $customer;
 
 }

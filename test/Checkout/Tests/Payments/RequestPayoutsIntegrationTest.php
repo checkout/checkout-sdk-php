@@ -16,7 +16,7 @@ class RequestPayoutsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRequestPayout(): void
+    public function shouldRequestPayout()
     {
         $requestCardDestination = new PaymentRequestCardDestination();
         $requestCardDestination->name = TestCardSource::$VisaName;
@@ -45,7 +45,10 @@ class RequestPayoutsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer",
             "customer.id");
 
-        $payment = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]));
+        $payment = $this->retriable(
+            function () use (&$paymentResponse) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
+            });
 
         $this->assertResponse($payment,
             "destination",
@@ -57,10 +60,10 @@ class RequestPayoutsIntegrationTest extends AbstractPaymentsIntegrationTest
             "destination.last4",
             "destination.fingerprint",
             "destination.name");
-            //"destination.issuer",
-            //"destination.issuer_country",
-            //"destination.product_id",
-            //"destination.product_type"
+        //"destination.issuer",
+        //"destination.issuer_country",
+        //"destination.product_id",
+        //"destination.product_type"
     }
 
 

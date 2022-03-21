@@ -7,14 +7,14 @@ use GuzzleHttp\Client as GuzzleHttpClient;
 final class DefaultHttpClientBuilder implements HttpClientBuilderInterface
 {
 
-    private GuzzleHttpClient $client;
+    private $client;
 
     public function __construct()
     {
         $this->client = new GuzzleHttpClient();
     }
 
-    public function getClient(): GuzzleHttpClient
+    public function getClient()
     {
         return $this->client;
     }

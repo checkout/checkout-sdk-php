@@ -4,24 +4,18 @@ namespace Checkout\Tests\Webhooks;
 
 use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
-use Checkout\Sources\SepaSourceRequest;
-use Checkout\Sources\SourcesClient;
 use Checkout\Tests\UnitTestFixture;
-use Checkout\Tokens\ApplePayTokenRequest;
-use Checkout\Tokens\CardTokenRequest;
-use Checkout\Tokens\GooglePayTokenRequest;
-use Checkout\Tokens\TokensClient;
 use Checkout\Webhooks\WebhookRequest;
 use Checkout\Webhooks\WebhooksClient;
 
 class WebhooksClientTest extends UnitTestFixture
 {
-    private WebhooksClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new WebhooksClient($this->apiClient, $this->configuration);
@@ -32,7 +26,7 @@ class WebhooksClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRetrieveWebhooks(): void
+    public function shouldRetrieveWebhooks()
     {
         $this->apiClient
             ->method("get")
@@ -46,7 +40,7 @@ class WebhooksClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRetrieveWebhook(): void
+    public function shouldRetrieveWebhook()
     {
         $this->apiClient
             ->method("get")
@@ -60,7 +54,7 @@ class WebhooksClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRegisterWebhook(): void
+    public function shouldRegisterWebhook()
     {
         $this->apiClient
             ->method("post")
@@ -74,7 +68,8 @@ class WebhooksClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUpdateWebhook(): void
+    public
+    function shouldUpdateWebhook()
     {
         $this->apiClient
             ->method("put")
@@ -88,7 +83,8 @@ class WebhooksClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldPatchWebhook(): void
+    public
+    function shouldPatchWebhook()
     {
         $this->apiClient
             ->method("patch")
@@ -103,7 +99,8 @@ class WebhooksClientTest extends UnitTestFixture
      * @doesNotPerformAssertions
      * @throws CheckoutApiException
      */
-    public function shouldRemoveWebhook(): void
+    public
+    function shouldRemoveWebhook()
     {
         $this->apiClient->method("delete");
 

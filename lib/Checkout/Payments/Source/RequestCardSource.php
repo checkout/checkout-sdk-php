@@ -2,9 +2,7 @@
 
 namespace Checkout\Payments\Source;
 
-use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
-use Checkout\Common\Phone;
 
 class RequestCardSource extends AbstractRequestSource
 {
@@ -14,20 +12,22 @@ class RequestCardSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$card);
     }
 
-    public string $number;
+    public $number;
 
-    public int $expiry_month;
+    public $expiry_month;
 
-    public int $expiry_year;
+    public $expiry_year;
 
-    public string $name;
+    public $name;
 
-    public string $cvv;
+    public $cvv;
 
-    public bool $stored;
+    public $stored;
 
-    public Address $billing_address;
+    // Address
+    public $billing_address;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
 }

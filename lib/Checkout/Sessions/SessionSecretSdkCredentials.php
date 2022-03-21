@@ -9,19 +9,19 @@ use Checkout\SdkCredentialsInterface;
 
 final class SessionSecretSdkCredentials implements SdkCredentialsInterface
 {
-    public string $secret;
+    public $secret;
 
-    public function __construct(string $secret)
+    public function __construct($secret)
     {
         $this->secret = $secret;
     }
 
     /**
-     * @param string $authorizationType
+     * @param $authorizationType
      * @return SdkAuthorization
      * @throws CheckoutAuthorizationException
      */
-    public function getAuthorization(string $authorizationType): SdkAuthorization
+    public function getAuthorization($authorizationType)
     {
         if ($authorizationType == AuthorizationType::$custom) {
             return new SdkAuthorization(AuthorizationType::$custom, $this->secret);

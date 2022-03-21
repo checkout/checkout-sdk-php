@@ -12,14 +12,18 @@ class PaymentActionsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetPaymentActions(): void
+    public function shouldGetPaymentActions()
     {
         $paymentResponse = $this->makeCardPayment(true);
 
-        $actions = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentActions($paymentResponse["id"]), $this->thereAreTwoPaymentActions());
+        $actions = $this->retriable(
+            function () use (&$paymentResponse) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentActions($paymentResponse["id"]);
+            },
+            $this->thereAreTwoPaymentActions());
 
-        self::assertNotNull($actions);
-        self::assertCount(2, $actions);
+        $this->assertNotNull($actions);
+        $this->assertCount(2, $actions);
         foreach ($actions as $paymentAction) {
             $this->assertResponse($paymentAction,
                 "amount",
@@ -35,8 +39,10 @@ class PaymentActionsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @return Closure
      */
-    private function thereAreTwoPaymentActions(): Closure
+    private function thereAreTwoPaymentActions()
     {
-        return fn($response) => sizeof($response) == 2;
+        return function ($response) {
+            return sizeof($response) == 2;
+        };
     }
 }

@@ -7,7 +7,6 @@ use Checkout\CheckoutFourSdk;
 use Checkout\Environment;
 use Checkout\HttpClientBuilderInterface;
 use Exception;
-use Throwable;
 
 class CheckoutFourSdkTest extends UnitTestFixture
 {
@@ -15,7 +14,7 @@ class CheckoutFourSdkTest extends UnitTestFixture
     /**
      * @test
      */
-    public function shouldCreateCheckoutSdks(): void
+    public function shouldCreateCheckoutSdks()
     {
         $builder = CheckoutFourSdk::staticKeys();
         $builder->setPublicKey(parent::$validFourPk);
@@ -32,7 +31,7 @@ class CheckoutFourSdkTest extends UnitTestFixture
     /**
      * @test
      */
-    public function shouldFailCreatingCheckoutSdks(): void
+    public function shouldFailCreatingCheckoutSdks()
     {
         try {
             $builder = CheckoutFourSdk::staticKeys();
@@ -40,10 +39,10 @@ class CheckoutFourSdkTest extends UnitTestFixture
             $builder->setSecretKey(parent::$validFourSk);
             $builder->setEnvironment(Environment::sandbox());
             $this->assertNotNull($builder->build());
-            self::fail();
+            $this->fail();
         } catch (Exception $e) {
-            self::assertTrue($e instanceof CheckoutArgumentException);
-            self::assertEquals("invalid public key", $e->getMessage());
+            $this->assertTrue($e instanceof CheckoutArgumentException);
+            $this->assertEquals("invalid public key", $e->getMessage());
         }
 
         try {
@@ -52,10 +51,10 @@ class CheckoutFourSdkTest extends UnitTestFixture
             $builder->setSecretKey(parent::$invalidFourSk);
             $builder->setEnvironment(Environment::sandbox());
             $this->assertNotNull($builder->build());
-            self::fail();
-        } catch (Throwable $e) {
-            self::assertTrue($e instanceof CheckoutArgumentException);
-            self::assertEquals("invalid secret key", $e->getMessage());
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof CheckoutArgumentException);
+            $this->assertEquals("invalid secret key", $e->getMessage());
         }
 
     }
@@ -63,7 +62,7 @@ class CheckoutFourSdkTest extends UnitTestFixture
     /**
      * @test
      */
-    public function ShouldInstantiateClientWithCustomHttpClient(): void
+    public function ShouldInstantiateClientWithCustomHttpClient()
     {
         $httpBuilder = $this->createMock(HttpClientBuilderInterface::class);
         $httpBuilder->expects($this->exactly(3))->method("getClient");

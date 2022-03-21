@@ -2,20 +2,19 @@
 
 namespace Checkout\Sources;
 
-use Checkout\Common\CustomerRequest;
-use Checkout\Common\Phone;
-
 abstract class SourceRequest
 {
-    public string $type;
+    public $type;
 
-    public string $reference;
+    public $reference;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
-    public CustomerRequest $customer;
+    // CustomerRequest
+    public $customer;
 
-    public function __construct(string $type)
+    public function __construct($type)
     {
         $this->type = $type;
     }

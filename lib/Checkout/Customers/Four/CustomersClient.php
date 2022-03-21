@@ -10,7 +10,7 @@ use Checkout\Client;
 
 class CustomersClient extends Client
 {
-    private const CUSTOMERS_PATH = "customers";
+    const CUSTOMERS_PATH = "customers";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -18,11 +18,11 @@ class CustomersClient extends Client
     }
 
     /**
-     * @param string $customerId
+     * @param $customerId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function get(string $customerId)
+    public function get($customerId)
     {
         return $this->apiClient->get($this->buildPath(self::CUSTOMERS_PATH, $customerId), $this->sdkAuthorization());
     }
@@ -38,21 +38,21 @@ class CustomersClient extends Client
     }
 
     /**
-     * @param string $customerId
+     * @param $customerId
      * @param CustomerRequest $customerRequest
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function update(string $customerId, CustomerRequest $customerRequest)
+    public function update($customerId, CustomerRequest $customerRequest)
     {
         return $this->apiClient->patch($this->buildPath(self::CUSTOMERS_PATH, $customerId), $customerRequest, $this->sdkAuthorization());
     }
 
     /**
-     * @param string $customerId
+     * @param $customerId
      * @throws CheckoutApiException
      */
-    public function delete(string $customerId): void
+    public function delete($customerId)
     {
         $this->apiClient->delete($this->buildPath(self::CUSTOMERS_PATH, $customerId), $this->sdkAuthorization());
     }

@@ -4,17 +4,17 @@ namespace Checkout;
 
 final class Environment
 {
-    private string $baseUri;
-    private string $authorizationUri;
-    private string $filesBaseUri;
-    private string $transfersUri;
-    private bool $isSandbox;
+    private $baseUri;
+    private $authorizationUri;
+    private $filesBaseUri;
+    private $transfersUri;
+    private $isSandbox;
 
-    private function __construct(string $baseUri,
-                                 string $authorizationUri,
-                                 string $filesBaseUrl,
-                                 string $transfersUri,
-                                 ?bool  $isSandbox = true)
+    private function __construct($baseUri,
+                                 $authorizationUri,
+                                 $filesBaseUrl,
+                                 $transfersUri,
+                                 $isSandbox)
     {
         $this->baseUri = $baseUri;
         $this->authorizationUri = $authorizationUri;
@@ -23,7 +23,7 @@ final class Environment
         $this->isSandbox = $isSandbox;
     }
 
-    public static function sandbox(): Environment
+    public static function sandbox()
     {
         return new Environment("https://api.sandbox.checkout.com/",
             "https://access.sandbox.checkout.com/connect/token",
@@ -32,7 +32,7 @@ final class Environment
             true);
     }
 
-    public static function production(): Environment
+    public static function production()
     {
 
         return new Environment("https://api.checkout.com/",
@@ -43,27 +43,27 @@ final class Environment
 
     }
 
-    public function getBaseUri(): string
+    public function getBaseUri()
     {
         return $this->baseUri;
     }
 
-    public function getAuthorizationUri(): string
+    public function getAuthorizationUri()
     {
         return $this->authorizationUri;
     }
 
-    public function getFilesBaseUri(): string
+    public function getFilesBaseUri()
     {
         return $this->filesBaseUri;
     }
 
-    public function getTransfersUri(): string
+    public function getTransfersUri()
     {
         return $this->transfersUri;
     }
 
-    public function isSandbox(): bool
+    public function isSandbox()
     {
         return $this->isSandbox;
     }

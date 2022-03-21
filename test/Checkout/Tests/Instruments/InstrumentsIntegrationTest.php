@@ -21,7 +21,7 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -29,10 +29,10 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldCreateAndGetInstrument(): void
+    public function shouldCreateAndGetInstrument()
     {
 
-        $instrument = self::createInstrument();
+        $instrument = $this->createInstrument();
         $this->assertResponse($instrument,
             "id",
             "type",
@@ -79,10 +79,10 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldUpdateAndDeleteInstrument(): void
+    public function shouldUpdateAndDeleteInstrument()
     {
 
-        $instrument = self::createInstrument();
+        $instrument = $this->createInstrument();
 
         $updateInstrumentRequest = new UpdateInstrumentRequest();
         $updateInstrumentRequest->name = "testing";
@@ -90,7 +90,7 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
         // update
         $this->assertResponse($this->defaultApi->getInstrumentsClient()->update($instrument["id"], $updateInstrumentRequest),
             "type",
-            "fingerprint",
+            "fingerprint"
         );
 
         // delete
@@ -98,9 +98,9 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
 
         try {
             $this->defaultApi->getInstrumentsClient()->delete($instrument["id"]);
-            self::fail("shouldn't get here!");
+            $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
-            self::assertEquals(self::MESSAGE_404, $e->getMessage());
+            $this->assertEquals(self::MESSAGE_404, $e->getMessage());
         }
 
     }

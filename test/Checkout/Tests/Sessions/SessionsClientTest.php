@@ -13,12 +13,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class SessionsClientTest extends UnitTestFixture
 {
-    private SessionsClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$fourOAuth);
         $this->client = new SessionsClient($this->apiClient, $this->configuration);
@@ -28,7 +28,7 @@ class SessionsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRequestSessionCreateSessionOkResponse(): void
+    public function shouldRequestSessionCreateSessionOkResponse()
     {
         $this->apiClient
             ->method("post")
@@ -43,7 +43,7 @@ class SessionsClientTest extends UnitTestFixture
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldGetSessionDetails(): void
+    public function shouldGetSessionDetails()
     {
         $this->apiClient
             ->method("get")
@@ -58,7 +58,7 @@ class SessionsClientTest extends UnitTestFixture
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldGetSessionDetailsSessionSecret(): void
+    public function shouldGetSessionDetailsSessionSecret()
     {
         $this->apiClient
             ->method("get")
@@ -73,7 +73,7 @@ class SessionsClientTest extends UnitTestFixture
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdateSessionDetails(): void
+    public function shouldUpdateSessionDetails()
     {
         $this->apiClient
             ->method("put")
@@ -88,7 +88,7 @@ class SessionsClientTest extends UnitTestFixture
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdateSessionDetailsSessionSecret(): void
+    public function shouldUpdateSessionDetailsSessionSecret()
     {
         $this->apiClient
             ->method("put")
@@ -103,7 +103,7 @@ class SessionsClientTest extends UnitTestFixture
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldCompleteSession(): void
+    public function shouldCompleteSession()
     {
         $this->apiClient
             ->method("post")
@@ -118,7 +118,7 @@ class SessionsClientTest extends UnitTestFixture
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldCompleteSessionSessionSecret(): void
+    public function shouldCompleteSessionSessionSecret()
     {
         $this->apiClient
             ->method("post")
@@ -133,7 +133,7 @@ class SessionsClientTest extends UnitTestFixture
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdate3dsMethodCompletionIndicator(): void
+    public function shouldUpdate3dsMethodCompletionIndicator()
     {
         $this->apiClient
             ->method("put")
@@ -148,7 +148,7 @@ class SessionsClientTest extends UnitTestFixture
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdate3dsMethodCompletionIndicatorSessionSecret(): void
+    public function shouldUpdate3dsMethodCompletionIndicatorSessionSecret()
     {
         $this->apiClient
             ->method("put")

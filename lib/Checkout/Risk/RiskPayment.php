@@ -4,7 +4,7 @@ namespace Checkout\Risk;
 
 class RiskPayment
 {
-    public string $psp;
+    public $psp;
 
-    public string $id;
+    public $id;
 }

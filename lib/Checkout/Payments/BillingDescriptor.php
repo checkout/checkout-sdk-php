@@ -4,12 +4,12 @@ namespace Checkout\Payments;
 
 class BillingDescriptor
 {
-    public string $name;
+    public $name;
 
-    public string $city;
+    public $city;
 
     //Only available in four
 
-    public string $reference;
+    public $reference;
 
 }

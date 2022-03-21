@@ -12,5 +12,5 @@ class RequestGiropaySource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$giropay);
     }
 
-    public string $purpose;
+    public $purpose;
 }

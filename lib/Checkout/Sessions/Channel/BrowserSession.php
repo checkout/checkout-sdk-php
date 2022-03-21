@@ -10,24 +10,24 @@ class BrowserSession extends ChannelData
         parent::__construct(ChannelType::$browser);
     }
 
-    public string $three_ds_method_completion;
+    public $three_ds_method_completion;
 
-    public string $accept_header;
+    public $accept_header;
 
-    public bool $java_enabled;
+    public $java_enabled;
 
-    public string $language;
+    public $language;
 
-    public string $color_depth;
+    public $color_depth;
 
-    public string $screen_height;
+    public $screen_height;
 
-    public string $screen_width;
+    public $screen_width;
 
-    public string $timezone;
+    public $timezone;
 
-    public string $user_agent;
+    public $user_agent;
 
-    public string $ip_address;
+    public $ip_address;
 
 }

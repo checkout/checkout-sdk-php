@@ -10,9 +10,9 @@ use Checkout\Client;
 
 class EventsClient extends Client
 {
-    private const EVENTS_PATH = "events";
-    private const WEBHOOKS_PATH = "webhooks";
-    private const RETRY_PATH = "retry";
+    const EVENTS_PATH = "events";
+    const WEBHOOKS_PATH = "webhooks";
+    const RETRY_PATH = "retry";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -24,7 +24,7 @@ class EventsClient extends Client
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function retrieveAllEventTypes(string $version = null)
+    public function retrieveAllEventTypes($version = null)
     {
         $path = "event-types";
         if (!empty($version)) {
@@ -44,45 +44,45 @@ class EventsClient extends Client
     }
 
     /**
-     * @param string $eventId
+     * @param $eventId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function retrieveEvent(string $eventId)
+    public function retrieveEvent($eventId)
     {
         return $this->apiClient->get($this->buildPath(self::EVENTS_PATH, $eventId), $this->sdkAuthorization());
     }
 
     /**
-     * @param string $eventId
-     * @param string $notificationId
+     * @param $eventId
+     * @param $notificationId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function retrieveEventNotification(string $eventId, string $notificationId)
+    public function retrieveEventNotification($eventId, $notificationId)
     {
         return $this->apiClient->get($this->buildPath(self::EVENTS_PATH, $eventId, $notificationId),
             $this->sdkAuthorization());
     }
 
     /**
-     * @param string $eventId
-     * @param string $webhookId
+     * @param $eventId
+     * @param $webhookId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function retryWebhook(string $eventId, string $webhookId)
+    public function retryWebhook($eventId, $webhookId)
     {
         return $this->apiClient->post($this->buildPath(self::EVENTS_PATH, $eventId,
             self::WEBHOOKS_PATH, $webhookId, self::RETRY_PATH), null, $this->sdkAuthorization());
     }
 
     /**
-     * @param string $eventId
+     * @param $eventId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function retryAllWebhooks(string $eventId)
+    public function retryAllWebhooks($eventId)
     {
         return $this->apiClient->post($this->buildPath(self::EVENTS_PATH, $eventId,
             self::WEBHOOKS_PATH, self::RETRY_PATH), null, $this->sdkAuthorization());

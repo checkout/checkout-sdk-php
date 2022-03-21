@@ -18,7 +18,7 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldIncrementPaymentAuthorization(): void
+    public function shouldIncrementPaymentAuthorization()
     {
         $paymentResponse = $this->makeEstimatedAuthorizedPayment();
 
@@ -29,7 +29,7 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
 
         $authorizationResponse = $this->fourApi->getPaymentsClient()->incrementPaymentAuthorization($paymentResponse["id"], $authorizationRequest);
 
-        self::assertResponse($authorizationResponse,
+        $this->assertResponse($authorizationResponse,
             "amount",
             "action_id",
             "currency",
@@ -47,7 +47,7 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldIncrementPaymentAuthorization_idempotently(): void
+    public function shouldIncrementPaymentAuthorization_idempotently()
     {
         $paymentResponse = $this->makeEstimatedAuthorizedPayment();
 
@@ -61,7 +61,7 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
         $authorizationResponse = $this->fourApi->getPaymentsClient()->incrementPaymentAuthorization($paymentResponse["id"], $authorizationRequest, $idempotencyKey);
         $authorizationResponse2 = $this->fourApi->getPaymentsClient()->incrementPaymentAuthorization($paymentResponse["id"], $authorizationRequest, $idempotencyKey);
 
-        self::assertEquals($authorizationResponse["action_id"], $authorizationResponse2["action_id"]);
+        $this->assertEquals($authorizationResponse["action_id"], $authorizationResponse2["action_id"]);
     }
 
     /**

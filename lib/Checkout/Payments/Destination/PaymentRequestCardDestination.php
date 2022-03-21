@@ -2,8 +2,6 @@
 
 namespace Checkout\Payments\Destination;
 
-use Checkout\Common\Address;
-use Checkout\Common\Phone;
 use Checkout\Payments\PaymentDestinationType;
 
 class PaymentRequestCardDestination extends PaymentRequestDestination
@@ -14,21 +12,23 @@ class PaymentRequestCardDestination extends PaymentRequestDestination
         parent::__construct(PaymentDestinationType::$card);
     }
 
-    public string $number;
+    public $number;
 
-    public int $expiry_month;
+    public $expiry_month;
 
-    public int $expiry_year;
+    public $expiry_year;
 
-    public string $first_name;
+    public $first_name;
 
-    public string $last_name;
+    public $last_name;
 
-    public string $name;
+    public $name;
 
-    public Address $billing_address;
+    // Address
+    public $billing_address;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
 }
 

@@ -2,10 +2,8 @@
 
 namespace Checkout;
 
-use GuzzleHttp\ClientInterface;
-
 interface HttpClientBuilderInterface
 {
-    public function getClient(): ClientInterface;
+    public function getClient();
 
 }

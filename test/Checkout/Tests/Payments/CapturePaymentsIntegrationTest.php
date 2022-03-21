@@ -12,7 +12,7 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldFullCaptureCardPayment(): void
+    public function shouldFullCaptureCardPayment()
     {
 
         $paymentResponse = $this->makeCardPayment();
@@ -20,7 +20,10 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $captureRequest = new CaptureRequest();
         $captureRequest->reference = uniqid("shouldFullCaptureCardPayment");
 
-        $response = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->capturePayment($paymentResponse["id"], $captureRequest));
+        $response = $this->retriable(
+            function () use (&$paymentResponse, &$captureRequest) {
+                return $this->defaultApi->getPaymentsClient()->capturePayment($paymentResponse["id"], $captureRequest);
+            });
 
         $this->assertResponse($response, "reference", "action_id");
 
@@ -30,7 +33,7 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldPartiallyCaptureCardPayment(): void
+    public function shouldPartiallyCaptureCardPayment()
     {
 
         $paymentResponse = $this->makeCardPayment();
@@ -39,7 +42,10 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $captureRequest->reference = uniqid("shouldPartiallyCaptureCardPayment");
         $captureRequest->amount = 5;
 
-        $response = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->capturePayment($paymentResponse["id"], $captureRequest));
+        $response = $this->retriable(
+            function () use (&$paymentResponse, &$captureRequest) {
+                return $this->defaultApi->getPaymentsClient()->capturePayment($paymentResponse["id"], $captureRequest);
+            });
 
         $this->assertResponse($response, "reference", "action_id");
     }
@@ -48,7 +54,7 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCaptureCardPaymentIdempotent(): void
+    public function shouldCaptureCardPaymentIdempotent()
     {
         $paymentResponse = $this->makeCardPayment();
 
@@ -57,14 +63,20 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $idempotencyKey = $this->idempotencyKey();
 
-        $capture1 = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->capturePayment($paymentResponse["id"], $captureRequest, $idempotencyKey));
+        $capture1 = $this->retriable(
+            function () use (&$paymentResponse, &$captureRequest, &$idempotencyKey) {
+                return $this->defaultApi->getPaymentsClient()->capturePayment($paymentResponse["id"], $captureRequest, $idempotencyKey);
+            });
 
-        self::assertNotNull($capture1);
+        $this->assertNotNull($capture1);
 
-        $capture2 = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->capturePayment($paymentResponse["id"], $captureRequest, $idempotencyKey));
+        $capture2 = $this->retriable(
+            function () use (&$paymentResponse, &$captureRequest, &$idempotencyKey) {
+                return $this->defaultApi->getPaymentsClient()->capturePayment($paymentResponse["id"], $captureRequest, $idempotencyKey);
+            });
 
-        self::assertNotNull($capture2);
+        $this->assertNotNull($capture2);
 
-        self::assertEquals($capture1["action_id"], $capture2["action_id"]);
+        $this->assertEquals($capture1["action_id"], $capture2["action_id"]);
     }
 }

@@ -19,7 +19,7 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldQueryDisputes(): void
+    public function shouldQueryDisputes()
     {
         $disputesQueryFilter = new DisputesQueryFilter();
         $disputesQueryFilter->limit = 100;
@@ -55,10 +55,10 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUploadFile(): void
+    public function shouldUploadFile()
     {
         $fileRequest = new FileRequest();
-        $fileRequest->file = self::getCheckoutFilePath();
+        $fileRequest->file = $this->getCheckoutFilePath();
         $fileRequest->purpose = "dispute_evidence";
 
         $uploadFileResponse = $this->fourApi->getDisputesClient()->uploadFile($fileRequest);
@@ -71,28 +71,32 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
             "size",
             "uploaded_on",
             "_links");
-        self::assertEquals($fileRequest->purpose, $fileDetails["purpose"]);
-        self::assertTrue(strpos($fileRequest->file, $fileDetails["filename"]) !== false);
+        $this->assertEquals($fileRequest->purpose, $fileDetails["purpose"]);
+        $this->assertTrue(strpos($fileRequest->file, $fileDetails["filename"]) !== false);
     }
 
     /**
      * Disabled due the time that takes to finish, run on demand
      * @throws CheckoutApiException
      */
-    public function shouldTestFullDisputesWorkflow(): void
+    public function shouldTestFullDisputesWorkflow()
     {
         $payment = $this->makeCardPayment(true, 1040);
 
         $filter = new DisputesQueryFilter();
         $filter->payment_id = $payment["id"];
 
-        $queryResponse = self::retriable(fn() => $this->defaultApi->getDisputesClient()->query($filter), $this->thereAreDisputes());
+        $queryResponse = $this->retriable(
+            function () use (&$filter) {
+                return $this->fourApi->getDisputesClient()->query($filter);
+            },
+            $this->thereAreDisputes());
 
         $this->assertResponse($queryResponse, "data");
-        self::assertEquals($payment["id"], $queryResponse["data"]["0"]["payment_id"]);
+        $this->assertEquals($payment["id"], $queryResponse["data"]["0"]["payment_id"]);
 
         $fileRequest = new FileRequest();
-        $fileRequest->file = self::getCheckoutFilePath();
+        $fileRequest->file = $this->getCheckoutFilePath();
         $fileRequest->purpose = "dispute_evidence";
 
         $uploadFileResponse = $this->fourApi->getDisputesClient()->uploadFile($fileRequest);
@@ -127,9 +131,11 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @return Closure
      */
-    private function thereAreDisputes(): Closure
+    private function thereAreDisputes()
     {
-        return fn($response): bool => array_key_exists("total_count", $response) && $response["total_count"] != 0;
+        return function ($response) {
+            return array_key_exists("total_count", $response) && $response["total_count"] != 0;
+        };
     }
 
 }

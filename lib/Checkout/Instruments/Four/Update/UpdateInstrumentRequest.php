@@ -5,9 +5,9 @@ namespace Checkout\Instruments\Four\Update;
 abstract class UpdateInstrumentRequest
 {
     //InstrumentType
-    public string $type;
+    public $type;
 
-    protected function __construct(string $type)
+    protected function __construct($type)
     {
         $this->type = $type;
     }

@@ -10,23 +10,22 @@ use Checkout\Tests\UnitTestFixture;
 
 class SourcesClientTest extends UnitTestFixture
 {
-    private SourcesClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new SourcesClient($this->apiClient, $this->configuration);
     }
 
-
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateSepaSource(): void
+    public function shouldCreateSepaSource()
     {
 
         $this->apiClient

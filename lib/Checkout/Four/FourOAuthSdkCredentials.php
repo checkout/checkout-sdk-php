@@ -11,31 +11,29 @@ use Checkout\SdkAuthorization;
 use Checkout\SdkCredentialsInterface;
 use DateInterval;
 use DateTime;
-use GuzzleHttp\ClientInterface;
-use Throwable;
+use Exception;
 
 class FourOAuthSdkCredentials implements SdkCredentialsInterface
 {
 
-    private ClientInterface $client;
-    private string $clientId;
-    private string $clientSecret;
-    private string $authorizationUri;
-    private array $scopes;
-    private ?OAuthAccessToken $accessToken = null;
+    private $client;
+    private $clientId;
+    private $clientSecret;
+    private $authorizationUri;
+    private $scopes;
+    private $accessToken = null;
 
     /**
      * @param HttpClientBuilderInterface $httpClientBuilder
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param string $authorizationUri
+     * @param $clientId
+     * @param $clientSecret
+     * @param $authorizationUri
      * @param array $scopes
      */
     public function __construct(HttpClientBuilderInterface $httpClientBuilder,
-                                string                     $clientId,
-                                string                     $clientSecret,
-                                string                     $authorizationUri,
-                                array                      $scopes)
+                                                           $clientId,
+                                                           $clientSecret,
+                                                           $authorizationUri, array $scopes)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
@@ -46,25 +44,25 @@ class FourOAuthSdkCredentials implements SdkCredentialsInterface
 
     /**
      * @param HttpClientBuilderInterface $httpClientBuilder
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param string $authorizationUri
+     * @param $clientId
+     * @param $clientSecret
+     * @param $authorizationUri
      * @param array $scopes
      * @return FourOAuthSdkCredentials
      * @throws CheckoutException
      */
     public static function init(HttpClientBuilderInterface $httpClientBuilder,
-                                string                     $clientId,
-                                string                     $clientSecret,
-                                string                     $authorizationUri,
-                                array                      $scopes): FourOAuthSdkCredentials
+                                                           $clientId,
+                                                           $clientSecret,
+                                                           $authorizationUri,
+                                array                      $scopes)
     {
         $credentials = new FourOAuthSdkCredentials($httpClientBuilder, $clientId, $clientSecret, $authorizationUri, $scopes);
         $credentials->getAccessToken();
         return $credentials;
     }
 
-    function getAuthorization(string $authorizationType): SdkAuthorization
+    function getAuthorization($authorizationType)
     {
         switch ($authorizationType) {
             case AuthorizationType::$secretKeyOrOAuth:
@@ -76,7 +74,7 @@ class FourOAuthSdkCredentials implements SdkCredentialsInterface
         }
     }
 
-    private function getAccessToken(): OAuthAccessToken
+    private function getAccessToken()
     {
         if (!is_null($this->accessToken) && $this->accessToken->isValid()) {
             return $this->accessToken;
@@ -99,7 +97,7 @@ class FourOAuthSdkCredentials implements SdkCredentialsInterface
             $expirationDate->add(new DateInterval("PT" . $body["expires_in"] . "S"));
             $this->accessToken = new OAuthAccessToken($body["access_token"], $expirationDate);
             return $this->accessToken;
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             throw new CheckoutException($e->getMessage());
         }
     }

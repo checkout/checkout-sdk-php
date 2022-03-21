@@ -4,7 +4,7 @@ namespace Checkout\Marketplace;
 
 class InstrumentDocument
 {
-    public string $type;
+    public $type;
 
-    public string $field_id;
+    public $field_id;
 }

@@ -2,8 +2,6 @@
 
 namespace Checkout\Payments\Four\Destination;
 
-use Checkout\Common\Four\AccountHolder;
-use Checkout\Common\Four\BankDetails;
 use Checkout\Payments\PaymentDestinationType;
 
 class PaymentBankAccountDestination extends PaymentRequestDestination
@@ -15,22 +13,24 @@ class PaymentBankAccountDestination extends PaymentRequestDestination
     }
 
     //AccountType
-    public string $account_type;
+    public $account_type;
 
-    public string $account_number;
+    public $account_number;
 
-    public string $bank_code;
+    public $bank_code;
 
-    public string $branch_code;
+    public $branch_code;
 
-    public string $iban;
+    public $iban;
 
-    public string $swift_bic;
+    public $swift_bic;
 
-    public string $country;
+    public $country;
 
-    public AccountHolder $account_holder;
+    // AccountHolder
+    public $account_holder;
 
-    public BankDetails $bank;
+    // BankDetails
+    public $bank;
 
 }

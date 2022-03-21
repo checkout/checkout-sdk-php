@@ -10,9 +10,9 @@ use Checkout\Files\FilesClient;
 
 class DisputesClient extends FilesClient
 {
-    protected const DISPUTES_PATH = "disputes";
-    private const ACCEPT_PATH = "accept";
-    private const EVIDENCE_PATH = "evidence";
+    const DISPUTES_PATH = "disputes";
+    const ACCEPT_PATH = "accept";
+    const EVIDENCE_PATH = "evidence";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -30,52 +30,52 @@ class DisputesClient extends FilesClient
     }
 
     /**
-     * @param string $disputeId
+     * @param $disputeId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function getDisputeDetails(string $disputeId)
+    public function getDisputeDetails($disputeId)
     {
         return $this->apiClient->get($this->buildPath(self::DISPUTES_PATH, $disputeId), $this->sdkAuthorization());
     }
 
     /**
-     * @param string $disputeId
+     * @param $disputeId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function accept(string $disputeId)
+    public function accept($disputeId)
     {
         return $this->apiClient->post($this->buildPath(self::DISPUTES_PATH, $disputeId, self::ACCEPT_PATH), null, $this->sdkAuthorization());
     }
 
     /**
-     * @param string $disputeId
+     * @param $disputeId
      * @param DisputeEvidenceRequest $disputeEvidenceRequest
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function putEvidence(string $disputeId, DisputeEvidenceRequest $disputeEvidenceRequest)
+    public function putEvidence($disputeId, DisputeEvidenceRequest $disputeEvidenceRequest)
     {
         return $this->apiClient->put($this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH), $disputeEvidenceRequest, $this->sdkAuthorization());
     }
 
     /**
-     * @param string $disputeId
+     * @param $disputeId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function getEvidence(string $disputeId)
+    public function getEvidence($disputeId)
     {
         return $this->apiClient->get($this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH), $this->sdkAuthorization());
     }
 
     /**
-     * @param string $disputeId
+     * @param $disputeId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function submitEvidence(string $disputeId)
+    public function submitEvidence($disputeId)
     {
         return $this->apiClient->post($this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH), null, $this->sdkAuthorization());
     }

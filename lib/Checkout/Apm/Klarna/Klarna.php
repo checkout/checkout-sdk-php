@@ -4,13 +4,13 @@ namespace Checkout\Apm\Klarna;
 
 class Klarna
 {
-    public string $description;
+    public $description;
 
     //KlarnaProduct
-    public array $products;
+    public $products;
 
     //KlarnaShippingInfo
-    public array $shipping_info;
+    public $shipping_info;
 
-    public int $shipping_delay;
+    public $shipping_delay;
 }

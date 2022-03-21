@@ -11,10 +11,10 @@ use Checkout\Payments\VoidRequest;
 
 class KlarnaClient extends Client
 {
-    private const CREDIT_SESSIONS_PATH = "credit-sessions";
-    private const ORDERS_PATH = "orders";
-    private const CAPTURES_PATH = "captures";
-    private const VOIDS_PATH = "voids";
+    const CREDIT_SESSIONS_PATH = "credit-sessions";
+    const ORDERS_PATH = "orders";
+    const CAPTURES_PATH = "captures";
+    const VOIDS_PATH = "voids";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -33,41 +33,41 @@ class KlarnaClient extends Client
     }
 
     /**
-     * @param string $sessionId
+     * @param $sessionId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function getCreditSession(string $sessionId)
+    public function getCreditSession($sessionId)
     {
         return $this->apiClient->get($this->buildPath($this->getBaseUrl(), self::CREDIT_SESSIONS_PATH, $sessionId), $this->sdkAuthorization());
     }
 
     /**
-     * @param string $paymentId
+     * @param $paymentId
      * @param OrderCaptureRequest $orderCaptureRequest
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function capturePayment(string $paymentId, OrderCaptureRequest $orderCaptureRequest)
+    public function capturePayment($paymentId, OrderCaptureRequest $orderCaptureRequest)
     {
         return $this->apiClient->post($this->buildPath($this->getBaseUrl(), self::ORDERS_PATH, $paymentId, self::CAPTURES_PATH),
             $orderCaptureRequest, $this->sdkAuthorization());
     }
 
     /**
-     * @param string $paymentId
+     * @param $paymentId
      * @param VoidRequest $voidRequest
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function voidPayment(string $paymentId, VoidRequest $voidRequest)
+    public function voidPayment($paymentId, VoidRequest $voidRequest)
     {
         return $this->apiClient->post($this->buildPath($this->getBaseUrl(), self::ORDERS_PATH, $paymentId, self::VOIDS_PATH),
             $voidRequest, $this->sdkAuthorization());
     }
 
 
-    private function getBaseUrl(): string
+    private function getBaseUrl()
     {
         return $this->configuration->getEnvironment()->isSandbox() ? "klarna-external" : "klarna";
     }

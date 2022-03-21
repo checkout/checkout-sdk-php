@@ -4,8 +4,8 @@ namespace Checkout\Payments;
 
 class VoidRequest
 {
-    public string $reference;
+    public $reference;
 
-    public array $metadata;
+    public $metadata;
 
 }

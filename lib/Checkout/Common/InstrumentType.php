@@ -4,9 +4,9 @@ namespace Checkout\Common;
 
 class InstrumentType
 {
-    public static string $bank_account = "bank_account";
+    public static $bank_account = "bank_account";
 
-    public static string $token = "token";
+    public static $token = "token";
 
-    public static string $card = "card";
+    public static $card = "card";
 }

@@ -4,11 +4,11 @@ namespace Checkout\Payments\Four\Request\Source;
 
 class PayoutRequestSource
 {
-    public string $type;
+    public $type;
 
-    public int $amount;
+    public $amount;
 
-    public function __construct(string $type)
+    public function __construct($type)
     {
         $this->type = $type;
     }

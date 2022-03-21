@@ -4,8 +4,8 @@ namespace Checkout\Payments;
 
 class PaymentType
 {
-    public static string $regular = "Regular";
-    public static string $recurring = "Recurring";
-    public static string $moto = "MOTO";
-    public static string $installment = "Installment";
+    public static $regular = "Regular";
+    public static $recurring = "Recurring";
+    public static $moto = "MOTO";
+    public static $installment = "Installment";
 }

@@ -4,16 +4,16 @@ namespace Checkout\Common;
 
 class Address
 {
-    public string $address_line1;
+    public $address_line1;
 
-    public string $address_line2;
+    public $address_line2;
 
-    public string $city;
+    public $city;
 
-    public string $state;
+    public $state;
 
-    public string $zip;
+    public $zip;
 
-    public string $country;
+    public $country;
 
 }

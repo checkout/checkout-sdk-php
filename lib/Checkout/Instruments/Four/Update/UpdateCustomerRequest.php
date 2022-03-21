@@ -4,7 +4,7 @@ namespace Checkout\Instruments\Four\Update;
 
 class UpdateCustomerRequest
 {
-    public string $id;
+    public $id;
 
-    public bool $default;
+    public $default;
 }

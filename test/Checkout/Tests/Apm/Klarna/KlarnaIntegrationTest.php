@@ -16,7 +16,7 @@ class KlarnaIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -25,7 +25,7 @@ class KlarnaIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateAndGetKlarnaSession(): void
+    public function shouldCreateAndGetKlarnaSession()
     {
         $klarnaProduct = new KlarnaProduct();
         $klarnaProduct->name = "Brown leather belt";

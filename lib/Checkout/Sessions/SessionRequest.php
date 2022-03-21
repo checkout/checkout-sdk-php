@@ -2,38 +2,40 @@
 
 namespace Checkout\Sessions;
 
-use Checkout\Sessions\Channel\ChannelData;
-use Checkout\Sessions\Completion\CompletionInfo;
-use Checkout\Sessions\Source\SessionSource;
-
 class SessionRequest
 {
-    public SessionSource $source;
+    // SessionSource
+    public $source;
 
-    public int $amount;
+    public $amount;
 
-    public string $currency;
+    public $currency;
 
-    public string $processing_channel_id;
+    public $processing_channel_id;
 
-    public SessionMarketplaceData $marketplace;
+    // SessionMarketplaceData
+    public $marketplace;
 
-    public string $authentication_type;
+    public $authentication_type;
 
-    public string $authentication_category;
+    public $authentication_category;
 
-    public string $challenge_indicator;
+    public $challenge_indicator;
 
-    public SessionsBillingDescriptor $billing_descriptor;
+    // SessionsBillingDescriptor
+    public $billing_descriptor;
 
-    public string $reference;
+    public $reference;
 
-    public string $transaction_type;
+    public $transaction_type;
 
-    public SessionAddress $shipping_address;
+    // SessionAddress
+    public $shipping_address;
 
-    public CompletionInfo $completion;
+    // CompletionInfo
+    public $completion;
 
-    public ChannelData $channel_data;
+    // ChannelData
+    public $channel_data;
 
 }

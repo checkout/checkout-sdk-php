@@ -4,7 +4,7 @@ namespace Checkout\Marketplace\Transfer;
 
 class TransferSource
 {
-    public string $id;
+    public $id;
 
-    public int $amount;
+    public $amount;
 }

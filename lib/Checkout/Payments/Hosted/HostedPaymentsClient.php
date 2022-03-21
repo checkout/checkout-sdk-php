@@ -11,7 +11,7 @@ use Checkout\Client;
 class HostedPaymentsClient extends Client
 {
 
-    private const HOSTED_PAYMENTS = "hosted-payments";
+    const HOSTED_PAYMENTS = "hosted-payments";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -19,11 +19,11 @@ class HostedPaymentsClient extends Client
     }
 
     /**
-     * @param string $id
+     * @param $id
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function getHostedPaymentsPageDetails(string $id)
+    public function getHostedPaymentsPageDetails($id)
     {
         return $this->apiClient->get($this->buildPath(self::HOSTED_PAYMENTS, $id), $this->sdkAuthorization());
     }

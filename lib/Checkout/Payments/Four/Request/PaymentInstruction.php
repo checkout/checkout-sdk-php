@@ -4,15 +4,15 @@ namespace Checkout\Payments\Four\Request;
 
 class PaymentInstruction
 {
-    public string $purpose;
+    public $purpose;
 
-    public string $charge_bearer;
+    public $charge_bearer;
 
-    public bool $repair;
+    public $repair;
 
     //InstructionScheme
-    public string $scheme;
+    public $scheme;
 
-    public string $quote_id;
+    public $quote_id;
 
 }

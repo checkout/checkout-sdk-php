@@ -2,7 +2,6 @@
 
 namespace Checkout\Marketplace;
 
-use Checkout\Common\Four\BankDetails;
 use Checkout\Common\InstrumentType;
 
 class MarketplacePaymentInstrument
@@ -12,31 +11,34 @@ class MarketplacePaymentInstrument
         $this->type = InstrumentType::$bank_account;
     }
 
-    public string $type;
+    public $type;
 
-    public string $label;
+    public $label;
 
-    public string $account_type;
+    public $account_type;
 
-    public string $account_number;
+    public $account_number;
 
-    public string $bank_code;
+    public $bank_code;
 
-    public string $branch_code;
+    public $branch_code;
 
-    public string $iban;
+    public $iban;
 
-    public string $bban;
+    public $bban;
 
-    public string $swift_bic;
+    public $swift_bic;
 
-    public string $currency;
+    public $currency;
 
-    public string $country;
+    public $country;
 
-    public InstrumentDocument $document;
+    // InstrumentDocument
+    public $document;
 
-    public BankDetails $bank;
+    // BankDetails
+    public $bank;
 
-    public MarketplaceAccountHolder $account_holder;
+    // MarketplaceAccountHolder
+    public $account_holder;
 }

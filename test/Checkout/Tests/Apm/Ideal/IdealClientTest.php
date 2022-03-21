@@ -9,12 +9,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class IdealClientTest extends UnitTestFixture
 {
-    private IdealClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new IdealClient($this->apiClient, $this->configuration);
@@ -24,7 +24,7 @@ class IdealClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetInfo(): void
+    public function shouldGetInfo()
     {
         $this->apiClient
             ->method("get")
@@ -38,7 +38,7 @@ class IdealClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetIssuers(): void
+    public function shouldGetIssuers()
     {
         $this->apiClient
             ->method("get")

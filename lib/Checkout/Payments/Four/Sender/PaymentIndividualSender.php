@@ -2,8 +2,6 @@
 
 namespace Checkout\Payments\Four\Sender;
 
-use Checkout\Common\Address;
-
 class PaymentIndividualSender extends PaymentSender
 {
     public function __construct()
@@ -11,12 +9,14 @@ class PaymentIndividualSender extends PaymentSender
         parent::__construct(PaymentSenderType::$individual);
     }
 
-    public string $fist_name;
+    public $fist_name;
 
-    public string $last_name;
+    public $last_name;
 
-    public Address $address;
+    // Address
+    public $address;
 
-    public Identification $identification;
+    // Identification
+    public $identification;
 
 }

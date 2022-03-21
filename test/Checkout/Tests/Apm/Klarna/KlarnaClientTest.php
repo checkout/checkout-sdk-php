@@ -12,12 +12,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class KlarnaClientTest extends UnitTestFixture
 {
-    private KlarnaClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new KlarnaClient($this->apiClient, $this->configuration);
@@ -27,7 +27,7 @@ class KlarnaClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateCreditSession(): void
+    public function shouldCreateCreditSession()
     {
         $this->apiClient
             ->method("post")
@@ -41,7 +41,7 @@ class KlarnaClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetCreditSession(): void
+    public function shouldGetCreditSession()
     {
         $this->apiClient
             ->method("get")
@@ -55,7 +55,7 @@ class KlarnaClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function capturePayment(): void
+    public function capturePayment()
     {
         $this->apiClient
             ->method("post")
@@ -69,7 +69,7 @@ class KlarnaClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldVoidPayment(): void
+    public function shouldVoidPayment()
     {
         $this->apiClient
             ->method("post")

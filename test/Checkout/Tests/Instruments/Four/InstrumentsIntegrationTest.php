@@ -3,22 +3,15 @@
 namespace Checkout\Tests\Instruments\Four;
 
 use Checkout\CheckoutApiException;
-use Checkout\CheckoutAuthorizationException;
-use Checkout\Common\Country;
-use Checkout\Common\Currency;
 use Checkout\Common\Four\AccountHolder;
-use Checkout\Common\Four\AccountHolderType;
 use Checkout\Customers\Four\CustomerRequest;
 use Checkout\Instruments\Four\Create\CreateCustomerInstrumentRequest;
 use Checkout\Instruments\Four\Create\CreateTokenInstrumentRequest;
-use Checkout\Instruments\Four\Get\BankAccountFieldQuery;
-use Checkout\Instruments\Four\Get\PaymentNetwork;
 use Checkout\Instruments\Four\Update\UpdateCardInstrumentRequest;
 use Checkout\Instruments\Four\Update\UpdateCustomerRequest;
 use Checkout\Instruments\Four\Update\UpdateTokenInstrumentRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\Payments\Four\AbstractPaymentsIntegrationTest;
-use Exception;
 
 class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
 {
@@ -26,7 +19,7 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$four);
     }
@@ -35,7 +28,7 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateAndGetInstrument(): void
+    public function shouldCreateAndGetInstrument()
     {
         $tokenInstrument = $this->createTokenInstrument();
 
@@ -56,15 +49,15 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "product_id",
             "product_type",
             "customer");
-        self::assertEquals($tokenInstrument["id"], $getInstrument["id"]);
-        self::assertEquals($tokenInstrument["fingerprint"], $getInstrument["fingerprint"]);
+        $this->assertEquals($tokenInstrument["id"], $getInstrument["id"]);
+        $this->assertEquals($tokenInstrument["fingerprint"], $getInstrument["fingerprint"]);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUpdateTokenInstrument(): void
+    public function shouldUpdateTokenInstrument()
     {
         $tokenInstrument = $this->createTokenInstrument();
 
@@ -78,14 +71,14 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $this->assertResponse($updateResponse,
             "type",
             "fingerprint");
-        self::assertEquals($tokenInstrument["fingerprint"], $updateResponse["fingerprint"]);
+        $this->assertEquals($tokenInstrument["fingerprint"], $updateResponse["fingerprint"]);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUpdateCardInstrument(): void
+    public function shouldUpdateCardInstrument()
     {
         $tokenInstrument = $this->createTokenInstrument();
 
@@ -126,8 +119,8 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "product_type",
             "customer"
         );
-        self::assertEquals($updateResponse["fingerprint"], $cardResponse["fingerprint"]);
-        self::assertEquals($tokenInstrument["customer"]["id"], $cardResponse["customer"]["id"]);
+        $this->assertEquals($updateResponse["fingerprint"], $cardResponse["fingerprint"]);
+        $this->assertEquals($tokenInstrument["customer"]["id"], $cardResponse["customer"]["id"]);
     }
 
 
@@ -135,7 +128,7 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldDeleteInstrument(): void
+    public function shouldDeleteInstrument()
     {
         $tokenInstrument = $this->createTokenInstrument();
 

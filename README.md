@@ -13,7 +13,7 @@ Packages and sources are available from [Packagist](https://packagist.org/packag
 
 ```json
 "require": {
-    "php": ">=7.4",
+    "php": ">=5.6",
     "checkout/checkout-sdk-php": "version"
 }
 ```

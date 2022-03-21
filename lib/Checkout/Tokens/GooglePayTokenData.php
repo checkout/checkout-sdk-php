@@ -4,9 +4,9 @@ namespace Checkout\Tokens;
 
 class GooglePayTokenData
 {
-    public string $signature;
+    public $signature;
 
-    public string $protocolVersion;
+    public $protocolVersion;
 
-    public string $signedMessage;
+    public $signedMessage;
 }

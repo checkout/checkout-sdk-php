@@ -11,12 +11,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class HostedPaymentsClientTest extends UnitTestFixture
 {
-    private HostedPaymentsClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new HostedPaymentsClient($this->apiClient, $this->configuration);
@@ -26,7 +26,7 @@ class HostedPaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetHostedPaymentsPageDetails(): void
+    public function shouldGetHostedPaymentsPageDetails()
     {
 
         $this->apiClient
@@ -42,7 +42,7 @@ class HostedPaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateHostedPaymentsPageSession(): void
+    public function shouldCreateHostedPaymentsPageSession()
     {
 
         $this->apiClient

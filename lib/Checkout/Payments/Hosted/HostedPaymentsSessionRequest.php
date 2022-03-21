@@ -2,71 +2,70 @@
 
 namespace Checkout\Payments\Hosted;
 
-use Checkout\Common\CustomerRequest;
-use Checkout\Common\MarketplaceData;
-use Checkout\Payments\BillingDescriptor;
-use Checkout\Payments\BillingInformation;
-use Checkout\Payments\PaymentRecipient;
-use Checkout\Payments\ProcessingSettings;
-use Checkout\Payments\RiskRequest;
-use Checkout\Payments\ShippingDetails;
-use Checkout\Payments\ThreeDsRequest;
-use DateTime;
-
 class HostedPaymentsSessionRequest
 {
-    public int $amount;
+    public $amount;
 
-    public string $currency;
+    public $currency;
 
-    public string $reference;
+    public $reference;
 
-    public string $description;
+    public $description;
 
-    public CustomerRequest $customer;
+    // CustomerRequest
+    public $customer;
 
-    public ShippingDetails $shipping;
+    // ShippingDetails
+    public $shipping;
 
-    public BillingInformation $billing;
+    // BillingInformation
+    public $billing;
 
-    public PaymentRecipient $recipient;
+    // PaymentRecipient
+    public $recipient;
 
-    public ProcessingSettings $processing;
+    // ProcessingSettings
+    public $processing;
 
     // Product
-    public array $products;
+    public $products;
 
-    public array $metadata;
+    public $metadata;
 
-    public ThreeDsRequest $three_ds;
+    // ThreeDsRequest
+    public $three_ds;
 
-    public RiskRequest $risk;
+    // RiskRequest
+    public $risk;
 
-    public string $success_url;
+    public $success_url;
 
-    public string $cancel_url;
+    public $cancel_url;
 
-    public string $failure_url;
+    public $failure_url;
 
-    public string $locale;
+    public $locale;
 
-    public bool $capture;
+    public $capture;
 
-    public DateTime $capture_on;
+    // DateTime
+    public $capture_on;
 
-    public string $payment_type;
+    public $payment_type;
 
-    public string $payment_ip;
+    public $payment_ip;
 
-    public BillingDescriptor $billing_descriptor;
+    // BillingDescriptor
+    public $billing_descriptor;
 
     //PaymentSourceType
-    public array $allow_payment_methods;
+    public $allow_payment_methods;
 
     // Only available in Four
 
-    public string $processing_channel_id;
+    public $processing_channel_id;
 
-    public MarketplaceData $marketplace;
+    // MarketplaceData
+    public $marketplace;
 
 }

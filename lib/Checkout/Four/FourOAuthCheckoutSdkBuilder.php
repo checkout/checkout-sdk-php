@@ -3,7 +3,6 @@
 namespace Checkout\Four;
 
 use Checkout\AbstractCheckoutSdkBuilder;
-use Checkout\ApiClient;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\CheckoutException;
@@ -13,26 +12,26 @@ use Checkout\SdkCredentialsInterface;
 class FourOAuthCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
 {
 
-    protected ?string $clientId = null;
-    protected ?string $clientSecret = null;
-    protected ?string $authorizationUri = null;
-    protected array $scopes = array();
+    protected $clientId = null;
+    protected $clientSecret = null;
+    protected $authorizationUri = null;
+    protected $scopes = array();
 
-    public function clientCredentials(string $clientId,
-                                      string $clientSecret): FourOAuthCheckoutSdkBuilder
+    public function clientCredentials($clientId,
+                                      $clientSecret)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         return $this;
     }
 
-    public function authorizationUri(string $authorizationUri): FourOAuthCheckoutSdkBuilder
+    public function authorizationUri($authorizationUri)
     {
         $this->authorizationUri = $authorizationUri;
         return $this;
     }
 
-    public function scopes(array $scopes): FourOAuthCheckoutSdkBuilder
+    public function scopes(array $scopes)
     {
         $this->scopes = $scopes;
         return $this;
@@ -43,7 +42,7 @@ class FourOAuthCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
-    protected function getSdkCredentials(): SdkCredentialsInterface
+    protected function getSdkCredentials()
     {
         if (empty($this->clientId) || empty($this->clientSecret)) {
             throw new CheckoutArgumentException("Invalid configuration. Please specify valid 'client_id' and 'client_secret' configurations.");
@@ -62,7 +61,7 @@ class FourOAuthCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
-    public function build(): Four\CheckoutApi
+    public function build()
     {
         $configuration = new CheckoutConfiguration($this->getSdkCredentials(), $this->environment, $this->httpClientBuilder, $this->logger);
         return new Four\CheckoutApi($configuration);

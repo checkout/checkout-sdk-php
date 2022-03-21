@@ -11,6 +11,6 @@ class UpdateTokenInstrumentRequest extends UpdateInstrumentRequest
         parent::__construct(InstrumentType::$token);
     }
 
-    public string $token;
+    public $token;
 
 }

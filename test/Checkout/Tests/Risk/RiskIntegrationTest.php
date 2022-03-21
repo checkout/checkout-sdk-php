@@ -14,17 +14,17 @@ use Checkout\Instruments\InstrumentAccountHolder;
 use Checkout\PlatformType;
 use Checkout\Risk\Device;
 use Checkout\Risk\Location;
-use Checkout\Risk\preauthentication\PreAuthenticationAssessmentRequest;
-use Checkout\Risk\precapture\AuthenticationResult;
-use Checkout\Risk\precapture\AuthorizationResult;
-use Checkout\Risk\precapture\PreCaptureAssessmentRequest;
+use Checkout\Risk\PreAuthentication\PreAuthenticationAssessmentRequest;
+use Checkout\Risk\PreCapture\AuthenticationResult;
+use Checkout\Risk\PreCapture\AuthorizationResult;
+use Checkout\Risk\PreCapture\PreCaptureAssessmentRequest;
 use Checkout\Risk\RiskPayment;
 use Checkout\Risk\RiskShippingDetails;
-use Checkout\Risk\source\CardSourcePrism;
-use Checkout\Risk\source\CustomerSourcePrism;
-use Checkout\Risk\source\IdSourcePrism;
-use Checkout\Risk\source\RiskPaymentRequestSource;
-use Checkout\Risk\source\RiskRequestTokenSource;
+use Checkout\Risk\Source\CardSourcePrism;
+use Checkout\Risk\Source\CustomerSourcePrism;
+use Checkout\Risk\Source\IdSourcePrism;
+use Checkout\Risk\Source\RiskPaymentRequestSource;
+use Checkout\Risk\Source\RiskRequestTokenSource;
 use Checkout\Tests\SandboxTestFixture;
 use Checkout\Tests\TestCardSource;
 use Checkout\Tokens\CardTokenRequest;
@@ -37,7 +37,7 @@ class RiskIntegrationTest extends SandboxTestFixture
      * @before
      * @throws CheckoutAuthorizationException
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -46,7 +46,7 @@ class RiskIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldPreCaptureAndAuthenticateCard(): void
+    public function shouldPreCaptureAndAuthenticateCard()
     {
         $address = new Address();
         $address->address_line1 = "123 Street";
@@ -62,15 +62,15 @@ class RiskIntegrationTest extends SandboxTestFixture
         $cardSourcePrism->expiry_year = TestCardSource::$VisaExpiryYear;
         $cardSourcePrism->number = TestCardSource::$VisaNumber;
 
-        $this->testAuthenticationAssessmentRequest($cardSourcePrism);
-        $this->testPreCaptureAssessmentRequest($cardSourcePrism);
+        $this->doAuthenticationAssessmentRequest($cardSourcePrism);
+        $this->doPreCaptureAssessmentRequest($cardSourcePrism);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldPreCaptureAndAuthenticateCustomer(): void
+    public function shouldPreCaptureAndAuthenticateCustomer()
     {
         $customerRequest = new \Checkout\Customers\CustomerRequest();
         $customerRequest->email = $this->randomEmail();
@@ -82,8 +82,8 @@ class RiskIntegrationTest extends SandboxTestFixture
         $customerSourcePrism = new CustomerSourcePrism();
         $customerSourcePrism->id = $customerResponse["id"];
 
-        $this->testAuthenticationAssessmentRequest($customerSourcePrism);
-        $this->testPreCaptureAssessmentRequest($customerSourcePrism);
+        $this->doAuthenticationAssessmentRequest($customerSourcePrism);
+        $this->doPreCaptureAssessmentRequest($customerSourcePrism);
 
     }
 
@@ -91,7 +91,7 @@ class RiskIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldPreCaptureAndAuthenticateId(): void
+    public function shouldPreCaptureAndAuthenticateId()
     {
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = TestCardSource::$VisaName;
@@ -119,15 +119,15 @@ class RiskIntegrationTest extends SandboxTestFixture
         $idSourcePrism->id = $instrumentsResponse["id"];
         $idSourcePrism->cvv = TestCardSource::$VisaCvv;
 
-        $this->testAuthenticationAssessmentRequest($idSourcePrism);
-        $this->testPreCaptureAssessmentRequest($idSourcePrism);
+        $this->doAuthenticationAssessmentRequest($idSourcePrism);
+        $this->doPreCaptureAssessmentRequest($idSourcePrism);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldPreCaptureAndAuthenticateToken(): void
+    public function shouldPreCaptureAndAuthenticateToken()
     {
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = TestCardSource::$VisaName;
@@ -145,15 +145,15 @@ class RiskIntegrationTest extends SandboxTestFixture
         $riskRequestTokenSource->phone = $this->getPhone();
         $riskRequestTokenSource->billing_address = $this->getAddress();
 
-        $this->testAuthenticationAssessmentRequest($riskRequestTokenSource);
-        $this->testPreCaptureAssessmentRequest($riskRequestTokenSource);
+        $this->doAuthenticationAssessmentRequest($riskRequestTokenSource);
+        $this->doPreCaptureAssessmentRequest($riskRequestTokenSource);
     }
 
     /**
      * @param RiskPaymentRequestSource $requestSource
      * @throws CheckoutApiException
      */
-    private function testAuthenticationAssessmentRequest(RiskPaymentRequestSource $requestSource): void
+    private function doAuthenticationAssessmentRequest(RiskPaymentRequestSource $requestSource)
     {
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
@@ -185,7 +185,7 @@ class RiskIntegrationTest extends SandboxTestFixture
      * @param RiskPaymentRequestSource $requestSource
      * @throws CheckoutApiException
      */
-    private function testPreCaptureAssessmentRequest(RiskPaymentRequestSource $requestSource): void
+    private function doPreCaptureAssessmentRequest(RiskPaymentRequestSource $requestSource)
     {
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
@@ -228,7 +228,7 @@ class RiskIntegrationTest extends SandboxTestFixture
     /**
      * @return RiskShippingDetails
      */
-    private function getRiskShippingDetails(): RiskShippingDetails
+    private function getRiskShippingDetails()
     {
         $riskShippingDetails = new RiskShippingDetails();
         $riskShippingDetails->address = $this->getAddress();
@@ -239,7 +239,7 @@ class RiskIntegrationTest extends SandboxTestFixture
     /**
      * @return Device
      */
-    private function getDevice(): Device
+    private function getDevice()
     {
         $location = new Location();
         $location->latitude = "51.5107";
@@ -259,7 +259,7 @@ class RiskIntegrationTest extends SandboxTestFixture
     /**
      * @return RiskPayment
      */
-    private function getRiskPayment(): RiskPayment
+    private function getRiskPayment()
     {
         $riskPayment = new RiskPayment();
         $riskPayment->psp = "CheckoutSdk.com";

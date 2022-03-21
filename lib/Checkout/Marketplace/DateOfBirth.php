@@ -4,9 +4,9 @@ namespace Checkout\Marketplace;
 
 class DateOfBirth
 {
-    public int $day;
+    public $day;
 
-    public int $month;
+    public $month;
 
-    public int $year;
+    public $year;
 }

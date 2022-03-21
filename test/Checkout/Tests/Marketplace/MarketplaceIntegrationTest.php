@@ -22,7 +22,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$fourOAuth);
     }
@@ -30,7 +30,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldCreateGetAndUpdateOnboardEntity(): void
+    public function shouldCreateGetAndUpdateOnboardEntity()
     {
 
         $onboardEntityRequest = new OnboardEntityRequest();
@@ -75,16 +75,16 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
 
         $this->assertResponse($updateResponse, "id");
 
-        self::assertEquals($response["id"], $updateResponse["id"]);
+        $this->assertEquals($response["id"], $updateResponse["id"]);
     }
 
     /**
      * @test
      */
-    public function shouldUploadMarketplaceFile(): void
+    public function shouldUploadMarketplaceFile()
     {
         $fileRequest = new MarketplaceFileRequest();
-        $fileRequest->file = self::getCheckoutFilePath();
+        $fileRequest->file = $this->getCheckoutFilePath();
         $fileRequest->content_type = "image/jpeg";
         $fileRequest->purpose = "identification";
 
@@ -97,7 +97,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldInitiateTransferOfFunds(): void
+    public function shouldInitiateTransferOfFunds()
     {
         $transferSource = new TransferSource();
         $transferSource->id = "ent_kidtcgc3ge5unf4a5i6enhnr5m";
@@ -116,7 +116,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         $this->assertResponse($response, "id", "status");
     }
 
-    private function getDateOfBirth(): DateOfBirth
+    private function getDateOfBirth()
     {
         $dateOfBirth = new DateOfBirth();
         $dateOfBirth->day = 5;
@@ -126,7 +126,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         return $dateOfBirth;
     }
 
-    private function getTestIdentification(): Identification
+    private function getTestIdentification()
     {
         $identification = new Identification();
         $identification->national_id_number = "AB123456C";

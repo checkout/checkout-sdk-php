@@ -4,8 +4,8 @@ namespace Checkout\Common;
 
 class MarketplaceCommission
 {
-    public int $amount;
+    public $amount;
 
-    public float $percentage;
+    public $percentage;
 
 }

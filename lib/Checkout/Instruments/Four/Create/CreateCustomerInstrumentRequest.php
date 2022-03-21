@@ -2,17 +2,16 @@
 
 namespace Checkout\Instruments\Four\Create;
 
-use Checkout\Common\Phone;
-
 class CreateCustomerInstrumentRequest
 {
-    public string $id;
+    public $id;
 
-    public string $email;
+    public $email;
 
-    public string $name;
+    public $name;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
-    public bool $default;
+    public $default;
 }

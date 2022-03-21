@@ -10,12 +10,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class CustomersClientTest extends UnitTestFixture
 {
-    private CustomersClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new CustomersClient($this->apiClient, $this->configuration);
@@ -26,7 +26,7 @@ class CustomersClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetCustomer(): void
+    public function shouldGetCustomer()
     {
 
         $this->apiClient
@@ -41,7 +41,7 @@ class CustomersClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateCustomer(): void
+    public function shouldCreateCustomer()
     {
 
         $this->apiClient
@@ -56,7 +56,7 @@ class CustomersClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUpdateCustomer(): void
+    public function shouldUpdateCustomer()
     {
 
         $this->apiClient
@@ -72,7 +72,7 @@ class CustomersClientTest extends UnitTestFixture
      * @doesNotPerformAssertions
      * @throws CheckoutApiException
      */
-    public function shouldDeleteCustomer(): void
+    public function shouldDeleteCustomer()
     {
         $this->apiClient->method("delete");
 

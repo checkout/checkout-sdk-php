@@ -2,9 +2,6 @@
 
 namespace Checkout\Tests\Tokens\Four;
 
-use Checkout\Common\Address;
-use Checkout\Common\Country;
-use Checkout\Common\Phone;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 use Checkout\Tokens\CardTokenRequest;
@@ -15,7 +12,7 @@ class TokensIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$four);
     }
@@ -23,7 +20,7 @@ class TokensIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldCreateCardToken(): void
+    public function shouldCreateCardToken()
     {
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = "Mr. Test";

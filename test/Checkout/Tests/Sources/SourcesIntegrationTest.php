@@ -2,9 +2,6 @@
 
 namespace Checkout\Tests\Sources;
 
-use Checkout\Common\Address;
-use Checkout\Common\Country;
-use Checkout\Common\Phone;
 use Checkout\PlatformType;
 use Checkout\Sources\SepaSourceRequest;
 use Checkout\Sources\SourceData;
@@ -16,7 +13,7 @@ class SourcesIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -24,7 +21,7 @@ class SourcesIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldSepaSource(): void
+    public function shouldSepaSource()
     {
         $sourceData = new SourceData();
         $sourceData->first_name = "Marcus";

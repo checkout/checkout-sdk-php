@@ -4,7 +4,7 @@ namespace Checkout\Sessions\Channel;
 
 final class ThreeDsMethodCompletion
 {
-    public static string $y = "Y";
-    public static string $n = "N";
-    public static string $u = "U";
+    public static $y = "Y";
+    public static $n = "N";
+    public static $u = "U";
 }

@@ -10,7 +10,7 @@ use Checkout\Client;
 
 class TokensClient extends Client
 {
-    private const TOKENS_PATH = "tokens";
+    const TOKENS_PATH = "tokens";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {

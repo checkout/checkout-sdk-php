@@ -6,13 +6,13 @@ use Psr\Log\LoggerInterface;
 
 final class CheckoutConfiguration
 {
-    private SdkCredentialsInterface $sdkCredentials;
+    private $sdkCredentials;
 
-    private Environment $environment;
+    private $environment;
 
-    private HttpClientBuilderInterface $httpClientBuilder;
+    private $httpClientBuilder;
 
-    private LoggerInterface $logger;
+    private $logger;
 
     public function __construct(SdkCredentialsInterface    $sdkCredentials,
                                 Environment                $environment,
@@ -25,22 +25,22 @@ final class CheckoutConfiguration
         $this->logger = $logger;
     }
 
-    public function getSdkCredentials(): SdkCredentialsInterface
+    public function getSdkCredentials()
     {
         return $this->sdkCredentials;
     }
 
-    public function getEnvironment(): Environment
+    public function getEnvironment()
     {
         return $this->environment;
     }
 
-    public function getHttpClientBuilder(): HttpClientBuilderInterface
+    public function getHttpClientBuilder()
     {
         return $this->httpClientBuilder;
     }
 
-    public function getLogger(): LoggerInterface
+    public function getLogger()
     {
         return $this->logger;
     }

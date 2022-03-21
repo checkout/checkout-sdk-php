@@ -16,7 +16,7 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldRequestAndGetCardSessionBrowserSession(): void
+    public function shouldRequestAndGetCardSessionBrowserSession()
     {
         $browserSession = $this->getBrowserSession();
         $responseBrowserSession = $this->createNonHostedSession($browserSession, Category::$payment,
@@ -38,7 +38,7 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldRequestAndGetCardSessionAppSession(): void
+    public function shouldRequestAndGetCardSessionAppSession()
     {
         $appSession = $this->getAppSession();
         $responseNonHostedSession = $this->createNonHostedSession($appSession, Category::$payment,

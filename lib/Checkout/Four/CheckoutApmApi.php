@@ -8,14 +8,14 @@ use Checkout\CheckoutConfiguration;
 
 class CheckoutApmApi
 {
-    private IdealClient $idealClient;
+    private $idealClient;
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
         $this->idealClient = new IdealClient($apiClient, $configuration);
     }
 
-    public function getIdealClient(): IdealClient
+    public function getIdealClient()
     {
         return $this->idealClient;
     }

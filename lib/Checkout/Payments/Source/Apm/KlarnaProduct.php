@@ -4,16 +4,16 @@ namespace Checkout\Payments\Source\Apm;
 
 class KlarnaProduct
 {
-    public string $name;
+    public $name;
 
-    public int $quantity;
+    public $quantity;
 
-    public int $unit_price;
+    public $unit_price;
 
-    public int $tax_rate;
+    public $tax_rate;
 
-    public int $total_amount;
+    public $total_amount;
 
-    public int $total_tax_amount;
+    public $total_tax_amount;
 
 }

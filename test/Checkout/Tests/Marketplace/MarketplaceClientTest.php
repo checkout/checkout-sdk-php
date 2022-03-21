@@ -13,12 +13,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class MarketplaceClientTest extends UnitTestFixture
 {
-    private MarketplaceClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$fourOAuth);
         $this->client = new MarketplaceClient($this->apiClient, $this->apiClient, $this->apiClient, $this->configuration);
@@ -28,7 +28,7 @@ class MarketplaceClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateEntity(): void
+    public function shouldCreateEntity()
     {
         $this->apiClient
             ->method("post")
@@ -43,7 +43,7 @@ class MarketplaceClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetEntity(): void
+    public function shouldGetEntity()
     {
         $this->apiClient
             ->method("get")
@@ -58,7 +58,7 @@ class MarketplaceClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUpdateEntity(): void
+    public function shouldUpdateEntity()
     {
         $this->apiClient
             ->method("put")
@@ -73,7 +73,7 @@ class MarketplaceClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreatePaymentInstrument(): void
+    public function shouldCreatePaymentInstrument()
     {
         $this->apiClient
             ->method("post")
@@ -88,7 +88,7 @@ class MarketplaceClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldSubmitFile(): void
+    public function shouldSubmitFile()
     {
         $this->apiClient
             ->method("submitFileFilesApi")
@@ -108,7 +108,7 @@ class MarketplaceClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldInitiateTransferOfFunds(): void
+    public function shouldInitiateTransferOfFunds()
     {
         $this->apiClient
             ->method("post")

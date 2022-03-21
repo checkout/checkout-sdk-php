@@ -4,9 +4,9 @@ namespace Checkout\Tokens;
 
 abstract class WalletTokenRequest
 {
-    public string $type;
+    public $type;
 
-    function __construct(string $type)
+    function __construct($type)
     {
         $this->type = $type;
     }

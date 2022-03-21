@@ -27,7 +27,7 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
      * @before
      * @throws CheckoutAuthorizationException
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$four);
     }
@@ -35,9 +35,9 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldCreateAndGetPaymentLink(): void
+    public function shouldCreateAndGetPaymentLink()
     {
-
+        $this->markTestSkipped("unavailable");
         $request = $this->createPaymentLinkRequest();
 
         $response = $this->fourApi->getPaymentLinksClient()->createPaymentLink($request);
@@ -75,12 +75,12 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
             "products",
             "_links",
             "_links.self",
-            "_links.redirect",
+            "_links.redirect"
         );
 
     }
 
-    private function createPaymentLinkRequest(): PaymentLinkRequest
+    private function createPaymentLinkRequest()
     {
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();

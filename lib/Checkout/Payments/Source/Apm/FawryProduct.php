@@ -4,12 +4,12 @@ namespace Checkout\Payments\Source\Apm;
 
 class FawryProduct
 {
-    public string $product_id;
+    public $product_id;
 
-    public int $quantity;
+    public $quantity;
 
-    public int $price;
+    public $price;
 
-    public string $description;
+    public $description;
 
 }

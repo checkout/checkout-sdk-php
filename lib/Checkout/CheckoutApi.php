@@ -17,17 +17,17 @@ use Checkout\Webhooks\WebhooksClient;
 
 final class CheckoutApi extends CheckoutApmApi
 {
-    private SourcesClient $sourcesClient;
-    private TokensClient $tokensClient;
-    private InstrumentsClient $instrumentsClient;
-    private WebhooksClient $webhooksClient;
-    private EventsClient $eventsClient;
-    private PaymentsClient $paymentsClient;
-    private CustomersClient $customersClient;
-    private DisputesClient $disputesClient;
-    private PaymentLinksClient $paymentLinksClient;
-    private HostedPaymentsClient $hostedPaymentsClient;
-    private RiskClient $riskClient;
+    private $sourcesClient;
+    private $tokensClient;
+    private $instrumentsClient;
+    private $webhooksClient;
+    private $eventsClient;
+    private $paymentsClient;
+    private $customersClient;
+    private $disputesClient;
+    private $paymentLinksClient;
+    private $hostedPaymentsClient;
+    private $riskClient;
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -45,57 +45,57 @@ final class CheckoutApi extends CheckoutApmApi
         $this->riskClient = new RiskClient($apiClient, $configuration);
     }
 
-    public function getSourcesClient(): SourcesClient
+    public function getSourcesClient()
     {
         return $this->sourcesClient;
     }
 
-    public function getTokensClient(): TokensClient
+    public function getTokensClient()
     {
         return $this->tokensClient;
     }
 
-    public function getInstrumentsClient(): InstrumentsClient
+    public function getInstrumentsClient()
     {
         return $this->instrumentsClient;
     }
 
-    public function getWebhooksClient(): WebhooksClient
+    public function getWebhooksClient()
     {
         return $this->webhooksClient;
     }
 
-    public function getEventsClient(): EventsClient
+    public function getEventsClient()
     {
         return $this->eventsClient;
     }
 
-    public function getPaymentsClient(): PaymentsClient
+    public function getPaymentsClient()
     {
         return $this->paymentsClient;
     }
 
-    public function getCustomersClient(): CustomersClient
+    public function getCustomersClient()
     {
         return $this->customersClient;
     }
 
-    public function getDisputesClient(): DisputesClient
+    public function getDisputesClient()
     {
         return $this->disputesClient;
     }
 
-    public function getPaymentLinksClient(): PaymentLinksClient
+    public function getPaymentLinksClient()
     {
         return $this->paymentLinksClient;
     }
 
-    public function getHostedPaymentsClient(): HostedPaymentsClient
+    public function getHostedPaymentsClient()
     {
         return $this->hostedPaymentsClient;
     }
 
-    public function getRiskClient(): RiskClient
+    public function getRiskClient()
     {
         return $this->riskClient;
     }

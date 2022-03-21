@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests;
 
-use Checkout\CheckoutApi;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutDefaultSdk;
 use Checkout\CheckoutFourSdk;
@@ -17,22 +16,19 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
-use function PHPUnit\Framework\assertNotEmpty;
-use function PHPUnit\Framework\assertNotNull;
 
 abstract class SandboxTestFixture extends TestCase
 {
 
-    protected CheckoutApi $defaultApi;
-    protected \Checkout\Four\CheckoutApi $fourApi;
+    protected $defaultApi;
+    protected $fourApi;
 
-    protected const MESSAGE_404 = "The API response status code (404) does not indicate success.";
-    protected const MESSAGE_403 = "The API response status code (403) does not indicate success.";
+    const MESSAGE_404 = "The API response status code (404) does not indicate success.";
+    const MESSAGE_403 = "The API response status code (403) does not indicate success.";
 
-    private LoggerInterface $logger;
+    private $logger;
 
-    protected function init(string $platformType): void
+    protected function init($platformType)
     {
         $this->logger = new Logger("checkout-sdk-test-php");
         $this->logger->pushHandler(new StreamHandler("php://stderr"));
@@ -71,38 +67,38 @@ abstract class SandboxTestFixture extends TestCase
 
     }
 
-    protected function assertResponse($obj, ...$properties): void // @phpstan-ignore-line
+    protected function assertResponse($obj, ...$properties) // @phpstan-ignore-line
     {
-        assertNotNull($obj);
-        assertNotEmpty($properties);
+        $this->assertNotNull($obj);
+        $this->assertNotEmpty($properties);
         foreach ($properties as $property) {
-            if (str_contains($property, ".")) {
+            if (strpos($property, ".") !== false) {
                 // "a.b.c" to "a","b","c"
                 $props = explode(".", $property);
                 // value("a")
                 $testingObj = $obj[$props[0]];
                 // collect to "b.c"
                 $joined = implode(".", array_slice($props, 1));
-                self::assertResponse($testingObj, $joined);
+                $this->assertResponse($testingObj, $joined);
             } else {
                 //echo "\e[0;30;45massertResponse[property] testing=" . json_encode($property) . " found=" . json_encode($obj[$property]) . "\n";
-                assertNotNull($obj[$property]);
-                assertNotEmpty($obj[$property]);
+                $this->assertNotNull($obj[$property]);
+                $this->assertNotEmpty($obj[$property]);
             }
         }
     }
 
-    protected function randomEmail(): string
+    protected function randomEmail()
     {
         return uniqid() . "@checkout-sdk-net.com";
     }
 
-    protected function idempotencyKey(): string
+    protected function idempotencyKey()
     {
         return substr(uniqid(), 0, 8);
     }
 
-    public static function getCheckoutFilePath(): string
+    public static function getCheckoutFilePath()
     {
         return __DIR__ . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR . "checkout.jpeg";
     }
@@ -110,7 +106,7 @@ abstract class SandboxTestFixture extends TestCase
     /**
      * @return Address
      */
-    protected function getAddress(): Address
+    protected function getAddress()
     {
         $address = new Address();
         $address->address_line1 = "CheckoutSdk.com";
@@ -125,7 +121,7 @@ abstract class SandboxTestFixture extends TestCase
     /**
      * @return Phone
      */
-    protected function getPhone(): Phone
+    protected function getPhone()
     {
         $phone = new Phone();
         $phone->country_code = "1";

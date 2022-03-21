@@ -11,6 +11,6 @@ class RequestTokenSource extends SessionSource
         parent::__construct(SessionSourceType::$token);
     }
 
-    public string $token;
+    public $token;
 
 }

@@ -4,11 +4,11 @@ namespace Checkout;
 
 final class SdkAuthorization
 {
-    private const BEARER = "Bearer ";
+    const BEARER = "Bearer ";
 
-    private string $platformType;
+    private $platformType;
 
-    private string $credential;
+    private $credential;
 
     /**
      * @param mixed $platformType
@@ -23,7 +23,7 @@ final class SdkAuthorization
     /**
      * @throws CheckoutAuthorizationException
      */
-    public function getAuthorizationHeader(): string
+    public function getAuthorizationHeader()
     {
         switch ($this->platformType) {
             case PlatformType::$default:

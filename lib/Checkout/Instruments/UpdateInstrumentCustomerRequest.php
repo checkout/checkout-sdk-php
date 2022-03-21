@@ -5,8 +5,8 @@ namespace Checkout\Instruments;
 class UpdateInstrumentCustomerRequest
 {
 
-    public string $id;
+    public $id;
 
-    public string $default;
+    public $default;
 
 }

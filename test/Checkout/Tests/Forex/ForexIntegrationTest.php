@@ -14,7 +14,7 @@ class ForexIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$fourOAuth);
     }
@@ -23,7 +23,7 @@ class ForexIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRequestQuote(): void
+    public function shouldRequestQuote()
     {
         $quoteRequest = new QuoteRequest();
         $quoteRequest->source_currency = Currency::$GBP;
@@ -39,8 +39,8 @@ class ForexIntegrationTest extends SandboxTestFixture
             "destination_amount",
             "rate",
             "expires_on");
-        self::assertEquals($quoteRequest->source_currency, $quoteResponse["source_currency"]);
-        self::assertEquals($quoteRequest->source_amount, $quoteResponse["source_amount"]);
-        self::assertEquals($quoteRequest->destination_currency, $quoteResponse["destination_currency"]);
+        $this->assertEquals($quoteRequest->source_currency, $quoteResponse["source_currency"]);
+        $this->assertEquals($quoteRequest->source_amount, $quoteResponse["source_amount"]);
+        $this->assertEquals($quoteRequest->destination_currency, $quoteResponse["destination_currency"]);
     }
 }

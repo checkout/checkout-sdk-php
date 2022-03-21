@@ -5,9 +5,9 @@ namespace Checkout\Payments\Four\Sender;
 class Identification
 {
     //IdentificationType
-    public string $type;
+    public $type;
 
-    public string $number;
+    public $number;
 
-    public string $issuing_country;
+    public $issuing_country;
 }

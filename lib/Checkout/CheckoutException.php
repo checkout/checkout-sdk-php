@@ -7,7 +7,7 @@ use Exception;
 class CheckoutException extends Exception
 {
 
-    public function __construct(string $message)
+    public function __construct($message)
     {
         parent::__construct($message);
     }

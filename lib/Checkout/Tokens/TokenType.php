@@ -4,7 +4,7 @@ namespace Checkout\Tokens;
 
 final class TokenType
 {
-    public static string $card = "card";
-    public static string $applepay = "applepay";
-    public static string $googlepay = "googlepay";
+    public static $card = "card";
+    public static $applepay = "applepay";
+    public static $googlepay = "googlepay";
 }

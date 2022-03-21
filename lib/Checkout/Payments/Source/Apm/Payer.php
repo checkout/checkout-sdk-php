@@ -4,10 +4,10 @@ namespace Checkout\Payments\Source\Apm;
 
 class Payer
 {
-    public string $name;
+    public $name;
 
-    public string $email;
+    public $email;
 
-    public string $document;
+    public $document;
 
 }

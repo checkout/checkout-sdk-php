@@ -12,14 +12,17 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRefundCardPayment(): void
+    public function shouldRefundCardPayment()
     {
         $paymentResponse = $this->makeCardPayment(true);
 
         $refundRequest = new RefundRequest();
         $refundRequest->reference = uniqid();
 
-        $response = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest));
+        $response = $this->retriable(
+            function () use (&$paymentResponse, &$refundRequest) {
+                return $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest);
+            });
 
         $this->assertResponse($response,
             "action_id",
@@ -30,7 +33,7 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRefundCardPaymentIdempotent(): void
+    public function shouldRefundCardPaymentIdempotent()
     {
         $paymentResponse = $this->makeCardPayment(true);
 
@@ -40,7 +43,10 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $idempotencyKey = $this->idempotencyKey();
 
-        $response1 = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest, $idempotencyKey));
+        $response1 = $this->retriable(
+            function () use (&$paymentResponse, &$refundRequest, &$idempotencyKey) {
+                return $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest, $idempotencyKey);
+            });
 
         $this->assertResponse($response1,
             "action_id",
@@ -50,9 +56,12 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $refundRequest2->reference = uniqid("shouldRefundCardPayment_Idempotent2");
         $refundRequest2->amount = 2;
 
-        $response2 = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest2, $idempotencyKey));
+        $response2 = $this->retriable(
+            function () use (&$paymentResponse, &$refundRequest2, &$idempotencyKey) {
+                return $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest2, $idempotencyKey);
+            });
 
-        self::assertEquals($response1["action_id"], $response2["action_id"]);
+        $this->assertEquals($response1["action_id"], $response2["action_id"]);
     }
 
 }

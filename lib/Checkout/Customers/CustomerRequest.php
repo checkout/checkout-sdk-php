@@ -2,15 +2,13 @@
 
 namespace Checkout\Customers;
 
-use Checkout\Common\Phone;
-
 class CustomerRequest
 {
-    public string $email;
+    public $email;
 
-    public string $name;
+    public $name;
 
-    public Phone $phone;
+    public $phone;
 
-    public array $metadata;
+    public $metadata;
 }

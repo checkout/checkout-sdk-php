@@ -18,17 +18,17 @@ use Checkout\Tokens\TokensClient;
 
 final class CheckoutApi extends CheckoutApmApi
 {
-    private TokensClient $tokensClient;
-    private CustomersClient $customersClient;
-    private PaymentsClient $paymentsClient;
-    private InstrumentsClient $instrumentsClient;
-    private ForexClient $forexClient;
-    private DisputesClient $disputesClient;
-    private SessionsClient $sessionsClient;
-    private MarketplaceClient $marketplaceClient;
-    private HostedPaymentsClient $hostedPaymentsClient;
-    private PaymentLinksClient $paymentLinksClient;
-    private RiskClient $riskClient;
+    private $tokensClient;
+    private $customersClient;
+    private $paymentsClient;
+    private $instrumentsClient;
+    private $forexClient;
+    private $disputesClient;
+    private $sessionsClient;
+    private $marketplaceClient;
+    private $hostedPaymentsClient;
+    private $paymentLinksClient;
+    private $riskClient;
 
     public function __construct(CheckoutConfiguration $configuration)
     {
@@ -50,72 +50,72 @@ final class CheckoutApi extends CheckoutApmApi
             $configuration);
     }
 
-    public function getTokensClient(): TokensClient
+    public function getTokensClient()
     {
         return $this->tokensClient;
     }
 
-    public function getCustomersClient(): CustomersClient
+    public function getCustomersClient()
     {
         return $this->customersClient;
     }
 
-    public function getPaymentsClient(): PaymentsClient
+    public function getPaymentsClient()
     {
         return $this->paymentsClient;
     }
 
-    public function getInstrumentsClient(): InstrumentsClient
+    public function getInstrumentsClient()
     {
         return $this->instrumentsClient;
     }
 
-    public function getForexClient(): ForexClient
+    public function getForexClient()
     {
         return $this->forexClient;
     }
 
-    public function getDisputesClient(): DisputesClient
+    public function getDisputesClient()
     {
         return $this->disputesClient;
     }
 
-    public function getSessionsClient(): SessionsClient
+    public function getSessionsClient()
     {
         return $this->sessionsClient;
     }
 
-    public function getMarketplaceClient(): MarketplaceClient
+    public function getMarketplaceClient()
     {
         return $this->marketplaceClient;
     }
 
-    public function getHostedPaymentsClient(): HostedPaymentsClient
+    public function getHostedPaymentsClient()
     {
         return $this->hostedPaymentsClient;
     }
 
-    public function getPaymentLinksClient(): PaymentLinksClient
+    public function getPaymentLinksClient()
     {
         return $this->paymentLinksClient;
     }
 
-    public function getRiskClient(): RiskClient
+    public function getRiskClient()
     {
         return $this->riskClient;
     }
 
-    private function getBaseApiClient(CheckoutConfiguration $configuration): ApiClient
+    private function getBaseApiClient(CheckoutConfiguration $configuration)
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getBaseUri());
     }
 
-    private function getFilesApiClient(CheckoutConfiguration $configuration): ApiClient
+    private function getFilesApiClient(CheckoutConfiguration $configuration)
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getFilesBaseUri());
     }
 
-    private function getTransfersApiClient(CheckoutConfiguration $configuration): ApiClient
+    private function getTransfersApiClient(CheckoutConfiguration $configuration)
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getTransfersUri());
     }

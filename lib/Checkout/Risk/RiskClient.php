@@ -7,13 +7,13 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
-use Checkout\Risk\preauthentication\PreAuthenticationAssessmentRequest;
-use Checkout\Risk\precapture\PreCaptureAssessmentRequest;
+use Checkout\Risk\PreAuthentication\PreAuthenticationAssessmentRequest;
+use Checkout\Risk\PreCapture\PreCaptureAssessmentRequest;
 
 class RiskClient extends Client
 {
-    private const PRE_AUTHENTICATION_PATH = "risk/assessments/pre-authentication";
-    private const PRE_CAPTURE_PATH = "risk/assessments/pre-capture";
+    const PRE_AUTHENTICATION_PATH = "risk/assessments/pre-authentication";
+    const PRE_CAPTURE_PATH = "risk/assessments/pre-capture";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {

@@ -11,9 +11,9 @@ use Checkout\CheckoutConfiguration;
 class CheckoutApmApi
 {
 
-    private IdealClient $idealClient;
-    private KlarnaClient $klarnaClient;
-    private SepaClient $sepaClient;
+    private $idealClient;
+    private $klarnaClient;
+    private $sepaClient;
 
     /**
      * @param ApiClient $apiClient
@@ -26,17 +26,17 @@ class CheckoutApmApi
         $this->sepaClient = new SepaClient($apiClient, $configuration);
     }
 
-    public function getIdealClient(): IdealClient
+    public function getIdealClient()
     {
         return $this->idealClient;
     }
 
-    public function getKlarnaClient(): KlarnaClient
+    public function getKlarnaClient()
     {
         return $this->klarnaClient;
     }
 
-    public function getSepaClient(): SepaClient
+    public function getSepaClient()
     {
         return $this->sepaClient;
     }

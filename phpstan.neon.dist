@@ -1,6 +1,6 @@
 parameters:
     checkMissingIterableValueType: false
 
-    level: 6
+    level: 1
     paths:
         - lib

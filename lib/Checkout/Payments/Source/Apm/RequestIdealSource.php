@@ -12,10 +12,10 @@ class RequestIdealSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$ideal);
     }
 
-    public string $bic;
+    public $bic;
 
-    public string $description;
+    public $description;
 
-    public string $language;
+    public $language;
 
 }

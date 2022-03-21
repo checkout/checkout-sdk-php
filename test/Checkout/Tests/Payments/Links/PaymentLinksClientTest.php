@@ -11,12 +11,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class PaymentLinksClientTest extends UnitTestFixture
 {
-    private PaymentLinksClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new PaymentLinksClient($this->apiClient, $this->configuration);
@@ -26,7 +26,7 @@ class PaymentLinksClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetPaymentLink(): void
+    public function shouldGetPaymentLink()
     {
 
         $this->apiClient
@@ -42,7 +42,7 @@ class PaymentLinksClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreatePaymentLink(): void
+    public function shouldCreatePaymentLink()
     {
 
         $this->apiClient

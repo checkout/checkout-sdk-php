@@ -5,8 +5,6 @@ namespace Checkout\Tests\Sessions;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\Sessions\SessionSecretSdkCredentials;
 use Checkout\Tests\UnitTestFixture;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotNull;
 
 class SessionSecretSdkCredentialsTest extends UnitTestFixture
 {
@@ -14,21 +12,21 @@ class SessionSecretSdkCredentialsTest extends UnitTestFixture
     /**
      * @test
      */
-    public function shouldCreateSessionSecretSdkCredentials(): void
+    public function shouldCreateSessionSecretSdkCredentials()
     {
         $credentials = new SessionSecretSdkCredentials("test");
-        assertEquals($credentials->secret, "test");
+        $this->assertEquals("test", $credentials->secret);
     }
 
     /**
      * @test
      * @throws CheckoutAuthorizationException
      */
-    public function shouldGetAuthorization(): void
+    public function shouldGetAuthorization()
     {
         $credentials = new SessionSecretSdkCredentials("test");
         $auth = $credentials->getAuthorization("custom");
-        assertNotNull($auth);
-        assertEquals($auth->getAuthorizationHeader(), "test");
+        $this->assertNotNull($auth);
+        $this->assertEquals("test", $auth->getAuthorizationHeader());
     }
 }

@@ -4,9 +4,9 @@ namespace Checkout\Marketplace;
 
 class Profile
 {
-    public array $urls;
+    public $urls;
 
-    public array $mccs;
+    public $mccs;
 
-    public string $default_holding_currency;
+    public $default_holding_currency;
 }

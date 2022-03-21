@@ -4,16 +4,16 @@ namespace Checkout\Payments;
 
 class PaymentRecipient
 {
-    public string $dob;
+    public $dob;
 
-    public string $account_number;
+    public $account_number;
 
-    public string $zip;
+    public $zip;
 
-    public string $first_name;
+    public $first_name;
 
-    public string $last_name;
+    public $last_name;
 
-    public string $country;
+    public $country;
 
 }

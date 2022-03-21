@@ -4,8 +4,8 @@ namespace Checkout\Files;
 
 class FileRequest
 {
-    public string $file;
+    public $file;
 
-    public string $purpose;
+    public $purpose;
 
 }

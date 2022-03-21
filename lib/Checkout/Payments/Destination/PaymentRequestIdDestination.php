@@ -11,10 +11,10 @@ class PaymentRequestIdDestination extends PaymentRequestDestination
         parent::__construct(PaymentDestinationType::$id);
     }
 
-    public string $id;
+    public $id;
 
-    public string $first_name;
+    public $first_name;
 
-    public string $last_name;
+    public $last_name;
 
 }

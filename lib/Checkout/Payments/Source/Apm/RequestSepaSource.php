@@ -12,5 +12,5 @@ class RequestSepaSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$id);
     }
 
-    public string $id;
+    public $id;
 }

@@ -4,7 +4,7 @@ namespace Checkout\Payments\Four\Request;
 
 class InstructionScheme
 {
-    public static string $swift = "swift";
-    public static string $local = "local";
-    public static string $instant = "instant";
+    public static $swift = "swift";
+    public static $local = "local";
+    public static $instant = "instant";
 }

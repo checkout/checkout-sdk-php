@@ -1,12 +1,12 @@
 <?php
 
-namespace Checkout\Risk\source;
+namespace Checkout\Risk\Source;
 
 use Checkout\Common\PaymentSourceType;
 
 class CustomerSourcePrism extends RiskPaymentRequestSource
 {
-    public string $id;
+    public $id;
 
     public function __construct()
     {

@@ -4,11 +4,11 @@ namespace Checkout\Tokens;
 
 class ApplePayTokenData
 {
-    public string $version;
+    public $version;
 
-    public string $data;
+    public $data;
 
-    public string $signature;
+    public $signature;
 
-    public array $header;
+    public $header;
 }

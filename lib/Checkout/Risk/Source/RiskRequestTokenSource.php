@@ -1,10 +1,8 @@
 <?php
 
-namespace Checkout\Risk\source;
+namespace Checkout\Risk\Source;
 
-use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
-use Checkout\Common\Phone;
 
 class RiskRequestTokenSource extends RiskPaymentRequestSource
 {
@@ -14,11 +12,13 @@ class RiskRequestTokenSource extends RiskPaymentRequestSource
         parent::__construct(PaymentSourceType::$token);
     }
 
-    public string $token;
+    public $token;
 
-    public Address $billing_address;
+    // Address
+    public $billing_address;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
 }
 

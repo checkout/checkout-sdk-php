@@ -2,69 +2,68 @@
 
 namespace Checkout\Payments\Four\Request;
 
-use Checkout\Common\CustomerRequest;
-use Checkout\Common\MarketplaceData;
-use Checkout\Payments\BillingDescriptor;
-use Checkout\Payments\Four\Request\Source\AbstractRequestSource;
-use Checkout\Payments\Four\Sender\PaymentSender;
-use Checkout\Payments\PaymentRecipient;
-use Checkout\Payments\ProcessingSettings;
-use Checkout\Payments\RiskRequest;
-use Checkout\Payments\ShippingDetails;
-use Checkout\Payments\ThreeDsRequest;
-use DateTime;
-
 class PaymentRequest
 {
-    public AbstractRequestSource $source;
+    // AbstractRequestSource
+    public $source;
 
-    public int $amount;
+    public $amount;
 
-    public string $currency;
+    public $currency;
 
     //AuthorizationType
-    public string $payment_type;
+    public $payment_type;
 
-    public bool $merchant_initiated;
+    public $merchant_initiated;
 
-    public string $reference;
+    public $reference;
 
-    public string $description;
+    public $description;
 
-    public string $authorization_type;
+    public $authorization_type;
 
-    public bool $capture;
+    public $capture;
 
-    public DateTime $capture_on;
+    // DateTime
+    public $capture_on;
 
-    public CustomerRequest $customer;
+    // CustomerRequest
+    public $customer;
 
-    public BillingDescriptor $billing_descriptor;
+    // BillingDescriptor
+    public $billing_descriptor;
 
-    public ShippingDetails $shipping;
+    // ShippingDetails
+    public $shipping;
 
-    public ThreeDsRequest $three_ds;
+    // ThreeDsRequest
+    public $three_ds;
 
-    public string $processing_channel_id;
+    public $processing_channel_id;
 
-    public string $previous_payment_id;
+    public $previous_payment_id;
 
-    public RiskRequest $risk;
+    // RiskRequest
+    public $risk;
 
-    public string $success_url;
+    public $success_url;
 
-    public string $failure_url;
+    public $failure_url;
 
-    public string $payment_ip;
+    public $payment_ip;
 
-    public PaymentSender $sender;
+    // PaymentSender
+    public $sender;
 
-    public PaymentRecipient $recipient;
+    // PaymentRecipient
+    public $recipient;
 
-    public MarketplaceData $marketplace;
+    // MarketplaceData
+    public $marketplace;
 
-    public ProcessingSettings $processing;
+    // ProcessingSettings
+    public $processing;
 
-    public array $metadata;
+    public $metadata;
 
 }

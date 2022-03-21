@@ -12,7 +12,7 @@ class TokensIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -20,7 +20,7 @@ class TokensIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldCreateCardToken(): void
+    public function shouldCreateCardToken()
     {
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = "Mr. Test";
@@ -47,13 +47,13 @@ class TokensIntegrationTest extends SandboxTestFixture
             "expiry_year",
             "name",
             "last4",
-            "bin",
-            //"card_type",
-            //"card_category",
-            //"issuer",
-            //"issuer_country",
-            //"product_id",
-            //"product_type"
+            "bin"
+        //"card_type",
+        //"card_category",
+        //"issuer",
+        //"issuer_country",
+        //"product_id",
+        //"product_type"
         );
     }
 

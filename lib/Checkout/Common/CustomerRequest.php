@@ -4,10 +4,10 @@ namespace Checkout\Common;
 
 class CustomerRequest
 {
-    public string $id;
+    public $id;
 
-    public string $email;
+    public $email;
 
-    public string $name;
+    public $name;
 
 }

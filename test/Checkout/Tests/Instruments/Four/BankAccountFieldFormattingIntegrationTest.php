@@ -19,7 +19,7 @@ class BankAccountFieldFormattingIntegrationTest extends SandboxTestFixture
      * @before
      * @throws CheckoutAuthorizationException
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$fourOAuth);
     }
@@ -28,7 +28,7 @@ class BankAccountFieldFormattingIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldFailGetBankAccountFieldFormattingWhenNoOAuthIsProvided(): void
+    public function shouldFailGetBankAccountFieldFormattingWhenNoOAuthIsProvided()
     {
         $request = new BankAccountFieldQuery();
         $request->account_holder_type = AccountHolderType::$individual;
@@ -39,8 +39,8 @@ class BankAccountFieldFormattingIntegrationTest extends SandboxTestFixture
         $this->assertResponse($response, "sections");
 
         foreach ($response["sections"] as $section) {
-            self::assertResponse($section, "name", "fields");
-            self::assertNotEmpty($section["fields"]);
+            $this->assertResponse($section, "name", "fields");
+            $this->assertNotEmpty($section["fields"]);
 
             foreach ($section["fields"] as $field) {
                 $this->assertResponse($field, "id", "display", "type");

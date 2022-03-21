@@ -4,6 +4,6 @@ namespace Checkout\Sessions;
 
 final class Category
 {
-    public static string $payment = "payment";
-    public static string $non_payment = "nonPayment";
+    public static $payment = "payment";
+    public static $non_payment = "nonPayment";
 }

@@ -4,11 +4,11 @@ namespace Checkout\Sessions\Channel;
 
 class SdkEphemeralPublicKey
 {
-    public string $kty;
+    public $kty;
 
-    public string $crv;
+    public $crv;
 
-    public string $x;
+    public $x;
 
-    public string $y;
+    public $y;
 }

@@ -2,23 +2,24 @@
 
 namespace Checkout\Marketplace;
 
-use Checkout\Common\Address;
-
 class Individual
 {
-    public string $first_name;
+    public $first_name;
 
-    public string $middle_name;
+    public $middle_name;
 
-    public string $last_name;
+    public $last_name;
 
-    public string $trading_name;
+    public $trading_name;
 
-    public string $national_tax_id;
+    public $national_tax_id;
 
-    public Address $registered_address;
+    // Address
+    public $registered_address;
 
-    public DateOfBirth $date_of_birth;
+    // DateOfBirth
+    public $date_of_birth;
 
-    public Identification $identification;
+    // Identification
+    public $identification;
 }

@@ -4,12 +4,13 @@ namespace Checkout\Common;
 
 class MarketplaceDataSubEntity
 {
-    public string $id;
+    public $id;
 
-    public int $amount;
+    public $amount;
 
-    public string $reference;
+    public $reference;
 
-    public MarketplaceCommission $commission;
+    // MarketplaceCommission
+    public $commission;
 
 }

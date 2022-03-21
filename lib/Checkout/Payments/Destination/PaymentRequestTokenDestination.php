@@ -2,8 +2,6 @@
 
 namespace Checkout\Payments\Destination;
 
-use Checkout\Common\Address;
-use Checkout\Common\Phone;
 use Checkout\Payments\PaymentDestinationType;
 
 class PaymentRequestTokenDestination extends PaymentRequestDestination
@@ -13,14 +11,16 @@ class PaymentRequestTokenDestination extends PaymentRequestDestination
         parent::__construct(PaymentDestinationType::$token);
     }
 
-    public string $id;
+    public $id;
 
-    public string $first_name;
+    public $first_name;
 
-    public string $last_name;
+    public $last_name;
 
-    public Address $billing_address;
+    // Address
+    public $billing_address;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
 }

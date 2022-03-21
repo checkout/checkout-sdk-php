@@ -10,12 +10,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class EventsClientTest extends UnitTestFixture
 {
-    private EventsClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new EventsClient($this->apiClient, $this->configuration);
@@ -26,7 +26,7 @@ class EventsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRetrieveAllEventTypes(): void
+    public function shouldRetrieveAllEventTypes()
     {
         $this->apiClient
             ->method("get")
@@ -40,7 +40,7 @@ class EventsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRetrieveEvents(): void
+    public function shouldRetrieveEvents()
     {
         $this->apiClient->method("query")
             ->willReturn("foo");
@@ -53,7 +53,7 @@ class EventsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRetrieveEvent(): void
+    public function shouldRetrieveEvent()
     {
         $this->apiClient->method("get")
             ->willReturn("foo");
@@ -67,7 +67,7 @@ class EventsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRetrieveEventNotification(): void
+    public function shouldRetrieveEventNotification()
     {
         $this->apiClient->method("get")
             ->willReturn("foo");
@@ -81,7 +81,7 @@ class EventsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRetryWebhook(): void
+    public function shouldRetryWebhook()
     {
         $this->apiClient->method("post")
             ->willReturn("foo");
@@ -95,7 +95,7 @@ class EventsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRetryAllWebhooks(): void
+    public function shouldRetryAllWebhooks()
     {
         $this->apiClient->method("post")
             ->willReturn("foo");

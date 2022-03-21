@@ -2,29 +2,30 @@
 
 namespace Checkout\Payments\Four\Request;
 
-use Checkout\Payments\Four\Destination\PaymentRequestDestination;
-use Checkout\Payments\Four\Request\Source\PayoutRequestSource;
-use Checkout\Payments\Four\Sender\PaymentSender;
-
 class PayoutRequest
 {
 
-    public PayoutRequestSource $source;
+    // PayoutRequestSource
+    public $source;
 
-    public PaymentRequestDestination $destination;
+    // PaymentRequestDestination
+    public $destination;
 
-    public int $amount;
+    public $amount;
 
-    public string $currency;
+    public $currency;
 
-    public string $reference;
+    public $reference;
 
-    public PayoutBillingDescriptor $billing_descriptor;
+    // PayoutBillingDescriptor
+    public $billing_descriptor;
 
-    public PaymentSender $sender;
+    // PaymentSender
+    public $sender;
 
-    public PaymentInstruction $instruction;
+    // PaymentInstruction
+    public $instruction;
 
-    public string $processing_channel_id;
+    public $processing_channel_id;
 
 }

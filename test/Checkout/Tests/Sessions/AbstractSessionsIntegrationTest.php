@@ -36,7 +36,7 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
      * @before
      * @throws CheckoutAuthorizationException
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$fourOAuth);
     }
@@ -49,8 +49,8 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
      * @return mixed
      * @throws CheckoutApiException
      */
-    protected function createNonHostedSession(channelData $channelData, string $authenticationCategory,
-                                              string      $challengeIndicatorType, string $transactionType)
+    protected function createNonHostedSession(ChannelData $channelData, $authenticationCategory,
+                                                          $challengeIndicatorType, $transactionType)
     {
 
         $billingAddress = new SessionAddress();
@@ -111,7 +111,7 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
         return $responseNonHostedSession;
     }
 
-    protected function getPhone(): Phone
+    protected function getPhone()
     {
         $phone = new Phone();
         $phone->number = "0204567895";
@@ -162,7 +162,7 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
         return $responseHostedSession;
     }
 
-    protected function getBrowserSession(): ChannelData
+    protected function getBrowserSession()
     {
         $browserSession = new BrowserSession();
         $browserSession->accept_header = "Accept:  *.*, q=0.1";
@@ -179,7 +179,7 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
         return $browserSession;
     }
 
-    protected function getAppSession(): ChannelData
+    protected function getAppSession()
     {
         $sdkEphemeralPublicKey = new SdkEphemeralPublicKey();
         $sdkEphemeralPublicKey->kty = "EC";

@@ -6,15 +6,15 @@ use Checkout\Common\AbstractQueryFilter;
 
 class BankAccountFieldQuery extends AbstractQueryFilter
 {
-    private const KEYS_TRANSFORMATIONS = array(
+    const KEYS_TRANSFORMATIONS = array(
         "account_holder_type" => "account-holder-type",
         "payment_network" => "payment-network"
     );
 
-    public ?string $account_holder_type = null;
-    public ?string $payment_network = null;
+    public $account_holder_type = null;
+    public $payment_network = null;
 
-    public function normalized(): BankAccountFieldQuery
+    public function normalized()
     {
         $normalized = new BankAccountFieldQuery();
         foreach (self::KEYS_TRANSFORMATIONS as $originalKey => $modifiedKey) {

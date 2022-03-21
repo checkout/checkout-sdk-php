@@ -9,6 +9,6 @@ class PayoutRequestCurrencyAccountSource extends PayoutRequestSource
         parent::__construct(PayoutSourceType::$currencyAccount);
     }
 
-    public string $id;
+    public $id;
 
 }

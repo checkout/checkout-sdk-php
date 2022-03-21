@@ -10,9 +10,9 @@ use Checkout\Client;
 
 class SepaClient extends Client
 {
-    private const  SEPA_MANDATES_PATH = "sepa/mandates";
-    private const  PPRO_PATH = "ppro";
-    private const  CANCEL_PATH = "cancel";
+    const  SEPA_MANDATES_PATH = "sepa/mandates";
+    const  PPRO_PATH = "ppro";
+    const  CANCEL_PATH = "cancel";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -20,43 +20,43 @@ class SepaClient extends Client
     }
 
     /**
-     * @param string $mandateId
+     * @param $mandateId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function getMandate(string $mandateId)
+    public function getMandate($mandateId)
     {
         return $this->apiClient->get($this->buildPath(self::SEPA_MANDATES_PATH, $mandateId), $this->sdkAuthorization());
     }
 
     /**
-     * @param string $mandateId
+     * @param $mandateId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function cancelMandate(string $mandateId)
+    public function cancelMandate($mandateId)
     {
         return $this->apiClient->post($this->buildPath(self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
             null, $this->sdkAuthorization());
     }
 
     /**
-     * @param string $mandateId
+     * @param $mandateId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function getMandateViaPPro(string $mandateId)
+    public function getMandateViaPPro($mandateId)
     {
         return $this->apiClient->get($this->buildPath(self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId),
             $this->sdkAuthorization());
     }
 
     /**
-     * @param string $mandateId
+     * @param $mandateId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function cancelMandateViaPPro(string $mandateId)
+    public function cancelMandateViaPPro($mandateId)
     {
         return $this->apiClient->post($this->buildPath(self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
             null, $this->sdkAuthorization());

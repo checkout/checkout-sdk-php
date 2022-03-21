@@ -2,52 +2,56 @@
 
 namespace Checkout\Payments;
 
-use Checkout\Common\CustomerRequest;
-use Checkout\Payments\Source\AbstractRequestSource;
-use DateTime;
-
 class PaymentRequest
 {
-    public AbstractRequestSource $source;
+    // AbstractRequestSource
+    public $source;
 
-    public int $amount;
+    public $amount;
 
-    public string $currency;
+    public $currency;
 
-    public string $payment_type;
+    public $payment_type;
 
-    public bool $merchant_initiated;
+    public $merchant_initiated;
 
-    public string $reference;
+    public $reference;
 
-    public string $description;
+    public $description;
 
-    public bool $capture;
+    public $capture;
 
-    public DateTime $capture_on;
+    // DateTime
+    public $capture_on;
 
-    public CustomerRequest $customer;
+    // CustomerRequest
+    public $customer;
 
-    public BillingDescriptor $billing_descriptor;
+    // BillingDescriptor
+    public $billing_descriptor;
 
-    public ShippingDetails $shipping;
+    // ShippingDetails
+    public $shipping;
 
-    public string $previous_payment_id;
+    public $previous_payment_id;
 
-    public RiskRequest $risk;
+    // RiskRequest
+    public $risk;
 
-    public string $success_url;
+    public $success_url;
 
-    public string $failure_url;
+    public $failure_url;
 
-    public string $payment_ip;
+    public $payment_ip;
 
-    public ThreeDsRequest $three_ds;
+    // ThreeDsRequest
+    public $three_ds;
 
-    public PaymentRecipient $recipient;
+    // PaymentRecipient
+    public $recipient;
 
-    public array $metadata;
+    public $metadata;
 
-    public array $processing;
+    public $processing;
 
 }

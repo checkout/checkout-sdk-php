@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments\Source\Apm;
 
-use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Source\AbstractRequestSource;
 
@@ -13,18 +12,20 @@ class RequestKlarnaSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$klarna);
     }
 
-    public string $authorization_token;
+    public $authorization_token;
 
-    public string $locale;
+    public $locale;
 
-    public string $purchase_country;
+    public $purchase_country;
 
-    public int $tax_amount;
+    public $tax_amount;
 
-    public Address $billing_address;
+    // Address
+    public $billing_address;
 
-    public KlarnaCustomer $customer;
+    // KlarnaCustomer
+    public $customer;
 
-    // KlarnaProduct
-    public array $products;
+    // array KlarnaProduct
+    public $products;
 }

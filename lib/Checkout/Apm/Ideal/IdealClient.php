@@ -11,8 +11,8 @@ use Checkout\Client;
 class IdealClient extends Client
 {
 
-    private const IDEAL_EXTERNAL_PATH = "ideal-external";
-    private const ISSUERS_PATH = "issuers";
+    const IDEAL_EXTERNAL_PATH = "ideal-external";
+    const ISSUERS_PATH = "issuers";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {

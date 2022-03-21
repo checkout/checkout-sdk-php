@@ -9,9 +9,9 @@ use Psr\Log\LoggerInterface;
 abstract class AbstractCheckoutSdkBuilder
 {
 
-    protected ?Environment $environment;
-    protected HttpClientBuilderInterface $httpClientBuilder;
-    protected LoggerInterface $logger;
+    protected $environment;
+    protected $httpClientBuilder;
+    protected $logger;
 
     public function __construct()
     {
@@ -20,34 +20,34 @@ abstract class AbstractCheckoutSdkBuilder
         $this->setDefaultLogger();
     }
 
-    public function setEnvironment(Environment $environment): void
+    public function setEnvironment(Environment $environment)
     {
         $this->environment = $environment;
     }
 
-    public function setHttpClientBuilder(HttpClientBuilderInterface $httpClientBuilder): void
+    public function setHttpClientBuilder(HttpClientBuilderInterface $httpClientBuilder)
     {
         $this->httpClientBuilder = $httpClientBuilder;
     }
 
-    public function setLogger(LoggerInterface $logger): void
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
-    protected function getCheckoutConfiguration(): CheckoutConfiguration
+    protected function getCheckoutConfiguration()
     {
         return new CheckoutConfiguration($this->getSdkCredentials(), $this->environment,
             $this->httpClientBuilder, $this->logger);
     }
 
-    private function setDefaultLogger(): void
+    private function setDefaultLogger()
     {
         $this->logger = new Logger(CheckoutUtils::PROJECT_NAME);
         $this->logger->pushHandler(new StreamHandler("php://stderr"));
     }
 
-    protected abstract function getSdkCredentials(): SdkCredentialsInterface;
+    protected abstract function getSdkCredentials();
 
     /**
      * @return mixed

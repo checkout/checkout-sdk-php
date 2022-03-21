@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Payments\Four;
 
-use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
 use Checkout\Payments\Four\Request\PaymentRequest;
 use Checkout\Payments\Four\Request\Source\Apm\RequestIdealSource;
@@ -13,7 +12,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeIdealPayment(): void
+    public function shouldMakeIdealPayment()
     {
         $requestSource = new RequestIdealSource();
         $requestSource->bic = "INGBNL2A";
@@ -28,18 +27,24 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        $paymentResponse1 = $this->retriable(fn() => $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest));
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
 
-        self::assertResponse($paymentResponse1,
+        $this->assertResponse($paymentResponse1,
             "id",
             "status",
             "_links",
             "_links.self",
             "_links.redirect");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
 
-        self::assertResponse($paymentResponse2,
+        $this->assertResponse($paymentResponse2,
             "id",
             "requested_on",
             "source",
@@ -53,7 +58,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeSofortPayment(): void
+    public function shouldMakeSofortPayment()
     {
         $requestSource = new RequestSofortSource();
 
@@ -65,18 +70,24 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        $paymentResponse1 = $this->retriable(fn() => $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest));
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
 
-        self::assertResponse($paymentResponse1,
+        $this->assertResponse($paymentResponse1,
             "id",
             "status",
             "_links",
             "_links.self",
             "_links.redirect");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
 
-        self::assertResponse($paymentResponse2,
+        $this->assertResponse($paymentResponse2,
             "id",
             "requested_on",
             "source",

@@ -4,6 +4,6 @@ namespace Checkout\Payments\Four;
 
 class CaptureType
 {
-    public static string $nonFinal = "NonFinal";
-    public static string $final = "Final";
+    public static $nonFinal = "NonFinal";
+    public static $final = "Final";
 }

@@ -16,7 +16,7 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldMakeCardPayment(): void
+    public function shouldMakeCardPayment()
     {
         $paymentResponse = $this->makeCardPayment(true, 10, new DateTime());
 
@@ -58,14 +58,14 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "processing",
             "processing.acquirer_transaction_id",
             "processing.retrieval_reference_number");
-        self::assertEquals("card", $paymentResponse["source"]["type"]);
+        $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldMakeCard3dsPayment(): void
+    public function shouldMakeCard3dsPayment()
     {
         $paymentResponse = $this->make3dsCardPayment();
         $this->assertResponse($paymentResponse,
@@ -84,7 +84,7 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldMakeCard3dsPayment_N3d(): void
+    public function shouldMakeCard3dsPayment_N3d()
     {
         $paymentResponse = $this->make3dsCardPayment(true);
         $this->assertResponse($paymentResponse,
@@ -125,14 +125,14 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "processing",
             "processing.acquirer_transaction_id",
             "processing.retrieval_reference_number");
-        self::assertEquals("card", $paymentResponse["source"]["type"]);
+        $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldTokenPayment(): void
+    public function shouldTokenPayment()
     {
         $paymentResponse = $this->makeTokenPayment();
 
@@ -174,14 +174,14 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "processing.acquirer_transaction_id",
             "processing.retrieval_reference_number");
 
-        self::assertEquals("card", $paymentResponse["source"]["type"]);
+        $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldMakePaymentsIdempotent(): void
+    public function shouldMakePaymentsIdempotent()
     {
         $requestCardSource = new RequestCardSource();
         $requestCardSource->name = TestCardSource::$VisaName;
@@ -202,12 +202,12 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $idempotencyKey = $this->idempotencyKey();
 
         $paymentResponse1 = $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest, $idempotencyKey);
-        self::assertNotNull($paymentResponse1);
+        $this->assertNotNull($paymentResponse1);
 
         $paymentResponse2 = $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest, $idempotencyKey);
-        self::assertNotNull($paymentResponse2);
+        $this->assertNotNull($paymentResponse2);
 
-        //self::assertEquals($paymentResponse1["action_id"], $paymentResponse2["action_id"]);
+        // $this->assertEquals($paymentResponse1["action_id"], $paymentResponse2["action_id"]);
     }
 
 }

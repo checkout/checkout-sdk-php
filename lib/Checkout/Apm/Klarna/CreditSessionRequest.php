@@ -4,16 +4,16 @@ namespace Checkout\Apm\Klarna;
 
 class CreditSessionRequest
 {
-    public string $purchase_country;
+    public $purchase_country;
 
-    public string $currency;
+    public $currency;
 
-    public string $locale;
+    public $locale;
 
-    public int $amount;
+    public $amount;
 
-    public int $tax_amount;
+    public $tax_amount;
 
     //KlarnaProduct
-    public array $products;
+    public $products;
 }

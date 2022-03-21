@@ -2,9 +2,7 @@
 
 namespace Checkout\Payments\Source;
 
-use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
-use Checkout\Common\Phone;
 
 class RequestNetworkTokenSource extends AbstractRequestSource
 {
@@ -14,26 +12,28 @@ class RequestNetworkTokenSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$network_token);
     }
 
-    public string $token;
+    public $token;
 
-    public int $expiry_month;
+    public $expiry_month;
 
-    public int $expiry_year;
+    public $expiry_year;
 
-    public string $token_type;
+    public $token_type;
 
-    public string $cryptogram;
+    public $cryptogram;
 
-    public string $eci;
+    public $eci;
 
-    public bool $stored;
+    public $stored;
 
-    public string $name;
+    public $name;
 
-    public string $cvv;
+    public $cvv;
 
-    public Address $billing_address;
+    // Address
+    public $billing_address;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
 }

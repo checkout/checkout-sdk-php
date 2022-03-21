@@ -9,7 +9,7 @@ class StaticKeysSdkCredentials extends AbstractStaticKeysSdkCredentials
      * @param string|null $secretKey
      * @param string|null $publicKey
      */
-    public function __construct(?string $secretKey, ?string $publicKey)
+    public function __construct($secretKey, $publicKey)
     {
         parent::__construct($secretKey, $publicKey);
     }
@@ -17,7 +17,7 @@ class StaticKeysSdkCredentials extends AbstractStaticKeysSdkCredentials
     /**
      * @throws CheckoutAuthorizationException
      */
-    function getAuthorization(string $authorizationType): SdkAuthorization
+    function getAuthorization($authorizationType)
     {
         switch ($authorizationType) {
             case AuthorizationType::$publicKey:

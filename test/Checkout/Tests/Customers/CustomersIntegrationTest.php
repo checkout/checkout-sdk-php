@@ -14,7 +14,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -23,7 +23,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateAndGetCustomer(): void
+    public function shouldCreateAndGetCustomer()
     {
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
@@ -38,8 +38,8 @@ class CustomersIntegrationTest extends SandboxTestFixture
             "email",
             "name",
             "phone");
-        self::assertEquals($customerRequest->name, $customerDetails["name"]);
-        self::assertEquals($customerRequest->email, $customerDetails["email"]);
+        $this->assertEquals($customerRequest->name, $customerDetails["name"]);
+        $this->assertEquals($customerRequest->email, $customerDetails["email"]);
 
     }
 
@@ -47,7 +47,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateAndUpdateCustomer(): void
+    public function shouldCreateAndUpdateCustomer()
     {
         //Create Customer
         $customerRequest = new CustomerRequest();
@@ -71,15 +71,15 @@ class CustomersIntegrationTest extends SandboxTestFixture
             "email",
             "name",
             "phone");
-        self::assertEquals($customerRequest->name, $customerDetails["name"]);
-        self::assertEquals($customerRequest->email, $customerDetails["email"]);
+        $this->assertEquals($customerRequest->name, $customerDetails["name"]);
+        $this->assertEquals($customerRequest->email, $customerDetails["email"]);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateAndDeleteCustomer(): void
+    public function shouldCreateAndDeleteCustomer()
     {
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
@@ -96,7 +96,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
         $this->defaultApi->getCustomersClient()->get($id);
     }
 
-    public function getPhone(): Phone
+    public function getPhone()
     {
         $phone = new Phone();
         $phone->country_code = "1";

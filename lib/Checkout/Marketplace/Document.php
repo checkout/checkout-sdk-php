@@ -5,9 +5,9 @@ namespace Checkout\Marketplace;
 class Document
 {
     # DocumentType
-    public string $type;
+    public $type;
 
-    public string $front;
+    public $front;
 
-    public string $back;
+    public $back;
 }

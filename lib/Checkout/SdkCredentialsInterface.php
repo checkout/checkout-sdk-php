@@ -4,5 +4,5 @@ namespace Checkout;
 
 interface SdkCredentialsInterface
 {
-    function getAuthorization(string $authorizationType): SdkAuthorization;
+    function getAuthorization($authorizationType);
 }

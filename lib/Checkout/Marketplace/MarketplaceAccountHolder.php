@@ -6,19 +6,21 @@ use Checkout\Common\Four\AccountHolder;
 
 class MarketplaceAccountHolder extends AccountHolder
 {
-    public string $type;
+    public $type;
 
-    public string $company_name;
+    public $company_name;
 
-    public string $tax_id;
+    public $tax_id;
 
-    public DateOfBirth $date_of_birth;
+    // DateOfBirth
+    public $date_of_birth;
 
-    public string $country_of_birth;
+    public $country_of_birth;
 
-    public string $residential_status;
+    public $residential_status;
 
-    public Identification $identification;
+    // Identification
+    public $identification;
 
-    public string $email;
+    public $email;
 }

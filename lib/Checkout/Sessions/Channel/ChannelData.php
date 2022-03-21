@@ -4,11 +4,11 @@ namespace Checkout\Sessions\Channel;
 
 abstract class ChannelData
 {
-    public function __construct(string $channel)
+    public function __construct($channel)
     {
         $this->channel = $channel;
     }
 
-    public string $channel;
+    public $channel;
 
 }

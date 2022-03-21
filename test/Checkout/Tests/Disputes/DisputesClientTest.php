@@ -12,12 +12,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class DisputesClientTest extends UnitTestFixture
 {
-    private DisputesClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new DisputesClient($this->apiClient, $this->configuration);
@@ -27,7 +27,7 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldQueryDispute(): void
+    public function shouldQueryDispute()
     {
 
         $this->apiClient
@@ -42,7 +42,7 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetDisputeDetails(): void
+    public function shouldGetDisputeDetails()
     {
 
         $this->apiClient
@@ -57,7 +57,7 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldAcceptDispute(): void
+    public function shouldAcceptDispute()
     {
 
         $this->apiClient
@@ -72,7 +72,7 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldPutEvidence(): void
+    public function shouldPutEvidence()
     {
 
         $this->apiClient
@@ -87,7 +87,7 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetEvidence(): void
+    public function shouldGetEvidence()
     {
 
         $this->apiClient
@@ -102,7 +102,7 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldSubmitEvidence(): void
+    public function shouldSubmitEvidence()
     {
 
         $this->apiClient
@@ -117,10 +117,10 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUploadFile(): void
+    public function shouldUploadFile()
     {
         $fileRequest = new FileRequest();
-        $fileRequest->file = getcwd() . "/test/Checkout/Tests/Resources/checkout.jpeg";
+        $fileRequest->file = str_replace("\\", "/", getcwd() . "/test/Checkout/Tests/Resources/checkout.jpeg");
 
         $this->apiClient
             ->method("submitFile")
@@ -134,7 +134,7 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetFileDetails(): void
+    public function shouldGetFileDetails()
     {
         $this->apiClient
             ->method("get")

@@ -12,5 +12,5 @@ class RequestCustomerSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$customer);
     }
 
-    public string $id;
+    public $id;
 }

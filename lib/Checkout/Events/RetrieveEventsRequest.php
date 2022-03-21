@@ -3,23 +3,24 @@
 namespace Checkout\Events;
 
 use Checkout\Common\AbstractQueryFilter;
-use DateTime;
 
 class RetrieveEventsRequest extends AbstractQueryFilter
 {
-    public string $payment_id;
+    public $payment_id;
 
-    public string $charge_id;
+    public $charge_id;
 
-    public string $track_id;
+    public $track_id;
 
-    public string $reference;
+    public $reference;
 
-    public int $skip;
+    public $skip;
 
-    public int $limit;
+    public $limit;
 
-    public DateTime $from;
+    // DateTime
+    public $from;
 
-    public DateTime $to;
+    // DateTime
+    public $to;
 }

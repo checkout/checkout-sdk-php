@@ -11,6 +11,6 @@ class SessionsRequestIdSource extends SessionSource
         parent::__construct(SessionSourceType::$id);
     }
 
-    public string $id;
+    public $id;
 
 }

@@ -4,25 +4,25 @@ namespace Checkout;
 
 abstract class Client
 {
-    protected ApiClient $apiClient;
+    protected $apiClient;
 
-    protected CheckoutConfiguration $configuration;
+    protected $configuration;
 
-    private string $sdkAuthorizationType;
+    private $sdkAuthorizationType;
 
-    public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration, string $sdkAuthorizationType)
+    public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration, $sdkAuthorizationType)
     {
         $this->apiClient = $apiClient;
         $this->configuration = $configuration;
         $this->sdkAuthorizationType = $sdkAuthorizationType;
     }
 
-    protected function sdkAuthorization(): SdkAuthorization
+    protected function sdkAuthorization()
     {
         return $this->configuration->getSdkCredentials()->getAuthorization($this->sdkAuthorizationType);
     }
 
-    protected function sdkSpecificAuthorization(string $authorizationType): SdkAuthorization
+    protected function sdkSpecificAuthorization($authorizationType)
     {
         return $this->configuration->getSdkCredentials()->getAuthorization($authorizationType);
     }
@@ -31,7 +31,7 @@ abstract class Client
      * @param mixed ...$parts
      * @return string
      */
-    protected function buildPath(...$parts): string
+    protected function buildPath(...$parts)
     {
         return join("/", $parts);
     }

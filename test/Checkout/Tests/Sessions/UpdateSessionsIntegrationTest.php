@@ -15,7 +15,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdateCardSessionUsingId_browserSession(): void
+    public function shouldUpdateCardSessionUsingId_browserSession()
     {
         $responseHostedSession = $this->createHostedSession();
 
@@ -33,7 +33,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdateCardSessionUsingSessionSecret_browserSession(): void
+    public function shouldUpdateCardSessionUsingSessionSecret_browserSession()
     {
         $responseHostedSession = $this->createHostedSession();
 
@@ -52,7 +52,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdateCardSession_appSession(): void
+    public function shouldUpdateCardSession_appSession()
     {
         $responseHostedSession = $this->createHostedSession();
         $this->assertNotNull($responseHostedSession);
@@ -67,7 +67,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdate3dsMethodCompletionIndicator_sessionId(): void
+    public function shouldUpdate3dsMethodCompletionIndicator_sessionId()
     {
         $responseHostedSession = $this->createHostedSession();
         $this->assertNotNull($responseHostedSession);
@@ -87,7 +87,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
-    public function shouldUpdate3dsMethodCompletionIndicator_sessionSecret(): void
+    public function shouldUpdate3dsMethodCompletionIndicator_sessionSecret()
     {
         $responseHostedSession = $this->createHostedSession();
         $this->assertNotNull($responseHostedSession);

@@ -13,11 +13,12 @@ class RequestBoletoSource extends AbstractRequestSource
         $this->integration_type = IntegrationType::$redirect;
     }
 
-    public string $integration_type;
+    public $integration_type;
 
-    public string $country;
+    public $country;
 
-    public string $description;
+    public $description;
 
-    public Payer $payer;
+    // Payer
+    public $payer;
 }

@@ -4,13 +4,13 @@ namespace Checkout\Webhooks;
 
 class WebhookRequest
 {
-    public string $url;
+    public $url;
 
-    public bool $active;
+    public $active;
 
-    public array $headers;
+    public $headers;
 
-    public string $content_type;
+    public $content_type;
 
-    public array $event_types;
+    public $event_types;
 }

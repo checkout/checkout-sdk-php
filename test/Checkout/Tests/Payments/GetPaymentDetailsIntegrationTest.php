@@ -11,11 +11,14 @@ class GetPaymentDetailsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetPaymentDetails(): void
+    public function shouldGetPaymentDetails()
     {
         $paymentResponse = $this->makeCardPayment(true);
 
-        $payment = self::retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]));
+        $payment = $this->retriable(
+            function () use (&$paymentResponse) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
+            });
 
         $this->assertResponse($payment,
             "id",

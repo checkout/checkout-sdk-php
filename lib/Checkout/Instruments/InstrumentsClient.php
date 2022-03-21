@@ -28,31 +28,31 @@ class InstrumentsClient extends Client
     }
 
     /**
-     * @param string $instrumentId
+     * @param $instrumentId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function get(string $instrumentId)
+    public function get($instrumentId)
     {
         return $this->apiClient->get($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $this->sdkAuthorization());
     }
 
     /**
-     * @param string $instrumentId
+     * @param $instrumentId
      * @param UpdateInstrumentRequest $updateInstrumentRequest
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function update(string $instrumentId, UpdateInstrumentRequest $updateInstrumentRequest)
+    public function update($instrumentId, UpdateInstrumentRequest $updateInstrumentRequest)
     {
         return $this->apiClient->patch($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $updateInstrumentRequest, $this->sdkAuthorization());
     }
 
     /**
-     * @param string $instrumentId
+     * @param $instrumentId
      * @throws CheckoutApiException
      */
-    public function delete(string $instrumentId): void
+    public function delete($instrumentId)
     {
         $this->apiClient->delete($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $this->sdkAuthorization());
     }

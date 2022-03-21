@@ -23,7 +23,7 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -32,7 +32,7 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateAndGetHostedPaymentsPageDetails(): void
+    public function shouldCreateAndGetHostedPaymentsPageDetails()
     {
 
         $request = $this->createHostedPaymentsRequest();
@@ -44,7 +44,7 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
             "reference",
             "_links",
             "_links.self",
-            "_links.redirect",
+            "_links.redirect"
         );
 
         $getResponse = $this->defaultApi->getHostedPaymentsClient()->getHostedPaymentsPageDetails($response["id"]);
@@ -64,12 +64,12 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
             "products",
             "_links",
             "_links.self",
-            "_links.redirect",
+            "_links.redirect"
         );
 
     }
 
-    private function createHostedPaymentsRequest(): HostedPaymentsSessionRequest
+    private function createHostedPaymentsRequest()
     {
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();

@@ -4,7 +4,7 @@ namespace Checkout\Marketplace;
 
 class EntityDocument
 {
-    public string $file_id;
+    public $file_id;
 
-    public string $type;
+    public $type;
 }

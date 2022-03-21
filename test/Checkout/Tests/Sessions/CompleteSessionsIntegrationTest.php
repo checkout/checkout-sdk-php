@@ -11,7 +11,7 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldTryToCompleteCardSessionBrowserSession(): void
+    public function shouldTryToCompleteCardSessionBrowserSession()
     {
         $sessionResponse = $this->createHostedSession();
 
@@ -22,20 +22,20 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         try {
             $this->fourApi->getSessionsClient()->completeSession($sessionId);
-            self::fail("shouldn't get here!");
+            $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
-            self::assertEquals(self::MESSAGE_403, $e->getMessage());
-            self::assertNotEmpty($e->request_id);
-            self::assertNotNull($e->error_details);
+            $this->assertEquals(self::MESSAGE_403, $e->getMessage());
+            $this->assertNotEmpty($e->request_id);
+            $this->assertNotNull($e->error_details);
         }
 
         try {
             $this->fourApi->getSessionsClient()->completeSession($sessionId, $sessionSecret);
-            self::fail("shouldn't get here!");
+            $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
-            self::assertEquals(self::MESSAGE_403, $e->getMessage());
-            self::assertNotEmpty($e->request_id);
-            self::assertNotNull($e->error_details);
+            $this->assertEquals(self::MESSAGE_403, $e->getMessage());
+            $this->assertNotEmpty($e->request_id);
+            $this->assertNotNull($e->error_details);
         }
 
     }

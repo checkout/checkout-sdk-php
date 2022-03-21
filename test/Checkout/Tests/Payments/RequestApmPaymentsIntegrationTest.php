@@ -26,7 +26,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeBalotoPayment(): void
+    public function shouldMakeBalotoPayment()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestBalotoSource();
@@ -44,13 +44,19 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->amount = 100000;
         $paymentRequest->currency = Currency::$COP;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
 
-        self::assertResponse($paymentResponse1, "id");
+        $this->assertResponse($paymentResponse1, "id");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
+            });
 
-        self::assertResponse($paymentResponse2,
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -60,7 +66,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeBoletoPayment_Redirect(): void
+    public function shouldMakeBoletoPayment_Redirect()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestBoletoSource();
@@ -80,11 +86,17 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->amount = 100;
         $paymentRequest->currency = Currency::$BRL;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
+            });
+
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -94,7 +106,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeBoletoPayment_Direct(): void
+    public function shouldMakeBoletoPayment_Direct()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestBoletoSource();
@@ -114,11 +126,18 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->amount = 100;
         $paymentRequest->currency = Currency::$BRL;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
+        $this->assertResponse($paymentResponse1, "id");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
+
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -128,7 +147,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeFawryPayment(): void
+    public function shouldMakeFawryPayment()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestFawrySource();
@@ -149,11 +168,17 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->amount = 1000;
         $paymentRequest->currency = Currency::$EGP;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
+
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -163,7 +188,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeGiropayPayment(): void
+    public function shouldMakeGiropayPayment()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestGiropaySource();
@@ -175,11 +200,17 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->currency = Currency::$EUR;
         $paymentRequest->capture = true;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
+
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -189,7 +220,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeIdealPayment(): void
+    public function shouldMakeIdealPayment()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestIdealSource();
@@ -203,11 +234,17 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->currency = Currency::$EUR;
         $paymentRequest->capture = true;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
+        $this->assertResponse($paymentResponse1, "id");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -217,7 +254,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeOxxoPayment(): void
+    public function shouldMakeOxxoPayment()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestOxxoSource();
@@ -236,11 +273,18 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->currency = Currency::$MXN;
         $paymentRequest->capture = true;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
+        $this->assertResponse($paymentResponse1, "id");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
+
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -250,7 +294,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakePagoFacilPayment(): void
+    public function shouldMakePagoFacilPayment()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestPagoFacilSource();
@@ -269,11 +313,17 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->currency = Currency::$ARS;
         $paymentRequest->capture = true;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
+        $this->assertResponse($paymentResponse1, "id");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -283,7 +333,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeRapiPagoPayment(): void
+    public function shouldMakeRapiPagoPayment()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestRapiPagoSource();
@@ -302,11 +352,17 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->currency = Currency::$ARS;
         $paymentRequest->capture = true;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
+        $this->assertResponse($paymentResponse1, "id");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",
@@ -316,7 +372,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakeSofortPayment(): void
+    public function shouldMakeSofortPayment()
     {
         $this->markTestSkipped("unstable");
         $requestSource = new RequestSofortSource();
@@ -327,11 +383,17 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->currency = Currency::$ARS;
         $paymentRequest->capture = true;
 
-        $paymentResponse1 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest));
-        self::assertResponse($paymentResponse1, "id");
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            });
+        $this->assertResponse($paymentResponse1, "id");
 
-        $paymentResponse2 = $this->retriable(fn() => $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]));
-        self::assertResponse($paymentResponse2,
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            });
+        $this->assertResponse($paymentResponse2,
             "id",
             "source",
             "amount",

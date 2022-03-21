@@ -4,7 +4,7 @@ namespace Checkout\Payments\Source\Apm;
 
 class BalotoPayer
 {
-    public string $name;
+    public $name;
 
-    public string $email;
+    public $email;
 }

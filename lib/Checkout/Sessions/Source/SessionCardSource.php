@@ -12,14 +12,14 @@ class SessionCardSource extends SessionSource
         parent::__construct(SessionSourceType::$card);
     }
 
-    public string $number;
+    public $number;
 
-    public int $expiry_month;
+    public $expiry_month;
 
-    public int $expiry_year;
+    public $expiry_year;
 
-    public string $name;
+    public $name;
 
-    public string $email;
+    public $email;
 
 }

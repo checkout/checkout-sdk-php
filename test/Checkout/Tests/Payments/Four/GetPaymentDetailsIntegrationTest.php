@@ -12,11 +12,16 @@ class GetPaymentDetailsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetPaymentDetails(): void
+    public function shouldGetPaymentDetails()
     {
         $paymentResponse = $this->makeCardPayment(true);
 
-        $payment = self::retriable(fn() => $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]), $this->paymentIsCaptured());
+        $payment = $this->retriable(
+            function () use (&$paymentResponse) {
+                return $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
+            },
+            self::paymentIsCaptured());
+
 
         $this->assertResponse($payment,
             "id",
@@ -39,8 +44,10 @@ class GetPaymentDetailsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @return Closure
      */
-    private function paymentIsCaptured(): Closure
+    private function paymentIsCaptured()
     {
-        return fn($response): bool => array_key_exists("status", $response) && $response["status"] == "Captured";
+        return function ($response) {
+            return array_key_exists("status", $response) && $response["status"] == "Captured";
+        };
     }
 }

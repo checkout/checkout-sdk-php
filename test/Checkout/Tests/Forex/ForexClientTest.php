@@ -10,12 +10,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class ForexClientTest extends UnitTestFixture
 {
-    private ForexClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new ForexClient($this->apiClient, $this->configuration);
@@ -25,7 +25,7 @@ class ForexClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRequestQuote(): void
+    public function shouldRequestQuote()
     {
 
         $this->apiClient

@@ -4,55 +4,53 @@ namespace Checkout;
 
 use Checkout\Common\AbstractQueryFilter;
 use Checkout\Files\FileRequest;
-use GuzzleHttp\ClientInterface;
+use Exception;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
-use Throwable;
 
 class ApiClient
 {
 
-    private CheckoutConfiguration $configuration;
+    private $configuration;
 
-    private ClientInterface $client;
+    private $client;
 
-    private JsonSerializer $jsonSerializer;
+    private $jsonSerializer;
 
-    private LoggerInterface $logger;
+    private $logger;
 
-    private string $baseUri;
+    private $baseUri;
 
-    public function __construct(CheckoutConfiguration $configuration, string $baseUri = null)
+    public function __construct(CheckoutConfiguration $configuration, $baseUri = null)
     {
         $this->configuration = $configuration;
         $this->client = $configuration->getHttpClientBuilder()->getClient();
         $this->jsonSerializer = new JsonSerializer();
         $this->logger = $this->configuration->getLogger();
-        $this->baseUri = $baseUri ?? $this->configuration->getEnvironment()->getBaseUri();
+        $this->baseUri = $baseUri != null ? $baseUri : $this->configuration->getEnvironment()->getBaseUri();
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param SdkAuthorization $authorization
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function get(string $path, SdkAuthorization $authorization)
+    public function get($path, SdkAuthorization $authorization)
     {
         $response = $this->invoke("GET", $path, null, $authorization);
         return $this->jsonSerializer->deserialize($response->getBody());
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param mixed $body
      * @param SdkAuthorization $authorization
      * @param string|null $idempotencyKey
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function post(string $path, $body, SdkAuthorization $authorization, string $idempotencyKey = null)
+    public function post($path, $body, SdkAuthorization $authorization, $idempotencyKey = null)
     {
         $response = $this->invoke("POST", $path, is_null($body) ? $body : $this->jsonSerializer->serialize($body), $authorization, $idempotencyKey);
 
@@ -60,49 +58,49 @@ class ApiClient
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param mixed $body
      * @param SdkAuthorization $authorization
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function put(string $path, $body, SdkAuthorization $authorization)
+    public function put($path, $body, SdkAuthorization $authorization)
     {
         $response = $this->invoke("PUT", $path, $this->jsonSerializer->serialize($body), $authorization);
         return $this->jsonSerializer->deserialize($response->getBody());
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param mixed $body
      * @param SdkAuthorization $authorization
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function patch(string $path, $body, SdkAuthorization $authorization)
+    public function patch($path, $body, SdkAuthorization $authorization)
     {
         $response = $this->invoke("PATCH", $path, $this->jsonSerializer->serialize($body), $authorization);
         return $this->jsonSerializer->deserialize($response->getBody());
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param SdkAuthorization $authorization
      * @throws CheckoutApiException
      */
-    public function delete(string $path, SdkAuthorization $authorization): void
+    public function delete($path, SdkAuthorization $authorization)
     {
         $this->invoke("DELETE", $path, null, $authorization);
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param AbstractQueryFilter $body
      * @param SdkAuthorization $authorization
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function query(string $path, AbstractQueryFilter $body, SdkAuthorization $authorization)
+    public function query($path, AbstractQueryFilter $body, SdkAuthorization $authorization)
     {
         $this->logger->info("GET " . $path);
         $queryParameters = $body->getEncodedQueryParameters();
@@ -114,38 +112,38 @@ class ApiClient
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function submitFile(string $path, FileRequest $fileRequest, SdkAuthorization $authorization)
+    public function submitFile($path, FileRequest $fileRequest, SdkAuthorization $authorization)
     {
         return $this->submit($path, $fileRequest, $authorization, "file");
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function submitFileFilesApi(string $path, FileRequest $fileRequest, SdkAuthorization $authorization)
+    public function submitFileFilesApi($path, FileRequest $fileRequest, SdkAuthorization $authorization)
     {
         return $this->submit($path, $fileRequest, $authorization, "path");
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
-     * @param string $multipart
+     * @param $multipart
      * @return mixed
      * @throws CheckoutApiException
      */
-    private function submit(string $path, FileRequest $fileRequest, SdkAuthorization $authorization, string $multipart)
+    private function submit($path, FileRequest $fileRequest, SdkAuthorization $authorization, $multipart)
     {
         try {
             $this->logger->info("POST " . $path . " file: " . $fileRequest->file);
@@ -164,7 +162,7 @@ class ApiClient
                     ]
                 ]]);
             return json_decode($response->getBody(), true);
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             $this->logger->error($path . " error: " . $e->getMessage());
             if ($e instanceof RequestException) {
                 throw CheckoutApiException::from($e);
@@ -174,15 +172,15 @@ class ApiClient
     }
 
     /**
-     * @param string $method
-     * @param string $path
+     * @param $method
+     * @param $path
      * @param string|null $body
      * @param SdkAuthorization $authorization
      * @param string|null $idempotencyKey
      * @return ResponseInterface
      * @throws CheckoutApiException
      */
-    private function invoke(string $method, string $path, ?string $body, SdkAuthorization $authorization, string $idempotencyKey = null): ResponseInterface
+    private function invoke($method, $path, $body, SdkAuthorization $authorization, $idempotencyKey = null)
     {
         try {
             $this->logger->info($method . " " . $path);
@@ -192,7 +190,7 @@ class ApiClient
                 "body" => $body,
                 "headers" => $headers
             ]);
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             $this->logger->error($path . " error: " . $e->getMessage());
             if ($e instanceof RequestException) {
                 throw CheckoutApiException::from($e);
@@ -201,7 +199,7 @@ class ApiClient
         }
     }
 
-    private function getRequestUrl(string $path): string
+    private function getRequestUrl($path)
     {
         return $this->baseUri . $path;
     }
@@ -213,7 +211,7 @@ class ApiClient
      * @return array
      * @throws CheckoutAuthorizationException
      */
-    private function getHeaders(SdkAuthorization $authorization, ?string $contentType, ?string $idempotencyKey): array
+    private function getHeaders(SdkAuthorization $authorization, $contentType, $idempotencyKey)
     {
         $headers = [
             "User-agent" => CheckoutUtils::PROJECT_NAME . "/" . CheckoutUtils::PROJECT_VERSION,

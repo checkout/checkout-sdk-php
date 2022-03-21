@@ -22,7 +22,7 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -30,7 +30,7 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldCreateAndGetPaymentLink(): void
+    public function shouldCreateAndGetPaymentLink()
     {
 
         $request = $this->createPaymentLinkRequest();
@@ -43,7 +43,7 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
             "expires_on",
             "_links",
             "_links.self",
-            "_links.redirect",
+            "_links.redirect"
         );
 
         $getResponse = $this->defaultApi->getPaymentLinksClient()->getPaymentLink($response["id"]);
@@ -63,12 +63,12 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
             "products",
             "_links",
             "_links.self",
-            "_links.redirect",
+            "_links.redirect"
         );
 
     }
 
-    private function createPaymentLinkRequest(): PaymentLinkRequest
+    private function createPaymentLinkRequest()
     {
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();

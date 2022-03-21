@@ -7,7 +7,7 @@ use DateTime;
 class JsonSerializer
 {
 
-    private const KEYS_TRANSFORMATIONS = array(
+    const KEYS_TRANSFORMATIONS = array(
         "three_ds" => "3ds"
     );
 
@@ -15,26 +15,29 @@ class JsonSerializer
      * @param mixed $body
      * @return string
      */
-    public function serialize($body): string
+    public function serialize($body)
     {
         return json_encode($this->normalize(get_object_vars($body)));
     }
 
-    private function normalize(array $arr): array
+    private function normalize(array $props)
     {
-        foreach ($arr as $key => $value) {
+        $array = array_filter($props, function ($value) {
+            return !is_null($value);
+        });
+        foreach ($array as $key => $value) {
             // customization
             if ($value instanceof DateTime) {
-                $arr[$key] = CheckoutUtils::formatDate($value);
+                $array[$key] = CheckoutUtils::formatDate($value);
             } else if (is_object($value)) {
-                $arr[$key] = $this->normalize(get_object_vars($value));
+                $array[$key] = $this->normalize(get_object_vars($value));
             }
-            $arr = $this->applyKeysTransformations($arr, $key);
+            $array = $this->applyKeysTransformations($array, $key);
         }
-        return $arr;
+        return $array;
     }
 
-    private function applyKeysTransformations(array $arr, string $key): array
+    private function applyKeysTransformations(array $arr, $key)
     {
         foreach (self::KEYS_TRANSFORMATIONS as $originalKey => $modifiedKey) {
             if ($key == $originalKey && array_key_exists($originalKey, $arr)) {

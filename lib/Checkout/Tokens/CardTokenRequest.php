@@ -2,25 +2,24 @@
 
 namespace Checkout\Tokens;
 
-use Checkout\Common\Address;
-use Checkout\Common\Phone;
-
 class CardTokenRequest
 {
-    public string $type = "card";
+    public $type = "card";
 
-    public string $number;
+    public $number;
 
-    public int $expiry_month;
+    public $expiry_month;
 
-    public int $expiry_year;
+    public $expiry_year;
 
-    public string $name;
+    public $name;
 
-    public string $cvv;
+    public $cvv;
 
-    public Address $billing_address;
+    // Address
+    public $billing_address;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
 }

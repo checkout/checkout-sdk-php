@@ -5,8 +5,8 @@ namespace Checkout;
 abstract class AbstractStaticKeysCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
 {
 
-    protected ?string $publicKey = null;
-    protected ?string $secretKey = null;
+    protected $publicKey = null;
+    protected $secretKey = null;
 
     public function __construct()
     {
@@ -16,7 +16,7 @@ abstract class AbstractStaticKeysCheckoutSdkBuilder extends AbstractCheckoutSdkB
     /**
      * @throws CheckoutArgumentException
      */
-    protected function validateSecretKey(string $key, string $secretKeyPattern): void
+    protected function validateSecretKey($key, $secretKeyPattern)
     {
         if ($this->validKey($secretKeyPattern, $key)) {
             return;
@@ -27,7 +27,7 @@ abstract class AbstractStaticKeysCheckoutSdkBuilder extends AbstractCheckoutSdkB
     /**
      * @throws CheckoutArgumentException
      */
-    protected function validatePublicKey(string $key, string $publicKeyPattern): void
+    protected function validatePublicKey($key, $publicKeyPattern)
     {
         if (empty($key)) {
             return;
@@ -38,15 +38,13 @@ abstract class AbstractStaticKeysCheckoutSdkBuilder extends AbstractCheckoutSdkB
         throw new CheckoutArgumentException("invalid public key");
     }
 
-    private function validKey(string $pattern, string $key): bool
+    private function validKey($pattern, $key)
     {
         return preg_match($pattern, $key);
     }
 
-    protected abstract function getSdkCredentials(): SdkCredentialsInterface;
+    protected abstract function setPublicKey($publicKey);
 
-    protected abstract function setPublicKey(string $publicKey): void;
-
-    protected abstract function setSecretKey(string $secretKey): void;
+    protected abstract function setSecretKey($secretKey);
 
 }

@@ -11,7 +11,7 @@ use Checkout\Client;
 class PaymentLinksClient extends Client
 {
 
-    private const PAYMENT_LINKS = "payment-links";
+    const PAYMENT_LINKS = "payment-links";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -19,11 +19,11 @@ class PaymentLinksClient extends Client
     }
 
     /**
-     * @param string $id
+     * @param $id
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function getPaymentLink(string $id)
+    public function getPaymentLink($id)
     {
         return $this->apiClient->get($this->buildPath(self::PAYMENT_LINKS, $id), $this->sdkAuthorization());
     }

@@ -5,16 +5,20 @@ namespace Checkout;
 class CheckoutAuthorizationException extends CheckoutException
 {
 
-    public function __construct(string $message)
+    /**
+     * @param $message
+     */
+    public function __construct($message)
     {
         parent::__construct($message);
     }
 
+
     /**
-     * @param string $authorizationType
+     * @param $authorizationType
      * @return CheckoutAuthorizationException
      */
-    public static function invalidAuthorization(string $authorizationType): CheckoutAuthorizationException
+    public static function invalidAuthorization($authorizationType)
     {
         return new CheckoutAuthorizationException("Operation requires " . $authorizationType . " authorization type");
     }
@@ -22,7 +26,7 @@ class CheckoutAuthorizationException extends CheckoutException
     /**
      * @return CheckoutAuthorizationException
      */
-    public static function invalidSecretKey(): CheckoutAuthorizationException
+    public static function invalidSecretKey()
     {
         return self::invalidKey(AuthorizationType::$secretKey);
     }
@@ -30,16 +34,16 @@ class CheckoutAuthorizationException extends CheckoutException
     /**
      * @return CheckoutAuthorizationException
      */
-    public static function invalidPublicKey(): CheckoutAuthorizationException
+    public static function invalidPublicKey()
     {
         return self::invalidKey(AuthorizationType::$publicKey);
     }
 
     /**
-     * @param string $keyType
+     * @param $keyType
      * @return CheckoutAuthorizationException
      */
-    private static function invalidKey(string $keyType): CheckoutAuthorizationException
+    private static function invalidKey($keyType)
     {
         return new CheckoutAuthorizationException($keyType . "  is required for this operation");
     }

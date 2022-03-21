@@ -12,7 +12,7 @@ class IdealIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$four);
     }
@@ -21,7 +21,7 @@ class IdealIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetInfo(): void
+    public function shouldGetInfo()
     {
         $this->markTestSkipped("unavailable");
         $response = $this->fourApi->getIdealClient()->getInfo();
@@ -36,7 +36,7 @@ class IdealIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetIssuers(): void
+    public function shouldGetIssuers()
     {
         $response = $this->fourApi->getIdealClient()->getIssuers();
         $this->assertResponse($response,

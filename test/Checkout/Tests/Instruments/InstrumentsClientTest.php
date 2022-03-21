@@ -11,12 +11,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class InstrumentsClientTest extends UnitTestFixture
 {
-    private InstrumentsClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new InstrumentsClient($this->apiClient, $this->configuration);
@@ -27,7 +27,7 @@ class InstrumentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateInstrument(): void
+    public function shouldCreateInstrument()
     {
 
         $this->apiClient
@@ -43,7 +43,7 @@ class InstrumentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetInstrument(): void
+    public function shouldGetInstrument()
     {
         $this->apiClient->method("get")
             ->willReturn("foo");
@@ -57,7 +57,7 @@ class InstrumentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUpdateInstrument(): void
+    public function shouldUpdateInstrument()
     {
         $this->apiClient->method("patch")
             ->willReturn("foo");
@@ -72,7 +72,7 @@ class InstrumentsClientTest extends UnitTestFixture
      * @doesNotPerformAssertions
      * @throws CheckoutApiException
      */
-    public function shouldDeleteInstruments(): void
+    public function shouldDeleteInstruments()
     {
         $this->apiClient->method("delete");
 

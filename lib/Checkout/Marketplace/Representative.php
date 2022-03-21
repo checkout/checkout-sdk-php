@@ -2,20 +2,21 @@
 
 namespace Checkout\Marketplace;
 
-use Checkout\Common\Address;
-use Checkout\Common\Phone;
-
 class Representative
 {
-    public string $first_name;
+    public $first_name;
 
-    public string $last_name;
+    public $last_name;
 
-    public Address $address;
+    // Address
+    public $address;
 
-    public Identification $identification;
+    // Identification
+    public $identification;
 
-    public Phone $phone;
+    // Phone
+    public $phone;
 
-    public DateOfBirth $date_of_birth;
+    // DateOfBirth
+    public $date_of_birth;
 }

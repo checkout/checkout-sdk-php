@@ -4,7 +4,7 @@ namespace Checkout\Risk;
 
 class Location
 {
-    public string $latitude;
+    public $latitude;
 
-    public string $longitude;
+    public $longitude;
 }

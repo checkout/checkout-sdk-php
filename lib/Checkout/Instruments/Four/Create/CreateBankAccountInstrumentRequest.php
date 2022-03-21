@@ -2,8 +2,6 @@
 
 namespace Checkout\Instruments\Four\Create;
 
-use Checkout\Common\Four\AccountHolder;
-use Checkout\Common\Four\BankDetails;
 use Checkout\Common\InstrumentType;
 
 class CreateBankAccountInstrumentRequest extends CreateInstrumentRequest
@@ -14,32 +12,35 @@ class CreateBankAccountInstrumentRequest extends CreateInstrumentRequest
     }
 
     //AccountType
-    public string $account_type;
+    public $account_type;
 
-    public string $account_number;
+    public $account_number;
 
-    public string $bank_code;
+    public $bank_code;
 
-    public string $branch_code;
+    public $branch_code;
 
-    public string $iban;
+    public $iban;
 
-    public string $bban;
+    public $bban;
 
-    public string $swift_bic;
+    public $swift_bic;
 
     //Currency
-    public string $currency;
+    public $currency;
 
     //CountryCode
-    public string $country;
+    public $country;
 
-    public string $processing_channel_id;
+    public $processing_channel_id;
 
-    public AccountHolder $account_holder;
+    // AccountHolder
+    public $account_holder;
 
-    public BankDetails $bank_details;
+    // BankDetails
+    public $bank_details;
 
-    public CreateCustomerInstrumentRequest $customer;
+    // CreateCustomerInstrumentRequest
+    public $customer;
 
 }

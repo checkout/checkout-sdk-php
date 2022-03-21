@@ -4,19 +4,19 @@ namespace Checkout\Tests\Risk;
 
 use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
-use Checkout\Risk\preauthentication\PreAuthenticationAssessmentRequest;
-use Checkout\Risk\precapture\PreCaptureAssessmentRequest;
+use Checkout\Risk\PreAuthentication\PreAuthenticationAssessmentRequest;
+use Checkout\Risk\PreCapture\PreCaptureAssessmentRequest;
 use Checkout\Risk\RiskClient;
 use Checkout\Tests\UnitTestFixture;
 
 class RiskClientTest extends UnitTestFixture
 {
-    private RiskClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new RiskClient($this->apiClient, $this->configuration);
@@ -27,7 +27,7 @@ class RiskClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRequestPreAuthenticationRiskScan(): void
+    public function shouldRequestPreAuthenticationRiskScan()
     {
 
         $this->apiClient
@@ -42,7 +42,7 @@ class RiskClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRequestPreCaptureRiskScan(): void
+    public function shouldRequestPreCaptureRiskScan()
     {
 
         $this->apiClient

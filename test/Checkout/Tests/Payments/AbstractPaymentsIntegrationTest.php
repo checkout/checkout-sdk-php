@@ -23,7 +23,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
      * @before
      * @throws CheckoutAuthorizationException
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -35,7 +35,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
      * @return mixed
      * @throws CheckoutApiException
      */
-    protected function makeCardPayment(?bool $shouldCapture = false, int $amount = 10, ?DateTime $captureOn = null)
+    protected function makeCardPayment($shouldCapture = false, $amount = 10, $captureOn = null)
     {
         $phone = $this->getPhone();
         $billingAddress = $this->getAddress();
@@ -111,7 +111,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
      * @return mixed
      * @throws CheckoutApiException
      */
-    protected function make3dsCardPayment(bool $attemptN3d = false)
+    protected function make3dsCardPayment($attemptN3d = false)
     {
         $phone = $this->getPhone();
         $billingAddress = $this->getAddress();
@@ -146,7 +146,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentRequest->three_ds = $threeDsRequest;
 
         $paymentResponse = $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-        self::assertNotNull($paymentResponse);
+        $this->assertNotNull($paymentResponse);
 
         return $paymentResponse;
 

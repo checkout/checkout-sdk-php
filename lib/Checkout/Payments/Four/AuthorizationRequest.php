@@ -4,9 +4,10 @@ namespace Checkout\Payments\Four;
 
 class AuthorizationRequest
 {
-    public int $amount;
+    public $amount;
 
-    public string $reference;
+    public $reference;
 
-    public array $metadata;
+    // array
+    public $metadata;
 }

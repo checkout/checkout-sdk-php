@@ -9,12 +9,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class SepaClientTest extends UnitTestFixture
 {
-    private SepaClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$default);
         $this->client = new SepaClient($this->apiClient, $this->configuration);
@@ -24,7 +24,7 @@ class SepaClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function getMandate(): void
+    public function getMandate()
     {
         $this->apiClient
             ->method("get")
@@ -38,7 +38,7 @@ class SepaClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function cancelMandate(): void
+    public function cancelMandate()
     {
         $this->apiClient
             ->method("post")
@@ -52,7 +52,7 @@ class SepaClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function getMandateViaPPro(): void
+    public function getMandateViaPPro()
     {
         $this->apiClient
             ->method("get")
@@ -66,7 +66,7 @@ class SepaClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function cancelMandateViaPPro(): void
+    public function cancelMandateViaPPro()
     {
         $this->apiClient
             ->method("post")

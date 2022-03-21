@@ -4,5 +4,5 @@ namespace Checkout\Payments;
 
 class ProcessingSettings
 {
-    public bool $aft;
+    public $aft;
 }

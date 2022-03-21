@@ -11,18 +11,20 @@ class OrderCaptureRequest
         $this->type = PaymentSourceType::$klarna;
     }
 
-    public string $type;
+    public $type;
 
-    public int $amount;
+    public $amount;
 
-    public string $reference;
+    public $reference;
 
-    public array $metadata;
+    public $metadata;
 
-    public Klarna $klarna;
+    // Klarna
+    public $klarna;
 
-    public KlarnaShippingInfo $shipping_info;
+    // KlarnaShippingInfo
+    public $shipping_info;
 
-    public int $shipping_delay;
+    public $shipping_delay;
 
 }

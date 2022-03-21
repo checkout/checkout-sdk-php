@@ -4,13 +4,13 @@ namespace Checkout\Forex;
 
 class QuoteRequest
 {
-    public string $source_currency;
+    public $source_currency;
 
-    public int $source_amount;
+    public $source_amount;
 
-    public string $destination_currency;
+    public $destination_currency;
 
-    public int $destination_amount;
+    public $destination_amount;
 
-    public string $process_channel_id;
+    public $process_channel_id;
 }

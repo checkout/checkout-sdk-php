@@ -15,12 +15,12 @@ use Checkout\Tests\UnitTestFixture;
 
 class PaymentsClientTest extends UnitTestFixture
 {
-    private PaymentsClient $client;
+    private $client;
 
     /**
      * @before
      */
-    public function init(): void
+    public function init()
     {
         $this->initMocks(PlatformType::$four);
         $this->client = new PaymentsClient($this->apiClient, $this->configuration);
@@ -30,7 +30,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRequestPayment(): void
+    public function shouldRequestPayment()
     {
 
         $this->apiClient
@@ -45,7 +45,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRequestPayout(): void
+    public function shouldRequestPayout()
     {
 
         $this->apiClient
@@ -60,7 +60,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetPaymentDetails(): void
+    public function shouldGetPaymentDetails()
     {
 
         $this->apiClient
@@ -75,7 +75,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetPaymentActions(): void
+    public function shouldGetPaymentActions()
     {
 
         $this->apiClient
@@ -90,7 +90,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCapturePayment(): void
+    public function shouldCapturePayment()
     {
 
         $this->apiClient
@@ -105,7 +105,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRefundPayment(): void
+    public function shouldRefundPayment()
     {
 
         $this->apiClient
@@ -120,7 +120,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldVoidPayment(): void
+    public function shouldVoidPayment()
     {
 
         $this->apiClient
@@ -135,7 +135,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldIncrementPaymentAuthorization(): void
+    public function shouldIncrementPaymentAuthorization()
     {
 
         $this->apiClient
@@ -150,7 +150,7 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldIncrementPaymentAuthorization_idempotently(): void
+    public function shouldIncrementPaymentAuthorization_idempotently()
     {
 
         $this->apiClient

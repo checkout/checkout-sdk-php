@@ -12,7 +12,7 @@ class IdealIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$default);
     }
@@ -21,7 +21,7 @@ class IdealIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetInfo(): void
+    public function shouldGetInfo()
     {
         $response = $this->defaultApi->getIdealClient()->getInfo();
         $this->assertResponse($response,
@@ -35,7 +35,7 @@ class IdealIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetIssuers(): void
+    public function shouldGetIssuers()
     {
         $response = $this->defaultApi->getIdealClient()->getIssuers();
         $this->assertResponse($response,

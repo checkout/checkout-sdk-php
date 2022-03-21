@@ -6,5 +6,5 @@ use Checkout\Files\FileRequest;
 
 class MarketplaceFileRequest extends FileRequest
 {
-    public string $content_type;
+    public $content_type;
 }

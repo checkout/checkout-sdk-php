@@ -4,7 +4,7 @@ namespace Checkout\Sessions;
 
 final class SessionSourceType
 {
-    public static string $card = "card";
-    public static string $id = "id";
-    public static string $token = "token";
+    public static $card = "card";
+    public static $id = "id";
+    public static $token = "token";
 }

@@ -11,7 +11,7 @@ use Checkout\Payments\Four\Request\PaymentRequest;
 use Checkout\Payments\Four\Request\Source\RequestCardSource;
 use Checkout\Payments\Four\Sender\PaymentIndividualSender;
 use Checkout\PlatformType;
-use Throwable;
+use Exception;
 
 class OAuthIntegrationTest extends SandboxTestFixture
 {
@@ -19,7 +19,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
     /**
      * @before
      */
-    public function before(): void
+    public function before()
     {
         $this->init(PlatformType::$fourOAuth);
     }
@@ -28,7 +28,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldMakePaymentWithOAuth(): void
+    public function shouldMakePaymentWithOAuth()
     {
 
         $requestCardSource = new RequestCardSource();
@@ -65,7 +65,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldFailInitAuthorization_InvalidCredentials(): void
+    public function shouldFailInitAuthorization_InvalidCredentials()
     {
 
         try {
@@ -73,8 +73,8 @@ class OAuthIntegrationTest extends SandboxTestFixture
             $builder->clientCredentials("fake", "fake");
             $builder->setEnvironment(Environment::sandbox());
             $this->fourApi = $builder->build();
-            self::fail("shouldn't get here");
-        } catch (Throwable $e) {
+            $this->fail("shouldn't get here");
+        } catch (Exception $e) {
             $this->assertEquals("Client error: `POST https://access.sandbox.checkout.com/connect/token` resulted in a `400 Bad Request` response:\n{\"error\":\"invalid_client\"}\n", $e->getMessage());
         }
 
@@ -83,7 +83,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
     /**
      * @test
      */
-    public function shouldFailInitAuthorization_CustomFakeAuthorizationUri(): void
+    public function shouldFailInitAuthorization_CustomFakeAuthorizationUri()
     {
         try {
             $builder = CheckoutFourSdk::oAuth();
@@ -91,9 +91,9 @@ class OAuthIntegrationTest extends SandboxTestFixture
             $builder->authorizationUri("https://test.checkout.com");
             $builder->setEnvironment(Environment::sandbox());
             $this->fourApi = $builder->build();
-            self::fail("shouldn't get here");
-        } catch (Throwable $e) {
-            $this->assertEquals("cURL error 6: Could not resolve host: test.checkout.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://test.checkout.com", $e->getMessage());
+            $this->fail("shouldn't get here");
+        } catch (Exception $e) {
+            $this->assertTrue(strpos($e->getMessage(), "cURL error 6: Could not resolve host: test.checkout.com") !== false);
         }
 
     }

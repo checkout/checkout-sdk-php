@@ -11,14 +11,14 @@ use Checkout\Marketplace\Transfer\CreateTransferRequest;
 
 class MarketplaceClient extends FilesClient
 {
-    private const MARKETPLACE_PATH = "marketplace";
-    private const INSTRUMENT_PATH = "instruments";
-    private const FILES_PATH = "files";
-    private const ENTITIES_PATH = "entities";
-    private const TRANSFERS_PATH = "transfers";
+    const MARKETPLACE_PATH = "marketplace";
+    const INSTRUMENT_PATH = "instruments";
+    const FILES_PATH = "files";
+    const ENTITIES_PATH = "entities";
+    const TRANSFERS_PATH = "transfers";
 
-    private ApiClient $filesApiClient;
-    private ApiClient $transfersApiClient;
+    private $filesApiClient;
+    private $transfersApiClient;
 
     public function __construct(ApiClient             $apiClient,
                                 ApiClient             $filesApiClient,
@@ -41,33 +41,33 @@ class MarketplaceClient extends FilesClient
     }
 
     /**
-     * @param string $entityId
+     * @param $entityId
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function getEntity(string $entityId)
+    public function getEntity($entityId)
     {
         return $this->apiClient->get($this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId), $this->sdkAuthorization());
     }
 
     /**
-     * @param string $entityId
+     * @param $entityId
      * @param OnboardEntityRequest $entityRequest
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function updateEntity(string $entityId, OnboardEntityRequest $entityRequest)
+    public function updateEntity($entityId, OnboardEntityRequest $entityRequest)
     {
         return $this->apiClient->put($this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId), $entityRequest, $this->sdkAuthorization());
     }
 
     /**
-     * @param string $entityId
+     * @param $entityId
      * @param MarketplacePaymentInstrument $marketplacePaymentInstrument
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function createPaymentInstrument(string $entityId, MarketplacePaymentInstrument $marketplacePaymentInstrument)
+    public function createPaymentInstrument($entityId, MarketplacePaymentInstrument $marketplacePaymentInstrument)
     {
         return $this->apiClient->post($this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId, self::INSTRUMENT_PATH), $marketplacePaymentInstrument, $this->sdkAuthorization());
     }

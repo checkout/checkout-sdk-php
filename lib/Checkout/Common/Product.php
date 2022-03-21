@@ -4,10 +4,10 @@ namespace Checkout\Common;
 
 class Product
 {
-    public string $name;
+    public $name;
 
-    public int $quantity;
+    public $quantity;
 
-    public int $price;
+    public $price;
 
 }

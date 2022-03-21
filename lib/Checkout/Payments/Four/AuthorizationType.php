@@ -4,7 +4,7 @@ namespace Checkout\Payments\Four;
 
 class AuthorizationType
 {
-    public static string $final = "Final";
-    public static string $estimated = "Estimated";
-    public static string $incremental = "Incremental";
+    public static $final = "Final";
+    public static $estimated = "Estimated";
+    public static $incremental = "Incremental";
 }

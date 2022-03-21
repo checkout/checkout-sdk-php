@@ -2,14 +2,13 @@
 
 namespace Checkout\Common\Four;
 
-use Checkout\Common\Address;
-
 class BankDetails
 {
-    public string $name;
+    public $name;
 
-    public string $branch;
+    public $branch;
 
-    public Address $address;
+    // Address
+    public $address;
 
 }

@@ -10,7 +10,7 @@ use Checkout\Client;
 
 class ForexClient extends Client
 {
-    private const FOREX_PATH = "forex/quotes";
+    const FOREX_PATH = "forex/quotes";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {

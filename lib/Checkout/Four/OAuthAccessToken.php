@@ -7,16 +7,16 @@ use DateTime;
 class OAuthAccessToken
 {
 
-    private string $token;
-    private ?DateTime $expirationDate;
+    private $token;
+    private $expirationDate;
 
-    public function __construct(string $token, DateTime $expirationDate)
+    public function __construct($token, DateTime $expirationDate)
     {
         $this->token = $token;
         $this->expirationDate = $expirationDate;
     }
 
-    public function isValid(): bool
+    public function isValid()
     {
         if (is_null($this->expirationDate)) {
             return false;
@@ -24,12 +24,12 @@ class OAuthAccessToken
         return $this->expirationDate > new DateTime();
     }
 
-    public function getToken(): string
+    public function getToken()
     {
         return $this->token;
     }
 
-    public function getExpirationDate(): DateTime
+    public function getExpirationDate()
     {
         return $this->expirationDate;
     }

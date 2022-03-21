@@ -4,13 +4,14 @@ namespace Checkout\Payments\Four;
 
 class CaptureRequest
 {
-    public int $amount;
+    public $amount;
 
     //CaptureType
-    public string $capture_type;
+    public $capture_type;
 
-    public string $reference;
+    public $reference;
 
-    public array $metadata;
+    // array
+    public $metadata;
 
 }

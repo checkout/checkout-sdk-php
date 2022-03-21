@@ -4,9 +4,9 @@ namespace Checkout\Payments\Four\Sender;
 
 class PaymentSender
 {
-    public string $type;
+    public $type;
 
-    public function __construct(string $type)
+    public function __construct($type)
     {
         $this->type = $type;
     }

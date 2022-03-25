@@ -38,4 +38,6 @@ class FourOAuthScope
     public static $Transfers = "transfers";
     public static $TransfersCreate = "transfers:create";
     public static $TransfersView = "transfers:view";
+    public static $Balances = "balances";
+    public static $BalancesView = "balances:view";
 }

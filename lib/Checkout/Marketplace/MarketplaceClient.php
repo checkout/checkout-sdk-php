@@ -7,6 +7,7 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Files\FilesClient;
+use Checkout\Marketplace\Balances\BalancesQuery;
 use Checkout\Marketplace\Transfer\CreateTransferRequest;
 
 class MarketplaceClient extends FilesClient
@@ -16,18 +17,22 @@ class MarketplaceClient extends FilesClient
     const FILES_PATH = "files";
     const ENTITIES_PATH = "entities";
     const TRANSFERS_PATH = "transfers";
+    const BALANCES_PATH = "balances";
 
     private $filesApiClient;
     private $transfersApiClient;
+    private $balancesApiClient;
 
     public function __construct(ApiClient             $apiClient,
                                 ApiClient             $filesApiClient,
                                 ApiClient             $transfersApiClient,
+                                ApiClient             $balancesApiClient,
                                 CheckoutConfiguration $configuration)
     {
         parent::__construct($apiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
         $this->filesApiClient = $filesApiClient;
         $this->transfersApiClient = $transfersApiClient;
+        $this->balancesApiClient = $balancesApiClient;
     }
 
     /**
@@ -90,6 +95,17 @@ class MarketplaceClient extends FilesClient
     public function initiateTransferOfFunds(CreateTransferRequest $transferRequest)
     {
         return $this->transfersApiClient->post(self::TRANSFERS_PATH, $transferRequest, $this->sdkAuthorization());
+    }
+
+    /**
+     * @param $entity_id
+     * @param BalancesQuery $balancesQuery
+     * @return mixed
+     * @throws CheckoutApiException
+     */
+    public function retrieveEntityBalances($entity_id, BalancesQuery $balancesQuery)
+    {
+        return $this->balancesApiClient->query($this->buildPath(self::BALANCES_PATH, $entity_id), $balancesQuery, $this->sdkAuthorization());
     }
 
 }

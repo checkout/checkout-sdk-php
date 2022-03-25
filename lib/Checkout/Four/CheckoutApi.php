@@ -47,6 +47,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->marketplaceClient = new MarketplaceClient($baseApiClient,
             $this->getFilesApiClient($configuration),
             $this->getTransfersApiClient($configuration),
+            $this->getBalancesApiClient($configuration),
             $configuration);
     }
 
@@ -118,6 +119,11 @@ final class CheckoutApi extends CheckoutApmApi
     private function getTransfersApiClient(CheckoutConfiguration $configuration)
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getTransfersUri());
+    }
+
+    private function getBalancesApiClient(CheckoutConfiguration $configuration)
+    {
+        return new ApiClient($configuration, $configuration->getEnvironment()->getBalancesUri());
     }
 
 }

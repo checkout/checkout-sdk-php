@@ -8,18 +8,21 @@ final class Environment
     private $authorizationUri;
     private $filesBaseUri;
     private $transfersUri;
+    private $balancesUri;
     private $isSandbox;
 
     private function __construct($baseUri,
                                  $authorizationUri,
                                  $filesBaseUrl,
                                  $transfersUri,
+                                 $balancesUri,
                                  $isSandbox)
     {
         $this->baseUri = $baseUri;
         $this->authorizationUri = $authorizationUri;
         $this->filesBaseUri = $filesBaseUrl;
         $this->transfersUri = $transfersUri;
+        $this->balancesUri = $balancesUri;
         $this->isSandbox = $isSandbox;
     }
 
@@ -29,6 +32,7 @@ final class Environment
             "https://access.sandbox.checkout.com/connect/token",
             "https://files.sandbox.checkout.com/",
             "https://transfers.sandbox.checkout.com/",
+            "https://balances.sandbox.checkout.com/",
             true);
     }
 
@@ -39,6 +43,7 @@ final class Environment
             "https://access.checkout.com/connect/token",
             "https://files.checkout.com/",
             "https://transfers.checkout.com/",
+            "https://balances.checkout.com/",
             false);
 
     }
@@ -67,5 +72,11 @@ final class Environment
     {
         return $this->isSandbox;
     }
+
+    public function getBalancesUri()
+    {
+        return $this->balancesUri;
+    }
+
 
 }

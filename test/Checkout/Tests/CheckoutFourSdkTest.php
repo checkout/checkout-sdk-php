@@ -65,7 +65,7 @@ class CheckoutFourSdkTest extends UnitTestFixture
     public function ShouldInstantiateClientWithCustomHttpClient()
     {
         $httpBuilder = $this->createMock(HttpClientBuilderInterface::class);
-        $httpBuilder->expects($this->exactly(3))->method("getClient");
+        $httpBuilder->expects($this->exactly(4))->method("getClient");
 
         $builder = CheckoutFourSdk::staticKeys();
         $builder->setPublicKey(parent::$validFourPk);

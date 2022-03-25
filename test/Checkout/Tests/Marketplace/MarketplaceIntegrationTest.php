@@ -3,6 +3,8 @@
 namespace Checkout\Tests\Marketplace;
 
 use Checkout\CheckoutApiException;
+use Checkout\Common\Currency;
+use Checkout\Marketplace\Balances\BalancesQuery;
 use Checkout\Marketplace\ContactDetails;
 use Checkout\Marketplace\DateOfBirth;
 use Checkout\Marketplace\Identification;
@@ -114,6 +116,25 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         $response = $this->fourApi->getMarketplaceClient()->initiateTransferOfFunds($transferRequest);
 
         $this->assertResponse($response, "id", "status");
+    }
+
+    /**
+     * @test
+     */
+    public function shouldRetrieveEntityBalances()
+    {
+        $balancesQuery = new BalancesQuery();
+        $balancesQuery->query = "currency:" . Currency::$GBP;
+
+        $balances = $this->fourApi->getMarketplaceClient()->retrieveEntityBalances("ent_kidtcgc3ge5unf4a5i6enhnr5m", $balancesQuery);
+        $this->assertResponse($balances, "data", "_links");
+        foreach ($balances["data"] as $balanceData) {
+            $this->assertResponse($balanceData,
+                "descriptor",
+                "holding_currency",
+                "balances",
+                "balances.available");
+        }
     }
 
     private function getDateOfBirth()

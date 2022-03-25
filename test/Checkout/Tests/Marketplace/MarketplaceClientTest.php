@@ -3,6 +3,7 @@
 namespace Checkout\Tests\Marketplace;
 
 use Checkout\CheckoutApiException;
+use Checkout\Marketplace\Balances\BalancesQuery;
 use Checkout\Marketplace\MarketplaceClient;
 use Checkout\Marketplace\MarketplaceFileRequest;
 use Checkout\Marketplace\MarketplacePaymentInstrument;
@@ -21,7 +22,8 @@ class MarketplaceClientTest extends UnitTestFixture
     public function init()
     {
         $this->initMocks(PlatformType::$fourOAuth);
-        $this->client = new MarketplaceClient($this->apiClient, $this->apiClient, $this->apiClient, $this->configuration);
+        $this->client = new MarketplaceClient($this->apiClient, $this->apiClient, $this->apiClient, $this->apiClient,
+            $this->configuration);
     }
 
     /**
@@ -117,6 +119,21 @@ class MarketplaceClientTest extends UnitTestFixture
         $transferRequest = new CreateTransferRequest();
 
         $response = $this->client->initiateTransferOfFunds($transferRequest);
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRetrieveEntityBalances()
+    {
+        $this->apiClient
+            ->method("query")
+            ->willReturn("response");
+
+        $response = $this->client->retrieveEntityBalances("entity_id", new BalancesQuery());
 
         $this->assertNotNull($response);
     }

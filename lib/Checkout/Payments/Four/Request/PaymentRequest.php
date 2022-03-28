@@ -66,4 +66,7 @@ class PaymentRequest
 
     public $metadata;
 
+    // array Four/Product
+    public $items;
+
 }

@@ -37,7 +37,6 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndGetPaymentLink()
     {
-        $this->markTestSkipped("unavailable");
         $request = $this->createPaymentLinkRequest();
 
         $response = $this->fourApi->getPaymentLinksClient()->createPaymentLink($request);

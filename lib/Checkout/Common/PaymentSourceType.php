@@ -31,5 +31,6 @@ class PaymentSourceType
     public static $przelewy24 = "p24";
     public static $benefitpay = "benefitpay";
     public static $bancontact = "bancontact";
+    public static $tamara = "tamara";
 
 }

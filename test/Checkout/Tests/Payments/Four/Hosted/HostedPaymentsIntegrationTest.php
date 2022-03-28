@@ -39,7 +39,6 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndGetHostedPaymentsPageDetails()
     {
-        $this->markTestSkipped("unavailable");
         $request = $this->createHostedPaymentsRequest();
 
         $response = $this->fourApi->getHostedPaymentsClient()->createHostedPaymentsPageSession($request);

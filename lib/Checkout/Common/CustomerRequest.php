@@ -10,4 +10,6 @@ class CustomerRequest
 
     public $name;
 
+    public $phone;
+
 }

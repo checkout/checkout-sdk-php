@@ -8,7 +8,7 @@ class CheckoutUtils
 {
 
     const PROJECT_NAME = "checkout-sdk-php";
-    const PROJECT_VERSION = "2.0.0-beta5";
+    const PROJECT_VERSION = "2.0.0-beta6";
 
     public static function formatDate(DateTime $date)
     {

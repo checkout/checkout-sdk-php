@@ -10,13 +10,11 @@ class StaticKeysCheckoutSdkBuilder extends AbstractStaticKeysCheckoutSdkBuilder
 
     public function setPublicKey($publicKey)
     {
-        $this->validatePublicKey($publicKey, self::PUBLIC_KEY_PATTERN);
         $this->publicKey = $publicKey;
     }
 
     public function setSecretKey($secretKey)
     {
-        $this->validateSecretKey($secretKey, self::SECRET_KEY_PATTERN);
         $this->secretKey = $secretKey;
     }
 
@@ -30,9 +28,12 @@ class StaticKeysCheckoutSdkBuilder extends AbstractStaticKeysCheckoutSdkBuilder
 
     /**
      * @return CheckoutApi
+     * @throws CheckoutArgumentException
      */
     public function build()
     {
+        $this->validatePublicKey($this->publicKey, self::PUBLIC_KEY_PATTERN);
+        $this->validateSecretKey($this->secretKey, self::SECRET_KEY_PATTERN);
         $configuration = new CheckoutConfiguration($this->getSdkCredentials(), $this->environment, $this->httpClientBuilder, $this->logger);
         $apiClient = new ApiClient($configuration);
         return new CheckoutApi($apiClient, $configuration);

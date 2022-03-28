@@ -3,6 +3,7 @@
 namespace Checkout\Four;
 
 use Checkout\AbstractStaticKeysCheckoutSdkBuilder;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\SdkCredentialsInterface;
 
@@ -13,13 +14,11 @@ class FourStaticKeysCheckoutSdkBuilder extends AbstractStaticKeysCheckoutSdkBuil
 
     public function setPublicKey($publicKey)
     {
-        $this->validatePublicKey($publicKey, self::PUBLIC_KEY_PATTERN);
         $this->publicKey = $publicKey;
     }
 
     public function setSecretKey($secretKey)
     {
-        $this->validateSecretKey($secretKey, self::SECRET_KEY_PATTERN);
         $this->secretKey = $secretKey;
     }
 
@@ -33,9 +32,12 @@ class FourStaticKeysCheckoutSdkBuilder extends AbstractStaticKeysCheckoutSdkBuil
 
     /**
      * @return CheckoutApi
+     * @throws CheckoutArgumentException
      */
     public function build()
     {
+        $this->validatePublicKey($this->publicKey, self::PUBLIC_KEY_PATTERN);
+        $this->validateSecretKey($this->secretKey, self::SECRET_KEY_PATTERN);
         $configuration = new CheckoutConfiguration($this->getSdkCredentials(), $this->environment, $this->httpClientBuilder, $this->logger);
         return new CheckoutApi($configuration);
     }

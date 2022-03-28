@@ -68,7 +68,7 @@ abstract class SandboxTestFixture extends TestCase
 
     }
 
-    protected function assertResponse($obj, ...$properties) // @phpstan-ignore-line
+    protected function assertResponse($obj, ...$properties)
     {
         $this->assertNotNull($obj);
         $this->assertNotEmpty($properties);

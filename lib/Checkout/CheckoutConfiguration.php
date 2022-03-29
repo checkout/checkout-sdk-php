@@ -14,11 +14,12 @@ final class CheckoutConfiguration
 
     private $logger;
 
-    public function __construct(SdkCredentialsInterface    $sdkCredentials,
-                                Environment                $environment,
-                                HttpClientBuilderInterface $httpClientBuilder,
-                                LoggerInterface            $logger)
-    {
+    public function __construct(
+        SdkCredentialsInterface    $sdkCredentials,
+        Environment                $environment,
+        HttpClientBuilderInterface $httpClientBuilder,
+        LoggerInterface            $logger
+    ) {
         $this->sdkCredentials = $sdkCredentials;
         $this->environment = $environment;
         $this->httpClientBuilder = $httpClientBuilder;
@@ -44,5 +45,4 @@ final class CheckoutConfiguration
     {
         return $this->logger;
     }
-
 }

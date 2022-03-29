@@ -36,8 +36,11 @@ class SepaClient extends Client
      */
     public function cancelMandate($mandateId)
     {
-        return $this->apiClient->post($this->buildPath(self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
-            null, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath(self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
+            null,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -47,8 +50,10 @@ class SepaClient extends Client
      */
     public function getMandateViaPPro($mandateId)
     {
-        return $this->apiClient->get($this->buildPath(self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId),
-            $this->sdkAuthorization());
+        return $this->apiClient->get(
+            $this->buildPath(self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId),
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -58,7 +63,10 @@ class SepaClient extends Client
      */
     public function cancelMandateViaPPro($mandateId)
     {
-        return $this->apiClient->post($this->buildPath(self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
-            null, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath(self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
+            null,
+            $this->sdkAuthorization()
+        );
     }
 }

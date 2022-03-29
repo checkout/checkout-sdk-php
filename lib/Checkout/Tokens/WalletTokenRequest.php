@@ -6,7 +6,7 @@ abstract class WalletTokenRequest
 {
     public $type;
 
-    function __construct($type)
+    protected function __construct($type)
     {
         $this->type = $type;
     }

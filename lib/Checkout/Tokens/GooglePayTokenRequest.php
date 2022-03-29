@@ -4,7 +4,7 @@ namespace Checkout\Tokens;
 
 class GooglePayTokenRequest extends WalletTokenRequest
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct(TokenType::$googlepay);
     }

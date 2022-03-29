@@ -2,7 +2,6 @@
 
 namespace Checkout;
 
-
 use Checkout\Four\FourOAuthCheckoutSdkBuilder;
 use Checkout\Four\FourStaticKeysCheckoutSdkBuilder;
 
@@ -18,7 +17,4 @@ class CheckoutFourSdk
     {
         return new FourOAuthCheckoutSdkBuilder();
     }
-
 }
-
-

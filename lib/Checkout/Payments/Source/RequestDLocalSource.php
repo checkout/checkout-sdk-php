@@ -30,4 +30,3 @@ class RequestDLocalSource extends AbstractRequestSource
     // Phone
     public $phone;
 }
-

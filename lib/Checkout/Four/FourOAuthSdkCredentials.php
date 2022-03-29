@@ -30,11 +30,13 @@ class FourOAuthSdkCredentials implements SdkCredentialsInterface
      * @param $authorizationUri
      * @param array $scopes
      */
-    public function __construct(HttpClientBuilderInterface $httpClientBuilder,
-                                                           $clientId,
-                                                           $clientSecret,
-                                                           $authorizationUri, array $scopes)
-    {
+    public function __construct(
+        HttpClientBuilderInterface $httpClientBuilder,
+        $clientId,
+        $clientSecret,
+        $authorizationUri,
+        array                      $scopes
+    ) {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->authorizationUri = $authorizationUri;
@@ -51,18 +53,29 @@ class FourOAuthSdkCredentials implements SdkCredentialsInterface
      * @return FourOAuthSdkCredentials
      * @throws CheckoutException
      */
-    public static function init(HttpClientBuilderInterface $httpClientBuilder,
-                                                           $clientId,
-                                                           $clientSecret,
-                                                           $authorizationUri,
-                                array                      $scopes)
-    {
-        $credentials = new FourOAuthSdkCredentials($httpClientBuilder, $clientId, $clientSecret, $authorizationUri, $scopes);
+    public static function init(
+        HttpClientBuilderInterface $httpClientBuilder,
+        $clientId,
+        $clientSecret,
+        $authorizationUri,
+        array                      $scopes
+    ) {
+        $credentials = new FourOAuthSdkCredentials(
+            $httpClientBuilder,
+            $clientId,
+            $clientSecret,
+            $authorizationUri,
+            $scopes
+        );
         $credentials->getAccessToken();
         return $credentials;
     }
 
-    function getAuthorization($authorizationType)
+    /**
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutException
+     */
+    public function getAuthorization($authorizationType)
     {
         switch ($authorizationType) {
             case AuthorizationType::$secretKeyOrOAuth:
@@ -74,6 +87,9 @@ class FourOAuthSdkCredentials implements SdkCredentialsInterface
         }
     }
 
+    /**
+     * @throws CheckoutException
+     */
     private function getAccessToken()
     {
         if (!is_null($this->accessToken) && $this->accessToken->isValid()) {

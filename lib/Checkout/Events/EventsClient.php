@@ -61,8 +61,10 @@ class EventsClient extends Client
      */
     public function retrieveEventNotification($eventId, $notificationId)
     {
-        return $this->apiClient->get($this->buildPath(self::EVENTS_PATH, $eventId, $notificationId),
-            $this->sdkAuthorization());
+        return $this->apiClient->get(
+            $this->buildPath(self::EVENTS_PATH, $eventId, $notificationId),
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -73,8 +75,13 @@ class EventsClient extends Client
      */
     public function retryWebhook($eventId, $webhookId)
     {
-        return $this->apiClient->post($this->buildPath(self::EVENTS_PATH, $eventId,
-            self::WEBHOOKS_PATH, $webhookId, self::RETRY_PATH), null, $this->sdkAuthorization());
+        return $this->apiClient->post($this->buildPath(
+            self::EVENTS_PATH,
+            $eventId,
+            self::WEBHOOKS_PATH,
+            $webhookId,
+            self::RETRY_PATH
+        ), null, $this->sdkAuthorization());
     }
 
     /**
@@ -84,7 +91,11 @@ class EventsClient extends Client
      */
     public function retryAllWebhooks($eventId)
     {
-        return $this->apiClient->post($this->buildPath(self::EVENTS_PATH, $eventId,
-            self::WEBHOOKS_PATH, self::RETRY_PATH), null, $this->sdkAuthorization());
+        return $this->apiClient->post($this->buildPath(
+            self::EVENTS_PATH,
+            $eventId,
+            self::WEBHOOKS_PATH,
+            self::RETRY_PATH
+        ), null, $this->sdkAuthorization());
     }
 }

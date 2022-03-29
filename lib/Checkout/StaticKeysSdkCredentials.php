@@ -17,7 +17,7 @@ class StaticKeysSdkCredentials extends AbstractStaticKeysSdkCredentials
     /**
      * @throws CheckoutAuthorizationException
      */
-    function getAuthorization($authorizationType)
+    public function getAuthorization($authorizationType)
     {
         switch ($authorizationType) {
             case AuthorizationType::$publicKey:

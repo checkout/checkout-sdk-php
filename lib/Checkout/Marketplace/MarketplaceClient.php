@@ -23,12 +23,13 @@ class MarketplaceClient extends FilesClient
     private $transfersApiClient;
     private $balancesApiClient;
 
-    public function __construct(ApiClient             $apiClient,
-                                ApiClient             $filesApiClient,
-                                ApiClient             $transfersApiClient,
-                                ApiClient             $balancesApiClient,
-                                CheckoutConfiguration $configuration)
-    {
+    public function __construct(
+        ApiClient             $apiClient,
+        ApiClient             $filesApiClient,
+        ApiClient             $transfersApiClient,
+        ApiClient             $balancesApiClient,
+        CheckoutConfiguration $configuration
+    ) {
         parent::__construct($apiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
         $this->filesApiClient = $filesApiClient;
         $this->transfersApiClient = $transfersApiClient;
@@ -107,5 +108,4 @@ class MarketplaceClient extends FilesClient
     {
         return $this->balancesApiClient->query($this->buildPath(self::BALANCES_PATH, $entity_id), $balancesQuery, $this->sdkAuthorization());
     }
-
 }

@@ -31,4 +31,3 @@ class PaymentRequestCardDestination extends PaymentRequestDestination
     public $phone;
 
 }
-

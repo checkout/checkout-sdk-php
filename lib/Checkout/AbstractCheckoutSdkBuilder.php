@@ -37,8 +37,12 @@ abstract class AbstractCheckoutSdkBuilder
 
     protected function getCheckoutConfiguration()
     {
-        return new CheckoutConfiguration($this->getSdkCredentials(), $this->environment,
-            $this->httpClientBuilder, $this->logger);
+        return new CheckoutConfiguration(
+            $this->getSdkCredentials(),
+            $this->environment,
+            $this->httpClientBuilder,
+            $this->logger
+        );
     }
 
     private function setDefaultLogger()
@@ -47,11 +51,10 @@ abstract class AbstractCheckoutSdkBuilder
         $this->logger->pushHandler(new StreamHandler("php://stderr"));
     }
 
-    protected abstract function getSdkCredentials();
+    abstract protected function getSdkCredentials();
 
     /**
      * @return mixed
      */
-    protected abstract function build();
-
+    abstract protected function build();
 }

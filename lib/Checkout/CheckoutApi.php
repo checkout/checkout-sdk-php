@@ -99,6 +99,4 @@ final class CheckoutApi extends CheckoutApmApi
     {
         return $this->riskClient;
     }
-
-
 }

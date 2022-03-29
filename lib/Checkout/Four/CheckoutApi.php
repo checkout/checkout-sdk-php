@@ -44,11 +44,13 @@ final class CheckoutApi extends CheckoutApmApi
         $this->hostedPaymentsClient = new HostedPaymentsClient($baseApiClient, $configuration);
         $this->paymentLinksClient = new PaymentLinksClient($baseApiClient, $configuration);
         $this->riskClient = new RiskClient($baseApiClient, $configuration);
-        $this->marketplaceClient = new MarketplaceClient($baseApiClient,
+        $this->marketplaceClient = new MarketplaceClient(
+            $baseApiClient,
             $this->getFilesApiClient($configuration),
             $this->getTransfersApiClient($configuration),
             $this->getBalancesApiClient($configuration),
-            $configuration);
+            $configuration
+        );
     }
 
     public function getTokensClient()
@@ -125,5 +127,4 @@ final class CheckoutApi extends CheckoutApmApi
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getBalancesUri());
     }
-
 }

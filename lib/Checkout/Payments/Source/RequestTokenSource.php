@@ -21,4 +21,3 @@ class RequestTokenSource extends AbstractRequestSource
     public $phone;
 
 }
-

@@ -25,9 +25,14 @@ class RiskClient extends Client
      * @return mixed
      * @throws CheckoutApiException
      */
-    public function requestPreAuthenticationRiskScan(PreAuthenticationAssessmentRequest $preAuthenticationAssessmentRequest)
-    {
-        return $this->apiClient->post(self::PRE_AUTHENTICATION_PATH, $preAuthenticationAssessmentRequest, $this->sdkAuthorization());
+    public function requestPreAuthenticationRiskScan(
+        PreAuthenticationAssessmentRequest $preAuthenticationAssessmentRequest
+    ) {
+        return $this->apiClient->post(
+            self::PRE_AUTHENTICATION_PATH,
+            $preAuthenticationAssessmentRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -38,6 +43,5 @@ class RiskClient extends Client
     public function requestPreCaptureRiskScan(PreCaptureAssessmentRequest $preCaptureAssessmentRequest)
     {
         return $this->apiClient->post(self::PRE_CAPTURE_PATH, $preCaptureAssessmentRequest, $this->sdkAuthorization());
-
     }
 }

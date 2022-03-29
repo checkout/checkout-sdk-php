@@ -18,13 +18,12 @@ class FourStaticKeysSdkCredentials extends AbstractStaticKeysSdkCredentials
     public function __construct($secretKey, $publicKey)
     {
         parent::__construct($secretKey, $publicKey);
-
     }
 
     /**
      * @throws CheckoutAuthorizationException
      */
-    function getAuthorization($authorizationType)
+    public function getAuthorization($authorizationType)
     {
         switch ($authorizationType) {
             case AuthorizationType::$publicKey:

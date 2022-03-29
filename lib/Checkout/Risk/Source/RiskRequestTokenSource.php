@@ -21,4 +21,3 @@ class RiskRequestTokenSource extends RiskPaymentRequestSource
     public $phone;
 
 }
-

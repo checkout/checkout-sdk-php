@@ -28,8 +28,11 @@ class KlarnaClient extends Client
      */
     public function createCreditSession(CreditSessionRequest $creditSessionRequest)
     {
-        return $this->apiClient->post($this->buildPath($this->getBaseUrl(), self::CREDIT_SESSIONS_PATH),
-            $creditSessionRequest, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath($this->getBaseUrl(), self::CREDIT_SESSIONS_PATH),
+            $creditSessionRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -39,7 +42,11 @@ class KlarnaClient extends Client
      */
     public function getCreditSession($sessionId)
     {
-        return $this->apiClient->get($this->buildPath($this->getBaseUrl(), self::CREDIT_SESSIONS_PATH, $sessionId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            $this->getBaseUrl(),
+            self::CREDIT_SESSIONS_PATH,
+            $sessionId
+        ), $this->sdkAuthorization());
     }
 
     /**
@@ -50,8 +57,11 @@ class KlarnaClient extends Client
      */
     public function capturePayment($paymentId, OrderCaptureRequest $orderCaptureRequest)
     {
-        return $this->apiClient->post($this->buildPath($this->getBaseUrl(), self::ORDERS_PATH, $paymentId, self::CAPTURES_PATH),
-            $orderCaptureRequest, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath($this->getBaseUrl(), self::ORDERS_PATH, $paymentId, self::CAPTURES_PATH),
+            $orderCaptureRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -62,8 +72,11 @@ class KlarnaClient extends Client
      */
     public function voidPayment($paymentId, VoidRequest $voidRequest)
     {
-        return $this->apiClient->post($this->buildPath($this->getBaseUrl(), self::ORDERS_PATH, $paymentId, self::VOIDS_PATH),
-            $voidRequest, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath($this->getBaseUrl(), self::ORDERS_PATH, $paymentId, self::VOIDS_PATH),
+            $voidRequest,
+            $this->sdkAuthorization()
+        );
     }
 
 

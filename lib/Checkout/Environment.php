@@ -11,13 +11,14 @@ final class Environment
     private $balancesUri;
     private $isSandbox;
 
-    private function __construct($baseUri,
-                                 $authorizationUri,
-                                 $filesBaseUrl,
-                                 $transfersUri,
-                                 $balancesUri,
-                                 $isSandbox)
-    {
+    private function __construct(
+        $baseUri,
+        $authorizationUri,
+        $filesBaseUrl,
+        $transfersUri,
+        $balancesUri,
+        $isSandbox
+    ) {
         $this->baseUri = $baseUri;
         $this->authorizationUri = $authorizationUri;
         $this->filesBaseUri = $filesBaseUrl;
@@ -28,24 +29,27 @@ final class Environment
 
     public static function sandbox()
     {
-        return new Environment("https://api.sandbox.checkout.com/",
+        return new Environment(
+            "https://api.sandbox.checkout.com/",
             "https://access.sandbox.checkout.com/connect/token",
             "https://files.sandbox.checkout.com/",
             "https://transfers.sandbox.checkout.com/",
             "https://balances.sandbox.checkout.com/",
-            true);
+            true
+        );
     }
 
     public static function production()
     {
 
-        return new Environment("https://api.checkout.com/",
+        return new Environment(
+            "https://api.checkout.com/",
             "https://access.checkout.com/connect/token",
             "https://files.checkout.com/",
             "https://transfers.checkout.com/",
             "https://balances.checkout.com/",
-            false);
-
+            false
+        );
     }
 
     public function getBaseUri()
@@ -77,6 +81,4 @@ final class Environment
     {
         return $this->balancesUri;
     }
-
-
 }

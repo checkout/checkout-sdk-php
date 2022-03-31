@@ -15,6 +15,7 @@ use Checkout\Payments\Links\PaymentLinksClient;
 use Checkout\Risk\RiskClient;
 use Checkout\Sessions\SessionsClient;
 use Checkout\Tokens\TokensClient;
+use Checkout\Workflows\WorkflowsClient;
 
 final class CheckoutApi extends CheckoutApmApi
 {
@@ -29,6 +30,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $hostedPaymentsClient;
     private $paymentLinksClient;
     private $riskClient;
+    private $workflowsClient;
 
     public function __construct(CheckoutConfiguration $configuration)
     {
@@ -44,6 +46,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->hostedPaymentsClient = new HostedPaymentsClient($baseApiClient, $configuration);
         $this->paymentLinksClient = new PaymentLinksClient($baseApiClient, $configuration);
         $this->riskClient = new RiskClient($baseApiClient, $configuration);
+        $this->workflowsClient = new WorkflowsClient($baseApiClient, $configuration);
         $this->marketplaceClient = new MarketplaceClient(
             $baseApiClient,
             $this->getFilesApiClient($configuration),
@@ -106,6 +109,11 @@ final class CheckoutApi extends CheckoutApmApi
     public function getRiskClient()
     {
         return $this->riskClient;
+    }
+
+    public function getWorkflowsClient()
+    {
+        return $this->workflowsClient;
     }
 
     private function getBaseApiClient(CheckoutConfiguration $configuration)

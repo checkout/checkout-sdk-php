@@ -59,4 +59,10 @@ class PaymentLinkRequest
 
     public $allow_payment_methods;
 
+    // Only available in Four
+
+    public $processing_channel_id;
+
+    // MarketplaceData
+    public $marketplace;
 }

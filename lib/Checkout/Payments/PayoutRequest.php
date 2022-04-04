@@ -9,6 +9,9 @@ class PayoutRequest
 
     public $amount;
 
+    // FundTransferType
+    public $fund_transfer_type;
+
     public $currency;
 
     public $payment_type;
@@ -50,5 +53,4 @@ class PayoutRequest
     public $metadata;
 
     public $processing;
-
 }

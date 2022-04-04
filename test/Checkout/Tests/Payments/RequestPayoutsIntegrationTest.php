@@ -5,6 +5,7 @@ namespace Checkout\Tests\Payments;
 use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
 use Checkout\Payments\Destination\PaymentRequestCardDestination;
+use Checkout\Payments\FundTransferType;
 use Checkout\Payments\PayoutRequest;
 use Checkout\Tests\TestCardSource;
 use DateTime;
@@ -35,36 +36,40 @@ class RequestPayoutsIntegrationTest extends AbstractPaymentsIntegrationTest
         $payoutRequest->amount = 5;
         $payoutRequest->currency = Currency::$USD;
         $payoutRequest->capture_on = new DateTime();
+        $payoutRequest->fund_transfer_type = FundTransferType::$FT;
 
         $paymentResponse = $this->defaultApi->getPaymentsClient()->requestPayout($payoutRequest);
 
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "reference",
             "status",
             "customer",
-            "customer.id");
+            "customer.id"
+        );
 
         $payment = $this->retriable(
             function () use (&$paymentResponse) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
-            });
+            }
+        );
 
-        $this->assertResponse($payment,
+        $this->assertResponse(
+            $payment,
             "destination",
             "destination.bin",
-            //"destination.card_category",
-            //"destination.card_type",
+            "destination.card_category",
+            "destination.card_type",
             "destination.expiry_month",
             "destination.expiry_year",
             "destination.last4",
             "destination.fingerprint",
-            "destination.name");
-        //"destination.issuer",
-        //"destination.issuer_country",
-        //"destination.product_id",
-        //"destination.product_type"
+            "destination.name",
+            "destination.issuer",
+            "destination.issuer_country",
+            "destination.product_id",
+            "destination.product_type"
+        );
     }
-
-
 }

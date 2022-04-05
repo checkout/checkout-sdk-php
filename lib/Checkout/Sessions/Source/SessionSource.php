@@ -20,4 +20,6 @@ abstract class SessionSource
 
     public $work_phone;
 
+    // SessionScheme
+    public $scheme;
 }

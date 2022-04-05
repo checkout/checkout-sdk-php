@@ -8,8 +8,4 @@ class InstrumentCustomerRequest extends CustomerRequest
 {
 
     public $default;
-
-    // Phone
-    public $phone;
-
 }

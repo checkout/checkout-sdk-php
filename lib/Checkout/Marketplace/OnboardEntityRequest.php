@@ -17,5 +17,4 @@ class OnboardEntityRequest
 
     // Individual
     public $individual;
-
 }

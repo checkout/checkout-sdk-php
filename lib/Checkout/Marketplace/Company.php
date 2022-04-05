@@ -19,6 +19,6 @@ class Company
     // EntityDocument
     public $document;
 
-    # Representative
+    // array Representative
     public $representatives;
 }

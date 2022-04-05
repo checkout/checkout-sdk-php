@@ -4,7 +4,7 @@ namespace Checkout\Marketplace;
 
 class Document
 {
-    # DocumentType
+    // DocumentType
     public $type;
 
     public $front;

@@ -43,7 +43,11 @@ class MarketplaceClient extends FilesClient
      */
     public function createEntity(OnboardEntityRequest $entityRequest)
     {
-        return $this->apiClient->post($this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH), $entityRequest, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH),
+            $entityRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -53,7 +57,10 @@ class MarketplaceClient extends FilesClient
      */
     public function getEntity($entityId)
     {
-        return $this->apiClient->get($this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId), $this->sdkAuthorization());
+        return $this->apiClient->get(
+            $this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId),
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -64,7 +71,11 @@ class MarketplaceClient extends FilesClient
      */
     public function updateEntity($entityId, OnboardEntityRequest $entityRequest)
     {
-        return $this->apiClient->put($this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId), $entityRequest, $this->sdkAuthorization());
+        return $this->apiClient->put(
+            $this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId),
+            $entityRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -75,7 +86,11 @@ class MarketplaceClient extends FilesClient
      */
     public function createPaymentInstrument($entityId, MarketplacePaymentInstrument $marketplacePaymentInstrument)
     {
-        return $this->apiClient->post($this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId, self::INSTRUMENT_PATH), $marketplacePaymentInstrument, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId, self::INSTRUMENT_PATH),
+            $marketplacePaymentInstrument,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -85,7 +100,11 @@ class MarketplaceClient extends FilesClient
      */
     public function submitFile(MarketplaceFileRequest $marketplaceFileRequest)
     {
-        return $this->filesApiClient->submitFileFilesApi(self::FILES_PATH, $marketplaceFileRequest, $this->sdkAuthorization());
+        return $this->filesApiClient->submitFileFilesApi(
+            self::FILES_PATH,
+            $marketplaceFileRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -106,6 +125,10 @@ class MarketplaceClient extends FilesClient
      */
     public function retrieveEntityBalances($entity_id, BalancesQuery $balancesQuery)
     {
-        return $this->balancesApiClient->query($this->buildPath(self::BALANCES_PATH, $entity_id), $balancesQuery, $this->sdkAuthorization());
+        return $this->balancesApiClient->query(
+            $this->buildPath(self::BALANCES_PATH, $entity_id),
+            $balancesQuery,
+            $this->sdkAuthorization()
+        );
     }
 }

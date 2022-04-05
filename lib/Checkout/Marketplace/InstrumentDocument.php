@@ -6,5 +6,5 @@ class InstrumentDocument
 {
     public $type;
 
-    public $field_id;
+    public $file_id;
 }

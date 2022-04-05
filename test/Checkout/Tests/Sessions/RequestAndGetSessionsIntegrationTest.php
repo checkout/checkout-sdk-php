@@ -19,8 +19,12 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
     public function shouldRequestAndGetCardSessionBrowserSession()
     {
         $browserSession = $this->getBrowserSession();
-        $responseBrowserSession = $this->createNonHostedSession($browserSession, Category::$payment,
-            ChallengeIndicatorType::$no_preference, TransactionType::$goods_service);
+        $responseBrowserSession = $this->createNonHostedSession(
+            $browserSession,
+            Category::$payment,
+            ChallengeIndicatorType::$no_preference,
+            TransactionType::$goods_service
+        );
 
         $this->assertNotNull($responseBrowserSession);
 
@@ -29,7 +33,10 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
 
         $responseSessionDetails = $this->fourApi->getSessionsClient()->getSessionDetails($sessionId);
         $this->assertNotNull($responseSessionDetails);
-        $responseSessionDetailsWithSecret = $this->fourApi->getSessionsClient()->getSessionDetails($sessionId, $sessionSecret);
+        $responseSessionDetailsWithSecret = $this->fourApi->getSessionsClient()->getSessionDetails(
+            $sessionId,
+            $sessionSecret
+        );
         $this->assertNotNull($responseSessionDetailsWithSecret);
     }
 
@@ -41,8 +48,12 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
     public function shouldRequestAndGetCardSessionAppSession()
     {
         $appSession = $this->getAppSession();
-        $responseNonHostedSession = $this->createNonHostedSession($appSession, Category::$payment,
-            ChallengeIndicatorType::$no_preference, TransactionType::$goods_service);
+        $responseNonHostedSession = $this->createNonHostedSession(
+            $appSession,
+            Category::$payment,
+            ChallengeIndicatorType::$no_preference,
+            TransactionType::$goods_service
+        );
 
         $this->assertNotNull($responseNonHostedSession);
 
@@ -51,7 +62,10 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
 
         $responseSessionDetails = $this->fourApi->getSessionsClient()->getSessionDetails($sessionId);
         $this->assertNotNull($responseSessionDetails);
-        $responseSessionDetailsWithSecret = $this->fourApi->getSessionsClient()->getSessionDetails($sessionId, $sessionSecret);
+        $responseSessionDetailsWithSecret = $this->fourApi->getSessionsClient()->getSessionDetails(
+            $sessionId,
+            $sessionSecret
+        );
         $this->assertNotNull($responseSessionDetailsWithSecret);
     }
 }

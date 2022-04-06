@@ -65,7 +65,6 @@ abstract class SandboxTestFixture extends TestCase
                 $this->logger->error("Invalid platform type");
                 throw new CheckoutAuthorizationException("Invalid platform type");
         }
-
     }
 
     protected function assertResponse($obj, ...$properties)
@@ -156,5 +155,4 @@ abstract class SandboxTestFixture extends TestCase
         }
         throw new AssertionFailedError("Max attempts reached!");
     }
-
 }

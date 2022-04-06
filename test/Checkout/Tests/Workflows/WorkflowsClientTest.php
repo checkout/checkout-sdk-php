@@ -31,7 +31,7 @@ class WorkflowsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->createWorkflow(new CreateWorkflowRequest());
         $this->assertNotNull($response);
@@ -44,7 +44,7 @@ class WorkflowsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->getWorkflows();
         $this->assertNotNull($response);
@@ -57,7 +57,7 @@ class WorkflowsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->getWorkflow("workflow_id");
         $this->assertNotNull($response);
@@ -70,7 +70,7 @@ class WorkflowsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("patch")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->updateWorkflow("workflow_id", new UpdateWorkflowRequest());
         $this->assertNotNull($response);
@@ -116,7 +116,7 @@ class WorkflowsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->getEventTypes();
         $this->assertNotNull($response);
@@ -129,7 +129,7 @@ class WorkflowsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->getSubjectEvents("subject_id");
         $this->assertNotNull($response);
@@ -142,7 +142,7 @@ class WorkflowsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->getEvent("event_id");
         $this->assertNotNull($response);
@@ -201,5 +201,18 @@ class WorkflowsClientTest extends UnitTestFixture
         $this->apiClient->method("post");
 
         $this->client->reflow(new ReflowByEventsRequest());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldGetActionInvocations()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn("response");
+
+        $response = $this->client->getActionInvocations("event_id", "action_id");
+        $this->assertNotNull($response);
     }
 }

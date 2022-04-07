@@ -2,9 +2,9 @@
 
 namespace Checkout\Events;
 
-use Checkout\Common\AbstractQueryFilter;
+use Checkout\Common\QueryFilterDateRange;
 
-class RetrieveEventsRequest extends AbstractQueryFilter
+class RetrieveEventsRequest extends QueryFilterDateRange
 {
     public $payment_id;
 
@@ -17,10 +17,4 @@ class RetrieveEventsRequest extends AbstractQueryFilter
     public $skip;
 
     public $limit;
-
-    // DateTime
-    public $from;
-
-    // DateTime
-    public $to;
 }

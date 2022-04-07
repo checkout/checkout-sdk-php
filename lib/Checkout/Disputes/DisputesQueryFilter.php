@@ -2,19 +2,13 @@
 
 namespace Checkout\Disputes;
 
-use Checkout\Common\AbstractQueryFilter;
+use Checkout\Common\QueryFilterDateRange;
 
-class DisputesQueryFilter extends AbstractQueryFilter
+class DisputesQueryFilter extends QueryFilterDateRange
 {
     public $limit;
 
     public $skip;
-
-    // DateTime
-    public $from;
-
-    // DateTime
-    public $to;
 
     public $id;
 
@@ -35,5 +29,4 @@ class DisputesQueryFilter extends AbstractQueryFilter
     public $sub_entity_ids;
 
     public $payment_mcc;
-
 }

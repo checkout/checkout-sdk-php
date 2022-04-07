@@ -34,9 +34,13 @@ class DisputesQueryFilterTest extends TestCase
         $disputesQueryFilter->sub_entity_ids = "sub_entity_ids";
         $disputesQueryFilter->payment_mcc = "payment_mcc";
 
-        $expected = "limit=100&skip=1&from=2022-01-10T12%3A12%3A12%2B0000&to=2021-02-15T12%3A12%3A12%2B0000&id=id&statuses=statuses&payment_id=payment_id&payment_reference=payment_reference&payment_arn=payment_arn&this_channel_only=this_channel_only&entity_ids=entity_ids&sub_entity_ids=sub_entity_ids&payment_mcc=payment_mcc";
+        if (version_compare(PHP_VERSION, '8.1', '<=')) {
+            $expected = "limit=100&skip=1&id=id&statuses=statuses&payment_id=payment_id&payment_reference=payment_reference&payment_arn=payment_arn&this_channel_only=this_channel_only&entity_ids=entity_ids&sub_entity_ids=sub_entity_ids&payment_mcc=payment_mcc&from=2022-01-10T12%3A12%3A12%2B0000&to=2021-02-15T12%3A12%3A12%2B0000";
+        } else {
+            $expected = "from=2022-01-10T12%3A12%3A12%2B0000&to=2021-02-15T12%3A12%3A12%2B0000&limit=100&skip=1&id=id&statuses=statuses&payment_id=payment_id&payment_reference=payment_reference&payment_arn=payment_arn&this_channel_only=this_channel_only&entity_ids=entity_ids&sub_entity_ids=sub_entity_ids&payment_mcc=payment_mcc";
+        }
+
 
         $this->assertEquals($expected, $disputesQueryFilter->getEncodedQueryParameters());
     }
-
 }

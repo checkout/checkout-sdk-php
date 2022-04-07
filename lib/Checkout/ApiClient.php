@@ -39,7 +39,7 @@ class ApiClient
     public function get($path, SdkAuthorization $authorization)
     {
         $response = $this->invoke("GET", $path, null, $authorization);
-        return $this->jsonSerializer->deserialize($response->getBody());
+        return $this->getResponseContents($response);
     }
 
     /**
@@ -108,7 +108,7 @@ class ApiClient
             $path .= "?" . $queryParameters;
         }
         $response = $this->invoke("GET", $path, null, $authorization);
-        return $this->jsonSerializer->deserialize($response->getBody());
+        return $this->getResponseContents($response);
     }
 
     /**
@@ -227,4 +227,16 @@ class ApiClient
         return $headers;
     }
 
+    /**
+     * @param $response
+     * @return mixed
+     */
+    private function getResponseContents($response)
+    {
+        $contentType = $response->getHeader("Content-Type");
+        if (in_array("text/csv", $contentType)) {
+            return $response->getBody()->getContents();
+        }
+        return $this->jsonSerializer->deserialize($response->getBody());
+    }
 }

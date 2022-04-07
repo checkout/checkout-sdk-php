@@ -10,6 +10,7 @@ use Checkout\Instruments\InstrumentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
 use Checkout\Payments\PaymentsClient;
+use Checkout\Reconciliation\ReconciliationClient;
 use Checkout\Risk\RiskClient;
 use Checkout\Sources\SourcesClient;
 use Checkout\Tokens\TokensClient;
@@ -28,6 +29,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $paymentLinksClient;
     private $hostedPaymentsClient;
     private $riskClient;
+    private $reconciliationClient;
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -43,6 +45,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->paymentLinksClient = new PaymentLinksClient($apiClient, $configuration);
         $this->hostedPaymentsClient = new HostedPaymentsClient($apiClient, $configuration);
         $this->riskClient = new RiskClient($apiClient, $configuration);
+        $this->reconciliationClient = new ReconciliationClient($apiClient, $configuration);
     }
 
     public function getSourcesClient()
@@ -98,5 +101,10 @@ final class CheckoutApi extends CheckoutApmApi
     public function getRiskClient()
     {
         return $this->riskClient;
+    }
+
+    public function getReconciliationClient()
+    {
+        return $this->reconciliationClient;
     }
 }

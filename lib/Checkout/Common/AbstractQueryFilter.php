@@ -17,9 +17,9 @@ abstract class AbstractQueryFilter
                 if (!empty($value)) {
                     $url .= $key . "=";
                     $url .= $value instanceof DateTime ? urlencode(CheckoutUtils::formatDate($value)) : $value;
-                }
-                if ($key != array_keys($vars)[count($vars) - 1]) {
-                    $url .= "&";
+                    if ($key != array_keys($vars)[count($vars) - 1]) {
+                        $url .= "&";
+                    }
                 }
             }
         }

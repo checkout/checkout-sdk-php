@@ -3,11 +3,13 @@
 namespace Checkout\Tests\Payments\Four;
 
 use Checkout\CheckoutApiException;
+use Checkout\Common\Four\AccountHolder;
 use Checkout\Payments\Four\AuthorizationRequest;
 use Checkout\Payments\Four\CaptureRequest;
 use Checkout\Payments\Four\PaymentsClient;
 use Checkout\Payments\Four\Request\PaymentRequest;
 use Checkout\Payments\Four\Request\PayoutRequest;
+use Checkout\Payments\Four\Request\Source\RequestProviderTokenSource;
 use Checkout\Payments\RefundRequest;
 use Checkout\Payments\VoidRequest;
 use Checkout\PlatformType;
@@ -33,11 +35,19 @@ class PaymentsClientTest extends UnitTestFixture
     public function shouldRequestPayment()
     {
 
+        $source = new RequestProviderTokenSource();
+        $source->payment_method = "method";
+        $source->token = "token";
+        $source->account_holder = new AccountHolder();
+
+        $request = new PaymentRequest();
+        $request->source = $source;
+
         $this->apiClient
             ->method("post")
             ->willReturn("response");
 
-        $response = $this->client->requestPayment(new PaymentRequest());
+        $response = $this->client->requestPayment($request);
         $this->assertNotNull($response);
     }
 
@@ -150,15 +160,18 @@ class PaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldIncrementPaymentAuthorization_idempotently()
+    public function shouldIncrementPaymentAuthorizationIdempotently()
     {
 
         $this->apiClient
             ->method("post")
             ->willReturn("response");
 
-        $response = $this->client->incrementPaymentAuthorization("payment_id", new AuthorizationRequest(), "idempotency_key");
+        $response = $this->client->incrementPaymentAuthorization(
+            "payment_id",
+            new AuthorizationRequest(),
+            "idempotency_key"
+        );
         $this->assertNotNull($response);
     }
-
 }

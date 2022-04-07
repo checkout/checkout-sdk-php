@@ -9,6 +9,7 @@ class PaymentSourceType
     public static $network_token = "network_token";
     public static $token = "token";
     public static $customer = "customer";
+    public static $provider_token = "provider_token";
     public static $dlocal = "dlocal";
     public static $klarna = "klarna";
     public static $currency_account = "currency_account";
@@ -32,5 +33,4 @@ class PaymentSourceType
     public static $benefitpay = "benefitpay";
     public static $bancontact = "bancontact";
     public static $tamara = "tamara";
-
 }

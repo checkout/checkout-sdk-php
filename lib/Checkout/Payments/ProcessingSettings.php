@@ -10,4 +10,8 @@ class ProcessingSettings
 
     public $shipping_amount;
 
+    /**
+     * @var Aggregator
+     */
+    public $aggregator;
 }

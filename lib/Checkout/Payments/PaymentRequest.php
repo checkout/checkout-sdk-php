@@ -52,6 +52,8 @@ class PaymentRequest
 
     public $metadata;
 
+    /**
+     * @var ProcessingSettings
+     */
     public $processing;
-
 }

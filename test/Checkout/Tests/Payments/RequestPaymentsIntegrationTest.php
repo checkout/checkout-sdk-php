@@ -4,9 +4,14 @@ namespace Checkout\Tests\Payments;
 
 use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
+use Checkout\Common\CustomerRequest;
+use Checkout\Payments\Aggregator;
 use Checkout\Payments\PaymentRequest;
+use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Source\RequestCardSource;
+use Checkout\Payments\Source\RequestTokenSource;
 use Checkout\Tests\TestCardSource;
+use Checkout\Tokens\CardTokenRequest;
 use DateTime;
 
 class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
@@ -20,7 +25,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     {
         $paymentResponse = $this->makeCardPayment(true, 10, new DateTime());
 
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "processed_on",
             "reference",
@@ -57,7 +63,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer.name",
             "processing",
             "processing.acquirer_transaction_id",
-            "processing.retrieval_reference_number");
+            "processing.retrieval_reference_number"
+        );
         $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
@@ -68,7 +75,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldMakeCard3dsPayment()
     {
         $paymentResponse = $this->make3dsCardPayment();
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "reference",
             "status",
@@ -77,17 +85,19 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer",
             "customer.id",
             "customer.name",
-            "customer.email");
+            "customer.email"
+        );
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldMakeCard3dsPayment_N3d()
+    public function shouldMakeCard3dsPaymentN3d()
     {
         $paymentResponse = $this->make3dsCardPayment(true);
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "processed_on",
             "reference",
@@ -124,7 +134,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer.name",
             "processing",
             "processing.acquirer_transaction_id",
-            "processing.retrieval_reference_number");
+            "processing.retrieval_reference_number"
+        );
         $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
@@ -136,7 +147,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     {
         $paymentResponse = $this->makeTokenPayment();
 
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "processed_on",
             "reference",
@@ -172,7 +184,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer.id",
             "processing",
             "processing.acquirer_transaction_id",
-            "processing.retrieval_reference_number");
+            "processing.retrieval_reference_number"
+        );
 
         $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
@@ -210,4 +223,59 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         // $this->assertEquals($paymentResponse1["action_id"], $paymentResponse2["action_id"]);
     }
 
+
+    /**
+     * @test
+     */
+    public function shouldMakePaymentsWithAggregator()
+    {
+        $phone = $this->getPhone();
+        $billingAddress = $this->getAddress();
+
+        $cardTokenRequest = new CardTokenRequest();
+        $cardTokenRequest->name = TestCardSource::$VisaName;
+        $cardTokenRequest->number = TestCardSource::$VisaNumber;
+        $cardTokenRequest->expiry_year = TestCardSource::$VisaExpiryYear;
+        $cardTokenRequest->expiry_month = TestCardSource::$VisaExpiryMonth;
+        $cardTokenRequest->cvv = TestCardSource::$VisaCvv;
+        $cardTokenRequest->billing_address = $billingAddress;
+        $cardTokenRequest->phone = $phone;
+
+        $cardTokenResponse = $this->defaultApi->getTokensClient()->requestCardToken($cardTokenRequest);
+        $this->assertResponse($cardTokenResponse, "token");
+
+        $requestTokenSource = new RequestTokenSource();
+        $requestTokenSource->token = $cardTokenResponse["token"];
+
+        $customerRequest = new CustomerRequest();
+        $customerRequest->email = $this->randomEmail();
+
+        $aggregator = new Aggregator();
+        $aggregator->sub_merchant_id = "9874587412";
+        $aggregator->sub_merchant_name = "Foodics - catering business";
+        $aggregator->sub_merchant_legal_name = "Foodics catering service LLC";
+        $aggregator->sub_merchant_street = "Kuwait Street 1";
+        $aggregator->sub_merchant_city = "Kuwait City";
+        $aggregator->sub_merchant_country = "KWT";
+        $aggregator->sub_merchant_postal_code = "60000";
+        $aggregator->sub_merchant_state = "Kuwait";
+        $aggregator->sub_merchant_email = "[foodcs@support.com](mailto:foodcs@support.com)";
+        $aggregator->sub_merchant_phone = "[+965412478112](tel:+965412478112)";
+        $aggregator->sub_merchant_industry_code = "5411";
+
+        $processing = new ProcessingSettings();
+        $processing->aggregator = $aggregator;
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestTokenSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->reference = uniqid("paymentAggregator");
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$SAR;
+        $paymentRequest->customer = $customerRequest;
+        $paymentRequest->processing = $processing;
+
+        $paymentResponse = $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+        $this->assertResponse($paymentResponse, "id");
+    }
 }

@@ -66,8 +66,8 @@ class RequestPayoutsIntegrationTest extends AbstractPaymentsIntegrationTest
             "destination.last4",
             "destination.fingerprint",
             "destination.name",
-            "destination.issuer",
-            "destination.issuer_country",
+            //"destination.issuer",
+            //"destination.issuer_country",
             "destination.product_id",
             "destination.product_type"
         );

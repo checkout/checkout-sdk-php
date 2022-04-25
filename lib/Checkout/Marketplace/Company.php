@@ -2,23 +2,42 @@
 
 namespace Checkout\Marketplace;
 
+use Checkout\Common\Address;
+
 class Company
 {
+    /**
+     * @var string
+     */
     public $business_registration_number;
 
+    /**
+     * @var string
+     */
     public $legal_name;
 
+    /**
+     * @var string
+     */
     public $trading_name;
 
-    // Address
+    /**
+     * @var Address
+     */
     public $principal_address;
 
-    // Address
+    /**
+     * @var Address
+     */
     public $registered_address;
 
-    // EntityDocument
+    /**
+     * @var EntityDocument
+     */
     public $document;
 
-    // array Representative
+    /**
+     * @var array of Representative
+     */
     public $representatives;
 }

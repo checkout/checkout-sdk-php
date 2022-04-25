@@ -2,30 +2,56 @@
 
 namespace Checkout\Payments\Four\Request;
 
+use Checkout\Common\Currency;
+use Checkout\Payments\Four\Destination\PaymentRequestDestination;
+use Checkout\Payments\Four\Request\Source\PayoutRequestSource;
+use Checkout\Payments\Four\Sender\PaymentSender;
+
 class PayoutRequest
 {
 
-    // PayoutRequestSource
+    /**
+     * @var PayoutRequestSource
+     */
     public $source;
 
-    // PaymentRequestDestination
+    /**
+     * @var PaymentRequestDestination
+     */
     public $destination;
 
+    /**
+     * @var int
+     */
     public $amount;
 
+    /**
+     * @var Currency
+     */
     public $currency;
 
+    /**
+     * @var string
+     */
     public $reference;
 
-    // PayoutBillingDescriptor
+    /**
+     * @var PayoutBillingDescriptor
+     */
     public $billing_descriptor;
 
-    // PaymentSender
+    /**
+     * @var PaymentSender
+     */
     public $sender;
 
-    // PaymentInstruction
+    /**
+     * @var PaymentInstruction
+     */
     public $instruction;
 
+    /**
+     * @var string
+     */
     public $processing_channel_id;
-
 }

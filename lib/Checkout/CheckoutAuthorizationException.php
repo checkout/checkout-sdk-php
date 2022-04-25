@@ -6,15 +6,6 @@ class CheckoutAuthorizationException extends CheckoutException
 {
 
     /**
-     * @param $message
-     */
-    public function __construct($message)
-    {
-        parent::__construct($message);
-    }
-
-
-    /**
      * @param $authorizationType
      * @return CheckoutAuthorizationException
      */
@@ -47,5 +38,4 @@ class CheckoutAuthorizationException extends CheckoutException
     {
         return new CheckoutAuthorizationException($keyType . "  is required for this operation");
     }
-
 }

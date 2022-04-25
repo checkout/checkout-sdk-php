@@ -2,8 +2,11 @@
 
 namespace Checkout\Tests;
 
+use Checkout\CheckoutApi;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutDefaultSdk;
+use Checkout\CheckoutException;
 use Checkout\CheckoutFourSdk;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
@@ -20,7 +23,13 @@ use PHPUnit\Framework\TestCase;
 abstract class SandboxTestFixture extends TestCase
 {
 
+    /**
+     * @var CheckoutApi
+     */
     protected $defaultApi;
+    /**
+     * @var \Checkout\Four\CheckoutApi
+     */
     protected $fourApi;
 
     const MESSAGE_404 = "The API response status code (404) does not indicate success.";
@@ -28,6 +37,11 @@ abstract class SandboxTestFixture extends TestCase
 
     private $logger;
 
+    /**
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
+     */
     protected function init($platformType)
     {
         $this->logger = new Logger("checkout-sdk-test-php");
@@ -88,16 +102,25 @@ abstract class SandboxTestFixture extends TestCase
         }
     }
 
+    /**
+     * @return string
+     */
     protected function randomEmail()
     {
         return uniqid() . "@checkout-sdk-net.com";
     }
 
+    /**
+     * @return false|string
+     */
     protected function idempotencyKey()
     {
         return substr(uniqid(), 0, 8);
     }
 
+    /**
+     * @return string
+     */
     public static function getCheckoutFilePath()
     {
         return __DIR__ . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR . "checkout.jpeg";

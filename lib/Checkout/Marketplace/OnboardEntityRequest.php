@@ -4,17 +4,28 @@ namespace Checkout\Marketplace;
 
 class OnboardEntityRequest
 {
+    /**
+     * @var string
+     */
     public $reference;
 
-    // ContactDetails
+    /**
+     * @var ContactDetails
+     */
     public $contact_details;
 
-    // Profile
+    /**
+     * @var Profile
+     */
     public $profile;
 
-    // Company
+    /**
+     * @var Company
+     */
     public $company;
 
-    // Individual
+    /**
+     * @var Individual
+     */
     public $individual;
 }

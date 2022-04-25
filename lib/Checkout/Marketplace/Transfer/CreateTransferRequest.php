@@ -4,15 +4,23 @@ namespace Checkout\Marketplace\Transfer;
 
 class CreateTransferRequest
 {
+    /**
+     * @var string
+     */
     public $reference;
 
-    // TransferType
+    /**
+     * @var TransferType
+     */
     public $transfer_type;
 
-    // TransferSource
+    /**
+     * @var TransferSource
+     */
     public $source;
 
-    // TransferDestination
+    /**
+     * @var TransferDestination
+     */
     public $destination;
-
 }

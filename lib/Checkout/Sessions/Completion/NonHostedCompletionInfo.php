@@ -9,6 +9,8 @@ class NonHostedCompletionInfo extends CompletionInfo
         parent::__construct(CompletionInfoType::$nonHosted);
     }
 
+    /**
+     * @var string
+     */
     public $callback_url;
-
 }

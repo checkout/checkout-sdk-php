@@ -2,18 +2,22 @@
 
 namespace Checkout\Sources;
 
+use Checkout\Common\Address;
+
 class SepaSourceRequest extends SourceRequest
 {
-
-    // Address
+    /**
+     * @var Address
+     */
     public $billing_address;
 
-    // SourceData
+    /**
+     * @var SourceData
+     */
     public $source_data;
 
     public function __construct()
     {
         parent::__construct(SourceType::$sepa);
     }
-
 }

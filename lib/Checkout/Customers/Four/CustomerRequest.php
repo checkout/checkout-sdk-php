@@ -4,6 +4,8 @@ namespace Checkout\Customers\Four;
 
 class CustomerRequest extends \Checkout\Customers\CustomerRequest
 {
-    // array
+    /**
+     * @var array of string
+     */
     public $instruments;
 }

@@ -2,8 +2,12 @@
 
 namespace Checkout\Marketplace;
 
+use Checkout\Common\Phone;
+
 class ContactDetails
 {
-    // Phone
+    /**
+     * @var Phone
+     */
     public $phone;
 }

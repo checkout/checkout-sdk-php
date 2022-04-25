@@ -12,11 +12,17 @@ class FourStaticKeysCheckoutSdkBuilder extends AbstractStaticKeysCheckoutSdkBuil
     const PUBLIC_KEY_PATTERN = "/^pk_(sbox_)?[a-z2-7]{26}[a-z2-7*#$=]$/";
     const SECRET_KEY_PATTERN = "/^sk_(sbox_)?[a-z2-7]{26}[a-z2-7*#$=]$/";
 
+    /**
+     * @param string $publicKey
+     */
     public function setPublicKey($publicKey)
     {
         $this->publicKey = $publicKey;
     }
 
+    /**
+     * @param string $secretKey
+     */
     public function setSecretKey($secretKey)
     {
         $this->secretKey = $secretKey;

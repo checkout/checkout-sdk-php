@@ -17,6 +17,11 @@ class FourOAuthCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
     protected $authorizationUri = null;
     protected $scopes = array();
 
+    /**
+     * @param string $clientId
+     * @param string $clientSecret
+     * @return $this
+     */
     public function clientCredentials(
         $clientId,
         $clientSecret
@@ -26,12 +31,20 @@ class FourOAuthCheckoutSdkBuilder extends AbstractCheckoutSdkBuilder
         return $this;
     }
 
+    /**
+     * @param string $authorizationUri
+     * @return $this
+     */
     public function authorizationUri($authorizationUri)
     {
         $this->authorizationUri = $authorizationUri;
         return $this;
     }
 
+    /**
+     * @param array $scopes
+     * @return $this
+     */
     public function scopes(array $scopes)
     {
         $this->scopes = $scopes;

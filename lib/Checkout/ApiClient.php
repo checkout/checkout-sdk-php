@@ -199,6 +199,10 @@ class ApiClient
         }
     }
 
+    /**
+     * @param string $path
+     * @return string
+     */
     private function getRequestUrl($path)
     {
         return $this->baseUri . $path;

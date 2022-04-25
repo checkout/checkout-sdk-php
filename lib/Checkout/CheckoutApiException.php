@@ -11,11 +11,10 @@ class CheckoutApiException extends CheckoutException
     public $http_status_code;
     public $error_details;
 
-    public function __construct($message)
-    {
-        parent::__construct($message);
-    }
-
+    /**
+     * @param RequestException $requestException
+     * @return CheckoutApiException
+     */
     public static function from(RequestException $requestException)
     {
         $body = json_decode($requestException->getResponse()->getBody()->getContents(), true);
@@ -25,5 +24,4 @@ class CheckoutApiException extends CheckoutException
         $ex->error_details = $body;
         return $ex;
     }
-
 }

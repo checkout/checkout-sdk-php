@@ -2,6 +2,9 @@
 
 namespace Checkout\Marketplace;
 
+use Checkout\Common\Country;
+use Checkout\Common\Currency;
+use Checkout\Common\Four\BankDetails;
 use Checkout\Common\InstrumentType;
 
 class MarketplacePaymentInstrument
@@ -11,34 +14,73 @@ class MarketplacePaymentInstrument
         $this->type = InstrumentType::$bank_account;
     }
 
+    /**
+     * @var InstrumentType
+     */
     public $type;
 
+    /**
+     * @var string
+     */
     public $label;
 
+    /**
+     * @var string
+     */
     public $account_type;
 
+    /**
+     * @var string
+     */
     public $account_number;
 
+    /**
+     * @var string
+     */
     public $bank_code;
 
+    /**
+     * @var string
+     */
     public $branch_code;
 
+    /**
+     * @var string
+     */
     public $iban;
 
+    /**
+     * @var string
+     */
     public $bban;
 
+    /**
+     * @var string
+     */
     public $swift_bic;
 
+    /**
+     * @var Currency
+     */
     public $currency;
 
+    /**
+     * @var Country
+     */
     public $country;
 
-    // InstrumentDocument
+    /**
+     * @var InstrumentDocument
+     */
     public $document;
 
-    // BankDetails
+    /**
+     * @var BankDetails
+     */
     public $bank;
 
-    // MarketplaceAccountHolder
+    /**
+     * @var MarketplaceAccountHolder
+     */
     public $account_holder;
 }

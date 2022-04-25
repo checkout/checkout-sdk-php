@@ -12,8 +12,13 @@ class RequestIdSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$id);
     }
 
+    /**
+     * @var string
+     */
     public $id;
 
+    /**
+     * @var string
+     */
     public $cvv;
-
 }

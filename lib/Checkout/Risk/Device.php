@@ -2,23 +2,47 @@
 
 namespace Checkout\Risk;
 
+use DateTime;
+
 class Device
 {
+    /**
+     * @var string
+     */
     public $ip;
 
-    // Location
+    /**
+     * @var Location
+     */
     public $location;
 
+    /**
+     * @var string
+     */
     public $os;
 
+    /**
+     * @var string
+     */
     public $type;
 
+    /**
+     * @var string
+     */
     public $model;
 
-    // DateTime
+    /**
+     * @var DateTime
+     */
     public $date;
 
+    /**
+     * @var string
+     */
     public $user_agent;
 
+    /**
+     * @var string
+     */
     public $fingerprint;
 }

@@ -11,6 +11,14 @@ final class Environment
     private $balancesUri;
     private $isSandbox;
 
+    /**
+     * @param string $baseUri
+     * @param string $authorizationUri
+     * @param string $filesBaseUrl
+     * @param string $transfersUri
+     * @param string $balancesUri
+     * @param bool $isSandbox
+     */
     private function __construct(
         $baseUri,
         $authorizationUri,
@@ -27,6 +35,9 @@ final class Environment
         $this->isSandbox = $isSandbox;
     }
 
+    /**
+     * @return Environment
+     */
     public static function sandbox()
     {
         return new Environment(
@@ -39,6 +50,9 @@ final class Environment
         );
     }
 
+    /**
+     * @return Environment
+     */
     public static function production()
     {
 
@@ -52,31 +66,49 @@ final class Environment
         );
     }
 
+    /**
+     * @return string
+     */
     public function getBaseUri()
     {
         return $this->baseUri;
     }
 
+    /**
+     * @return string
+     */
     public function getAuthorizationUri()
     {
         return $this->authorizationUri;
     }
 
+    /**
+     * @return string
+     */
     public function getFilesBaseUri()
     {
         return $this->filesBaseUri;
     }
 
+    /**
+     * @return string
+     */
     public function getTransfersUri()
     {
         return $this->transfersUri;
     }
 
+    /**
+     * @return bool
+     */
     public function isSandbox()
     {
         return $this->isSandbox;
     }
 
+    /**
+     * @return string
+     */
     public function getBalancesUri()
     {
         return $this->balancesUri;

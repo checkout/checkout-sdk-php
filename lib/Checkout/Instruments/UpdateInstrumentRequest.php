@@ -4,15 +4,28 @@ namespace Checkout\Instruments;
 
 class UpdateInstrumentRequest
 {
+    /**
+     * @var int
+     */
     public $expiry_month;
 
+    /**
+     * @var int
+     */
     public $expiry_year;
 
+    /**
+     * @var string
+     */
     public $name;
 
-    // InstrumentAccountHolder
+    /**
+     * @var InstrumentAccountHolder
+     */
     public $account_holder;
 
-    // UpdateInstrumentCustomerRequest
+    /**
+     * @var UpdateInstrumentCustomerRequest
+     */
     public $customer;
 }

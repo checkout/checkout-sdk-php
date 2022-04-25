@@ -2,37 +2,73 @@
 
 namespace Checkout\Risk\PreCapture;
 
+use Checkout\Common\Currency;
+use Checkout\Common\CustomerRequest;
+use Checkout\Risk\Device;
+use Checkout\Risk\RiskPayment;
+use Checkout\Risk\RiskShippingDetails;
+use Checkout\Risk\Source\RiskPaymentRequestSource;
+use DateTime;
+
 class PreCaptureAssessmentRequest
 {
+    /**
+     * @var string
+     */
     public $assessment_id;
 
-    // DateTime
+    /**
+     * @var DateTime
+     */
     public $date;
 
-    // RiskPaymentRequestSource
+    /**
+     * @var RiskPaymentRequestSource
+     */
     public $source;
 
-    // CustomerRequest
+    /**
+     * @var CustomerRequest
+     */
     public $customer;
 
+    /**
+     * @var int
+     */
     public $amount;
 
+    /**
+     * @var Currency
+     */
     public $currency;
 
-    // RiskPayment
+    /**
+     * @var RiskPayment
+     */
     public $payment;
 
-    // RiskShippingDetails
+    /**
+     * @var RiskShippingDetails
+     */
     public $shipping;
 
-    // Device
+    /**
+     * @var Device
+     */
     public $device;
 
+    /**
+     * @var array
+     */
     public $metadata;
 
-    // AuthenticationResult
+    /**
+     * @var AuthenticationResult
+     */
     public $authentication_result;
 
-    // AuthorizationResult
+    /**
+     * @var AuthorizationResult
+     */
     public $authorization_result;
 }

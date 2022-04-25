@@ -56,81 +56,133 @@ final class CheckoutApi extends CheckoutApmApi
         );
     }
 
+    /**
+     * @return TokensClient
+     */
     public function getTokensClient()
     {
         return $this->tokensClient;
     }
 
+    /**
+     * @return CustomersClient
+     */
     public function getCustomersClient()
     {
         return $this->customersClient;
     }
 
+    /**
+     * @return PaymentsClient
+     */
     public function getPaymentsClient()
     {
         return $this->paymentsClient;
     }
 
+    /**
+     * @return InstrumentsClient
+     */
     public function getInstrumentsClient()
     {
         return $this->instrumentsClient;
     }
 
+    /**
+     * @return ForexClient
+     */
     public function getForexClient()
     {
         return $this->forexClient;
     }
 
+    /**
+     * @return DisputesClient
+     */
     public function getDisputesClient()
     {
         return $this->disputesClient;
     }
 
+    /**
+     * @return SessionsClient
+     */
     public function getSessionsClient()
     {
         return $this->sessionsClient;
     }
 
+    /**
+     * @return MarketplaceClient
+     */
     public function getMarketplaceClient()
     {
         return $this->marketplaceClient;
     }
 
+    /**
+     * @return HostedPaymentsClient
+     */
     public function getHostedPaymentsClient()
     {
         return $this->hostedPaymentsClient;
     }
 
+    /**
+     * @return PaymentLinksClient
+     */
     public function getPaymentLinksClient()
     {
         return $this->paymentLinksClient;
     }
 
+    /**
+     * @return RiskClient
+     */
     public function getRiskClient()
     {
         return $this->riskClient;
     }
 
+    /**
+     * @return WorkflowsClient
+     */
     public function getWorkflowsClient()
     {
         return $this->workflowsClient;
     }
 
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
     private function getBaseApiClient(CheckoutConfiguration $configuration)
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getBaseUri());
     }
 
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
     private function getFilesApiClient(CheckoutConfiguration $configuration)
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getFilesBaseUri());
     }
 
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
     private function getTransfersApiClient(CheckoutConfiguration $configuration)
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getTransfersUri());
     }
 
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
     private function getBalancesApiClient(CheckoutConfiguration $configuration)
     {
         return new ApiClient($configuration, $configuration->getEnvironment()->getBalancesUri());

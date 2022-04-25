@@ -9,7 +9,8 @@ class GooglePayTokenRequest extends WalletTokenRequest
         parent::__construct(TokenType::$googlepay);
     }
 
-    // GooglePayTokenData
+    /**
+     * @var GooglePayTokenData
+     */
     public $token_data;
-
 }

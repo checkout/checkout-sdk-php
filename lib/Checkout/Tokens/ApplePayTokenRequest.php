@@ -9,7 +9,8 @@ class ApplePayTokenRequest extends WalletTokenRequest
         parent::__construct(TokenType::$applepay);
     }
 
-    // ApplePayTokenData
+    /**
+     * @var ApplePayTokenData
+     */
     public $token_data;
-
 }

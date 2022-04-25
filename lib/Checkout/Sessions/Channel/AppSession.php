@@ -10,21 +10,43 @@ class AppSession extends ChannelData
         parent::__construct(ChannelType::$app);
     }
 
+    /**
+     * @var string
+     */
     public $sdk_app_id;
 
+    /**
+     * @var int
+     */
     public $sdk_max_timeout;
 
-    // SdkEphemeralPublicKey
+    /**
+     * @var SdkEphemeralPublicKey
+     */
     public $sdk_ephem_pub_key;
 
+    /**
+     * @var string
+     */
     public $sdk_reference_number;
 
+    /**
+     * @var string
+     */
     public $sdk_encrypted_data;
 
+    /**
+     * @var string
+     */
     public $sdk_transaction_id;
 
+    /**
+     * @var SdkInterfaceType
+     */
     public $sdk_interface_type;
 
+    /**
+     * @var array of UIElements
+     */
     public $sdk_ui_elements;
-
 }

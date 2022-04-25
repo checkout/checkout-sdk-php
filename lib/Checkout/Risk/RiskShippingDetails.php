@@ -2,8 +2,12 @@
 
 namespace Checkout\Risk;
 
+use Checkout\Common\Address;
+
 class RiskShippingDetails
 {
-    // Address
+    /**
+     * @var Address
+     */
     public $address;
 }

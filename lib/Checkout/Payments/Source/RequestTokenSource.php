@@ -2,7 +2,9 @@
 
 namespace Checkout\Payments\Source;
 
+use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
+use Checkout\Common\Phone;
 
 class RequestTokenSource extends AbstractRequestSource
 {
@@ -12,12 +14,18 @@ class RequestTokenSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$token);
     }
 
+    /**
+     * @var string
+     */
     public $token;
 
-    // Address
+    /**
+     * @var Address
+     */
     public $billing_address;
 
-    // Phone
+    /**
+     * @var Phone
+     */
     public $phone;
-
 }

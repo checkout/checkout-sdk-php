@@ -4,8 +4,13 @@ namespace Checkout\Marketplace;
 
 class Identification
 {
+    /**
+     * @var string
+     */
     public $national_id_number;
 
-    // Document
+    /**
+     * @var Document
+     */
     public $document;
 }

@@ -14,9 +14,11 @@ final class DefaultHttpClientBuilder implements HttpClientBuilderInterface
         $this->client = new GuzzleHttpClient();
     }
 
+    /**
+     * @return GuzzleHttpClient
+     */
     public function getClient()
     {
         return $this->client;
     }
-
 }

@@ -12,13 +12,23 @@ class RequestFawrySource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$fawry);
     }
 
+    /**
+     * @var string
+     */
     public $description;
 
+    /**
+     * @var string
+     */
     public $customer_mobile;
 
+    /**
+     * @var string
+     */
     public $customer_email;
 
-    // FawryProduct
+    /**
+     * @var array of FawryProduct
+     */
     public $products;
-
 }

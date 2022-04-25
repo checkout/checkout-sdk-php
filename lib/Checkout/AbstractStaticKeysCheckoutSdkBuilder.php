@@ -8,12 +8,9 @@ abstract class AbstractStaticKeysCheckoutSdkBuilder extends AbstractCheckoutSdkB
     protected $publicKey = null;
     protected $secretKey = null;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
+     * @param string $key
+     * @param string $secretKeyPattern
      * @throws CheckoutArgumentException
      */
     protected function validateSecretKey($key, $secretKeyPattern)
@@ -25,6 +22,8 @@ abstract class AbstractStaticKeysCheckoutSdkBuilder extends AbstractCheckoutSdkB
     }
 
     /**
+     * @param string $key
+     * @param string $publicKeyPattern
      * @throws CheckoutArgumentException
      */
     protected function validatePublicKey($key, $publicKeyPattern)

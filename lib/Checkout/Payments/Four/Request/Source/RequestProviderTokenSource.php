@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Four\Request\Source;
 
+use Checkout\Common\Four\AccountHolder;
 use Checkout\Common\PaymentSourceType;
 
 class RequestProviderTokenSource extends AbstractRequestSource
@@ -12,10 +13,18 @@ class RequestProviderTokenSource extends AbstractRequestSource
         parent::__construct(PaymentSourceType::$provider_token);
     }
 
+    /**
+     * @var string
+     */
     public $payment_method;
 
+    /**
+     * @var string
+     */
     public $token;
 
-    // AccountHolder
+    /**
+     * @var AccountHolder
+     */
     public $account_holder;
 }

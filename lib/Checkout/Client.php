@@ -10,6 +10,11 @@ abstract class Client
 
     private $sdkAuthorizationType;
 
+    /**
+     * @param ApiClient $apiClient
+     * @param CheckoutConfiguration $configuration
+     * @param $sdkAuthorizationType
+     */
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration, $sdkAuthorizationType)
     {
         $this->apiClient = $apiClient;
@@ -17,11 +22,18 @@ abstract class Client
         $this->sdkAuthorizationType = $sdkAuthorizationType;
     }
 
+    /**
+     * @return mixed
+     */
     protected function sdkAuthorization()
     {
         return $this->configuration->getSdkCredentials()->getAuthorization($this->sdkAuthorizationType);
     }
 
+    /**
+     * @param $authorizationType
+     * @return mixed
+     */
     protected function sdkSpecificAuthorization($authorizationType)
     {
         return $this->configuration->getSdkCredentials()->getAuthorization($authorizationType);
@@ -35,5 +47,4 @@ abstract class Client
     {
         return join("/", $parts);
     }
-
 }

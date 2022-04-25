@@ -2,40 +2,81 @@
 
 namespace Checkout\Sessions;
 
+use Checkout\Common\ChallengeIndicatorType;
+use Checkout\Common\Currency;
+use Checkout\Sessions\Channel\ChannelData;
+use Checkout\Sessions\Completion\CompletionInfo;
+use Checkout\Sessions\Source\SessionSource;
+
 class SessionRequest
 {
-    // SessionSource
+    /**
+     * @var SessionSource
+     */
     public $source;
 
+    /**
+     * @var int
+     */
     public $amount;
 
+    /**
+     * @var Currency
+     */
     public $currency;
 
+    /**
+     * @var string
+     */
     public $processing_channel_id;
 
-    // SessionMarketplaceData
+    /**
+     * @var SessionMarketplaceData
+     */
     public $marketplace;
 
+    /**
+     * @var AuthenticationType
+     */
     public $authentication_type;
 
+    /**
+     * @var Category
+     */
     public $authentication_category;
 
+    /**
+     * @var ChallengeIndicatorType
+     */
     public $challenge_indicator;
 
-    // SessionsBillingDescriptor
+    /**
+     * @var SessionsBillingDescriptor
+     */
     public $billing_descriptor;
 
+    /**
+     * @var string
+     */
     public $reference;
 
+    /**
+     * @var TransactionType
+     */
     public $transaction_type;
 
-    // SessionAddress
+    /**
+     * @var SessionAddress
+     */
     public $shipping_address;
 
-    // CompletionInfo
+    /**
+     * @var CompletionInfo
+     */
     public $completion;
 
-    // ChannelData
+    /**
+     * @var ChannelData
+     */
     public $channel_data;
-
 }

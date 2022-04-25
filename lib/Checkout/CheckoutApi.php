@@ -48,61 +48,97 @@ final class CheckoutApi extends CheckoutApmApi
         $this->reconciliationClient = new ReconciliationClient($apiClient, $configuration);
     }
 
+    /**
+     * @return SourcesClient
+     */
     public function getSourcesClient()
     {
         return $this->sourcesClient;
     }
 
+    /**
+     * @return TokensClient
+     */
     public function getTokensClient()
     {
         return $this->tokensClient;
     }
 
+    /**
+     * @return InstrumentsClient
+     */
     public function getInstrumentsClient()
     {
         return $this->instrumentsClient;
     }
 
+    /**
+     * @return WebhooksClient
+     */
     public function getWebhooksClient()
     {
         return $this->webhooksClient;
     }
 
+    /**
+     * @return EventsClient
+     */
     public function getEventsClient()
     {
         return $this->eventsClient;
     }
 
+    /**
+     * @return PaymentsClient
+     */
     public function getPaymentsClient()
     {
         return $this->paymentsClient;
     }
 
+    /**
+     * @return CustomersClient
+     */
     public function getCustomersClient()
     {
         return $this->customersClient;
     }
 
+    /**
+     * @return DisputesClient
+     */
     public function getDisputesClient()
     {
         return $this->disputesClient;
     }
 
+    /**
+     * @return PaymentLinksClient
+     */
     public function getPaymentLinksClient()
     {
         return $this->paymentLinksClient;
     }
 
+    /**
+     * @return HostedPaymentsClient
+     */
     public function getHostedPaymentsClient()
     {
         return $this->hostedPaymentsClient;
     }
 
+    /**
+     * @return RiskClient
+     */
     public function getRiskClient()
     {
         return $this->riskClient;
     }
 
+    /**
+     * @return ReconciliationClient
+     */
     public function getReconciliationClient()
     {
         return $this->reconciliationClient;

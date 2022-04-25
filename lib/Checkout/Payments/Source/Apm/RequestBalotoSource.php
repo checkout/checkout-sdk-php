@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Source\Apm;
 
+use Checkout\Common\Country;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Source\AbstractRequestSource;
 
@@ -13,13 +14,23 @@ class RequestBalotoSource extends AbstractRequestSource
         $this->integration_type = IntegrationType::$redirect;
     }
 
+    /**
+     * @var IntegrationType
+     */
     public $integration_type;
 
+    /**
+     * @var Country
+     */
     public $country;
 
+    /**
+     * @var string
+     */
     public $description;
 
-    // BalotoPayer
+    /**
+     * @var BalotoPayer
+     */
     public $payer;
-
 }

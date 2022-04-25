@@ -4,6 +4,9 @@ namespace Checkout\Workflows\Conditions;
 
 class ProcessingChannelWorkflowConditionRequest extends WorkflowConditionRequest
 {
+    /**
+     * @var array
+     */
     public $processing_channels;
 
     public function __construct()

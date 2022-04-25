@@ -2,16 +2,28 @@
 
 namespace Checkout\Common\Four;
 
+use Checkout\Common\Address;
+use Checkout\Common\Phone;
+
 class AccountHolder
 {
+    /**
+     * @var string
+     */
     public $first_name;
 
+    /**
+     * @var string
+     */
     public $last_name;
 
-    // Address
+    /**
+     * @var Address
+     */
     public $billing_address;
 
-    // Phone
+    /**
+     * @var Phone
+     */
     public $phone;
-
 }

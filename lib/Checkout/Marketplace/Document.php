@@ -4,10 +4,18 @@ namespace Checkout\Marketplace;
 
 class Document
 {
-    // DocumentType
+    /**
+     * @var DocumentType
+     */
     public $type;
 
+    /**
+     * @var string
+     */
     public $front;
 
+    /**
+     * @var string
+     */
     public $back;
 }

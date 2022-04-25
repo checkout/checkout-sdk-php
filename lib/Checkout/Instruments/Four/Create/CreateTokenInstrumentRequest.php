@@ -2,6 +2,7 @@
 
 namespace Checkout\Instruments\Four\Create;
 
+use Checkout\Common\Four\AccountHolder;
 use Checkout\Common\InstrumentType;
 
 class CreateTokenInstrumentRequest extends CreateInstrumentRequest
@@ -12,12 +13,18 @@ class CreateTokenInstrumentRequest extends CreateInstrumentRequest
         parent::__construct(InstrumentType::$token);
     }
 
+    /**
+     * @var string
+     */
     public $token;
 
-    // AccountHolder
+    /**
+     * @var AccountHolder
+     */
     public $account_holder;
 
-    // CreateCustomerInstrumentRequest
+    /**
+     * @var CreateCustomerInstrumentRequest
+     */
     public $customer;
-
 }

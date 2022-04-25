@@ -9,6 +9,8 @@ abstract class CompletionInfo
         $this->type = $type;
     }
 
+    /**
+     * @var CompletionInfoType
+     */
     public $type;
-
 }

@@ -2,54 +2,111 @@
 
 namespace Checkout\Payments;
 
+use Checkout\Common\Currency;
+use Checkout\Common\CustomerRequest;
+use Checkout\Payments\Source\AbstractRequestSource;
+use DateTime;
+
 class PaymentRequest
 {
-    // AbstractRequestSource
+    /**
+     * @var AbstractRequestSource
+     */
     public $source;
 
+    /**
+     * @var int
+     */
     public $amount;
 
+    /**
+     * @var Currency
+     */
     public $currency;
 
+    /**
+     * @var PaymentType
+     */
     public $payment_type;
 
+    /**
+     * @var bool
+     */
     public $merchant_initiated;
 
+    /**
+     * @var string
+     */
     public $reference;
 
+    /**
+     * @var string
+     */
     public $description;
 
+    /**
+     * @var bool
+     */
     public $capture;
 
-    // DateTime
+    /**
+     * @var DateTime
+     */
     public $capture_on;
 
-    // CustomerRequest
+    /**
+     * @var CustomerRequest
+     */
     public $customer;
 
-    // BillingDescriptor
+    /**
+     * @var BillingDescriptor
+     */
     public $billing_descriptor;
 
-    // ShippingDetails
+    /**
+     * @var ShippingDetails
+     */
     public $shipping;
 
+    /**
+     * @var string
+     */
     public $previous_payment_id;
 
-    // RiskRequest
+    /**
+     * @var RiskRequest
+     */
     public $risk;
 
+    /**
+     * @var string
+     */
     public $success_url;
 
+    /**
+     * @var string
+     */
     public $failure_url;
 
+    /**
+     * @var string
+     */
     public $payment_ip;
 
-    // ThreeDsRequest
+    /**
+     * @var ThreeDsRequest
+     */
     public $three_ds;
 
-    // PaymentRecipient
+    /**
+     * @var PaymentRecipient
+     */
     public $recipient;
 
+    /**
+     * @var array
+     */
     public $metadata;
 
     /**

@@ -2,21 +2,38 @@
 
 namespace Checkout\Marketplace;
 
+use Checkout\Common\Address;
+use Checkout\Common\Phone;
+
 class Representative
 {
+    /**
+     * @var string
+     */
     public $first_name;
 
+    /**
+     * @var string
+     */
     public $last_name;
 
-    // Address
+    /**
+     * @var Address
+     */
     public $address;
 
-    // Identification
+    /**
+     * @var Identification
+     */
     public $identification;
 
-    // Phone
+    /**
+     * @var Phone
+     */
     public $phone;
 
-    // DateOfBirth
+    /**
+     * @var DateOfBirth
+     */
     public $date_of_birth;
 }

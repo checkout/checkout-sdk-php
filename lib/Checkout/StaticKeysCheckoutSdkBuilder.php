@@ -8,11 +8,17 @@ class StaticKeysCheckoutSdkBuilder extends AbstractStaticKeysCheckoutSdkBuilder
     const PUBLIC_KEY_PATTERN = "/^pk_(test_)?(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})$/";
     const SECRET_KEY_PATTERN = "/^sk_(test_)?(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})$/";
 
+    /**
+     * @param string $publicKey
+     */
     public function setPublicKey($publicKey)
     {
         $this->publicKey = $publicKey;
     }
 
+    /**
+     * @param string $secretKey
+     */
     public function setSecretKey($secretKey)
     {
         $this->secretKey = $secretKey;

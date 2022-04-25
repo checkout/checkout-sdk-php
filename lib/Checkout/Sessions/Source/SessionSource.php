@@ -2,6 +2,11 @@
 
 namespace Checkout\Sessions\Source;
 
+use Checkout\Common\Phone;
+use Checkout\Sessions\SessionAddress;
+use Checkout\Sessions\SessionScheme;
+use Checkout\Sessions\SessionSourceType;
+
 abstract class SessionSource
 {
     public function __construct($type)
@@ -9,17 +14,33 @@ abstract class SessionSource
         $this->type = $type;
     }
 
+    /**
+     * @var SessionSourceType
+     */
     public $type;
 
-    // SessionAddress
+    /**
+     * @var SessionAddress
+     */
     public $billing_address;
 
+    /**
+     * @var Phone
+     */
     public $home_phone;
 
+    /**
+     * @var Phone
+     */
     public $mobile_phone;
 
+    /**
+     * @var Phone
+     */
     public $work_phone;
 
-    // SessionScheme
+    /**
+     * @var SessionScheme
+     */
     public $scheme;
 }

@@ -2,55 +2,115 @@
 
 namespace Checkout\Payments;
 
+use Checkout\Common\Currency;
+use Checkout\Common\CustomerRequest;
+use Checkout\Payments\Destination\PaymentRequestDestination;
+use DateTime;
+
 class PayoutRequest
 {
-    // PaymentRequestDestination
+    /**
+     * @var PaymentRequestDestination
+     */
     public $destination;
 
+    /**
+     * @var int
+     */
     public $amount;
 
-    // FundTransferType
+    /**
+     * @var FundTransferType
+     */
     public $fund_transfer_type;
 
+    /**
+     * @var Currency
+     */
     public $currency;
 
+    /**
+     * @var PaymentType
+     */
     public $payment_type;
 
+    /**
+     * @var string
+     */
     public $reference;
 
+    /**
+     * @var string
+     */
     public $description;
 
+    /**
+     * @var bool
+     */
     public $capture;
 
-    // DateTime
+    /**
+     * @var DateTime
+     */
     public $capture_on;
 
-    // CustomerRequest
+    /**
+     * @var CustomerRequest
+     */
     public $customer;
 
-    // BillingDescriptor
+    /**
+     * @var BillingDescriptor
+     */
     public $billing_descriptor;
 
-    // ShippingDetails
+    /**
+     * @var ShippingDetails
+     */
     public $shipping;
 
+    /**
+     * @var string
+     */
     public $previous_payment_id;
 
-    // RiskRequest
+    /**
+     * @var RiskRequest
+     */
     public $risk;
 
+    /**
+     * @var string
+     */
     public $success_url;
 
+    /**
+     * @var string
+     */
     public $failure_url;
 
+    /**
+     * @var string
+     */
     public $payment_ip;
 
+    /**
+     * @var string
+     */
     public $purpose;
 
-    // PaymentRecipient
+    /**
+     * @var PaymentRecipient
+     */
     public $recipient;
 
+    /**
+     * @var array
+     */
     public $metadata;
 
+    /**
+     * @var array
+     */
     public $processing;
 }

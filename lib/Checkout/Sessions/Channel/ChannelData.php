@@ -9,6 +9,8 @@ abstract class ChannelData
         $this->channel = $channel;
     }
 
+    /**
+     * @var ChannelType
+     */
     public $channel;
-
 }

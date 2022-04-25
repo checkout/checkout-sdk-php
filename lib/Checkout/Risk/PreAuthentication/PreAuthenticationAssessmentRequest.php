@@ -2,33 +2,68 @@
 
 namespace Checkout\Risk\PreAuthentication;
 
+use Checkout\Common\Currency;
+use Checkout\Common\CustomerRequest;
+use Checkout\Risk\Device;
+use Checkout\Risk\RiskPayment;
+use Checkout\Risk\RiskShippingDetails;
+use Checkout\Risk\Source\RiskPaymentRequestSource;
+use DateTime;
+
 class PreAuthenticationAssessmentRequest
 {
-    // DateTime
+    /**
+     * @var DateTime
+     */
     public $date;
 
-    // RiskPaymentRequestSource
+    /**
+     * @var RiskPaymentRequestSource
+     */
     public $source;
 
-    // CustomerRequest
+    /**
+     * @var CustomerRequest
+     */
     public $customer;
 
-    // RiskPayment
+    /**
+     * @var RiskPayment
+     */
     public $payment;
 
-    // RiskShippingDetails
+    /**
+     * @var RiskShippingDetails
+     */
     public $shipping;
 
+    /**
+     * @var string
+     */
     public $reference;
 
+    /**
+     * @var string
+     */
     public $description;
 
+    /**
+     * @var int
+     */
     public $amount;
 
+    /**
+     * @var Currency
+     */
     public $currency;
 
-    // Device
+    /**
+     * @var Device
+     */
     public $device;
 
+    /**
+     * @var array
+     */
     public $metadata;
 }

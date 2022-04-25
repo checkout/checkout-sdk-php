@@ -15,9 +15,11 @@ class CheckoutApmApi
         $this->idealClient = new IdealClient($apiClient, $configuration);
     }
 
+    /**
+     * @return IdealClient
+     */
     public function getIdealClient()
     {
         return $this->idealClient;
     }
-
 }

@@ -26,19 +26,27 @@ class CheckoutApmApi
         $this->sepaClient = new SepaClient($apiClient, $configuration);
     }
 
+    /**
+     * @return IdealClient
+     */
     public function getIdealClient()
     {
         return $this->idealClient;
     }
 
+    /**
+     * @return KlarnaClient
+     */
     public function getKlarnaClient()
     {
         return $this->klarnaClient;
     }
 
+    /**
+     * @return SepaClient
+     */
     public function getSepaClient()
     {
         return $this->sepaClient;
     }
-
 }

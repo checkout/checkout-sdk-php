@@ -2,11 +2,18 @@
 
 namespace Checkout\Instruments;
 
+use Checkout\Common\Address;
+use Checkout\Common\Phone;
+
 class InstrumentAccountHolder
 {
-    // Address
+    /**
+     * @var Address
+     */
     public $billing_address;
 
-    // Phone
+    /**
+     * @var Phone
+     */
     public $phone;
 }

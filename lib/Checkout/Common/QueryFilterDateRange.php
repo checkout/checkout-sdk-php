@@ -2,11 +2,17 @@
 
 namespace Checkout\Common;
 
+use DateTime;
+
 class QueryFilterDateRange extends AbstractQueryFilter
 {
-    // DateTime
+    /**
+     * @var DateTime
+     */
     public $from;
 
-    // DateTime
+    /**
+     * @var DateTime
+     */
     public $to;
 }

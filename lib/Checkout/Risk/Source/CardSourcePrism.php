@@ -2,7 +2,9 @@
 
 namespace Checkout\Risk\Source;
 
+use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
+use Checkout\Common\Phone;
 
 class CardSourcePrism extends RiskPaymentRequestSource
 {
@@ -11,18 +13,33 @@ class CardSourcePrism extends RiskPaymentRequestSource
         parent::__construct(PaymentSourceType::$card);
     }
 
+    /**
+     * @var string
+     */
     public $number;
 
+    /**
+     * @var int
+     */
     public $expiry_month;
 
+    /**
+     * @var int
+     */
     public $expiry_year;
 
+    /**
+     * @var string
+     */
     public $name;
 
-    // Address
+    /**
+     * @var Address
+     */
     public $billing_address;
 
-    // Phone
+    /**
+     * @var Phone
+     */
     public $phone;
-
 }

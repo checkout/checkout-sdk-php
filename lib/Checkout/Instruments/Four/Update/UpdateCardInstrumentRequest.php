@@ -2,6 +2,7 @@
 
 namespace Checkout\Instruments\Four\Update;
 
+use Checkout\Common\Four\AccountHolder;
 use Checkout\Common\InstrumentType;
 
 class UpdateCardInstrumentRequest extends UpdateInstrumentRequest
@@ -11,15 +12,28 @@ class UpdateCardInstrumentRequest extends UpdateInstrumentRequest
         parent::__construct(InstrumentType::$card);
     }
 
+    /**
+     * @var int
+     */
     public $expiry_month;
 
+    /**
+     * @var int
+     */
     public $expiry_year;
 
+    /**
+     * @var string
+     */
     public $name;
 
-    // UpdateCustomerRequest
+    /**
+     * @var UpdateCustomerRequest
+     */
     public $customer;
 
-    // AccountHolder
+    /**
+     * @var AccountHolder
+     */
     public $account_holder;
 }

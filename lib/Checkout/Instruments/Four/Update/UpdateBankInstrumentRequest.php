@@ -2,6 +2,11 @@
 
 namespace Checkout\Instruments\Four\Update;
 
+use Checkout\Common\Country;
+use Checkout\Common\Currency;
+use Checkout\Common\Four\AccountHolder;
+use Checkout\Common\Four\AccountType;
+use Checkout\Common\Four\BankDetails;
 use Checkout\Common\InstrumentType;
 
 class UpdateBankInstrumentRequest extends UpdateInstrumentRequest
@@ -11,35 +16,68 @@ class UpdateBankInstrumentRequest extends UpdateInstrumentRequest
         parent::__construct(InstrumentType::$bank_account);
     }
 
-    //AccountType
+    /**
+     * @var AccountType
+     */
     public $account_type;
 
+    /**
+     * @var string
+     */
     public $account_number;
 
+    /**
+     * @var string
+     */
     public $bank_code;
 
+    /**
+     * @var string
+     */
     public $branch_code;
 
+    /**
+     * @var string
+     */
     public $iban;
 
+    /**
+     * @var string
+     */
     public $bban;
 
+    /**
+     * @var string
+     */
     public $swift_bic;
 
-    //Currency
+    /**
+     * @var Currency
+     */
     public $currency;
 
-    //CountryCode
+    /**
+     * @var Country
+     */
     public $country;
 
+    /**
+     * @var string
+     */
     public $processing_channel_id;
 
-    // AccountHolder
+    /**
+     * @var AccountHolder
+     */
     public $account_holder;
 
-    // BankDetails
+    /**
+     * @var BankDetails
+     */
     public $bank_details;
 
-    // UpdateCustomerRequest
+    /**
+     * @var UpdateCustomerRequest
+     */
     public $customer;
 }

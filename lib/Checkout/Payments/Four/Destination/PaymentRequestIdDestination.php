@@ -11,6 +11,8 @@ class PaymentRequestIdDestination extends PaymentRequestDestination
         parent::__construct(PaymentDestinationType::$id);
     }
 
+    /**
+     * @var string
+     */
     public $id;
-
 }

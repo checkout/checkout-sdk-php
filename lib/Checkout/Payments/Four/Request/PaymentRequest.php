@@ -2,71 +2,149 @@
 
 namespace Checkout\Payments\Four\Request;
 
+use Checkout\Common\Currency;
+use Checkout\Common\CustomerRequest;
+use Checkout\Common\MarketplaceData;
+use Checkout\Payments\BillingDescriptor;
+use Checkout\Payments\Four\AuthorizationType;
+use Checkout\Payments\Four\Request\Source\AbstractRequestSource;
+use Checkout\Payments\Four\Sender\PaymentSender;
+use Checkout\Payments\PaymentRecipient;
+use Checkout\Payments\ProcessingSettings;
+use Checkout\Payments\RiskRequest;
+use Checkout\Payments\ShippingDetails;
+use Checkout\Payments\ThreeDsRequest;
+use DateTime;
+
 class PaymentRequest
 {
-    // AbstractRequestSource
+    /**
+     * @var AbstractRequestSource
+     */
     public $source;
 
+    /**
+     * @var int
+     */
     public $amount;
 
+    /**
+     * @var Currency
+     */
     public $currency;
 
-    //AuthorizationType
+    /**
+     * @var AuthorizationType
+     */
     public $payment_type;
 
+    /**
+     * @var bool
+     */
     public $merchant_initiated;
 
+    /**
+     * @var string
+     */
     public $reference;
 
+    /**
+     * @var string
+     */
     public $description;
 
+    /**
+     * @var AuthorizationType
+     */
     public $authorization_type;
 
+    /**
+     * @var bool
+     */
     public $capture;
 
-    // DateTime
+    /**
+     * @var DateTime
+     */
     public $capture_on;
 
-    // CustomerRequest
+    /**
+     * @var CustomerRequest
+     */
     public $customer;
 
-    // BillingDescriptor
+    /**
+     * @var BillingDescriptor
+     */
     public $billing_descriptor;
 
-    // ShippingDetails
+    /**
+     * @var ShippingDetails
+     */
     public $shipping;
 
-    // ThreeDsRequest
+    /**
+     * @var ThreeDsRequest
+     */
     public $three_ds;
 
+    /**
+     * @var string
+     */
     public $processing_channel_id;
 
+    /**
+     * @var string
+     */
     public $previous_payment_id;
 
-    // RiskRequest
+    /**
+     * @var RiskRequest
+     */
     public $risk;
 
+    /**
+     * @var string
+     */
     public $success_url;
 
+    /**
+     * @var string
+     */
     public $failure_url;
 
+    /**
+     * @var string
+     */
     public $payment_ip;
 
-    // PaymentSender
+    /**
+     * @var PaymentSender
+     */
     public $sender;
 
-    // PaymentRecipient
+    /**
+     * @var PaymentRecipient
+     */
     public $recipient;
 
-    // MarketplaceData
+    /**
+     * @var MarketplaceData
+     */
     public $marketplace;
 
-    // ProcessingSettings
+    /**
+     * @var ProcessingSettings
+     */
     public $processing;
 
+    /**
+     * @var array
+     */
     public $metadata;
 
-    // array Four/Product
+    /**
+     * @var array of Four/Product
+     */
     public $items;
-
 }

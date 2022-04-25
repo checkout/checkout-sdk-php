@@ -2,16 +2,32 @@
 
 namespace Checkout\Instruments\Four\Create;
 
+use Checkout\Common\Phone;
+
 class CreateCustomerInstrumentRequest
 {
+    /**
+     * @var string
+     */
     public $id;
 
+    /**
+     * @var string
+     */
     public $email;
 
+    /**
+     * @var string
+     */
     public $name;
 
-    // Phone
+    /**
+     * @var Phone
+     */
     public $phone;
 
+    /**
+     * @var bool
+     */
     public $default;
 }

@@ -2,12 +2,18 @@
 
 namespace Checkout\Payments;
 
+use Checkout\Common\Address;
+use Checkout\Common\Phone;
+
 class BillingInformation
 {
-    // Address
+    /**
+     * @var Address
+     */
     public $address;
 
-    // Phone
+    /**
+     * @var Phone
+     */
     public $phone;
-
 }

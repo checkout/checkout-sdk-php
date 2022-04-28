@@ -17,7 +17,7 @@ class JsonSerializer
      */
     public function serialize($body)
     {
-        return json_encode($this->normalize(get_object_vars($body)));
+        return json_encode($this->normalize(is_array($body) ? $body : get_object_vars($body)));
     }
 
     private function normalize(array $props)
@@ -29,7 +29,7 @@ class JsonSerializer
             // customization
             if ($value instanceof DateTime) {
                 $array[$key] = CheckoutUtils::formatDate($value);
-            } else if (is_object($value)) {
+            } elseif (is_object($value)) {
                 $array[$key] = $this->normalize(get_object_vars($value));
             }
             $array = $this->applyKeysTransformations($array, $key);

@@ -39,6 +39,8 @@ jobs:
                     CHECKOUT_FOUR_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_FOUR_PUBLIC_KEY }}
                     CHECKOUT_FOUR_OAUTH_CLIENT_ID: ${{ secrets.IT_CHECKOUT_FOUR_OAUTH_CLIENT_ID }}
                     CHECKOUT_FOUR_OAUTH_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_FOUR_OAUTH_CLIENT_SECRET }}
+                    CHECKOUT_FOUR_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID: ${{ secrets.IT_CHECKOUT_FOUR_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID }}
+                    CHECKOUT_FOUR_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_FOUR_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET }}
                 run: vendor/bin/phpunit --verbose
     sonarcloud:
         name: SonarCloud

@@ -18,6 +18,7 @@ class MarketplaceClient extends FilesClient
     const ENTITIES_PATH = "entities";
     const TRANSFERS_PATH = "transfers";
     const BALANCES_PATH = "balances";
+    const PAYOUT_SCHEDULES_PATH = "payout-schedules";
 
     private $filesApiClient;
     private $transfersApiClient;
@@ -128,6 +129,35 @@ class MarketplaceClient extends FilesClient
         return $this->balancesApiClient->query(
             $this->buildPath(self::BALANCES_PATH, $entity_id),
             $balancesQuery,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $entityId
+     * @param string $currency
+     * @param UpdateScheduleRequest $updateScheduleRequest
+     * @return mixed
+     * @throws CheckoutApiException
+     */
+    public function updatePayoutSchedule($entityId, $currency, UpdateScheduleRequest $updateScheduleRequest)
+    {
+        return $this->apiClient->put(
+            $this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId, self::PAYOUT_SCHEDULES_PATH),
+            [$currency => $updateScheduleRequest],
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $entityId
+     * @return mixed
+     * @throws CheckoutApiException
+     */
+    public function retrievePayoutSchedule($entityId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::MARKETPLACE_PATH, self::ENTITIES_PATH, $entityId, self::PAYOUT_SCHEDULES_PATH),
             $this->sdkAuthorization()
         );
     }

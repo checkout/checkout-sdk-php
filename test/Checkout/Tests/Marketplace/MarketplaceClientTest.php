@@ -3,12 +3,14 @@
 namespace Checkout\Tests\Marketplace;
 
 use Checkout\CheckoutApiException;
+use Checkout\Common\Currency;
 use Checkout\Marketplace\Balances\BalancesQuery;
 use Checkout\Marketplace\MarketplaceClient;
 use Checkout\Marketplace\MarketplaceFileRequest;
 use Checkout\Marketplace\MarketplacePaymentInstrument;
 use Checkout\Marketplace\OnboardEntityRequest;
 use Checkout\Marketplace\Transfer\CreateTransferRequest;
+use Checkout\Marketplace\UpdateScheduleRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -22,8 +24,13 @@ class MarketplaceClientTest extends UnitTestFixture
     public function init()
     {
         $this->initMocks(PlatformType::$fourOAuth);
-        $this->client = new MarketplaceClient($this->apiClient, $this->apiClient, $this->apiClient, $this->apiClient,
-            $this->configuration);
+        $this->client = new MarketplaceClient(
+            $this->apiClient,
+            $this->apiClient,
+            $this->apiClient,
+            $this->apiClient,
+            $this->configuration
+        );
     }
 
     /**
@@ -134,6 +141,34 @@ class MarketplaceClientTest extends UnitTestFixture
             ->willReturn("response");
 
         $response = $this->client->retrieveEntityBalances("entity_id", new BalancesQuery());
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldUpdatePayoutSchedule()
+    {
+        $this->apiClient
+            ->method("put")
+            ->willReturn("response");
+
+        $response = $this->client->updatePayoutSchedule("entity_id", Currency::$USD, new UpdateScheduleRequest());
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldRetrievePayoutSchedule()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn("response");
+
+        $response = $this->client->retrievePayoutSchedule("entity_id");
 
         $this->assertNotNull($response);
     }

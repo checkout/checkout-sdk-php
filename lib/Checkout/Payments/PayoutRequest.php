@@ -95,11 +95,6 @@ class PayoutRequest
     public $payment_ip;
 
     /**
-     * @var string
-     */
-    public $purpose;
-
-    /**
      * @var PaymentRecipient
      */
     public $recipient;

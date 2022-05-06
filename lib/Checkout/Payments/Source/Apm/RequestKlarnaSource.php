@@ -30,9 +30,9 @@ class RequestKlarnaSource extends AbstractRequestSource
     public $purchase_country;
 
     /**
-     * @var int
+     * @var bool
      */
-    public $tax_amount;
+    public $auto_capture;
 
     /**
      * @var Address
@@ -40,12 +40,42 @@ class RequestKlarnaSource extends AbstractRequestSource
     public $billing_address;
 
     /**
-     * @var KlarnaCustomer
+     * @var array
      */
-    public $customer;
+    public $shipping_address;
+
+    /**
+     * @var int
+     */
+    public $tax_amount;
 
     /**
      * @var array of KlarnaProduct
      */
     public $products;
+
+    /**
+     * @var KlarnaCustomer
+     */
+    public $customer;
+
+    /**
+     * @var string
+     */
+    public $merchant_reference1;
+
+    /**
+     * @var string
+     */
+    public $merchant_reference2;
+
+    /**
+     * @var string
+     */
+    public $merchant_data;
+
+    /**
+     * @var array
+     */
+    public $attachment;
 }

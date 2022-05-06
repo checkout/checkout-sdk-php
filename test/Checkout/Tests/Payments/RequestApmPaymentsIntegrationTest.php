@@ -5,20 +5,27 @@ namespace Checkout\Tests\Payments;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Payments\PaymentRequest;
-use Checkout\Payments\Source\Apm\BalotoPayer;
 use Checkout\Payments\Source\Apm\FawryProduct;
 use Checkout\Payments\Source\Apm\IntegrationType;
-use Checkout\Payments\Source\Apm\Payer;
+use Checkout\Payments\Source\Apm\RequestAlipaySource;
 use Checkout\Payments\Source\Apm\RequestBalotoSource;
+use Checkout\Payments\Source\Apm\RequestBancontactSource;
+use Checkout\Payments\Source\Apm\RequestBenefitPaySource;
 use Checkout\Payments\Source\Apm\RequestBoletoSource;
+use Checkout\Payments\Source\Apm\RequestEpsSource;
 use Checkout\Payments\Source\Apm\RequestFawrySource;
 use Checkout\Payments\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Source\Apm\RequestIdealSource;
+use Checkout\Payments\Source\Apm\RequestKnetSource;
+use Checkout\Payments\Source\Apm\RequestMultiBancoSource;
 use Checkout\Payments\Source\Apm\RequestOxxoSource;
+use Checkout\Payments\Source\Apm\RequestP24Source;
 use Checkout\Payments\Source\Apm\RequestPagoFacilSource;
+use Checkout\Payments\Source\Apm\RequestPayPalSource;
+use Checkout\Payments\Source\Apm\RequestPoliSource;
+use Checkout\Payments\Source\Apm\RequestQPaySource;
 use Checkout\Payments\Source\Apm\RequestRapiPagoSource;
 use Checkout\Payments\Source\Apm\RequestSofortSource;
-
 
 class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 {
@@ -26,18 +33,86 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
+    public function shouldMakeAliPayPayment()
+    {
+        $this->markTestSkipped("not available");
+        $requestSource = new RequestAlipaySource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$USD;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
+            }
+        );
+
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeBenefitPayPayment()
+    {
+        $this->markTestSkipped("not available");
+        $requestSource = new RequestBenefitPaySource();
+        $requestSource->integration_type = "mobile";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$USD;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
+            }
+        );
+
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
     public function shouldMakeBalotoPayment()
     {
-        $this->markTestSkipped("unstable");
+        $this->markTestSkipped("not available");
         $requestSource = new RequestBalotoSource();
         $requestSource->country = Country::$CO;
         $requestSource->description = "simulate Via Baloto Demo Payment";
-
-        $payer = new BalotoPayer();
-        $payer->email = "bruce@wayne-enterprises.com";
-        $payer->name = "Bruce Wayne";
-
-        $requestSource->payer = $payer;
+        $requestSource->payer = $this->getPayer();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
@@ -47,39 +122,37 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
 
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse2,
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
     }
 
     /**
      * @test
      */
-    public function shouldMakeBoletoPayment_Redirect()
+    public function shouldMakeBoletoPaymentRedirect()
     {
-        $this->markTestSkipped("unstable");
+        $this->markTestSkipped("not available");
         $requestSource = new RequestBoletoSource();
         $requestSource->country = Country::$BR;
         $requestSource->description = "boleto payment";
         $requestSource->integration_type = IntegrationType::$redirect;
-
-        $payer = new Payer();
-        $payer->email = "bruce@wayne-enterprises.com";
-        $payer->name = "Bruce Wayne";
-        $payer->document = "53033315550";
-
-        $requestSource->payer = $payer;
+        $requestSource->payer = $this->getPayer();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
@@ -89,37 +162,35 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse2,
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
     }
 
     /**
      * @test
      */
-    public function shouldMakeBoletoPayment_Direct()
+    public function shouldMakeBoletoPaymentDirect()
     {
-        $this->markTestSkipped("unstable");
+        $this->markTestSkipped("not available");
         $requestSource = new RequestBoletoSource();
         $requestSource->country = Country::$BR;
         $requestSource->description = "boleto payment";
         $requestSource->integration_type = IntegrationType::$direct;
-
-        $payer = new Payer();
-        $payer->email = "bruce@wayne-enterprises.com";
-        $payer->name = "Bruce Wayne";
-        $payer->document = "53033315550";
-
-        $requestSource->payer = $payer;
+        $requestSource->payer = $this->getPayer();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
@@ -129,19 +200,58 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse2,
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeEpsPayment()
+    {
+        $requestSource = new RequestEpsSource();
+        $requestSource->purpose = "Mens black t-shirt L";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$EUR;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
     }
 
     /**
@@ -149,7 +259,6 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeFawryPayment()
     {
-        $this->markTestSkipped("unstable");
         $requestSource = new RequestFawrySource();
         $requestSource->description = "Fawry Demo Payment";
         $requestSource->customer_email = "bruce@wayne-enterprises.com";
@@ -171,18 +280,22 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse2,
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
     }
 
     /**
@@ -190,7 +303,6 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeGiropayPayment()
     {
-        $this->markTestSkipped("unstable");
         $requestSource = new RequestGiropaySource();
         $requestSource->purpose = "CKO Giropay test";
 
@@ -203,18 +315,22 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse2,
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
     }
 
     /**
@@ -222,7 +338,6 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeIdealPayment()
     {
-        $this->markTestSkipped("unstable");
         $requestSource = new RequestIdealSource();
         $requestSource->bic = "INGBNL2A";
         $requestSource->description = "ORD50234E89";
@@ -237,18 +352,22 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
-        $this->assertResponse($paymentResponse2,
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
     }
 
     /**
@@ -256,16 +375,11 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeOxxoPayment()
     {
-        $this->markTestSkipped("unstable");
+        $this->markTestSkipped("not available");
         $requestSource = new RequestOxxoSource();
         $requestSource->country = Country::$MX;
         $requestSource->description = "ORD50234E89";
-
-        $payer = new Payer();
-        $payer->email = "bruce@wayne-enterprises.com";
-        $payer->name = "Bruce Wayne";
-
-        $requestSource->payer = $payer;
+        $requestSource->payer = $this->getPayer();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
@@ -276,19 +390,23 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse2,
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
     }
 
     /**
@@ -296,16 +414,11 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakePagoFacilPayment()
     {
-        $this->markTestSkipped("unstable");
+        $this->markTestSkipped("not available");
         $requestSource = new RequestPagoFacilSource();
         $requestSource->country = Country::$AR;
         $requestSource->description = "simulate Via Pago Facil Demo Payment";
-
-        $payer = new Payer();
-        $payer->email = "bruce@wayne-enterprises.com";
-        $payer->name = "Bruce Wayne";
-
-        $requestSource->payer = $payer;
+        $requestSource->payer = $this->getPayer();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
@@ -316,18 +429,22 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
-        $this->assertResponse($paymentResponse2,
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
     }
 
     /**
@@ -335,16 +452,11 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeRapiPagoPayment()
     {
-        $this->markTestSkipped("unstable");
+        $this->markTestSkipped("not available");
         $requestSource = new RequestRapiPagoSource();
         $requestSource->country = Country::$AR;
         $requestSource->description = "simulate Via Rapi Pago Demo Payment";
-
-        $payer = new Payer();
-        $payer->email = "bruce@wayne-enterprises.com";
-        $payer->name = "Bruce Wayne";
-
-        $requestSource->payer = $payer;
+        $requestSource->payer = $this->getPayer();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
@@ -355,18 +467,22 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
-        $this->assertResponse($paymentResponse2,
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
     }
 
     /**
@@ -374,29 +490,288 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeSofortPayment()
     {
-        $this->markTestSkipped("unstable");
         $requestSource = new RequestSofortSource();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
-        $paymentRequest->amount = 100000;
-        $paymentRequest->currency = Currency::$ARS;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$EUR;
         $paymentRequest->capture = true;
 
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
-        $this->assertResponse($paymentResponse2,
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "source",
             "amount",
-            "_links");
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeKnetPayment()
+    {
+        $requestSource = new RequestKnetSource();
+        $requestSource->language = "en";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$KWD;
+        $paymentRequest->capture = true;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakePrzelewy24Payment()
+    {
+        $requestSource = new RequestP24Source();
+        $requestSource->payment_country = Country::$PL;
+        $requestSource->account_holder_name = "Bruce Wayne";
+        $requestSource->account_holder_email = "bruce@wayne-enterprises.com";
+        $requestSource->billing_descriptor = "P24 Demo Payment";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$PLN;
+        $paymentRequest->capture = true;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakePayPalPayment()
+    {
+        $requestSource = new RequestPayPalSource();
+        $requestSource->invoice_number = "CKO00001";
+        $requestSource->logo_url = "https://www.example.com/logo.jpg";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakePoliPayment()
+    {
+        $requestSource = new RequestPoliSource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$AUD;
+        $paymentRequest->capture = true;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeBancontactPayment()
+    {
+        $requestSource = new RequestBancontactSource();
+        $requestSource->payment_country = Country::$BE;
+        $requestSource->account_holder_name = "Bruce Wayne";
+        $requestSource->billing_descriptor = "CKO Demo - bancontact";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeQPayPayment()
+    {
+        $requestSource = new RequestQPaySource();
+        $requestSource->description = "QPay Demo Payment";
+        $requestSource->language = "en";
+        $requestSource->quantity = "1";
+        $requestSource->national_id = "070AYY010BU234M";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$QAR;
+        $paymentRequest->capture = true;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeMultiBancoPayment()
+    {
+        $this->markTestSkipped("not available");
+        $requestSource = new RequestMultiBancoSource();
+        $requestSource->payment_country = Country::$PT;
+        $requestSource->account_holder_name = "Bruce Wayne";
+        $requestSource->billing_descriptor = "CKO Demo - Multibanco";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$QAR;
+        $paymentRequest->capture = true;
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+        $this->assertResponse($paymentResponse1, "id");
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "source",
+            "amount",
+            "_links"
+        );
     }
 }

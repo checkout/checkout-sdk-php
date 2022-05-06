@@ -2,24 +2,23 @@
 
 namespace Checkout\Payments\Source\Apm;
 
-use Checkout\Common\Country;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Source\AbstractRequestSource;
 
-class RequestSofortSource extends AbstractRequestSource
+class RequestEpsSource extends AbstractRequestSource
 {
     public function __construct()
     {
-        parent::__construct(PaymentSourceType::$sofort);
+        parent::__construct(PaymentSourceType::$eps);
     }
-
-    /**
-     * @var Country
-     */
-    public $countryCode;
 
     /**
      * @var string
      */
-    public $languageCode;
+    public $purpose;
+
+    /**
+     * @var string
+     */
+    public $bic;
 }

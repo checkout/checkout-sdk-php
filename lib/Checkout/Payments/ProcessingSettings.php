@@ -23,4 +23,9 @@ class ProcessingSettings
      * @var Aggregator
      */
     public $aggregator;
+
+    /**
+     * @var DLocalProcessingSettings
+     */
+    public $dlocal;
 }

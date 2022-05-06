@@ -4,6 +4,7 @@ namespace Checkout\Payments\Source\Apm;
 
 use Checkout\Common\Country;
 use Checkout\Common\PaymentSourceType;
+use Checkout\Payments\Payer;
 use Checkout\Payments\Source\AbstractRequestSource;
 
 class RequestBalotoSource extends AbstractRequestSource
@@ -30,7 +31,8 @@ class RequestBalotoSource extends AbstractRequestSource
     public $description;
 
     /**
-     * @var BalotoPayer
+     * @var Payer
      */
     public $payer;
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Payments\Source\Apm;
+namespace Checkout\Payments;
 
 class Payer
 {

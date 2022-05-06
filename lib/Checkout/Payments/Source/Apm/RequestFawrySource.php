@@ -4,6 +4,7 @@ namespace Checkout\Payments\Source\Apm;
 
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Source\AbstractRequestSource;
+use DateTime;
 
 class RequestFawrySource extends AbstractRequestSource
 {
@@ -20,12 +21,22 @@ class RequestFawrySource extends AbstractRequestSource
     /**
      * @var string
      */
+    public $customer_profile_id;
+
+    /**
+     * @var string
+     */
     public $customer_mobile;
 
     /**
      * @var string
      */
     public $customer_email;
+
+    /**
+     * @var DateTime
+     */
+    public $expires_on;
 
     /**
      * @var array of FawryProduct

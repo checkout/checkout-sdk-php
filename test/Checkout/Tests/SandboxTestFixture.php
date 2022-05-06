@@ -13,6 +13,7 @@ use Checkout\Common\Country;
 use Checkout\Common\Phone;
 use Checkout\Environment;
 use Checkout\Four\FourOAuthScope;
+use Checkout\Payments\Payer;
 use Checkout\PlatformType;
 use Exception;
 use Monolog\Handler\StreamHandler;
@@ -177,5 +178,17 @@ abstract class SandboxTestFixture extends TestCase
             sleep(2);
         }
         throw new AssertionFailedError("Max attempts reached!");
+    }
+
+    /**
+     * @return Payer
+     */
+    protected function getPayer()
+    {
+        $payer = new Payer();
+        $payer->email = "bruce@wayne-enterprises.com";
+        $payer->name = "Bruce Wayne";
+        $payer->document = "53033315550";
+        return $payer;
     }
 }

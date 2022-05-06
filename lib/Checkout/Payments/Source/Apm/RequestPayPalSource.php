@@ -5,25 +5,30 @@ namespace Checkout\Payments\Source\Apm;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Source\AbstractRequestSource;
 
-class RequestGiropaySource extends AbstractRequestSource
+class RequestPayPalSource extends AbstractRequestSource
 {
     public function __construct()
     {
-        parent::__construct(PaymentSourceType::$giropay);
+        parent::__construct(PaymentSourceType::$paypal);
     }
 
     /**
      * @var string
      */
-    public $purpose;
+    public $invoice_number;
 
     /**
      * @var string
      */
-    public $bic;
+    public $recipient_name;
+
+    /**
+     * @var string
+     */
+    public $logo_url;
 
     /**
      * @var array
      */
-    public $info_fields;
+    public $stc;
 }

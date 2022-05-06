@@ -4,6 +4,7 @@ namespace Checkout\Payments\Source\Apm;
 
 use Checkout\Common\Country;
 use Checkout\Common\PaymentSourceType;
+use Checkout\Payments\Payer;
 use Checkout\Payments\Source\AbstractRequestSource;
 
 class RequestBoletoSource extends AbstractRequestSource

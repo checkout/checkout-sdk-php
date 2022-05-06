@@ -6,20 +6,25 @@ use Checkout\Common\Country;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Source\AbstractRequestSource;
 
-class RequestSofortSource extends AbstractRequestSource
+class RequestMultiBancoSource extends AbstractRequestSource
 {
     public function __construct()
     {
-        parent::__construct(PaymentSourceType::$sofort);
+        parent::__construct(PaymentSourceType::$multibanco);
     }
 
     /**
      * @var Country
      */
-    public $countryCode;
+    public $payment_country;
 
     /**
      * @var string
      */
-    public $languageCode;
+    public $account_holder_name;
+
+    /**
+     * @var string
+     */
+    public $billing_descriptor;
 }

@@ -18,6 +18,8 @@ class BankAccountFieldFormattingIntegrationTest extends SandboxTestFixture
     /**
      * @before
      * @throws CheckoutAuthorizationException
+     * @throws \Checkout\CheckoutArgumentException
+     * @throws \Checkout\CheckoutException
      */
     public function before()
     {

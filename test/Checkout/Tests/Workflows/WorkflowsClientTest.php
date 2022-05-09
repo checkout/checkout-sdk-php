@@ -13,6 +13,9 @@ use Checkout\Workflows\WorkflowsClient;
 
 class WorkflowsClientTest extends UnitTestFixture
 {
+    /**
+     * @var WorkflowsClient
+     */
     private $client;
 
     /**
@@ -78,35 +81,38 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function shouldRemoveWorkflow()
     {
-        $this->apiClient->method("delete");
+        $this->apiClient->method("delete")
+            ->willReturn("response");
 
-        $this->client->removeWorkflow("workflow_id");
+        $response = $this->client->removeWorkflow("workflow_id");
+        $this->assertNotNull($response);
     }
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function shouldUpdateWorkflowAction()
     {
-        $this->apiClient->method("put");
+        $this->apiClient->method("put")
+            ->willReturn("response");
 
-        $this->client->updateWorkflowAction("workflow_id", "action_id", new WebhookWorkflowActionRequest());
+        $response = $this->client->updateWorkflowAction("workflow_id", "action_id", new WebhookWorkflowActionRequest());
+        $this->assertNotNull($response);
     }
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function shouldUpdateWorkflowCondition()
     {
-        $this->apiClient->method("put");
+        $this->apiClient->method("put")
+            ->willReturn("response");
 
-        $this->client->updateWorkflowCondition("workflow_id", "action_id", new EntityWorkflowConditionRequest());
+        $response = $this->client->updateWorkflowCondition("workflow_id", "action_id", new EntityWorkflowConditionRequest());
+        $this->assertNotNull($response);
     }
 
     /**
@@ -150,57 +156,62 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function reflowByEvent()
     {
-        $this->apiClient->method("post");
+        $this->apiClient->method("post")
+            ->willReturn("response");
 
-        $this->client->reflowByEvent("event_id");
+        $response = $this->client->reflowByEvent("event_id");
+        $this->assertNotNull($response);
     }
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function reflowBySubject()
     {
-        $this->apiClient->method("post");
+        $this->apiClient->method("post")
+            ->willReturn("response");
 
-        $this->client->reflowBySubject("subject_id");
+        $response = $this->client->reflowBySubject("subject_id");
+        $this->assertNotNull($response);
     }
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function reflowByEventAndWorkflow()
     {
-        $this->apiClient->method("post");
+        $this->apiClient->method("post")
+            ->willReturn("response");
 
-        $this->client->reflowByEventAndWorkflow("event_id", "workflow_id");
+        $response = $this->client->reflowByEventAndWorkflow("event_id", "workflow_id");
+        $this->assertNotNull($response);
     }
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function reflowBySubjectAndWorkflow()
     {
-        $this->apiClient->method("post");
+        $this->apiClient->method("post")
+            ->willReturn("response");
 
-        $this->client->reflowBySubjectAndWorkflow("subject_id", "workflow_id");
+        $response = $this->client->reflowBySubjectAndWorkflow("subject_id", "workflow_id");
+        $this->assertNotNull($response);
     }
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function reflow()
     {
-        $this->apiClient->method("post");
+        $this->apiClient->method("post")
+            ->willReturn("response");
 
-        $this->client->reflow(new ReflowByEventsRequest());
+        $response = $this->client->reflow(new ReflowByEventsRequest());
+        $this->assertNotNull($response);
     }
 
     /**

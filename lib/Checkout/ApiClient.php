@@ -6,7 +6,7 @@ use Checkout\Common\AbstractQueryFilter;
 use Checkout\Files\FileRequest;
 use Exception;
 use GuzzleHttp\Exception\RequestException;
-use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
 
 class ApiClient
 {
@@ -33,13 +33,12 @@ class ApiClient
     /**
      * @param $path
      * @param SdkAuthorization $authorization
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function get($path, SdkAuthorization $authorization)
     {
-        $response = $this->invoke("GET", $path, null, $authorization);
-        return $this->getResponseContents($response);
+        return $this->invoke("GET", $path, null, $authorization);
     }
 
     /**
@@ -47,57 +46,54 @@ class ApiClient
      * @param mixed $body
      * @param SdkAuthorization $authorization
      * @param string|null $idempotencyKey
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function post($path, $body, SdkAuthorization $authorization, $idempotencyKey = null)
     {
-        $response = $this->invoke("POST", $path, is_null($body) ? $body : $this->jsonSerializer->serialize($body), $authorization, $idempotencyKey);
-
-        return $this->jsonSerializer->deserialize($response->getBody());
+        return $this->invoke("POST", $path, is_null($body) ? $body : $this->jsonSerializer->serialize($body), $authorization, $idempotencyKey);
     }
 
     /**
      * @param $path
      * @param mixed $body
      * @param SdkAuthorization $authorization
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function put($path, $body, SdkAuthorization $authorization)
     {
-        $response = $this->invoke("PUT", $path, $this->jsonSerializer->serialize($body), $authorization);
-        return $this->jsonSerializer->deserialize($response->getBody());
+        return $this->invoke("PUT", $path, $this->jsonSerializer->serialize($body), $authorization);
     }
 
     /**
      * @param $path
      * @param mixed $body
      * @param SdkAuthorization $authorization
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function patch($path, $body, SdkAuthorization $authorization)
     {
-        $response = $this->invoke("PATCH", $path, $this->jsonSerializer->serialize($body), $authorization);
-        return $this->jsonSerializer->deserialize($response->getBody());
+        return $this->invoke("PATCH", $path, $this->jsonSerializer->serialize($body), $authorization);
     }
 
     /**
      * @param $path
      * @param SdkAuthorization $authorization
+     * @return array
      * @throws CheckoutApiException
      */
     public function delete($path, SdkAuthorization $authorization)
     {
-        $this->invoke("DELETE", $path, null, $authorization);
+        return $this->invoke("DELETE", $path, null, $authorization);
     }
 
     /**
      * @param $path
      * @param AbstractQueryFilter $body
      * @param SdkAuthorization $authorization
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function query($path, AbstractQueryFilter $body, SdkAuthorization $authorization)
@@ -107,15 +103,14 @@ class ApiClient
         if (!empty($queryParameters)) {
             $path .= "?" . $queryParameters;
         }
-        $response = $this->invoke("GET", $path, null, $authorization);
-        return $this->getResponseContents($response);
+        return $this->invoke("GET", $path, null, $authorization);
     }
 
     /**
      * @param $path
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function submitFile($path, FileRequest $fileRequest, SdkAuthorization $authorization)
@@ -127,7 +122,7 @@ class ApiClient
      * @param $path
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function submitFileFilesApi($path, FileRequest $fileRequest, SdkAuthorization $authorization)
@@ -140,7 +135,7 @@ class ApiClient
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
      * @param $multipart
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     private function submit($path, FileRequest $fileRequest, SdkAuthorization $authorization, $multipart)
@@ -161,7 +156,7 @@ class ApiClient
                         "contents" => $fileRequest->purpose
                     ]
                 ]]);
-            return json_decode($response->getBody(), true);
+            return $this->getResponseContents($response);
         } catch (Exception $e) {
             $this->logger->error($path . " error: " . $e->getMessage());
             if ($e instanceof RequestException) {
@@ -172,12 +167,12 @@ class ApiClient
     }
 
     /**
-     * @param $method
-     * @param $path
-     * @param string|null $body
+     * @param string $method
+     * @param string $path
+     * @param $body
      * @param SdkAuthorization $authorization
-     * @param string|null $idempotencyKey
-     * @return ResponseInterface
+     * @param null $idempotencyKey
+     * @return array
      * @throws CheckoutApiException
      */
     private function invoke($method, $path, $body, SdkAuthorization $authorization, $idempotencyKey = null)
@@ -185,11 +180,12 @@ class ApiClient
         try {
             $this->logger->info($method . " " . $path);
             $headers = $this->getHeaders($authorization, "application/json", $idempotencyKey);
-            return $this->client->request($method, $this->getRequestUrl($path), [
+            $response = $this->client->request($method, $this->getRequestUrl($path), [
                 "verify" => false,
                 "body" => $body,
                 "headers" => $headers
             ]);
+            return $this->getResponseContents($response);
         } catch (Exception $e) {
             $this->logger->error($path . " error: " . $e->getMessage());
             if ($e instanceof RequestException) {
@@ -233,14 +229,41 @@ class ApiClient
 
     /**
      * @param $response
-     * @return mixed
+     * @return array
      */
     private function getResponseContents($response)
     {
         $contentType = $response->getHeader("Content-Type");
         if (in_array("text/csv", $contentType)) {
-            return $response->getBody()->getContents();
+            return $this->createResponse($response, $response->getBody()->getContents());
         }
-        return $this->jsonSerializer->deserialize($response->getBody());
+        return $this->createResponse($response, $this->jsonSerializer->deserialize($response->getBody()));
+    }
+
+    /**
+     * @param Response|null $http_response
+     * @param string|array $data
+     * @return array
+     */
+    private static function createResponse($http_response = null, $data = null)
+    {
+        $response = array();
+        if ($http_response != null) {
+            $response["http_metadata"] = CheckoutUtils::getHttpMetadata($http_response);
+        }
+        if ($data != null) {
+            if (is_array($data)) {
+                //Validate if array is sequential, basically list contents
+                if (array_keys($data) !== range(0, count($data) - 1)) {
+                    $response = array_merge($response, $data);
+                } else {
+                    $response["items"] = $data;
+                }
+            }
+            if (is_string($data)) {
+                $response["contents"] = $data;
+            }
+        }
+        return $response;
     }
 }

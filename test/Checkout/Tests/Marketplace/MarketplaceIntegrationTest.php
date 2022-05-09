@@ -57,7 +57,8 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
 
         $response = $this->fourApi->getMarketplaceClient()->getEntity($response["id"]);
 
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "id",
             "reference",
             "contact_details",
@@ -82,6 +83,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUploadMarketplaceFile()
     {
@@ -129,11 +131,13 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         $balances = $this->fourApi->getMarketplaceClient()->retrieveEntityBalances("ent_kidtcgc3ge5unf4a5i6enhnr5m", $balancesQuery);
         $this->assertResponse($balances, "data", "_links");
         foreach ($balances["data"] as $balanceData) {
-            $this->assertResponse($balanceData,
+            $this->assertResponse(
+                $balanceData,
                 "descriptor",
                 "holding_currency",
                 "balances",
-                "balances.available");
+                "balances.available"
+            );
         }
     }
 

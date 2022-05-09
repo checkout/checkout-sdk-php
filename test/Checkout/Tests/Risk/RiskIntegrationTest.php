@@ -36,6 +36,8 @@ class RiskIntegrationTest extends SandboxTestFixture
     /**
      * @before
      * @throws CheckoutAuthorizationException
+     * @throws \Checkout\CheckoutArgumentException
+     * @throws \Checkout\CheckoutException
      */
     public function before()
     {
@@ -84,7 +86,6 @@ class RiskIntegrationTest extends SandboxTestFixture
 
         $this->doAuthenticationAssessmentRequest($customerSourcePrism);
         $this->doPreCaptureAssessmentRequest($customerSourcePrism);
-
     }
 
     /**
@@ -173,12 +174,14 @@ class RiskIntegrationTest extends SandboxTestFixture
         $preAuthenticationAssessmentRequest->metadata = array("VoucherCode" => "loyalty_10", "discountApplied" => "10", "customer_id" => "2190EF321");
 
         $response = $this->defaultApi->getRiskClient()->requestPreAuthenticationRiskScan($preAuthenticationAssessmentRequest);
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "assessment_id",
             "result",
             "result.decision",
             "result.details",
-            "_links");
+            "_links"
+        );
     }
 
     /**
@@ -217,12 +220,14 @@ class RiskIntegrationTest extends SandboxTestFixture
         $preCaptureAssessmentRequest->authorization_result = $authorizationResult;
 
         $response = $this->defaultApi->getRiskClient()->requestPreCaptureRiskScan($preCaptureAssessmentRequest);
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "assessment_id",
             "result",
             "result.decision",
             "result.details",
-            "_links");
+            "_links"
+        );
     }
 
     /**

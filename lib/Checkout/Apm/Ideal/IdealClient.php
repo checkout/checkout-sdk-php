@@ -20,7 +20,7 @@ class IdealClient extends Client
     }
 
     /**
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getInfo()
@@ -29,7 +29,7 @@ class IdealClient extends Client
     }
 
     /**
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getIssuers()

@@ -19,7 +19,7 @@ class ForexClient extends Client
 
     /**
      * @param QuoteRequest $quoteRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function requestQuote(QuoteRequest $quoteRequest)

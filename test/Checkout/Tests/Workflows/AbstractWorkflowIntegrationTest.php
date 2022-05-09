@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Workflows;
 
+use Checkout\CheckoutApiException;
 use Checkout\Tests\Payments\Four\AbstractPaymentsIntegrationTest;
 use Checkout\Workflows\Actions\WebhookSignature;
 use Checkout\Workflows\Actions\WebhookWorkflowActionRequest;
@@ -78,6 +79,7 @@ abstract class AbstractWorkflowIntegrationTest extends AbstractPaymentsIntegrati
 
     /**
      * @after
+     * @throws CheckoutApiException
      */
     public function tearDownWorkflows()
     {

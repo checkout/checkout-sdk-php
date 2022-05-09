@@ -16,23 +16,27 @@ class PaymentActionsIntegrationTest extends AbstractPaymentsIntegrationTest
     {
         $paymentResponse = $this->makeCardPayment(true);
 
-        $actions = $this->retriable(
+        $response = $this->retriable(
             function () use (&$paymentResponse) {
                 return $this->defaultApi->getPaymentsClient()->getPaymentActions($paymentResponse["id"]);
             },
-            $this->thereAreTwoPaymentActions());
+            $this->thereAreTwoPaymentActions()
+        );
 
+        $actions = $response["items"];
         $this->assertNotNull($actions);
-        $this->assertCount(2, $actions);
+        $this->assertEquals(2, sizeof($actions));
         foreach ($actions as $paymentAction) {
-            $this->assertResponse($paymentAction,
+            $this->assertResponse(
+                $paymentAction,
                 "amount",
                 "approved",
                 "processed_on",
                 "reference",
                 "response_code",
                 "response_summary",
-                "type");
+                "type"
+            );
         }
     }
 
@@ -42,7 +46,7 @@ class PaymentActionsIntegrationTest extends AbstractPaymentsIntegrationTest
     private function thereAreTwoPaymentActions()
     {
         return function ($response) {
-            return sizeof($response) == 2;
+            return sizeof($response["items"]) == 2;
         };
     }
 }

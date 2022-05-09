@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Instruments;
 
-use Checkout\CheckoutApiException;
 use Checkout\Instruments\CreateInstrumentRequest;
 use Checkout\Instruments\InstrumentsClient;
 use Checkout\Instruments\UpdateInstrumentRequest;
@@ -11,6 +10,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class InstrumentsClientTest extends UnitTestFixture
 {
+    /**
+     * @var InstrumentsClient
+     */
     private $client;
 
     /**
@@ -25,7 +27,6 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreateInstrument()
     {
@@ -41,7 +42,6 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetInstrument()
     {
@@ -55,7 +55,6 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldUpdateInstrument()
     {
@@ -69,13 +68,13 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @doesNotPerformAssertions
-     * @throws CheckoutApiException
      */
     public function shouldDeleteInstruments()
     {
-        $this->apiClient->method("delete");
+        $this->apiClient->method("delete")
+            ->willReturn("foo");
 
-        $this->client->delete("instrument_id");
+        $response = $this->client->delete("instrument_id");
+        $this->assertNotNull($response);
     }
 }

@@ -19,7 +19,7 @@ class TokensClient extends Client
 
     /**
      * @param CardTokenRequest $cardTokenRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function requestCardToken(CardTokenRequest $cardTokenRequest)
@@ -29,7 +29,7 @@ class TokensClient extends Client
 
     /**
      * @param WalletTokenRequest $walletTokenRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function requestWalletToken(WalletTokenRequest $walletTokenRequest)

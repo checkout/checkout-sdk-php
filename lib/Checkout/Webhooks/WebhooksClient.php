@@ -18,7 +18,7 @@ class WebhooksClient extends Client
     }
 
     /**
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retrieveWebhooks()
@@ -28,7 +28,7 @@ class WebhooksClient extends Client
 
     /**
      * @param $webhookId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retrieveWebhook($webhookId)
@@ -39,7 +39,7 @@ class WebhooksClient extends Client
     /**
      * @param WebhookRequest $webhookRequest
      * @param string|null $idempotencyKey
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function registerWebhook(WebhookRequest $webhookRequest, $idempotencyKey = null)
@@ -50,7 +50,7 @@ class WebhooksClient extends Client
     /**
      * @param $webhookId
      * @param WebhookRequest $webhookRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function updateWebhook($webhookId, WebhookRequest $webhookRequest)
@@ -62,7 +62,7 @@ class WebhooksClient extends Client
      * TODO Review
      * @param $webhookId
      * @param WebhookRequest $webhookRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function patchWebhook($webhookId, WebhookRequest $webhookRequest)
@@ -72,11 +72,12 @@ class WebhooksClient extends Client
 
     /**
      * @param $webhookId
+     * @return array
      * @throws CheckoutApiException
      */
     public function removeWebhook($webhookId)
     {
-        $this->apiClient->delete($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $this->sdkAuthorization());
+        return $this->apiClient->delete($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $this->sdkAuthorization());
     }
 
 }

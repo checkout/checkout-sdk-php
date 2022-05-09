@@ -26,6 +26,8 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
     /**
      * @before
      * @throws CheckoutAuthorizationException
+     * @throws \Checkout\CheckoutArgumentException
+     * @throws \Checkout\CheckoutException
      */
     public function before()
     {
@@ -41,7 +43,8 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
 
         $response = $this->fourApi->getPaymentLinksClient()->createPaymentLink($request);
 
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "id",
             "reference",
             "expires_on",
@@ -51,15 +54,18 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
             "warnings"
         );
         foreach ($response["warnings"] as $warning) {
-            $this->assertResponse($warning,
+            $this->assertResponse(
+                $warning,
                 "code",
                 "value",
-                "description");
+                "description"
+            );
         }
 
         $getResponse = $this->fourApi->getPaymentLinksClient()->getPaymentLink($response["id"]);
 
-        $this->assertResponse($getResponse,
+        $this->assertResponse(
+            $getResponse,
             "id",
             "reference",
             "status",
@@ -76,7 +82,6 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
             "_links.self",
             "_links.redirect"
         );
-
     }
 
     private function createPaymentLinkRequest()

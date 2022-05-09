@@ -23,7 +23,7 @@ class KlarnaClient extends Client
 
     /**
      * @param CreditSessionRequest $creditSessionRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function createCreditSession(CreditSessionRequest $creditSessionRequest)
@@ -37,7 +37,7 @@ class KlarnaClient extends Client
 
     /**
      * @param $sessionId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getCreditSession($sessionId)
@@ -52,7 +52,7 @@ class KlarnaClient extends Client
     /**
      * @param $paymentId
      * @param OrderCaptureRequest $orderCaptureRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function capturePayment($paymentId, OrderCaptureRequest $orderCaptureRequest)
@@ -67,7 +67,7 @@ class KlarnaClient extends Client
     /**
      * @param $paymentId
      * @param VoidRequest $voidRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function voidPayment($paymentId, VoidRequest $voidRequest)

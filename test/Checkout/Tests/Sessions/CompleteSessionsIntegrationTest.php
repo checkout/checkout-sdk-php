@@ -10,6 +10,7 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
     /**
      * @test
      * @throws CheckoutApiException
+     * @throws \Checkout\CheckoutAuthorizationException
      */
     public function shouldTryToCompleteCardSessionBrowserSession()
     {
@@ -25,7 +26,7 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
             $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
             $this->assertEquals(self::MESSAGE_403, $e->getMessage());
-            $this->assertNotEmpty($e->request_id);
+            $this->assertNotEmpty($e->http_metadata->getHeaders()["Cko-Request-Id"]);
             $this->assertNotNull($e->error_details);
         }
 
@@ -34,9 +35,8 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
             $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
             $this->assertEquals(self::MESSAGE_403, $e->getMessage());
-            $this->assertNotEmpty($e->request_id);
+            $this->assertNotEmpty($e->http_metadata->getHeaders()["Cko-Request-Id"]);
             $this->assertNotNull($e->error_details);
         }
-
     }
 }

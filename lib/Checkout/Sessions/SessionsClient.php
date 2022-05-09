@@ -24,7 +24,7 @@ class SessionsClient extends Client
 
     /**
      * @param SessionRequest $sessionRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function requestSession(SessionRequest $sessionRequest)
@@ -35,7 +35,7 @@ class SessionsClient extends Client
     /**
      * @param $sessionId
      * @param string|null $sessionSecret
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
@@ -48,7 +48,7 @@ class SessionsClient extends Client
      * @param $sessionId
      * @param ChannelData $channelData
      * @param string|null $sessionSecret
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
@@ -60,7 +60,7 @@ class SessionsClient extends Client
     /**
      * @param $sessionId
      * @param string|null $sessionSecret
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
@@ -73,8 +73,8 @@ class SessionsClient extends Client
      * @param $sessionId
      * @param ThreeDsMethodCompletionRequest $threeDsMethodCompletionRequest
      * @param string|null $sessionSecret
-     * @return mixed
-     * @throws CheckoutApiExceptio
+     * @return array
+     * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
      */
     public function updateThreeDsMethodCompletionIndicator($sessionId, ThreeDsMethodCompletionRequest $threeDsMethodCompletionRequest, $sessionSecret = null)

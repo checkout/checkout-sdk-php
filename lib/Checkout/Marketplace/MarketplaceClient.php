@@ -39,7 +39,7 @@ class MarketplaceClient extends FilesClient
 
     /**
      * @param OnboardEntityRequest $entityRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function createEntity(OnboardEntityRequest $entityRequest)
@@ -53,7 +53,7 @@ class MarketplaceClient extends FilesClient
 
     /**
      * @param $entityId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getEntity($entityId)
@@ -67,7 +67,7 @@ class MarketplaceClient extends FilesClient
     /**
      * @param $entityId
      * @param OnboardEntityRequest $entityRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function updateEntity($entityId, OnboardEntityRequest $entityRequest)
@@ -82,7 +82,7 @@ class MarketplaceClient extends FilesClient
     /**
      * @param $entityId
      * @param MarketplacePaymentInstrument $marketplacePaymentInstrument
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function createPaymentInstrument($entityId, MarketplacePaymentInstrument $marketplacePaymentInstrument)
@@ -96,7 +96,7 @@ class MarketplaceClient extends FilesClient
 
     /**
      * @param MarketplaceFileRequest $marketplaceFileRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function submitFile(MarketplaceFileRequest $marketplaceFileRequest)
@@ -110,7 +110,7 @@ class MarketplaceClient extends FilesClient
 
     /**
      * @param CreateTransferRequest $transferRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function initiateTransferOfFunds(CreateTransferRequest $transferRequest)
@@ -121,7 +121,7 @@ class MarketplaceClient extends FilesClient
     /**
      * @param $entity_id
      * @param BalancesQuery $balancesQuery
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retrieveEntityBalances($entity_id, BalancesQuery $balancesQuery)
@@ -137,7 +137,7 @@ class MarketplaceClient extends FilesClient
      * @param string $entityId
      * @param string $currency
      * @param UpdateScheduleRequest $updateScheduleRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function updatePayoutSchedule($entityId, $currency, UpdateScheduleRequest $updateScheduleRequest)
@@ -151,7 +151,7 @@ class MarketplaceClient extends FilesClient
 
     /**
      * @param string $entityId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retrievePayoutSchedule($entityId)

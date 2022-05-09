@@ -2,15 +2,16 @@
 
 namespace Checkout\Tests\Payments\Hosted;
 
-use Checkout\CheckoutApiException;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsSessionRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
-
 class HostedPaymentsClientTest extends UnitTestFixture
 {
+    /**
+     * @var HostedPaymentsClient
+     */
     private $client;
 
     /**
@@ -24,7 +25,6 @@ class HostedPaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetHostedPaymentsPageDetails()
     {
@@ -40,7 +40,6 @@ class HostedPaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreateHostedPaymentsPageSession()
     {

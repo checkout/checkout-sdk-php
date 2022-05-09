@@ -27,6 +27,8 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
     /**
      * @before
      * @throws CheckoutAuthorizationException
+     * @throws \Checkout\CheckoutArgumentException
+     * @throws \Checkout\CheckoutException
      */
     public function before()
     {
@@ -167,7 +169,6 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $this->assertResponse($paymentResponse, "id");
 
         return $paymentResponse;
-
     }
 
     /**

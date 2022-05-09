@@ -3,12 +3,14 @@
 namespace Checkout\Tests\Apm\Ideal;
 
 use Checkout\Apm\Ideal\IdealClient;
-use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
 class IdealClientTest extends UnitTestFixture
 {
+    /**
+     * @var IdealClient
+     */
     private $client;
 
     /**
@@ -22,7 +24,6 @@ class IdealClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetInfo()
     {
@@ -36,7 +37,6 @@ class IdealClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetIssuers()
     {

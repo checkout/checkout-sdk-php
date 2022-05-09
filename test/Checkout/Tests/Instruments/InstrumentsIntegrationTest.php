@@ -33,7 +33,8 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
     {
 
         $instrument = $this->createInstrument();
-        $this->assertResponse($instrument,
+        $this->assertResponse(
+            $instrument,
             "id",
             "type",
             "expiry_month",
@@ -54,7 +55,8 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
         );
 
         // get
-        $this->assertResponse($this->defaultApi->getInstrumentsClient()->get($instrument["id"]),
+        $this->assertResponse(
+            $this->defaultApi->getInstrumentsClient()->get($instrument["id"]),
             "id",
             "type",
             "expiry_month",
@@ -73,11 +75,11 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
             "customer.email",
             "customer.name"
         );
-
     }
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdateAndDeleteInstrument()
     {
@@ -88,25 +90,30 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
         $updateInstrumentRequest->name = "testing";
 
         // update
-        $this->assertResponse($this->defaultApi->getInstrumentsClient()->update($instrument["id"], $updateInstrumentRequest),
+        $updateResponse = $this->defaultApi->getInstrumentsClient()->update($instrument["id"], $updateInstrumentRequest);
+        $this->assertResponse(
+            $updateResponse,
             "type",
-            "fingerprint"
+            "fingerprint",
+            "http_metadata"
         );
+        self::assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
 
         // delete
-        $this->defaultApi->getInstrumentsClient()->delete($instrument["id"]);
-
+        $deleteResponse = $this->defaultApi->getInstrumentsClient()->delete($instrument["id"]);
+        self::assertArrayHasKey("http_metadata", $deleteResponse);
+        self::assertEquals(204, $deleteResponse["http_metadata"]->getStatusCode());
         try {
             $this->defaultApi->getInstrumentsClient()->delete($instrument["id"]);
             $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
             $this->assertEquals(self::MESSAGE_404, $e->getMessage());
         }
-
     }
 
     /**
      * @return mixed
+     * @throws CheckoutApiException
      */
     private function createInstrument()
     {
@@ -163,7 +170,5 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
         $cardTokenRequest->phone = $phone;
 
         return $this->defaultApi->getTokensClient()->requestCardToken($cardTokenRequest);
-
     }
-
 }

@@ -27,6 +27,8 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
     /**
      * @before
      * @throws CheckoutAuthorizationException
+     * @throws \Checkout\CheckoutArgumentException
+     * @throws \Checkout\CheckoutException
      */
     public function before()
     {
@@ -43,7 +45,8 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
 
         $response = $this->fourApi->getHostedPaymentsClient()->createHostedPaymentsPageSession($request);
 
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "id",
             "reference",
             "_links",
@@ -52,15 +55,18 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
             "warnings"
         );
         foreach ($response["warnings"] as $warning) {
-            $this->assertResponse($warning,
+            $this->assertResponse(
+                $warning,
                 "code",
                 "value",
-                "description");
+                "description"
+            );
         }
 
         $getResponse = $this->fourApi->getHostedPaymentsClient()->getHostedPaymentsPageDetails($response["id"]);
 
-        $this->assertResponse($getResponse,
+        $this->assertResponse(
+            $getResponse,
             "id",
             "reference",
             "status",
@@ -77,7 +83,6 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
             "_links.self",
             "_links.redirect"
         );
-
     }
 
     private function createHostedPaymentsRequest()

@@ -21,7 +21,7 @@ class EventsClient extends Client
 
     /**
      * @param string|null $version
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retrieveAllEventTypes($version = null)
@@ -35,7 +35,7 @@ class EventsClient extends Client
 
     /**
      * @param RetrieveEventsRequest|null $eventsRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retrieveEvents(RetrieveEventsRequest $eventsRequest = null)
@@ -45,7 +45,7 @@ class EventsClient extends Client
 
     /**
      * @param $eventId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retrieveEvent($eventId)
@@ -56,7 +56,7 @@ class EventsClient extends Client
     /**
      * @param $eventId
      * @param $notificationId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retrieveEventNotification($eventId, $notificationId)
@@ -70,7 +70,7 @@ class EventsClient extends Client
     /**
      * @param $eventId
      * @param $webhookId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retryWebhook($eventId, $webhookId)
@@ -86,7 +86,7 @@ class EventsClient extends Client
 
     /**
      * @param $eventId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function retryAllWebhooks($eventId)

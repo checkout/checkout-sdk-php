@@ -19,7 +19,7 @@ class CustomersClient extends Client
 
     /**
      * @param $customerId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function get($customerId)
@@ -29,7 +29,7 @@ class CustomersClient extends Client
 
     /**
      * @param CustomerRequest $customerRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function create(CustomerRequest $customerRequest)
@@ -40,7 +40,7 @@ class CustomersClient extends Client
     /**
      * @param $customerId
      * @param CustomerRequest $customerRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function update($customerId, CustomerRequest $customerRequest)
@@ -50,10 +50,11 @@ class CustomersClient extends Client
 
     /**
      * @param $customerId
+     * @return array
      * @throws CheckoutApiException
      */
     public function delete($customerId)
     {
-        $this->apiClient->delete($this->buildPath(self::CUSTOMERS_PATH, $customerId), $this->sdkAuthorization());
+        return $this->apiClient->delete($this->buildPath(self::CUSTOMERS_PATH, $customerId), $this->sdkAuthorization());
     }
 }

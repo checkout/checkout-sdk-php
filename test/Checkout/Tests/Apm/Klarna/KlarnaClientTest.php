@@ -5,13 +5,15 @@ namespace Checkout\Tests\Apm\Klarna;
 use Checkout\Apm\Klarna\CreditSessionRequest;
 use Checkout\Apm\Klarna\KlarnaClient;
 use Checkout\Apm\Klarna\OrderCaptureRequest;
-use Checkout\CheckoutApiException;
 use Checkout\Payments\VoidRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
 class KlarnaClientTest extends UnitTestFixture
 {
+    /**
+     * @var KlarnaClient
+     */
     private $client;
 
     /**
@@ -25,7 +27,6 @@ class KlarnaClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreateCreditSession()
     {
@@ -39,7 +40,6 @@ class KlarnaClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetCreditSession()
     {
@@ -53,7 +53,6 @@ class KlarnaClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function capturePayment()
     {
@@ -67,7 +66,6 @@ class KlarnaClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldVoidPayment()
     {

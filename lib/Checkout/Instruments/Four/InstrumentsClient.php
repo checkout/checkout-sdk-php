@@ -23,7 +23,7 @@ class InstrumentsClient extends Client
 
     /**
      * @param CreateInstrumentRequest $createInstrumentRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function create(CreateInstrumentRequest $createInstrumentRequest)
@@ -33,7 +33,7 @@ class InstrumentsClient extends Client
 
     /**
      * @param $instrumentId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function get($instrumentId)
@@ -44,7 +44,7 @@ class InstrumentsClient extends Client
     /**
      * @param $instrumentId
      * @param UpdateInstrumentRequest $updateInstrumentRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function update($instrumentId, UpdateInstrumentRequest $updateInstrumentRequest)
@@ -54,18 +54,19 @@ class InstrumentsClient extends Client
 
     /**
      * @param $instrumentId
+     * @return array
      * @throws CheckoutApiException
      */
     public function delete($instrumentId)
     {
-        $this->apiClient->delete($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $this->sdkAuthorization());
+        return $this->apiClient->delete($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $this->sdkAuthorization());
     }
 
     /**
      * @param $country_code
      * @param $currency
      * @param BankAccountFieldQuery $query
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getBankAccountFieldFormatting($country_code, $currency, BankAccountFieldQuery $query)

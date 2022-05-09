@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Payments\Four;
 
-use Checkout\CheckoutApiException;
 use Checkout\Common\Four\AccountHolder;
 use Checkout\Payments\Four\AuthorizationRequest;
 use Checkout\Payments\Four\CaptureRequest;
@@ -17,6 +16,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class PaymentsClientTest extends UnitTestFixture
 {
+    /**
+     * @var PaymentsClient
+     */
     private $client;
 
     /**
@@ -30,7 +32,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRequestPayment()
     {
@@ -53,7 +54,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRequestPayout()
     {
@@ -68,7 +68,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetPaymentDetails()
     {
@@ -83,7 +82,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetPaymentActions()
     {
@@ -98,7 +96,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCapturePayment()
     {
@@ -113,7 +110,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRefundPayment()
     {
@@ -128,7 +124,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldVoidPayment()
     {
@@ -143,7 +138,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldIncrementPaymentAuthorization()
     {
@@ -158,7 +152,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldIncrementPaymentAuthorizationIdempotently()
     {

@@ -3,12 +3,14 @@
 namespace Checkout\Tests\Apm\Sepa;
 
 use Checkout\Apm\Sepa\SepaClient;
-use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
 class SepaClientTest extends UnitTestFixture
 {
+    /**
+     * @var SepaClient
+     */
     private $client;
 
     /**
@@ -22,7 +24,6 @@ class SepaClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function getMandate()
     {
@@ -36,7 +37,6 @@ class SepaClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function cancelMandate()
     {
@@ -50,7 +50,6 @@ class SepaClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function getMandateViaPPro()
     {
@@ -64,7 +63,6 @@ class SepaClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function cancelMandateViaPPro()
     {

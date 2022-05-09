@@ -24,7 +24,7 @@ class PaymentsClient extends Client
     /**
      * @param PaymentRequest $paymentRequest
      * @param string|null $idempotencyKey
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function requestPayment(PaymentRequest $paymentRequest, $idempotencyKey = null)
@@ -35,7 +35,7 @@ class PaymentsClient extends Client
     /**
      * @param PayoutRequest $payoutRequest
      * @param string|null $idempotencyKey
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function requestPayout(PayoutRequest $payoutRequest, $idempotencyKey = null)
@@ -45,7 +45,7 @@ class PaymentsClient extends Client
 
     /**
      * @param $paymentId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getPaymentDetails($paymentId)
@@ -55,7 +55,7 @@ class PaymentsClient extends Client
 
     /**
      * @param $paymentId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getPaymentActions($paymentId)
@@ -67,7 +67,7 @@ class PaymentsClient extends Client
      * @param $paymentId
      * @param CaptureRequest $captureRequest
      * @param string|null $idempotencyKey
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function capturePayment($paymentId, CaptureRequest $captureRequest, $idempotencyKey = null)
@@ -79,7 +79,7 @@ class PaymentsClient extends Client
      * @param $paymentId
      * @param RefundRequest|null $refundRequest
      * @param string|null $idempotencyKey
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function refundPayment($paymentId, RefundRequest $refundRequest = null, $idempotencyKey = null)
@@ -91,7 +91,7 @@ class PaymentsClient extends Client
      * @param $paymentId
      * @param VoidRequest|null $voidRequest
      * @param string|null $idempotencyKey
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function voidPayment($paymentId, VoidRequest $voidRequest = null, $idempotencyKey = null)
@@ -103,7 +103,7 @@ class PaymentsClient extends Client
      * @param $paymentId
      * @param AuthorizationRequest|null $authorizationRequest
      * @param string|null $idempotencyKey
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function incrementPaymentAuthorization($paymentId, AuthorizationRequest $authorizationRequest = null, $idempotencyKey = null)

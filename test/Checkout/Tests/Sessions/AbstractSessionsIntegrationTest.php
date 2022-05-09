@@ -35,6 +35,8 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
     /**
      * @before
      * @throws CheckoutAuthorizationException
+     * @throws \Checkout\CheckoutArgumentException
+     * @throws \Checkout\CheckoutException
      */
     public function before()
     {
@@ -49,9 +51,12 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
      * @return mixed
      * @throws CheckoutApiException
      */
-    protected function createNonHostedSession(ChannelData $channelData, $authenticationCategory,
-                                                          $challengeIndicatorType, $transactionType)
-    {
+    protected function createNonHostedSession(
+        ChannelData $channelData,
+        $authenticationCategory,
+        $challengeIndicatorType,
+        $transactionType
+    ) {
 
         $billingAddress = new SessionAddress();
         $billingAddress->address_line1 = "CheckoutSdk.com";

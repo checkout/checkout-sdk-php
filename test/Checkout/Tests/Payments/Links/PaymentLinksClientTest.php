@@ -2,15 +2,16 @@
 
 namespace Checkout\Tests\Payments\Links;
 
-use Checkout\CheckoutApiException;
 use Checkout\Payments\Links\PaymentLinkRequest;
 use Checkout\Payments\Links\PaymentLinksClient;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
-
 class PaymentLinksClientTest extends UnitTestFixture
 {
+    /**
+     * @var PaymentLinksClient
+     */
     private $client;
 
     /**
@@ -24,7 +25,6 @@ class PaymentLinksClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetPaymentLink()
     {
@@ -40,7 +40,6 @@ class PaymentLinksClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreatePaymentLink()
     {

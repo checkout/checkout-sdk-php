@@ -39,21 +39,25 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse1,
+        $this->assertResponse(
+            $paymentResponse1,
             "id",
             "status",
             "_links",
-            "_links.self",
-            "_links.redirect");
+            "_links.self"
+        );
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse2,
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "requested_on",
             "source",
@@ -61,7 +65,8 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             //"balances",
             "currency",
             "payment_type",
-            "status");
+            "status"
+        );
     }
 
     /**
@@ -82,21 +87,26 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {
                 return $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse1,
+        $this->assertResponse(
+            $paymentResponse1,
             "id",
             "status",
             "_links",
             "_links.self",
-            "_links.redirect");
+            "_links.redirect"
+        );
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
                 return $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse2,
+        $this->assertResponse(
+            $paymentResponse2,
             "id",
             "requested_on",
             "source",
@@ -104,7 +114,8 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             //"balances",
             "currency",
             "payment_type",
-            "status");
+            "status"
+        );
     }
 
     /**
@@ -171,9 +182,11 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse = $this->retriable(
             function () use (&$paymentRequest, &$previewApi) {
                 return $previewApi->getPaymentsClient()->requestPayment($paymentRequest);
-            });
+            }
+        );
 
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "reference",
             "status",
@@ -182,8 +195,8 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer.id",
             "customer.name",
             "customer.email",
-            "customer.phone");
-
+            "customer.phone"
+        );
     }
 
 }

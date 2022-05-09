@@ -20,7 +20,7 @@ class HostedPaymentsClient extends Client
 
     /**
      * @param $id
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getHostedPaymentsPageDetails($id)
@@ -30,7 +30,7 @@ class HostedPaymentsClient extends Client
 
     /**
      * @param HostedPaymentsSessionRequest $hostedPaymentRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function createHostedPaymentsPageSession(HostedPaymentsSessionRequest $hostedPaymentRequest)

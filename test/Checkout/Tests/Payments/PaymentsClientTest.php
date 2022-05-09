@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Payments;
 
-use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
 use Checkout\Payments\CaptureRequest;
 use Checkout\Payments\PaymentRequest;
@@ -13,9 +12,11 @@ use Checkout\Payments\VoidRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
-
 class PaymentsClientTest extends UnitTestFixture
 {
+    /**
+     * @var PaymentsClient
+     */
     private $client;
 
     /**
@@ -30,7 +31,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRequestPayment()
     {
@@ -45,9 +45,8 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
-    public function shouldRequestPayment_customSource()
+    public function shouldRequestPaymentCustomSource()
     {
 
         $this->apiClient
@@ -67,7 +66,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRequestPayout()
     {
@@ -82,7 +80,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetPaymentDetails()
     {
@@ -97,7 +94,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetPaymentActions()
     {
@@ -112,7 +108,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCapturePayment()
     {
@@ -127,7 +122,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRefundPayment()
     {
@@ -142,7 +136,6 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldVoidPayment()
     {

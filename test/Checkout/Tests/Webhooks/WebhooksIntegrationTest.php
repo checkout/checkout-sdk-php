@@ -18,13 +18,12 @@ class WebhooksIntegrationTest extends SandboxTestFixture
     public function cleanUp()
     {
         $this->init(PlatformType::$default);
-        $webhooks = $this->defaultApi->getWebhooksClient()->retrieveWebhooks();
-        if (!$webhooks) {
-            return;
-        }
-        foreach ($webhooks as $webhook) {
-            $this->assertResponse($webhook, "id");
-            $this->defaultApi->getWebhooksClient()->removeWebhook($webhook["id"]);
+        $response = $this->defaultApi->getWebhooksClient()->retrieveWebhooks();
+        if (array_key_exists("items", $response)) {
+            foreach ($response["items"] as $webhook) {
+                $this->assertResponse($webhook, "id");
+                $this->defaultApi->getWebhooksClient()->removeWebhook($webhook["id"]);
+            }
         }
     }
 
@@ -55,7 +54,8 @@ class WebhooksIntegrationTest extends SandboxTestFixture
         $retrieveResponse = $this->retriable(
             function () use (&$webhookId) {
                 return $this->defaultApi->getWebhooksClient()->retrieveWebhook($webhookId);
-            });
+            }
+        );
 
         $this->assertNotNull($retrieveResponse);
         $this->assertEquals($webhookId, $retrieveResponse["id"]);
@@ -75,25 +75,26 @@ class WebhooksIntegrationTest extends SandboxTestFixture
         $updateResponse = $this->retriable(
             function () use (&$webhookId, &$updateRequest) {
                 return $this->defaultApi->getWebhooksClient()->updateWebhook($webhookId, $updateRequest);
-            });
+            }
+        );
 
         $this->assertNotNull($updateResponse);
         $this->assertEquals($webhookId, $updateResponse["id"]);
         $this->assertEquals($updateRequest->url, $updateResponse["url"]);
         $this->assertEquals($updateRequest->content_type, $updateResponse["content_type"]);
         $this->assertEquals($updateRequest->event_types, $updateResponse["event_types"]);
+        self::assertArrayHasKey("http_metadata", $updateResponse);
+        self::assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
 
         // delete
-
-        $this->defaultApi->getWebhooksClient()->removeWebhook($webhookId);
-
+        $deleteResponse = $this->defaultApi->getWebhooksClient()->removeWebhook($webhookId);
+        self::assertArrayHasKey("http_metadata", $deleteResponse);
+        self::assertEquals(200, $deleteResponse["http_metadata"]->getStatusCode());
         try {
             $this->defaultApi->getWebhooksClient()->retrieveWebhook($webhookId);
             $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
             $this->assertEquals(self::MESSAGE_404, $e->getMessage());
         }
-
     }
-
 }

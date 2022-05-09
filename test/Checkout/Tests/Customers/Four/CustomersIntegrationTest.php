@@ -34,13 +34,14 @@ class CustomersIntegrationTest extends SandboxTestFixture
         $this->assertResponse($customerResponse, "id");
 
         $customerDetails = $this->fourApi->getCustomersClient()->get($customerResponse["id"]);
-        $this->assertResponse($customerDetails,
+        $this->assertResponse(
+            $customerDetails,
             "email",
             "name",
-            "phone");
+            "phone"
+        );
         $this->assertEquals($customerRequest->name, $customerDetails["name"]);
         $this->assertEquals($customerRequest->email, $customerDetails["email"]);
-
     }
 
     /**
@@ -64,13 +65,17 @@ class CustomersIntegrationTest extends SandboxTestFixture
 
         $id = $customerResponse["id"];
 
-        $this->fourApi->getCustomersClient()->update($id, $customerRequest);
+        $response = $this->fourApi->getCustomersClient()->update($id, $customerRequest);
+        self::assertArrayHasKey("http_metadata", $response);
+        self::assertEquals(204, $response["http_metadata"]->getStatusCode());
 
         $customerDetails = $this->fourApi->getCustomersClient()->get($id);
-        $this->assertResponse($customerDetails,
+        $this->assertResponse(
+            $customerDetails,
             "email",
             "name",
-            "phone");
+            "phone"
+        );
         $this->assertEquals($customerRequest->name, $customerDetails["name"]);
         $this->assertEquals($customerRequest->email, $customerDetails["email"]);
     }
@@ -89,7 +94,9 @@ class CustomersIntegrationTest extends SandboxTestFixture
         $this->assertResponse($customerResponse, "id");
 
         $id = $customerResponse["id"];
-        $this->fourApi->getCustomersClient()->delete($id);
+        $deleteResponse = $this->fourApi->getCustomersClient()->delete($id);
+        self::assertArrayHasKey("http_metadata", $deleteResponse);
+        self::assertEquals(204, $deleteResponse["http_metadata"]->getStatusCode());
 
         $this->expectException(CheckoutApiException::class);
         $this->expectExceptionMessage(self::MESSAGE_404);

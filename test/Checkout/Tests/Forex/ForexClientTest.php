@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Forex;
 
-use Checkout\CheckoutApiException;
 use Checkout\Forex\ForexClient;
 use Checkout\Forex\QuoteRequest;
 use Checkout\PlatformType;
@@ -10,6 +9,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class ForexClientTest extends UnitTestFixture
 {
+    /**
+     * @var ForexClient
+     */
     private $client;
 
     /**
@@ -23,7 +25,6 @@ class ForexClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRequestQuote()
     {

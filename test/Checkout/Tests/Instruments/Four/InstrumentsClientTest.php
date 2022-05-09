@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Instruments\Four;
 
-use Checkout\CheckoutApiException;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\Four\AccountHolderType;
@@ -16,6 +15,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class InstrumentsClientTest extends UnitTestFixture
 {
+    /**
+     * @var InstrumentsClient
+     */
     private $client;
 
     /**
@@ -30,7 +32,6 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreateInstrument()
     {
@@ -46,7 +47,6 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetInstrument()
     {
@@ -60,7 +60,6 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldUpdateInstrument()
     {
@@ -74,19 +73,18 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @doesNotPerformAssertions
-     * @throws CheckoutApiException
      */
     public function shouldDeleteInstruments()
     {
-        $this->apiClient->method("delete");
+        $this->apiClient->method("delete")
+            ->willReturn("foo");
 
-        $this->client->delete("instrument_id");
+        $response = $this->client->delete("instrument_id");
+        $this->assertNotNull($response);
     }
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetBankAccountFieldFormatting()
     {

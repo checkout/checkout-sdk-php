@@ -20,7 +20,7 @@ class PaymentLinksClient extends Client
 
     /**
      * @param $id
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getPaymentLink($id)
@@ -30,7 +30,7 @@ class PaymentLinksClient extends Client
 
     /**
      * @param PaymentLinkRequest $paymentLinkRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function createPaymentLink(PaymentLinkRequest $paymentLinkRequest)

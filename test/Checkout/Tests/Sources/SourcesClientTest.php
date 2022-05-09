@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Sources;
 
-use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
 use Checkout\Sources\SepaSourceRequest;
 use Checkout\Sources\SourcesClient;
@@ -10,6 +9,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class SourcesClientTest extends UnitTestFixture
 {
+    /**
+     * @var SourcesClient
+     */
     private $client;
 
     /**
@@ -23,7 +25,6 @@ class SourcesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreateSepaSource()
     {

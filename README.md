@@ -12,9 +12,11 @@ Packages and sources are available from [Packagist](https://packagist.org/packag
 #### Composer
 
 ```json
-"require": {
+{
+  "require": {
     "php": ">=5.6",
     "checkout/checkout-sdk-php": "version"
+  }
 }
 ```
 
@@ -87,8 +89,9 @@ For operations that require file upload (Disputes or Marketplace) the configurat
 
 ## Exception handling
 
-All the API responses that do not fall in the 2** status codes will cause a `CheckoutApiException`. The exception encapsulates
-the `requestId`, `httpStatusCode` and a map of `errorDetails`, if available.
+All the API responses that do not fall in the 2** status codes, the SDK will throw a `CheckoutApiException`.
+
+The exception encapsulates `http_metadata` and `$error_details`, if available.
 
 More documentation related to Checkout API and the SDK is available at:
 

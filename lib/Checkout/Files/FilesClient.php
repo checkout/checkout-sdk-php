@@ -17,7 +17,7 @@ class FilesClient extends Client
 
     /**
      * @param FileRequest $fileRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function uploadFile(FileRequest $fileRequest)
@@ -28,7 +28,7 @@ class FilesClient extends Client
 
     /**
      * @param $fileId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getFileDetails($fileId)
@@ -43,7 +43,9 @@ class FilesClient extends Client
     private function validateContents($file)
     {
         if (!in_array(mime_content_type($file), self::ALLOWED_CONTENTS)) {
-            throw new CheckoutApiException("The file type is not supported.\n Supported file types: JPG/JPEG, PNG and PDF.");
+            throw new CheckoutApiException(
+                "The file type is not supported.\n Supported file types: JPG/JPEG, PNG and PDF."
+            );
         }
     }
 }

@@ -22,7 +22,7 @@ class RiskClient extends Client
 
     /**
      * @param PreAuthenticationAssessmentRequest $preAuthenticationAssessmentRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function requestPreAuthenticationRiskScan(
@@ -37,7 +37,7 @@ class RiskClient extends Client
 
     /**
      * @param PreCaptureAssessmentRequest $preCaptureAssessmentRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function requestPreCaptureRiskScan(PreCaptureAssessmentRequest $preCaptureAssessmentRequest)

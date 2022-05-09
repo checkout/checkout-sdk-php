@@ -33,7 +33,8 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $tokenInstrument = $this->createTokenInstrument();
 
         $getInstrument = $this->fourApi->getInstrumentsClient()->get($tokenInstrument["id"]);
-        $this->assertResponse($getInstrument,
+        $this->assertResponse(
+            $getInstrument,
             "id",
             "type",
             "fingerprint",
@@ -48,7 +49,8 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "issuer_country",
             "product_id",
             "product_type",
-            "customer");
+            "customer"
+        );
         $this->assertEquals($tokenInstrument["id"], $getInstrument["id"]);
         $this->assertEquals($tokenInstrument["fingerprint"], $getInstrument["fingerprint"]);
     }
@@ -67,10 +69,13 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $updateTokenInstrumentRequest->token = $tokenResponse["token"];
 
         $updateResponse = $this->fourApi->getInstrumentsClient()->update($tokenInstrument["id"], $updateTokenInstrumentRequest);
-
-        $this->assertResponse($updateResponse,
+        $this->assertResponse(
+            $updateResponse,
             "type",
-            "fingerprint");
+            "fingerprint",
+            "http_metadata"
+        );
+        self::assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
         $this->assertEquals($tokenInstrument["fingerprint"], $updateResponse["fingerprint"]);
     }
 
@@ -101,13 +106,18 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $updateCardInstrumentRequest->account_holder = $accountHolder;
 
         $updateResponse = $this->fourApi->getInstrumentsClient()->update($tokenInstrument["id"], $updateCardInstrumentRequest);
-        $this->assertResponse($updateResponse,
+        $this->assertResponse(
+            $updateResponse,
             "type",
-            "fingerprint");
+            "fingerprint"
+        );
+        self::assertArrayHasKey('http_metadata', $updateResponse);
+        self::assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
 
 
         $cardResponse = $this->fourApi->getInstrumentsClient()->get($tokenInstrument["id"]);
-        $this->assertResponse($cardResponse,
+        $this->assertResponse(
+            $cardResponse,
             "id",
             "type",
             "fingerprint",
@@ -132,12 +142,12 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
     {
         $tokenInstrument = $this->createTokenInstrument();
 
-        $this->fourApi->getInstrumentsClient()->delete($tokenInstrument["id"]);
-
+        $deleteResponse = $this->fourApi->getInstrumentsClient()->delete($tokenInstrument["id"]);
+        self::assertArrayHasKey("http_metadata", $deleteResponse);
+        self::assertEquals(204, $deleteResponse["http_metadata"]->getStatusCode());
         $this->expectException(CheckoutApiException::class);
         $this->expectExceptionMessage(self::MESSAGE_404);
         $this->fourApi->getInstrumentsClient()->get($tokenInstrument["id"]);
-
     }
 
     /**
@@ -171,7 +181,8 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $createTokenInstrumentRequest->customer = $createCustomerInstrumentRequest;
 
         $response = $this->fourApi->getInstrumentsClient()->create($createTokenInstrumentRequest);
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "id",
             "type",
             "fingerprint",
@@ -186,7 +197,8 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "issuer_country",
             "product_id",
             "product_type",
-            "customer");
+            "customer"
+        );
 
 
         return $response;

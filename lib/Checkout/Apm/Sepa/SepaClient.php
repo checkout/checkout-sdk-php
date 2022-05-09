@@ -21,7 +21,7 @@ class SepaClient extends Client
 
     /**
      * @param $mandateId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getMandate($mandateId)
@@ -31,7 +31,7 @@ class SepaClient extends Client
 
     /**
      * @param $mandateId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function cancelMandate($mandateId)
@@ -45,7 +45,7 @@ class SepaClient extends Client
 
     /**
      * @param $mandateId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getMandateViaPPro($mandateId)
@@ -58,7 +58,7 @@ class SepaClient extends Client
 
     /**
      * @param $mandateId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function cancelMandateViaPPro($mandateId)

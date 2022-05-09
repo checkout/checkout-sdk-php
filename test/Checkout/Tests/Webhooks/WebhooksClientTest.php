@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Webhooks;
 
-use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 use Checkout\Webhooks\WebhookRequest;
@@ -10,6 +9,9 @@ use Checkout\Webhooks\WebhooksClient;
 
 class WebhooksClientTest extends UnitTestFixture
 {
+    /**
+     * @var WebhooksClient
+     */
     private $client;
 
     /**
@@ -24,7 +26,6 @@ class WebhooksClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetrieveWebhooks()
     {
@@ -38,7 +39,6 @@ class WebhooksClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetrieveWebhook()
     {
@@ -52,7 +52,6 @@ class WebhooksClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRegisterWebhook()
     {
@@ -66,10 +65,8 @@ class WebhooksClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
-    public
-    function shouldUpdateWebhook()
+    public function shouldUpdateWebhook()
     {
         $this->apiClient
             ->method("put")
@@ -81,10 +78,8 @@ class WebhooksClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
-    public
-    function shouldPatchWebhook()
+    public function shouldPatchWebhook()
     {
         $this->apiClient
             ->method("patch")
@@ -96,15 +91,14 @@ class WebhooksClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @doesNotPerformAssertions
-     * @throws CheckoutApiException
      */
-    public
-    function shouldRemoveWebhook()
+    public function shouldRemoveWebhook()
     {
-        $this->apiClient->method("delete");
+        $this->apiClient->method("delete")
+            ->willReturn("foo");
 
-        $this->client->removeWebhook("webhook_id");
+        $response = $this->client->removeWebhook("webhook_id");
+        $this->assertNotNull($response);
     }
 
 }

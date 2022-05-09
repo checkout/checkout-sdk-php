@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Marketplace;
 
-use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
 use Checkout\Marketplace\Balances\BalancesQuery;
 use Checkout\Marketplace\MarketplaceClient;
@@ -16,6 +15,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class MarketplaceClientTest extends UnitTestFixture
 {
+    /**
+     * @var MarketplaceClient
+     */
     private $client;
 
     /**
@@ -35,7 +37,6 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreateEntity()
     {
@@ -50,7 +51,6 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetEntity()
     {
@@ -65,7 +65,6 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldUpdateEntity()
     {
@@ -80,7 +79,6 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreatePaymentInstrument()
     {
@@ -95,7 +93,6 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldSubmitFile()
     {
@@ -115,7 +112,6 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldInitiateTransferOfFunds()
     {
@@ -132,7 +128,6 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetrieveEntityBalances()
     {

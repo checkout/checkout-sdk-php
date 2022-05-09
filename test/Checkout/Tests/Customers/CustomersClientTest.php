@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Customers;
 
-use Checkout\CheckoutApiException;
 use Checkout\Customers\CustomerRequest;
 use Checkout\Customers\CustomersClient;
 use Checkout\PlatformType;
@@ -10,6 +9,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class CustomersClientTest extends UnitTestFixture
 {
+    /**
+     * @var CustomersClient
+     */
     private $client;
 
     /**
@@ -24,7 +26,6 @@ class CustomersClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetCustomer()
     {
@@ -39,7 +40,6 @@ class CustomersClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldCreateCustomer()
     {
@@ -54,7 +54,6 @@ class CustomersClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldUpdateCustomer()
     {
@@ -69,14 +68,16 @@ class CustomersClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @doesNotPerformAssertions
-     * @throws CheckoutApiException
      */
     public function shouldDeleteCustomer()
     {
-        $this->apiClient->method("delete");
+        $this->apiClient->method("delete")
+            ->willReturn("foo");
+        ;
 
-        $this->client->delete("customer_id");
+        $response = $this->client->delete("customer_id");
+
+        $this->assertNotNull($response);
     }
 
 }

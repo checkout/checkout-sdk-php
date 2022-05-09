@@ -2,8 +2,6 @@
 
 namespace Checkout\Tests\Sessions;
 
-use Checkout\CheckoutApiException;
-use Checkout\CheckoutAuthorizationException;
 use Checkout\PlatformType;
 use Checkout\Sessions\Channel\AppSession;
 use Checkout\Sessions\SessionRequest;
@@ -13,6 +11,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class SessionsClientTest extends UnitTestFixture
 {
+    /**
+     * @var SessionsClient
+     */
     private $client;
 
     /**
@@ -26,7 +27,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRequestSessionCreateSessionOkResponse()
     {
@@ -40,8 +40,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
-     * @throws CheckoutAuthorizationException
      */
     public function shouldGetSessionDetails()
     {
@@ -55,8 +53,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
-     * @throws CheckoutAuthorizationException
      */
     public function shouldGetSessionDetailsSessionSecret()
     {
@@ -70,8 +66,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
-     * @throws CheckoutAuthorizationException
      */
     public function shouldUpdateSessionDetails()
     {
@@ -85,8 +79,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
-     * @throws CheckoutAuthorizationException
      */
     public function shouldUpdateSessionDetailsSessionSecret()
     {
@@ -100,8 +92,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
-     * @throws CheckoutAuthorizationException
      */
     public function shouldCompleteSession()
     {
@@ -115,8 +105,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
-     * @throws CheckoutAuthorizationException
      */
     public function shouldCompleteSessionSessionSecret()
     {
@@ -130,8 +118,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
-     * @throws CheckoutAuthorizationException
      */
     public function shouldUpdate3dsMethodCompletionIndicator()
     {
@@ -145,8 +131,6 @@ class SessionsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
-     * @throws CheckoutAuthorizationException
      */
     public function shouldUpdate3dsMethodCompletionIndicatorSessionSecret()
     {

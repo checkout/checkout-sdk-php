@@ -102,7 +102,11 @@ class ReconciliationIntegrationTest extends SandboxTestFixture
     {
         $this->markTestSkipped("only available in production");
         $report = self::productionApi()->getReconciliationClient()->retrieveCsvPaymentReport(self::getQueryFilterDateRange());
-        self::assertNotNull($report);
+        $this->assertResponse(
+            $report,
+            'http_metadata',
+            'contents'
+        );
     }
 
     /**
@@ -113,7 +117,11 @@ class ReconciliationIntegrationTest extends SandboxTestFixture
     {
         $this->markTestSkipped("only available in production");
         $report = self::productionApi()->getReconciliationClient()->retrieveCsvSingleStatementReport("C8DAEF772R0C5F3F598F");
-        self::assertNotNull($report);
+        $this->assertResponse(
+            $report,
+            'http_metadata',
+            'contents'
+        );
     }
 
     /**
@@ -124,6 +132,10 @@ class ReconciliationIntegrationTest extends SandboxTestFixture
     {
         $this->markTestSkipped("only available in production");
         $report = self::productionApi()->getReconciliationClient()->retrieveCsvStatementsReport(self::getQueryFilterDateRange());
-        self::assertNotNull($report);
+        $this->assertResponse(
+            $report,
+            'http_metadata',
+            'contents'
+        );
     }
 }

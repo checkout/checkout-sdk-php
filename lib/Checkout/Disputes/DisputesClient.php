@@ -21,7 +21,7 @@ class DisputesClient extends FilesClient
 
     /**
      * @param DisputesQueryFilter $filter
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function query(DisputesQueryFilter $filter)
@@ -31,7 +31,7 @@ class DisputesClient extends FilesClient
 
     /**
      * @param $disputeId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getDisputeDetails($disputeId)
@@ -41,7 +41,7 @@ class DisputesClient extends FilesClient
 
     /**
      * @param $disputeId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function accept($disputeId)
@@ -52,7 +52,7 @@ class DisputesClient extends FilesClient
     /**
      * @param $disputeId
      * @param DisputeEvidenceRequest $disputeEvidenceRequest
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function putEvidence($disputeId, DisputeEvidenceRequest $disputeEvidenceRequest)
@@ -62,7 +62,7 @@ class DisputesClient extends FilesClient
 
     /**
      * @param $disputeId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function getEvidence($disputeId)
@@ -72,7 +72,7 @@ class DisputesClient extends FilesClient
 
     /**
      * @param $disputeId
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
     public function submitEvidence($disputeId)

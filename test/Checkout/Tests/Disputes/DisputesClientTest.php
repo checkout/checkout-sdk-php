@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Disputes;
 
-use Checkout\CheckoutApiException;
 use Checkout\Disputes\DisputeEvidenceRequest;
 use Checkout\Disputes\DisputesClient;
 use Checkout\Disputes\DisputesQueryFilter;
@@ -12,6 +11,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class DisputesClientTest extends UnitTestFixture
 {
+    /**
+     * @var DisputesClient
+     */
     private $client;
 
     /**
@@ -25,7 +27,6 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldQueryDispute()
     {
@@ -40,7 +41,6 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetDisputeDetails()
     {
@@ -55,7 +55,6 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldAcceptDispute()
     {
@@ -70,7 +69,6 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldPutEvidence()
     {
@@ -85,7 +83,6 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetEvidence()
     {
@@ -100,7 +97,6 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldSubmitEvidence()
     {
@@ -115,7 +111,6 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldUploadFile()
     {
@@ -132,7 +127,6 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldGetFileDetails()
     {

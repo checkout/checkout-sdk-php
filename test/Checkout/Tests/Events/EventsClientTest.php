@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Events;
 
-use Checkout\CheckoutApiException;
 use Checkout\Events\EventsClient;
 use Checkout\Events\RetrieveEventsRequest;
 use Checkout\PlatformType;
@@ -10,6 +9,9 @@ use Checkout\Tests\UnitTestFixture;
 
 class EventsClientTest extends UnitTestFixture
 {
+    /**
+     * @var EventsClient
+     */
     private $client;
 
     /**
@@ -24,7 +26,6 @@ class EventsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetrieveAllEventTypes()
     {
@@ -38,7 +39,6 @@ class EventsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetrieveEvents()
     {
@@ -51,7 +51,6 @@ class EventsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetrieveEvent()
     {
@@ -65,7 +64,6 @@ class EventsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetrieveEventNotification()
     {
@@ -79,7 +77,6 @@ class EventsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetryWebhook()
     {
@@ -93,7 +90,6 @@ class EventsClientTest extends UnitTestFixture
 
     /**
      * @test
-     * @throws CheckoutApiException
      */
     public function shouldRetryAllWebhooks()
     {

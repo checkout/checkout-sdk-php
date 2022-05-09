@@ -32,22 +32,25 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
         $disputesQueryFilter->to = new DateTime(); // UTC, now
 
         $response = $this->fourApi->getDisputesClient()->query($disputesQueryFilter);
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "limit",
             "total_count",
             "from",
-            "to");
+            "to"
+        );
         if (array_key_exists("data", $response)) {
             $disputeDetails = $response["data"]["0"];
-            $this->assertResponse($disputeDetails,
+            $this->assertResponse(
+                $disputeDetails,
                 "id",
                 "category",
                 "status",
                 "amount",
                 "currency",
                 "reason_code",
-                "payment_id");
-
+                "payment_id"
+            );
         }
     }
 
@@ -65,12 +68,15 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
         $this->assertResponse($uploadFileResponse, "id");
 
         $fileDetails = $this->fourApi->getDisputesClient()->getFileDetails($uploadFileResponse["id"]);
-        $this->assertResponse($fileDetails, "id",
+        $this->assertResponse(
+            $fileDetails,
+            "id",
             "filename",
             "purpose",
             "size",
             "uploaded_on",
-            "_links");
+            "_links"
+        );
         $this->assertEquals($fileRequest->purpose, $fileDetails["purpose"]);
         $this->assertTrue(strpos($fileRequest->file, $fileDetails["filename"]) !== false);
     }
@@ -90,7 +96,8 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
             function () use (&$filter) {
                 return $this->fourApi->getDisputesClient()->query($filter);
             },
-            $this->thereAreDisputes());
+            $this->thereAreDisputes()
+        );
 
         $this->assertResponse($queryResponse, "data");
         $this->assertEquals($payment["id"], $queryResponse["data"]["0"]["payment_id"]);
@@ -114,10 +121,13 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $disputeId = $queryResponse["data"]["0"]["id"];
 
-        $this->fourApi->getDisputesClient()->putEvidence($disputeId, $disputeEvidenceRequest);
+        $updateResponse = $this->fourApi->getDisputesClient()->putEvidence($disputeId, $disputeEvidenceRequest);
+        self::assertArrayHasKey("http_metadata", $updateResponse);
+        self::assertEquals(204, $updateResponse["http_metadata"]->getStatusCode());
 
         $evidence = $this->fourApi->getDisputesClient()->getEvidence($disputeId);
-        $this->assertResponse($evidence,
+        $this->assertResponse(
+            $evidence,
             "proof_of_delivery_or_service_file",
             "proof_of_delivery_or_service_text",
             "invoice_or_receipt_file",
@@ -125,7 +135,8 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer_communication_file",
             "customer_communication_text",
             "additional_evidence_file",
-            "additional_evidence_text");
+            "additional_evidence_text"
+        );
     }
 
     /**
@@ -137,5 +148,4 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
             return array_key_exists("total_count", $response) && $response["total_count"] != 0;
         };
     }
-
 }

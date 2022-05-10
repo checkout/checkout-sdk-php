@@ -41,7 +41,7 @@ Default keys client instantiation can be done as follows:
 
 ```php
 $builder = CheckoutDefaultSdk::staticKeys();
-$builder->setPublicKey("public_key");
+$builder->setPublicKey("public_key"); // optional, only required for operations related with tokens
 $builder->setSecretKey("secret_key");
 $builder->setEnvironment(Environment::sandbox()); // or production()
 $builder->setHttpClientBuilder(); // optional, for a custom HTTP client
@@ -57,7 +57,7 @@ If your pair of keys matches the Four type, this is how the SDK should be used:
 
 ```php
 $builder = CheckoutFourSdk::staticKeys();
-$builder->setPublicKey("public_key");
+$builder->setPublicKey("public_key"); // optional, only required for operations related with tokens
 $builder->setSecretKey("secret_key");
 $builder->setEnvironment(Environment::sandbox()); // or production()
 $builder->setHttpClientBuilder(); // optional, for a custom HTTP client

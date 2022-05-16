@@ -35,6 +35,7 @@ abstract class SandboxTestFixture extends TestCase
 
     const MESSAGE_404 = "The API response status code (404) does not indicate success.";
     const MESSAGE_403 = "The API response status code (403) does not indicate success.";
+    const MESSAGE_409 = "The API response status code (409) does not indicate success.";
 
     private $logger;
 

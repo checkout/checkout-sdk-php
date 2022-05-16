@@ -122,6 +122,45 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldInitiateTransferOfFundsIdempotently()
+    {
+        $transferSource = new TransferSource();
+        $transferSource->id = "ent_kidtcgc3ge5unf4a5i6enhnr5m";
+        $transferSource->amount = 100;
+
+        $transferDestination = new TransferDestination();
+        $transferDestination->id = "ent_w4jelhppmfiufdnatam37wrfc4";
+
+        $transferRequest = new CreateTransferRequest();
+        $transferRequest->transfer_type = TransferType::$commission;
+        $transferRequest->source = $transferSource;
+        $transferRequest->destination = $transferDestination;
+
+        $idempotencyKey = self::idempotencyKey();
+
+        $response1 = $this->fourApi->getMarketplaceClient()->initiateTransferOfFunds(
+            $transferRequest,
+            $idempotencyKey
+        );
+
+        $this->assertResponse($response1, "id", "status");
+
+        try {
+            $this->fourApi->getMarketplaceClient()->initiateTransferOfFunds(
+                $transferRequest,
+                $idempotencyKey
+            );
+            $this->fail("shouldn't get here!");
+        } catch (CheckoutApiException $e) {
+            $this->assertEquals(self::MESSAGE_409, $e->getMessage());
+            $this->assertNotEmpty($e->http_metadata->getHeaders()["Cko-Request-Id"]);
+        }
+    }
+
+    /**
+     * @test
      */
     public function shouldRetrieveEntityBalances()
     {

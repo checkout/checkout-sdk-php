@@ -110,12 +110,18 @@ class MarketplaceClient extends FilesClient
 
     /**
      * @param CreateTransferRequest $transferRequest
+     * @param null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
      */
-    public function initiateTransferOfFunds(CreateTransferRequest $transferRequest)
+    public function initiateTransferOfFunds(CreateTransferRequest $transferRequest, $idempotencyKey = null)
     {
-        return $this->transfersApiClient->post(self::TRANSFERS_PATH, $transferRequest, $this->sdkAuthorization());
+        return $this->transfersApiClient->post(
+            self::TRANSFERS_PATH,
+            $transferRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
     }
 
     /**

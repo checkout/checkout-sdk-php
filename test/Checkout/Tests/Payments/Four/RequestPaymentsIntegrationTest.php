@@ -3,8 +3,11 @@
 namespace Checkout\Tests\Payments\Four;
 
 use Checkout\CheckoutApiException;
+use Checkout\Common\Country;
 use Checkout\Common\Currency;
+use Checkout\Common\Four\AccountHolder;
 use Checkout\Payments\Four\Request\PaymentRequest;
+use Checkout\Payments\Four\Request\Source\RequestBankAccountSource;
 use Checkout\Payments\Four\Request\Source\RequestCardSource;
 use Checkout\Tests\TestCardSource;
 
@@ -17,7 +20,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldMakeCardPayment()
     {
         $paymentResponse = $this->makeCardPayment();
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "processed_on",
             "reference",
@@ -52,7 +56,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer.name",
             "processing",
             "processing.acquirer_transaction_id",
-            "processing.retrieval_reference_number");
+            "processing.retrieval_reference_number"
+        );
         $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
@@ -63,7 +68,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldMakeCard3dsPayment()
     {
         $paymentResponse = $this->make3dsCardPayment();
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "reference",
             "status",
@@ -72,17 +78,19 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer",
             "customer.id",
             "customer.name",
-            "customer.email");
+            "customer.email"
+        );
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldMakeCard3dsPayment_N3d()
+    public function shouldMakeCard3dsPaymentN3d()
     {
         $paymentResponse = $this->make3dsCardPayment(true);
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "processed_on",
             "reference",
@@ -117,7 +125,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer.name",
             "processing",
             "processing.acquirer_transaction_id",
-            "processing.retrieval_reference_number");
+            "processing.retrieval_reference_number"
+        );
         $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
@@ -128,7 +137,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldTokenPayment()
     {
         $paymentResponse = $this->makeTokenPayment();
-        $this->assertResponse($paymentResponse,
+        $this->assertResponse(
+            $paymentResponse,
             "id",
             "processed_on",
             "reference",
@@ -162,7 +172,8 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer.id",
             "processing",
             "processing.acquirer_transaction_id",
-            "processing.retrieval_reference_number");
+            "processing.retrieval_reference_number"
+        );
         $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
@@ -197,5 +208,39 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $this->assertNotNull($paymentResponse2);
 
         //$this->assertEquals($paymentResponse1["action_id"], $paymentResponse2["action_id"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldMakeBankAccountPayment()
+    {
+        $this->markTestSkipped("beta");
+        $accountHolder = new AccountHolder();
+        $accountHolder->type = "individual";
+        $accountHolder->first_name = "John";
+        $accountHolder->last_name = "Doe";
+
+        $requestBankAccountSource = new RequestBankAccountSource();
+        $requestBankAccountSource->payment_method = "ach";
+        $requestBankAccountSource->account_type = "savings";
+        $requestBankAccountSource->country = Country::$US;
+        $requestBankAccountSource->account_number = "1365456745";
+        $requestBankAccountSource->bank_code = "011075150";
+        $requestBankAccountSource->account_holder = $accountHolder;
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestBankAccountSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$USD;
+        $paymentRequest->processing_channel_id = "pc_5jp2az55l3cuths25t5p3xhwru";
+        $paymentRequest->reference = "Bank Account Payment";
+        $paymentRequest->success_url = "https://test.checkout.com/success";
+        $paymentRequest->failure_url = "https://test.checkout.com/failure";
+
+        $paymentResponse = $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest);
+
+        $this->assertResponse($paymentResponse, "id");
     }
 }

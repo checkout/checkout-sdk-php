@@ -33,4 +33,5 @@ class PaymentSourceType
     public static $benefitpay = "benefitpay";
     public static $bancontact = "bancontact";
     public static $tamara = "tamara";
+    public static $bank_account = "bank_account";
 }

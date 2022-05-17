@@ -8,11 +8,6 @@ use Checkout\Common\Four\AccountHolder;
 class MarketplaceAccountHolder extends AccountHolder
 {
     /**
-     * @var MarketplaceAccountHolderType
-     */
-    public $type;
-
-    /**
      * @var string
      */
     public $company_name;

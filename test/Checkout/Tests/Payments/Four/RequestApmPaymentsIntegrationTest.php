@@ -12,6 +12,7 @@ use Checkout\Common\Phone;
 use Checkout\Environment;
 use Checkout\Payments\Four\Request\PaymentRequest;
 use Checkout\Payments\Four\Request\Source\Apm\RequestIdealSource;
+use Checkout\Payments\Four\Request\Source\Apm\RequestPayPalSource;
 use Checkout\Payments\Four\Request\Source\Apm\RequestSofortSource;
 use Checkout\Payments\Four\Request\Source\Apm\RequestTamaraSource;
 use Checkout\Payments\ProcessingSettings;
@@ -199,4 +200,58 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         );
     }
 
+    /**
+     * @test
+     */
+    public function shouldMakePayPalPayment()
+    {
+        $this->markTestSkipped("beta");
+        $requestSource = new RequestPayPalSource();
+
+        $product = new Product();
+        $product->name = "laptop";
+        $product->unit_price = 1000;
+        $product->quantity = 1;
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 1000;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->items = array($product);
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $paymentResponse1 = $this->retriable(
+            function () use (&$paymentRequest) {
+                return $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest);
+            }
+        );
+
+        $this->assertResponse(
+            $paymentResponse1,
+            "id",
+            "status",
+            "_links",
+            "_links.self"
+        );
+
+        $paymentResponse2 = $this->retriable(
+            function () use (&$paymentResponse1) {
+                return $this->fourApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
+            }
+        );
+
+        $this->assertResponse(
+            $paymentResponse2,
+            "id",
+            "requested_on",
+            "source",
+            "amount",
+            //"balances",
+            "currency",
+            "payment_type",
+            "status"
+        );
+    }
 }

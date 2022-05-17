@@ -26,4 +26,9 @@ class AccountHolder
      * @var Phone
      */
     public $phone;
+
+    /**
+     * @var string
+     */
+    public $type;
 }

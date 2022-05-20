@@ -23,7 +23,12 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $sessionId = $responseHostedSession["id"];
 
-        $responseSessionDetails = $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession());
+        $responseSessionDetails = $this->retriable(
+            function () use ($sessionId) {
+                return $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession());
+            }
+        );
+
         $this->assertNotNull($responseSessionDetails);
         self::assertArrayHasKey("http_metadata", $responseSessionDetails);
         self::assertEquals(200, $responseSessionDetails["http_metadata"]->getStatusCode());
@@ -43,7 +48,11 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
         $sessionId = $responseHostedSession["id"];
         $sessionSecret = $responseHostedSession["session_secret"];
 
-        $responseSessionDetailsWithSecret = $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession(), $sessionSecret);
+        $responseSessionDetailsWithSecret = $this->retriable(
+            function () use ($sessionSecret, $sessionId) {
+                return $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession(), $sessionSecret);
+            }
+        );
         $this->assertNotNull($responseSessionDetailsWithSecret);
         self::assertArrayHasKey("http_metadata", $responseSessionDetailsWithSecret);
         self::assertEquals(200, $responseSessionDetailsWithSecret["http_metadata"]->getStatusCode());
@@ -60,7 +69,11 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
         $this->assertNotNull($responseHostedSession);
 
         $sessionId = $responseHostedSession["id"];
-        $responseSessionDetails = $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getAppSession());
+        $responseSessionDetails = $this->retriable(
+            function () use ($sessionId) {
+                return $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getAppSession());
+            }
+        );
         $this->assertNotNull($responseSessionDetails);
         self::assertArrayHasKey("http_metadata", $responseSessionDetails);
         self::assertEquals(200, $responseSessionDetails["http_metadata"]->getStatusCode());
@@ -81,7 +94,11 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $sessionId = $responseHostedSession["id"];
 
-        $responseSessionDetails = $this->fourApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest);
+        $responseSessionDetails = $this->retriable(
+            function () use ($threeDsMethodCompletionRequest, $sessionId) {
+                return $this->fourApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest);
+            }
+        );
         $this->assertNotNull($responseSessionDetails);
     }
 
@@ -101,7 +118,11 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
         $sessionId = $responseHostedSession["id"];
         $sessionSecret = $responseHostedSession["session_secret"];
 
-        $responseSessionDetailsWithSecret = $this->fourApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest, $sessionSecret);
+        $responseSessionDetailsWithSecret = $this->retriable(
+            function () use ($sessionSecret, $threeDsMethodCompletionRequest, $sessionId) {
+                return $this->fourApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest, $sessionSecret);
+            }
+        );
         $this->assertNotNull($responseSessionDetailsWithSecret);
     }
 }

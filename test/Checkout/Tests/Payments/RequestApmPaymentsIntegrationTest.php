@@ -48,15 +48,13 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
             }
         );
-
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
-                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
             }
         );
-
         $this->assertResponse(
             $paymentResponse2,
             "id",
@@ -85,15 +83,13 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
             }
         );
-
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
-                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
             }
         );
-
         $this->assertResponse(
             $paymentResponse2,
             "id",
@@ -124,15 +120,13 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
             }
         );
-
         $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
-                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
             }
         );
-
         $this->assertResponse(
             $paymentResponse2,
             "id",
@@ -164,13 +158,13 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
                 return $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
             }
         );
+        $this->assertResponse($paymentResponse1, "id");
 
         $paymentResponse2 = $this->retriable(
             function () use (&$paymentResponse1) {
-                return $this->defaultApi->getPaymentsClient()->requestPayment($paymentResponse1);
+                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
             }
         );
-
         $this->assertResponse(
             $paymentResponse2,
             "id",
@@ -209,7 +203,6 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
             }
         );
-
         $this->assertResponse(
             $paymentResponse2,
             "id",
@@ -244,7 +237,6 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
                 return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
             }
         );
-
         $this->assertResponse(
             $paymentResponse2,
             "id",

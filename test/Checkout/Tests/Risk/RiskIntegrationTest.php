@@ -179,7 +179,7 @@ class RiskIntegrationTest extends SandboxTestFixture
             "assessment_id",
             "result",
             "result.decision",
-            "result.details",
+            //"result.details",
             "_links"
         );
     }
@@ -225,7 +225,7 @@ class RiskIntegrationTest extends SandboxTestFixture
             "assessment_id",
             "result",
             "result.decision",
-            "result.details",
+            //"result.details",
             "_links"
         );
     }

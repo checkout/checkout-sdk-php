@@ -40,7 +40,7 @@ abstract class SessionSource
     public $work_phone;
 
     /**
-     * @var SessionScheme
+     * @var string
      */
-    public $scheme;
+    public $email;
 }

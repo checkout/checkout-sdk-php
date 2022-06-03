@@ -32,7 +32,7 @@ class RequestNetworkTokenSource extends SessionSource
     public $name;
 
     /**
-     * @var string
+     * @var bool
      */
-    public $email;
+    public $stored;
 }

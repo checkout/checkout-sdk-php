@@ -46,6 +46,11 @@ class SessionRequest
     public $authentication_category;
 
     /**
+     * @var CardholderAccountInfo
+     */
+    public $account_info;
+
+    /**
      * @var ChallengeIndicatorType
      */
     public $challenge_indicator;
@@ -61,6 +66,16 @@ class SessionRequest
     public $reference;
 
     /**
+     * @var MerchantRiskInfo
+     */
+    public $merchant_risk_info;
+
+    /**
+     * @var string
+     */
+    public $prior_transaction_reference;
+
+    /**
      * @var TransactionType
      */
     public $transaction_type;
@@ -71,6 +86,11 @@ class SessionRequest
     public $shipping_address;
 
     /**
+     * @var bool
+     */
+    public $shipping_address_matches_billing;
+
+    /**
      * @var CompletionInfo
      */
     public $completion;
@@ -79,4 +99,9 @@ class SessionRequest
      * @var ChannelData
      */
     public $channel_data;
+
+    /**
+     * @var Recurring
+     */
+    public $recurring;
 }

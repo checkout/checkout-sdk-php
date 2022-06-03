@@ -20,6 +20,31 @@ class ProcessingSettings
     public $shipping_amount;
 
     /**
+     * @var PreferredSchema
+     */
+    public $preferred_scheme;
+
+    /**
+     * @var ProductType
+     */
+    public $product_type;
+
+    /**
+     * @var string
+     */
+    public $open_id;
+
+    /**
+     * @var int
+     */
+    public $original_order_amount;
+
+    /**
+     * @var string
+     */
+    public $receipt_id;
+
+    /**
      * @var Aggregator
      */
     public $aggregator;

@@ -39,7 +39,8 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
 
         $response = $this->defaultApi->getHostedPaymentsClient()->createHostedPaymentsPageSession($request);
 
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "id",
             "reference",
             "_links",
@@ -49,7 +50,8 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
 
         $getResponse = $this->defaultApi->getHostedPaymentsClient()->getHostedPaymentsPageDetails($response["id"]);
 
-        $this->assertResponse($getResponse,
+        $this->assertResponse(
+            $getResponse,
             "id",
             "reference",
             "status",
@@ -66,7 +68,6 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
             "_links.self",
             "_links.redirect"
         );
-
     }
 
     private function createHostedPaymentsRequest()
@@ -85,9 +86,7 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
 
         $recipient = new PaymentRecipient();
         $recipient->account_number = "1234567";
-        $recipient->country = Country::$ES;
         $recipient->dob = "1985-05-15";
-        $recipient->first_name = "IT";
         $recipient->last_name = "Testing";
         $recipient->zip = "12345";
 

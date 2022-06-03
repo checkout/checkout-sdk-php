@@ -100,9 +100,7 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
 
         $recipient = new PaymentRecipient();
         $recipient->account_number = "1234567";
-        $recipient->country = Country::$ES;
         $recipient->dob = "1985-05-15";
-        $recipient->first_name = "IT";
         $recipient->last_name = "Testing";
         $recipient->zip = "12345";
 

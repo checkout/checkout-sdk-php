@@ -2,6 +2,7 @@
 
 namespace Checkout\Sessions\Source;
 
+use Checkout\Sessions\SessionScheme;
 use Checkout\Sessions\SessionSourceType;
 
 class SessionCardSource extends SessionSource
@@ -33,7 +34,12 @@ class SessionCardSource extends SessionSource
     public $name;
 
     /**
-     * @var string
+     * @var SessionScheme
      */
-    public $email;
+    public $scheme;
+
+    /**
+     * @var bool
+     */
+    public $stored;
 }

@@ -2,8 +2,6 @@
 
 namespace Checkout\Payments;
 
-use Checkout\Common\Country;
-
 class PaymentRecipient
 {
     /**
@@ -24,15 +22,5 @@ class PaymentRecipient
     /**
      * @var string
      */
-    public $first_name;
-
-    /**
-     * @var string
-     */
     public $last_name;
-
-    /**
-     * @var Country
-     */
-    public $country;
 }

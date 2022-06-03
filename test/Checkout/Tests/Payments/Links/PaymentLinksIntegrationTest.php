@@ -37,7 +37,8 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
 
         $response = $this->defaultApi->getPaymentLinksClient()->createPaymentLink($request);
 
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "id",
             "reference",
             "expires_on",
@@ -48,7 +49,8 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
 
         $getResponse = $this->defaultApi->getPaymentLinksClient()->getPaymentLink($response["id"]);
 
-        $this->assertResponse($getResponse,
+        $this->assertResponse(
+            $getResponse,
             "id",
             "reference",
             "status",
@@ -65,7 +67,6 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
             "_links.self",
             "_links.redirect"
         );
-
     }
 
     private function createPaymentLinkRequest()
@@ -84,9 +85,7 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
 
         $recipient = new PaymentRecipient();
         $recipient->account_number = "1234567";
-        $recipient->country = Country::$ES;
         $recipient->dob = "1985-05-15";
-        $recipient->first_name = "IT";
         $recipient->last_name = "Testing";
         $recipient->zip = "12345";
 

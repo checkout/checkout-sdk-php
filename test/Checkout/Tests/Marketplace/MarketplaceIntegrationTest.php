@@ -101,7 +101,7 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldInitiateTransferOfFunds()
+    public function shouldInitiateAndRetrieveTransferOfFunds()
     {
         $transferSource = new TransferSource();
         $transferSource->id = "ent_kidtcgc3ge5unf4a5i6enhnr5m";
@@ -118,6 +118,18 @@ class MarketplaceIntegrationTest extends SandboxTestFixture
         $response = $this->fourApi->getMarketplaceClient()->initiateTransferOfFunds($transferRequest);
 
         $this->assertResponse($response, "id", "status");
+
+        $transferResponse = $this->fourApi->getMarketplaceClient()->retrieveATransfer($response["id"]);
+
+        $this->assertResponse(
+            $transferResponse,
+            "id",
+            "source",
+            "destination",
+            "status",
+            "requested_on",
+            "transfer_type"
+        );
     }
 
     /**

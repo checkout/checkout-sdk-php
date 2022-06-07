@@ -125,6 +125,19 @@ class MarketplaceClient extends FilesClient
     }
 
     /**
+     * @param $transferId string
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function retrieveATransfer($transferId)
+    {
+        return $this->transfersApiClient->get(
+            $this->buildPath(self::TRANSFERS_PATH, $transferId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
      * @param $entity_id
      * @param BalancesQuery $balancesQuery
      * @return array

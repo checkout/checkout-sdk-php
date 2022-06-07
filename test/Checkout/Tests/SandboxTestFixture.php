@@ -72,7 +72,7 @@ abstract class SandboxTestFixture extends TestCase
                 $builder->scopes([FourOAuthScope::$Files, FourOAuthScope::$Flow, FourOAuthScope::$Fx, FourOAuthScope::$Gateway,
                     FourOAuthScope::$Marketplace, FourOAuthScope::$SessionsApp, FourOAuthScope::$SessionsBrowser,
                     FourOAuthScope::$Vault, FourOAuthScope::$PayoutsBankDetails, FourOAuthScope::$TransfersCreate,
-                    FourOAuthScope::$BalancesView]);
+                    FourOAuthScope::$TransfersView, FourOAuthScope::$BalancesView]);
                 $builder->setEnvironment(Environment::sandbox());
                 $builder->setLogger($this->logger);
                 $this->fourApi = $builder->build();

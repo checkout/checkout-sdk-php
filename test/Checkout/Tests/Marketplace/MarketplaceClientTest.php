@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Marketplace;
 
+use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
 use Checkout\Marketplace\Balances\BalancesQuery;
 use Checkout\Marketplace\MarketplaceClient;
@@ -37,6 +38,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCreateEntity()
     {
@@ -51,6 +53,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetEntity()
     {
@@ -65,6 +68,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdateEntity()
     {
@@ -79,6 +83,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCreatePaymentInstrument()
     {
@@ -93,6 +98,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldSubmitFile()
     {
@@ -112,6 +118,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldInitiateTransferOfFunds()
     {
@@ -128,6 +135,23 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRetrieveATransfer()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn("response");
+
+
+        $response = $this->client->retrieveATransfer("transfer_id");
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
      */
     public function shouldRetrieveEntityBalances()
     {
@@ -142,6 +166,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdatePayoutSchedule()
     {
@@ -156,6 +181,7 @@ class MarketplaceClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldRetrievePayoutSchedule()
     {

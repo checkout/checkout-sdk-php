@@ -53,4 +53,9 @@ class ProcessingSettings
      * @var DLocalProcessingSettings
      */
     public $dlocal;
+
+    /**
+     * @var PayPalProcessingSettings
+     */
+    public $PayPal;
 }

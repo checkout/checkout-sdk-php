@@ -34,4 +34,8 @@ class PaymentSourceType
     public static $bancontact = "bancontact";
     public static $tamara = "tamara";
     public static $bank_account = "bank_account";
+    public static $alipay_hk = "alipay_hk";
+    public static $alipay_cn = "alipay_cn";
+    public static $gcash = "gcash";
+    public static $wechatpay = "wechatpay";
 }

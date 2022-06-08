@@ -53,4 +53,14 @@ class Product
      * @var string
      */
     public $sku;
+
+    /**
+     * @var string
+     */
+    public $goods_id;
+
+    /**
+     * @var string
+     */
+    public $wxpay_goods_id;
 }

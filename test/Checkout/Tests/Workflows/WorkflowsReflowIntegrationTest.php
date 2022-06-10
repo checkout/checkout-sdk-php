@@ -66,6 +66,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldReflowByEvents()
     {
+        $this->markTestSkipped("unstable");
         $workflow = $this->createWorkflow();
 
         $payment = $this->makeCardPayment();
@@ -89,6 +90,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldReflowBySubjectAndWorkflow()
     {
+        $this->markTestSkipped("unstable");
         $workflow = $this->createWorkflow();
 
         $payment = $this->makeCardPayment();

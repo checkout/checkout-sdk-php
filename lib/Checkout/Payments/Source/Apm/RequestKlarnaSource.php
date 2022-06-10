@@ -35,7 +35,7 @@ class RequestKlarnaSource extends AbstractRequestSource
     public $auto_capture;
 
     /**
-     * @var Address
+     * @var array
      */
     public $billing_address;
 
@@ -50,12 +50,12 @@ class RequestKlarnaSource extends AbstractRequestSource
     public $tax_amount;
 
     /**
-     * @var array of KlarnaProduct
+     * @var array
      */
     public $products;
 
     /**
-     * @var KlarnaCustomer
+     * @var array
      */
     public $customer;
 

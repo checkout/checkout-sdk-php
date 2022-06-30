@@ -10,7 +10,7 @@ abstract class ChannelData
     }
 
     /**
-     * @var ChannelType
+     * @var string value of ChannelType
      */
     public $channel;
 }

@@ -2,13 +2,11 @@
 
 namespace Checkout\Instruments;
 
-use Checkout\Common\InstrumentType;
-
 class CreateInstrumentRequest
 {
 
     /**
-     * @var InstrumentType
+     * @var string value of InstrumentType
      */
     public $type;
 

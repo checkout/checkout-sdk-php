@@ -3,7 +3,6 @@
 namespace Checkout\Sessions;
 
 use Checkout\Common\ChallengeIndicatorType;
-use Checkout\Common\Currency;
 use Checkout\Sessions\Channel\ChannelData;
 use Checkout\Sessions\Completion\CompletionInfo;
 use Checkout\Sessions\Source\SessionSource;
@@ -21,7 +20,7 @@ class SessionRequest
     public $amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 
@@ -36,12 +35,12 @@ class SessionRequest
     public $marketplace;
 
     /**
-     * @var AuthenticationType
+     * @var string value of AuthenticationType
      */
     public $authentication_type;
 
     /**
-     * @var Category
+     * @var string value of Category
      */
     public $authentication_category;
 
@@ -76,7 +75,7 @@ class SessionRequest
     public $prior_transaction_reference;
 
     /**
-     * @var TransactionType
+     * @var string value of TransactionType
      */
     public $transaction_type;
 

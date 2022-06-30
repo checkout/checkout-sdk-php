@@ -20,7 +20,7 @@ class PaymentInstruction
     public $repair;
 
     /**
-     * @var InstructionScheme
+     * @var string value of InstructionScheme
      */
     public $scheme;
 

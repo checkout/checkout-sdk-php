@@ -2,12 +2,10 @@
 
 namespace Checkout\Payments;
 
-use Checkout\Common\Country;
-
 class DLocalProcessingSettings
 {
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $country;
 

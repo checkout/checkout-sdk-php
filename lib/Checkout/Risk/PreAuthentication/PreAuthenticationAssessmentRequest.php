@@ -2,7 +2,6 @@
 
 namespace Checkout\Risk\PreAuthentication;
 
-use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Risk\Device;
 use Checkout\Risk\RiskPayment;
@@ -53,7 +52,7 @@ class PreAuthenticationAssessmentRequest
     public $amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 

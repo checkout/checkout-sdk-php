@@ -5,7 +5,7 @@ namespace Checkout\Marketplace;
 abstract class ScheduleRequest
 {
     /**
-     * @var ScheduleFrequency
+     * @var string value of ScheduleFrequency
      */
     public $frequency;
 

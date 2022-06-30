@@ -10,7 +10,7 @@ class CreateTransferRequest
     public $reference;
 
     /**
-     * @var TransferType
+     * @var string value of TransferType
      */
     public $transfer_type;
 

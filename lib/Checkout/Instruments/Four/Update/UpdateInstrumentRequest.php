@@ -2,12 +2,10 @@
 
 namespace Checkout\Instruments\Four\Update;
 
-use Checkout\Common\InstrumentType;
-
 abstract class UpdateInstrumentRequest
 {
     /**
-     * @var InstrumentType
+     * @var string value of InstrumentType
      */
     public $type;
 

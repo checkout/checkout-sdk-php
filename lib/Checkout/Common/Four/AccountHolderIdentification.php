@@ -2,12 +2,10 @@
 
 namespace Checkout\Common\Four;
 
-use Checkout\Common\Country;
-
 class AccountHolderIdentification
 {
     /**
-     * @var AccountHolderIdentificationType
+     * @var string value of AccountHolderIdentificationType
      */
     public $type;
 
@@ -17,7 +15,7 @@ class AccountHolderIdentification
     public $number;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $issuing_country;
 }

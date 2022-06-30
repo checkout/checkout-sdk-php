@@ -2,12 +2,10 @@
 
 namespace Checkout\Sessions;
 
-use Checkout\Sessions\Channel\ThreeDsMethodCompletion;
-
 class ThreeDsMethodCompletionRequest
 {
     /**
-     * @var ThreeDsMethodCompletion
+     * @var string value of ThreeDsMethodCompletion
      */
     public $three_ds_method_completion;
 }

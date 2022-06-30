@@ -2,12 +2,10 @@
 
 namespace Checkout\Forex;
 
-use Checkout\Common\Currency;
-
 class QuoteRequest
 {
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $source_currency;
 
@@ -17,7 +15,7 @@ class QuoteRequest
     public $source_amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $destination_currency;
 

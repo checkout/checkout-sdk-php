@@ -40,7 +40,7 @@ class CardholderAccountInfo
     public $transactions_today;
 
     /**
-     * @var AuthenticationMethod
+     * @var string value of AuthenticationMethod
      */
     public $authentication_method;
 }

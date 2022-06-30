@@ -11,7 +11,14 @@ class BankAccountFieldQuery extends AbstractQueryFilter
         "payment_network" => "payment-network"
     );
 
+    /**
+     * @var string|null value of AccountHolderType
+     */
     public $account_holder_type = null;
+
+    /**
+     * @var string|null value of PaymentNetwork
+     */
     public $payment_network = null;
 
     public function normalized()

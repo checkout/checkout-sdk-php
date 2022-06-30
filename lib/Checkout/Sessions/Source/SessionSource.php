@@ -3,9 +3,6 @@
 namespace Checkout\Sessions\Source;
 
 use Checkout\Common\Phone;
-use Checkout\Sessions\SessionAddress;
-use Checkout\Sessions\SessionScheme;
-use Checkout\Sessions\SessionSourceType;
 
 abstract class SessionSource
 {
@@ -15,12 +12,12 @@ abstract class SessionSource
     }
 
     /**
-     * @var SessionSourceType
+     * @var string value of SessionSourceType
      */
     public $type;
 
     /**
-     * @var SessionAddress
+     * @var string value of SessionAddress
      */
     public $billing_address;
 

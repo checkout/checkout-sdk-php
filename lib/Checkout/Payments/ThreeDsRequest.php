@@ -2,8 +2,6 @@
 
 namespace Checkout\Payments;
 
-use Checkout\Common\ChallengeIndicatorType;
-use Checkout\Common\Exemption;
 use DateTime;
 
 class ThreeDsRequest
@@ -39,12 +37,12 @@ class ThreeDsRequest
     public $version;
 
     /**
-     * @var Exemption
+     * @var string value of Exemption
      */
     public $exemption;
 
     /**
-     * @var ChallengeIndicatorType
+     * @var string value of ChallengeIndicatorType
      */
     public $challenge_indicator;
 

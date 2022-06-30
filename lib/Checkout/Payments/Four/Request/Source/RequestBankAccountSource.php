@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments\Four\Request\Source;
 
-use Checkout\Common\Country;
 use Checkout\Common\Four\AccountHolder;
 use Checkout\Common\PaymentSourceType;
 
@@ -25,7 +24,7 @@ class RequestBankAccountSource extends AbstractRequestSource
     public $account_type;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $country;
 

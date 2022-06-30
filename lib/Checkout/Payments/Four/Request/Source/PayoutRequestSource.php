@@ -5,7 +5,7 @@ namespace Checkout\Payments\Four\Request\Source;
 class PayoutRequestSource
 {
     /**
-     * @var PayoutSourceType
+     * @var string value of PayoutSourceType
      */
     public $type;
 

@@ -2,7 +2,6 @@
 
 namespace Checkout\Risk\PreCapture;
 
-use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Risk\Device;
 use Checkout\Risk\RiskPayment;
@@ -38,7 +37,7 @@ class PreCaptureAssessmentRequest
     public $amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 

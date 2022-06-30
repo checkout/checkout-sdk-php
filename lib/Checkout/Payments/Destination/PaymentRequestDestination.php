@@ -2,12 +2,10 @@
 
 namespace Checkout\Payments\Destination;
 
-use Checkout\Payments\PaymentDestinationType;
-
 abstract class PaymentRequestDestination
 {
     /**
-     * @var PaymentDestinationType
+     * @var string value of PaymentDestinationType
      */
     public $type;
 

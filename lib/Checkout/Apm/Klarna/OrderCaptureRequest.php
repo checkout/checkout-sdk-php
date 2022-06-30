@@ -12,7 +12,7 @@ class OrderCaptureRequest
     }
 
     /**
-     * @var PaymentSourceType
+     * @var string value of PaymentSourceType
      */
     public $type;
 

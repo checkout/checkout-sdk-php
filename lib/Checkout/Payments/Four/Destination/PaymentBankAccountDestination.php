@@ -2,9 +2,7 @@
 
 namespace Checkout\Payments\Four\Destination;
 
-use Checkout\Common\Country;
 use Checkout\Common\Four\AccountHolder;
-use Checkout\Common\Four\AccountType;
 use Checkout\Common\Four\BankDetails;
 use Checkout\Payments\PaymentDestinationType;
 
@@ -17,7 +15,7 @@ class PaymentBankAccountDestination extends PaymentRequestDestination
     }
 
     /**
-     * @var AccountType
+     * @var string value of AccountType
      */
     public $account_type;
 
@@ -47,7 +45,7 @@ class PaymentBankAccountDestination extends PaymentRequestDestination
     public $swift_bic;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $country;
 

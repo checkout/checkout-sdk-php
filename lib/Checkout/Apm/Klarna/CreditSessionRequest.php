@@ -2,18 +2,15 @@
 
 namespace Checkout\Apm\Klarna;
 
-use Checkout\Common\Country;
-use Checkout\Common\Currency;
-
 class CreditSessionRequest
 {
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $purchase_country;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 

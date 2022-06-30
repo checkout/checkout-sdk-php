@@ -2,12 +2,10 @@
 
 namespace Checkout\Payments\Four\Request\Source;
 
-use Checkout\Common\PaymentSourceType;
-
 class AbstractRequestSource
 {
     /**
-     * @var PaymentSourceType
+     * @var string value of PaymentSourceType
      */
     public $type;
 

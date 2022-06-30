@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments\Source\Apm;
 
-use Checkout\Common\Country;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Payer;
 use Checkout\Payments\Source\AbstractRequestSource;
@@ -16,12 +15,12 @@ class RequestBoletoSource extends AbstractRequestSource
     }
 
     /**
-     * @var IntegrationType
+     * @var string value of IntegrationType
      */
     public $integration_type;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $country;
 

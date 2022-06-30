@@ -5,7 +5,7 @@ namespace Checkout\Marketplace;
 class Document
 {
     /**
-     * @var DocumentType
+     * @var string value of DocumentType
      */
     public $type;
 

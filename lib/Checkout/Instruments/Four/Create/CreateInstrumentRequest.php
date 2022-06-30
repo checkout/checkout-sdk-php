@@ -2,12 +2,10 @@
 
 namespace Checkout\Instruments\Four\Create;
 
-use Checkout\Common\InstrumentType;
-
 abstract class CreateInstrumentRequest
 {
     /**
-     * @var InstrumentType
+     * @var string value of InstrumentType
      */
     public $type;
 

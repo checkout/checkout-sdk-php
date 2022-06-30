@@ -2,8 +2,6 @@
 
 namespace Checkout\Marketplace;
 
-use Checkout\Common\Currency;
-
 class Profile
 {
     /**
@@ -17,7 +15,7 @@ class Profile
     public $mccs;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $default_holding_currency;
 }

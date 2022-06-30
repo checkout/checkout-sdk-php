@@ -2,13 +2,11 @@
 
 namespace Checkout\Payments\Links;
 
-use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Common\MarketplaceData;
 use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
 use Checkout\Payments\PaymentRecipient;
-use Checkout\Payments\PaymentType;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\RiskRequest;
 use Checkout\Payments\ShippingDetails;
@@ -23,7 +21,7 @@ class PaymentLinkRequest
     public $amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 
@@ -108,7 +106,7 @@ class PaymentLinkRequest
     public $capture_on;
 
     /**
-     * @var PaymentType
+     * @var string value of PaymentType
      */
     public $payment_type;
 

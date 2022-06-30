@@ -10,7 +10,7 @@ class MerchantRiskInfo
     public $delivery_email;
 
     /**
-     * @var DeliveryTimeframe
+     * @var string value of DeliveryTimeframe
      */
     public $delivery_timeframe;
 
@@ -25,7 +25,7 @@ class MerchantRiskInfo
     public $is_reorder;
 
     /**
-     * @var ShippingIndicator
+     * @var string value of ShippingIndicator
      */
     public $shipping_indicator;
 }

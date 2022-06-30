@@ -2,8 +2,6 @@
 
 namespace Checkout\Payments\Source\Apm;
 
-use Checkout\Common\Address;
-use Checkout\Common\Country;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Source\AbstractRequestSource;
 
@@ -25,7 +23,7 @@ class RequestKlarnaSource extends AbstractRequestSource
     public $locale;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $purchase_country;
 

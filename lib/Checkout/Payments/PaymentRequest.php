@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments;
 
-use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Payments\Source\AbstractRequestSource;
 use DateTime;
@@ -20,12 +19,12 @@ class PaymentRequest
     public $amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 
     /**
-     * @var PaymentType
+     * @var string value of PaymentType
      */
     public $payment_type;
 

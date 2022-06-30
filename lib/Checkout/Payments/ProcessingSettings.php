@@ -20,12 +20,12 @@ class ProcessingSettings
     public $shipping_amount;
 
     /**
-     * @var PreferredSchema
+     * @var string value of PreferredSchema
      */
     public $preferred_scheme;
 
     /**
-     * @var ProductType
+     * @var string value of ProductType
      */
     public $product_type;
 

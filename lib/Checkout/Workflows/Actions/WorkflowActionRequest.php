@@ -5,7 +5,7 @@ namespace Checkout\Workflows\Actions;
 abstract class WorkflowActionRequest
 {
     /**
-     * @var WorkflowActionType
+     * @var string value of WorkflowActionType
      */
     public $type;
 

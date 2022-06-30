@@ -11,7 +11,7 @@ class BrowserSession extends ChannelData
     }
 
     /**
-     * @var ThreeDsMethodCompletion
+     * @var string value of ThreeDsMethodCompletion
      */
     public $three_ds_method_completion;
 

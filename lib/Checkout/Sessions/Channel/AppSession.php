@@ -41,7 +41,7 @@ class AppSession extends ChannelData
     public $sdk_transaction_id;
 
     /**
-     * @var SdkInterfaceType
+     * @var string value of SdkInterfaceType
      */
     public $sdk_interface_type;
 

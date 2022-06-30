@@ -8,12 +8,12 @@ use Checkout\Payments\Four\Request\Source\AbstractRequestSource;
 class RequestAlipayPlusCNSource extends AbstractRequestSource
 {
     /**
-     * @var TerminalType
+     * @var string value of TerminalType
      */
     public $terminal_type;
 
     /**
-     * @var OsType
+     * @var string OsType
      */
     public $os_type;
 

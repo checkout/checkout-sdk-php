@@ -2,8 +2,6 @@
 
 namespace Checkout\Marketplace;
 
-use Checkout\Common\Country;
-use Checkout\Common\Currency;
 use Checkout\Common\Four\AccountHolder;
 use Checkout\Common\Four\BankDetails;
 use Checkout\Common\InstrumentType;
@@ -16,7 +14,7 @@ class MarketplacePaymentInstrument
     }
 
     /**
-     * @var InstrumentType
+     * @var string value of InstrumentType
      */
     public $type;
 
@@ -61,12 +59,12 @@ class MarketplacePaymentInstrument
     public $swift_bic;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $country;
 

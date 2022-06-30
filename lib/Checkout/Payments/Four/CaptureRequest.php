@@ -10,7 +10,7 @@ class CaptureRequest
     public $amount;
 
     /**
-     * @var CaptureType
+     * @var string value of CaptureType
      */
     public $capture_type;
 

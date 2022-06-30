@@ -3,7 +3,6 @@
 namespace Checkout\Common\Four;
 
 use Checkout\Common\Address;
-use Checkout\Common\Country;
 use Checkout\Common\Phone;
 
 class AccountHolder
@@ -29,7 +28,7 @@ class AccountHolder
     public $phone;
 
     /**
-     * @var AccountHolderType
+     * @var string value of AccountHolderType
      */
     public $type;
 
@@ -49,12 +48,12 @@ class AccountHolder
     public $date_of_birth;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $country_of_birth;
 
     /**
-     * @var ResidentialStatusType
+     * @var string value of ResidentialStatusType
      */
     public $residential_status;
 

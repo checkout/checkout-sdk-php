@@ -2,15 +2,11 @@
 
 namespace Checkout\Payments\Hosted;
 
-use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Common\MarketplaceData;
-use Checkout\Common\PaymentSourceType;
-use Checkout\Common\Product;
 use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
 use Checkout\Payments\PaymentRecipient;
-use Checkout\Payments\PaymentType;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\RiskRequest;
 use Checkout\Payments\ShippingDetails;
@@ -25,7 +21,7 @@ class HostedPaymentsSessionRequest
     public $amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 
@@ -115,7 +111,7 @@ class HostedPaymentsSessionRequest
     public $capture_on;
 
     /**
-     * @var PaymentType
+     * @var string value of PaymentType
      */
     public $payment_type;
 
@@ -130,7 +126,7 @@ class HostedPaymentsSessionRequest
     public $billing_descriptor;
 
     /**
-     * @var PaymentSourceType
+     * @var string value of PaymentSourceType
      */
     public $allow_payment_methods;
 

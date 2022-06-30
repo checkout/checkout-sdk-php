@@ -8,7 +8,7 @@ use Checkout\Common\Phone;
 abstract class SourceRequest
 {
     /**
-     * @var SourceType
+     * @var string value of SourceType
      */
     public $type;
 

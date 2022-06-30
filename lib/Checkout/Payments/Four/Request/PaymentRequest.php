@@ -2,11 +2,9 @@
 
 namespace Checkout\Payments\Four\Request;
 
-use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Common\MarketplaceData;
 use Checkout\Payments\BillingDescriptor;
-use Checkout\Payments\Four\AuthorizationType;
 use Checkout\Payments\Four\Request\Source\AbstractRequestSource;
 use Checkout\Payments\Four\Sender\PaymentSender;
 use Checkout\Payments\PaymentRecipient;
@@ -29,12 +27,12 @@ class PaymentRequest
     public $amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 
     /**
-     * @var AuthorizationType
+     * @var string value of PaymentType
      */
     public $payment_type;
 
@@ -54,7 +52,7 @@ class PaymentRequest
     public $description;
 
     /**
-     * @var AuthorizationType
+     * @var string value of AuthorizationType
      */
     public $authorization_type;
 

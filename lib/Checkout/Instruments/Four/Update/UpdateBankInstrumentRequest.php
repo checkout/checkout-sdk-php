@@ -2,10 +2,7 @@
 
 namespace Checkout\Instruments\Four\Update;
 
-use Checkout\Common\Country;
-use Checkout\Common\Currency;
 use Checkout\Common\Four\AccountHolder;
-use Checkout\Common\Four\AccountType;
 use Checkout\Common\Four\BankDetails;
 use Checkout\Common\InstrumentType;
 
@@ -17,7 +14,7 @@ class UpdateBankInstrumentRequest extends UpdateInstrumentRequest
     }
 
     /**
-     * @var AccountType
+     * @var string value of AccountType
      */
     public $account_type;
 
@@ -52,12 +49,12 @@ class UpdateBankInstrumentRequest extends UpdateInstrumentRequest
     public $swift_bic;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $country;
 

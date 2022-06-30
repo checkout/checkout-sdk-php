@@ -5,7 +5,7 @@ namespace Checkout\Workflows\Conditions;
 abstract class WorkflowConditionRequest
 {
     /**
-     * @var WorkflowConditionType
+     * @var string value of WorkflowConditionType
      */
     public $type;
 

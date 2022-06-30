@@ -5,7 +5,7 @@ namespace Checkout\Tokens;
 abstract class WalletTokenRequest
 {
     /**
-     * @var TokenType
+     * @var string value of TokenType
      */
     public $type;
 

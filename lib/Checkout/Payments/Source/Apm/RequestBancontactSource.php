@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments\Source\Apm;
 
-use Checkout\Common\Country;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Source\AbstractRequestSource;
 
@@ -14,7 +13,7 @@ class RequestBancontactSource extends AbstractRequestSource
     }
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $payment_country;
 

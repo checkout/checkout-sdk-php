@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments\Four\Request;
 
-use Checkout\Common\Currency;
 use Checkout\Payments\Four\Destination\PaymentRequestDestination;
 use Checkout\Payments\Four\Request\Source\PayoutRequestSource;
 use Checkout\Payments\Four\Sender\PaymentSender;
@@ -26,7 +25,7 @@ class PayoutRequest
     public $amount;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 

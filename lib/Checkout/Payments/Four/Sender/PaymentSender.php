@@ -5,7 +5,7 @@ namespace Checkout\Payments\Four\Sender;
 class PaymentSender
 {
     /**
-     * @var PaymentSenderType
+     * @var string value of PaymentSenderType
      */
     public $type;
 

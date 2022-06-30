@@ -30,7 +30,7 @@ class Address
     public $zip;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $country;
 }

@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments;
 
-use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Payments\Destination\PaymentRequestDestination;
 use DateTime;
@@ -20,17 +19,17 @@ class PayoutRequest
     public $amount;
 
     /**
-     * @var FundTransferType
+     * @var string value of FundTransferType
      */
     public $fund_transfer_type;
 
     /**
-     * @var Currency
+     * @var string value of Currency
      */
     public $currency;
 
     /**
-     * @var PaymentType
+     * @var string value of PaymentType
      */
     public $payment_type;
 

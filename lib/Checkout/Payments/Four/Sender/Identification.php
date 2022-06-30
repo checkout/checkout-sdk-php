@@ -2,12 +2,10 @@
 
 namespace Checkout\Payments\Four\Sender;
 
-use Checkout\Common\Country;
-
 class Identification
 {
     /**
-     * @var IdentificationType
+     * @var string value of IdentificationType
      */
     public $type;
 
@@ -17,7 +15,7 @@ class Identification
     public $number;
 
     /**
-     * @var Country
+     * @var string values of Country
      */
     public $issuing_country;
 }

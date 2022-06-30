@@ -10,7 +10,7 @@ abstract class CompletionInfo
     }
 
     /**
-     * @var CompletionInfoType
+     * @var string value of CompletionInfoType
      */
     public $type;
 }

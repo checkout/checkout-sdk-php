@@ -10,7 +10,7 @@ use Checkout\tests\Helpers\Responses;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-class ModelTest extends TestCase
+class ModelTest
 {
     public function testGetValue()
     {

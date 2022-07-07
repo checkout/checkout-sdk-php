@@ -8,7 +8,7 @@ use Checkout\tests\Helpers\HttpHandlers;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-class HttpHandlerTest extends TestCase
+class HttpHandlerTest
 {
     public function testCreate()
     {
@@ -183,6 +183,7 @@ class HttpHandlerTest extends TestCase
         $curl = curl_init('*');
         $result = $method->invokeArgs($handler, array($curl));
         $this->assertInstanceOf(CheckoutHttpException::class, $result);
+
     }
 
     public function testHandleErrorSuccess()

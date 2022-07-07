@@ -14,6 +14,8 @@ class Webhooks
     public static function generateModel($id = '')
     {
         $webhook = new Webhook('www.checkout.com', $id);
+        $webhook->event_types = array("invoice.cancelled", "card.updated");
+        $webhook->active = false;
         return $webhook;
     }
 }

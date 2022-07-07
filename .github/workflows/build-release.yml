@@ -1,0 +1,49 @@
+name: build-release
+on:
+    push:
+        branches:
+            - legacy
+        paths:
+            - version.json
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Setup PHP 5.6
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: "5.6"
+                    coverage: none
+            -   name: Installed version
+                run: php -v
+            -   name: Remove PHPStan
+                run: composer remove --dev phpstan/phpstan
+            -   name: Composer validate
+                run: composer validate
+            -   name: Composer install
+                run: composer install
+            -   name: Run PHPUnit
+                env:
+                    CHECKOUT_SECRET_KEY: ${{ secrets.IT_CHECKOUT_SECRET_KEY }}
+                    CHECKOUT_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_PUBLIC_KEY }}
+                run: vendor/bin/phpunit --verbose
+            -   name: Read release version
+                uses: HardNorth/github-version-generate@v1.1.1
+                with:
+                    version-source: file
+                    version-file: 'version.json'
+                    version-file-extraction-pattern: '"version":\s*"([^"]+)"'
+            -   name: Print release version
+                run: echo "Releasing $CURRENT_VERSION"
+            -   name: Create GitHub release
+                uses: actions/create-release@v1
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                with:
+                    tag_name: ${{ env.CURRENT_VERSION }}
+                    release_name: ${{ env.CURRENT_VERSION }}
+                    body: ${{ github.event.head_commit.message }}
+                    draft: false
+                    prerelease: false

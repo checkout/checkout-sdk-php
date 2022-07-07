@@ -9,12 +9,19 @@ use Checkout\tests\Helpers\Notifications;
 use Checkout\tests\Helpers\Webhooks;
 use PHPUnit\Framework\TestCase;
 
-class EventControllerTest extends TestCase
+class EventControllerTest extends SandboxTestFixture
 {
+    /**
+     * @before
+     */
+    public function before()
+    {
+        $this->init();
+    }
+
     public function testLoad()
     {
-        $checkout = new CheckoutApi();
-        $event = $checkout->events()->load(Events::generateID(), HttpHandler::MODE_RETRIEVE);
+        $event = $this->checkout->events()->load(Events::generateID(), HttpHandler::MODE_RETRIEVE);
 
         $this->assertInstanceOf(HttpHandler::class, $event);
         $this->assertEquals(HttpHandler::METHOD_GET, $event->getMethod());
@@ -24,8 +31,7 @@ class EventControllerTest extends TestCase
 
     public function testRetrieve()
     {
-        $checkout = new CheckoutApi();
-        $event = $checkout->events()->retrieve(array(), HttpHandler::MODE_RETRIEVE);
+        $event = $this->checkout->events()->retrieve(array(), HttpHandler::MODE_RETRIEVE);
 
         $this->assertInstanceOf(HttpHandler::class, $event);
         $this->assertEquals(HttpHandler::METHOD_GET, $event->getMethod());
@@ -35,8 +41,7 @@ class EventControllerTest extends TestCase
 
     public function testNotification()
     {
-        $checkout = new CheckoutApi();
-        $event = $checkout->events()->notification(Events::generateID(), Notifications::generateID(), HttpHandler::MODE_RETRIEVE);
+        $event = $this->checkout->events()->notification(Events::generateID(), Notifications::generateID(), HttpHandler::MODE_RETRIEVE);
 
         $this->assertInstanceOf(HttpHandler::class, $event);
         $this->assertEquals(HttpHandler::METHOD_GET, $event->getMethod());
@@ -46,8 +51,7 @@ class EventControllerTest extends TestCase
 
     public function testTypes()
     {
-        $checkout = new CheckoutApi();
-        $event = $checkout->events()->types(array(), HttpHandler::MODE_RETRIEVE);
+        $event = $this->checkout->events()->types(array(), HttpHandler::MODE_RETRIEVE);
 
         $this->assertInstanceOf(HttpHandler::class, $event);
         $this->assertEquals(HttpHandler::METHOD_GET, $event->getMethod());
@@ -57,8 +61,7 @@ class EventControllerTest extends TestCase
 
     public function testWebhook()
     {
-        $checkout = new CheckoutApi();
-        $event = $checkout->events()->webhook(Events::generateID(), Webhooks::generateID(), HttpHandler::MODE_RETRIEVE);
+        $event = $this->checkout->events()->webhook(Events::generateID(), Webhooks::generateID(), HttpHandler::MODE_RETRIEVE);
 
         $this->assertInstanceOf(HttpHandler::class, $event);
         $this->assertEquals(HttpHandler::METHOD_POST, $event->getMethod());

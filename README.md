@@ -4,6 +4,9 @@
 The **Checkout SDK for PHP** enables developers to easily work with Checkout.com APIs.
 It requires PHP 5.6.
 
+> **Warning**
+> This is a legacy version and is not fully maintained by Checkout team, we recommend using the [latest version](https://github.com/checkout/checkout-sdk-php/releases) to avoid compatibility issues
+
 ## Getting Help
 
 If you encounter a bug with Checkout SDK for PHP please search the existing issues and try to make sure your problem doesn’t already exist before opening a new issue.

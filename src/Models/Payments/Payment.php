@@ -203,9 +203,10 @@ class Payment extends Idempotency
         $source = $this->getValue('source');
         $id = '';
         if (is_array($source) && isset($source['id'])) {
-            $id = $source['id'];
-        } elseif ($source->getId() !== null) {
-            $id = $source->getId();
+            return $source['id'];
+        }
+        if (!is_array($source) && property_exists($source, 'id') && !is_null($source->id)) {
+            return $source->id;
         }
 
         return $id;

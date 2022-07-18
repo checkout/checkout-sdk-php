@@ -52,6 +52,20 @@ class PaymentTest extends TestCase
     {
         $model = Payments::generateModel();
         $this->assertTrue(is_string($model->getSourceId()));
+        //When model does not contain ID
+        unset($model->source->id);
+        $this->assertTrue(is_string($model->getSourceId()));
+        self::assertEquals("", $model->getSourceId());
+        //Generate source as array
+        $model->source = array(
+            "id" => "src_b081e6b34078d0eb40c9a94283",
+            "type" => "card");
+        $this->assertTrue(is_string($model->getSourceId()));
+        self::assertEquals("src_b081e6b34078d0eb40c9a94283", $model->getSourceId());
+        //When array does not have ID
+        $model->source = array("type" => "card");
+        $this->assertTrue(is_string($model->getSourceId()));
+        self::assertEquals("", $model->getSourceId());
     }
 
     public function testIsValid()

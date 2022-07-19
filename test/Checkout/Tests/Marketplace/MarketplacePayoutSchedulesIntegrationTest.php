@@ -40,7 +40,7 @@ class MarketplacePayoutSchedulesIntegrationTest extends SandboxTestFixture
     public function shouldUpdateAndRetrieveWeeklyPayoutSchedules()
     {
         $weeklyRequest = new ScheduleFrequencyWeeklyRequest();
-        $weeklyRequest->by_day = DaySchedule::$FRIDAY;
+        $weeklyRequest->by_day = [DaySchedule::$FRIDAY, DaySchedule::$MONDAY];
 
         $scheduleRequest = new UpdateScheduleRequest();
         $scheduleRequest->enabled = true;
@@ -66,6 +66,7 @@ class MarketplacePayoutSchedulesIntegrationTest extends SandboxTestFixture
             "USD.recurrence.frequency",
             "USD.recurrence.by_day"
         );
+        self::assertTrue(is_array($payoutSchedule["USD"]["recurrence"]["by_day"]));
     }
 
     /**
@@ -112,7 +113,7 @@ class MarketplacePayoutSchedulesIntegrationTest extends SandboxTestFixture
     public function shouldUpdateAndRetrieveMonthlyPayoutSchedules()
     {
         $monthlyRequest = new ScheduleFrequencyMonthlyRequest();
-        $monthlyRequest->by_month_day = 10;
+        $monthlyRequest->by_month_day = [10, 5];
 
         $scheduleRequest = new UpdateScheduleRequest();
         $scheduleRequest->enabled = true;
@@ -138,6 +139,7 @@ class MarketplacePayoutSchedulesIntegrationTest extends SandboxTestFixture
             "USD.recurrence.frequency",
             "USD.recurrence.by_month_day"
         );
+        self::assertTrue(is_array($payoutSchedule["USD"]["recurrence"]["by_month_day"]));
     }
 
     /**

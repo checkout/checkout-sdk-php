@@ -2,19 +2,21 @@
 
 namespace Checkout\Four;
 
+use Checkout\Accounts\AccountsClient;
 use Checkout\ApiClient;
+use Checkout\Balances\BalancesClient;
 use Checkout\CheckoutConfiguration;
 use Checkout\Customers\Four\CustomersClient;
 use Checkout\Disputes\DisputesClient;
 use Checkout\Forex\ForexClient;
 use Checkout\Instruments\Four\InstrumentsClient;
-use Checkout\Marketplace\MarketplaceClient;
 use Checkout\Payments\Four\PaymentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
 use Checkout\Risk\RiskClient;
 use Checkout\Sessions\SessionsClient;
 use Checkout\Tokens\TokensClient;
+use Checkout\Transfers\TransfersClient;
 use Checkout\Workflows\WorkflowsClient;
 
 final class CheckoutApi extends CheckoutApmApi
@@ -26,11 +28,13 @@ final class CheckoutApi extends CheckoutApmApi
     private $forexClient;
     private $disputesClient;
     private $sessionsClient;
-    private $marketplaceClient;
+    private $accountsClient;
     private $hostedPaymentsClient;
     private $paymentLinksClient;
     private $riskClient;
     private $workflowsClient;
+    private $balancesClient;
+    private $transfersClient;
 
     public function __construct(CheckoutConfiguration $configuration)
     {
@@ -47,11 +51,17 @@ final class CheckoutApi extends CheckoutApmApi
         $this->paymentLinksClient = new PaymentLinksClient($baseApiClient, $configuration);
         $this->riskClient = new RiskClient($baseApiClient, $configuration);
         $this->workflowsClient = new WorkflowsClient($baseApiClient, $configuration);
-        $this->marketplaceClient = new MarketplaceClient(
+        $this->balancesClient = new BalancesClient(
+            $this->getBalancesApiClient($configuration),
+            $configuration
+        );
+        $this->transfersClient = new TransfersClient(
+            $this->getTransfersApiClient($configuration),
+            $configuration
+        );
+        $this->accountsClient = new AccountsClient(
             $baseApiClient,
             $this->getFilesApiClient($configuration),
-            $this->getTransfersApiClient($configuration),
-            $this->getBalancesApiClient($configuration),
             $configuration
         );
     }
@@ -113,11 +123,11 @@ final class CheckoutApi extends CheckoutApmApi
     }
 
     /**
-     * @return MarketplaceClient
+     * @return AccountsClient
      */
-    public function getMarketplaceClient()
+    public function getAccountsClient()
     {
-        return $this->marketplaceClient;
+        return $this->accountsClient;
     }
 
     /**
@@ -150,6 +160,22 @@ final class CheckoutApi extends CheckoutApmApi
     public function getWorkflowsClient()
     {
         return $this->workflowsClient;
+    }
+
+    /**
+     * @return BalancesClient
+     */
+    public function getBalancesClient()
+    {
+        return $this->balancesClient;
+    }
+
+    /**
+     * @return TransfersClient
+     */
+    public function getTransfersClient()
+    {
+        return $this->transfersClient;
     }
 
     /**

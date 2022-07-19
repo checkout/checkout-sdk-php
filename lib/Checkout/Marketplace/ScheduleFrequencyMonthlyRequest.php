@@ -5,7 +5,7 @@ namespace Checkout\Marketplace;
 class ScheduleFrequencyMonthlyRequest extends ScheduleRequest
 {
     /**
-     * @var int
+     * @var array int
      */
     public $by_month_day;
 

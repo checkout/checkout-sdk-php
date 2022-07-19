@@ -5,7 +5,7 @@ namespace Checkout\Marketplace;
 class ScheduleFrequencyWeeklyRequest extends ScheduleRequest
 {
     /**
-     * @var string value of DaySchedule
+     * @var array values of DaySchedule
      */
     public $by_day;
 

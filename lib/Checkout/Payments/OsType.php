@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Payments\Four\Request\Source\Apm;
+namespace Checkout\Payments;
 
 class OsType
 {

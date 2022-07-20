@@ -28,4 +28,9 @@ class RequestTokenSource extends AbstractRequestSource
      * @var Phone
      */
     public $phone;
+
+    /**
+     * @var bool
+     */
+    public $store_for_future_use;
 }

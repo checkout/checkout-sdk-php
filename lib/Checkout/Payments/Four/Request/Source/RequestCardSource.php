@@ -45,6 +45,11 @@ class RequestCardSource extends AbstractRequestSource
     public $stored;
 
     /**
+     * @var bool
+     */
+    public $store_for_future_use;
+
+    /**
      * @var Address
      */
     public $billing_address;

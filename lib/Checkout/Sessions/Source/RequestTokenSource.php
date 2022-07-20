@@ -15,4 +15,9 @@ class RequestTokenSource extends SessionSource
      * @var string
      */
     public $token;
+
+    /**
+     * @var bool
+     */
+    public $store_for_future_use;
 }

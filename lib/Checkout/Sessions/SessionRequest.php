@@ -103,4 +103,9 @@ class SessionRequest
      * @var Recurring
      */
     public $recurring;
+
+    /**
+     * @var Installment
+     */
+    public $installment;
 }

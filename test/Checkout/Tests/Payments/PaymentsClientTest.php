@@ -2,11 +2,14 @@
 
 namespace Checkout\Tests\Payments;
 
-use Checkout\Common\Currency;
+use Checkout\CheckoutApiException;
+use Checkout\Common\AccountHolder;
+use Checkout\Payments\AuthorizationRequest;
 use Checkout\Payments\CaptureRequest;
-use Checkout\Payments\PaymentRequest;
 use Checkout\Payments\PaymentsClient;
-use Checkout\Payments\PayoutRequest;
+use Checkout\Payments\Request\PaymentRequest;
+use Checkout\Payments\Request\PayoutRequest;
+use Checkout\Payments\Request\Source\RequestProviderTokenSource;
 use Checkout\Payments\RefundRequest;
 use Checkout\Payments\VoidRequest;
 use Checkout\PlatformType;
@@ -28,51 +31,39 @@ class PaymentsClientTest extends UnitTestFixture
         $this->client = new PaymentsClient($this->apiClient, $this->configuration);
     }
 
-
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldRequestPayment()
     {
 
-        $this->apiClient
-            ->method("post")
-            ->willReturn("foo");
-
-        $response = $this->client->requestPayment(new PaymentRequest());
-        $this->assertNotNull($response);
-    }
-
-    /**
-     * @test
-     */
-    public function shouldRequestPaymentCustomSource()
-    {
-
-        $this->apiClient
-            ->method("post")
-            ->willReturn("foo");
-
-        $customSource = new CustomSource();
-        $customSource->amount = 10;
-        $customSource->currency = Currency::$USD;
+        $source = new RequestProviderTokenSource();
+        $source->payment_method = "method";
+        $source->token = "token";
+        $source->account_holder = new AccountHolder();
 
         $request = new PaymentRequest();
-        $request->source = $customSource;
+        $request->source = $source;
+
+        $this->apiClient
+            ->method("post")
+            ->willReturn("response");
+
         $response = $this->client->requestPayment($request);
         $this->assertNotNull($response);
     }
 
-
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldRequestPayout()
     {
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->requestPayout(new PayoutRequest());
         $this->assertNotNull($response);
@@ -80,13 +71,14 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetPaymentDetails()
     {
 
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->getPaymentDetails("payment_id");
         $this->assertNotNull($response);
@@ -94,13 +86,14 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetPaymentActions()
     {
 
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->getPaymentActions("payment_id");
         $this->assertNotNull($response);
@@ -108,13 +101,14 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCapturePayment()
     {
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->capturePayment("payment_id", new CaptureRequest());
         $this->assertNotNull($response);
@@ -122,13 +116,14 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldRefundPayment()
     {
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->refundPayment("payment_id", new RefundRequest());
         $this->assertNotNull($response);
@@ -136,16 +131,50 @@ class PaymentsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldVoidPayment()
     {
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn("response");
 
         $response = $this->client->voidPayment("payment_id", new VoidRequest());
         $this->assertNotNull($response);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldIncrementPaymentAuthorization()
+    {
+
+        $this->apiClient
+            ->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->incrementPaymentAuthorization("payment_id", new AuthorizationRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldIncrementPaymentAuthorizationIdempotently()
+    {
+
+        $this->apiClient
+            ->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->incrementPaymentAuthorization(
+            "payment_id",
+            new AuthorizationRequest(),
+            "idempotency_key"
+        );
+        $this->assertNotNull($response);
+    }
 }

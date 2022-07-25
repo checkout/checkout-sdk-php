@@ -2,9 +2,15 @@
 
 namespace Checkout\Tests\Instruments;
 
-use Checkout\Instruments\CreateInstrumentRequest;
+use Checkout\CheckoutApiException;
+use Checkout\Common\Country;
+use Checkout\Common\Currency;
+use Checkout\Common\AccountHolderType;
+use Checkout\Instruments\Create\CreateBankAccountInstrumentRequest;
+use Checkout\Instruments\Get\BankAccountFieldQuery;
+use Checkout\Instruments\Get\PaymentNetwork;
 use Checkout\Instruments\InstrumentsClient;
-use Checkout\Instruments\UpdateInstrumentRequest;
+use Checkout\Instruments\Update\UpdateCardInstrumentRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -27,6 +33,7 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCreateInstrument()
     {
@@ -35,13 +42,14 @@ class InstrumentsClientTest extends UnitTestFixture
             ->method("post")
             ->willReturn("foo");
 
-        $response = $this->client->create(new CreateInstrumentRequest());
+        $response = $this->client->create(new CreateBankAccountInstrumentRequest());
         $this->assertNotNull($response);
     }
 
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetInstrument()
     {
@@ -55,6 +63,7 @@ class InstrumentsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdateInstrument()
     {
@@ -62,12 +71,13 @@ class InstrumentsClientTest extends UnitTestFixture
             ->willReturn("foo");
 
 
-        $response = $this->client->update("instrument_id", new UpdateInstrumentRequest());
+        $response = $this->client->update("instrument_id", new UpdateCardInstrumentRequest());
         $this->assertNotNull($response);
     }
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldDeleteInstruments()
     {
@@ -75,6 +85,23 @@ class InstrumentsClientTest extends UnitTestFixture
             ->willReturn("foo");
 
         $response = $this->client->delete("instrument_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetBankAccountFieldFormatting()
+    {
+        $this->apiClient->method("query")
+            ->willReturn("foo");
+
+        $request = new BankAccountFieldQuery();
+        $request->payment_network = PaymentNetwork::$local;
+        $request->account_holder_type = AccountHolderType::$individual;
+
+        $response = $this->client->getBankAccountFieldFormatting(Country::$GB, Currency::$GBP, $request);
         $this->assertNotNull($response);
     }
 }

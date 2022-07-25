@@ -30,6 +30,11 @@ class ProcessingSettings
     public $shipping_amount;
 
     /**
+     * @var Aggregator
+     */
+    public $aggregator;
+
+    /**
      * @var string value of PreferredSchema
      */
     public $preferred_scheme;

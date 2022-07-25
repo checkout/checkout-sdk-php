@@ -17,14 +17,16 @@ class AccountsIntegrationTest extends SandboxTestFixture
 {
     /**
      * @before
+     * @throws
      */
     public function before()
     {
-        $this->init(PlatformType::$fourOAuth);
+        $this->init(PlatformType::$default_oauth);
     }
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCreateGetAndUpdateOnboardEntity()
     {
@@ -45,11 +47,11 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $onboardEntityRequest->individual->date_of_birth = $this->getDateOfBirth();
         $onboardEntityRequest->individual->identification = $this->getTestIdentification();
 
-        $response = $this->fourApi->getAccountsClient()->createEntity($onboardEntityRequest);
+        $response = $this->checkoutApi->getAccountsClient()->createEntity($onboardEntityRequest);
 
         $this->assertResponse($response, "id", "reference");
 
-        $response = $this->fourApi->getAccountsClient()->getEntity($response["id"]);
+        $response = $this->checkoutApi->getAccountsClient()->getEntity($response["id"]);
 
         $this->assertResponse(
             $response,
@@ -68,7 +70,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
 
         $onboardEntityRequest->individual->first_name = "John";
 
-        $updateResponse = $this->fourApi->getAccountsClient()->updateEntity($response["id"], $onboardEntityRequest);
+        $updateResponse = $this->checkoutApi->getAccountsClient()->updateEntity($response["id"], $onboardEntityRequest);
 
         $this->assertResponse($updateResponse, "id");
 
@@ -86,7 +88,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $fileRequest->content_type = "image/jpeg";
         $fileRequest->purpose = "identification";
 
-        $response = $this->fourApi->getAccountsClient()->submitFile($fileRequest);
+        $response = $this->checkoutApi->getAccountsClient()->submitFile($fileRequest);
 
         $this->assertResponse($response, "id");
     }

@@ -3,13 +3,13 @@
 namespace Checkout\Tests;
 
 use Checkout\CheckoutApiException;
-use Checkout\CheckoutFourSdk;
+use Checkout\CheckoutSdk;
 use Checkout\Common\Currency;
 use Checkout\Common\MarketplaceData;
 use Checkout\Environment;
-use Checkout\Payments\Four\Request\PaymentRequest;
-use Checkout\Payments\Four\Request\Source\RequestCardSource;
-use Checkout\Payments\Four\Sender\PaymentIndividualSender;
+use Checkout\Payments\Request\PaymentRequest;
+use Checkout\Payments\Request\Source\RequestCardSource;
+use Checkout\Payments\Sender\PaymentIndividualSender;
 use Checkout\PlatformType;
 use Exception;
 
@@ -18,10 +18,11 @@ class OAuthIntegrationTest extends SandboxTestFixture
 
     /**
      * @before
+     * @throws
      */
     public function before()
     {
-        $this->init(PlatformType::$fourOAuth);
+        $this->init(PlatformType::$default_oauth);
     }
 
     /**
@@ -56,46 +57,45 @@ class OAuthIntegrationTest extends SandboxTestFixture
         $paymentRequest->marketplace = $marketplace;
         $paymentRequest->sender = $paymentIndividualSender;
 
-        $paymentResponse = $this->fourApi->getPaymentsClient()->requestPayment($paymentRequest);
+        $paymentResponse = $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
 
         $this->assertResponse($paymentResponse, "id");
-
     }
 
     /**
      * @test
      */
-    public function shouldFailInitAuthorization_InvalidCredentials()
+    public function shouldFailInitAuthorizationInvalidCredentials()
     {
 
         try {
-            $builder = CheckoutFourSdk::oAuth();
-            $builder->clientCredentials("fake", "fake");
-            $builder->setEnvironment(Environment::sandbox());
-            $this->fourApi = $builder->build();
+            CheckoutSdk::builder()
+                ->oAuth()
+                ->clientCredentials("fake", "fake")
+                ->environment(Environment::sandbox())
+                ->build();
             $this->fail("shouldn't get here");
         } catch (Exception $e) {
             $this->assertEquals("Client error: `POST https://access.sandbox.checkout.com/connect/token` resulted in a `400 Bad Request` response:\n{\"error\":\"invalid_client\"}\n", $e->getMessage());
         }
-
     }
 
     /**
      * @test
      */
-    public function shouldFailInitAuthorization_CustomFakeAuthorizationUri()
+    public function shouldFailInitAuthorizationCustomFakeAuthorizationUri()
     {
         try {
-            $builder = CheckoutFourSdk::oAuth();
-            $builder->clientCredentials("fake", "fake");
-            $builder->authorizationUri("https://test.checkout.com");
-            $builder->setEnvironment(Environment::sandbox());
-            $this->fourApi = $builder->build();
+            CheckoutSdk::builder()
+                ->oAuth()
+                ->clientCredentials("fake", "fake")
+                ->authorizationUri("https://test.checkout.com")
+                ->environment(Environment::sandbox())
+                ->build();
             $this->fail("shouldn't get here");
         } catch (Exception $e) {
             $this->assertTrue(strpos($e->getMessage(), "cURL error 6: Could not resolve host: test.checkout.com") !== false);
         }
-
     }
 
 }

@@ -2,58 +2,66 @@
 
 namespace Checkout;
 
-use Checkout\Apm\CheckoutApmApi;
+use Checkout\Accounts\AccountsClient;
+use Checkout\Balances\BalancesClient;
 use Checkout\Customers\CustomersClient;
 use Checkout\Disputes\DisputesClient;
-use Checkout\Events\EventsClient;
+use Checkout\Forex\ForexClient;
 use Checkout\Instruments\InstrumentsClient;
+use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
-use Checkout\Payments\PaymentsClient;
-use Checkout\Reconciliation\ReconciliationClient;
 use Checkout\Risk\RiskClient;
-use Checkout\Sources\SourcesClient;
+use Checkout\Sessions\SessionsClient;
 use Checkout\Tokens\TokensClient;
-use Checkout\Webhooks\WebhooksClient;
+use Checkout\Transfers\TransfersClient;
+use Checkout\Workflows\WorkflowsClient;
 
 final class CheckoutApi extends CheckoutApmApi
 {
-    private $sourcesClient;
     private $tokensClient;
-    private $instrumentsClient;
-    private $webhooksClient;
-    private $eventsClient;
-    private $paymentsClient;
     private $customersClient;
+    private $paymentsClient;
+    private $instrumentsClient;
+    private $forexClient;
     private $disputesClient;
-    private $paymentLinksClient;
+    private $sessionsClient;
+    private $accountsClient;
     private $hostedPaymentsClient;
+    private $paymentLinksClient;
     private $riskClient;
-    private $reconciliationClient;
+    private $workflowsClient;
+    private $balancesClient;
+    private $transfersClient;
 
-    public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
+    public function __construct(CheckoutConfiguration $configuration)
     {
-        parent::__construct($apiClient, $configuration);
-        $this->sourcesClient = new SourcesClient($apiClient, $configuration);
-        $this->tokensClient = new TokensClient($apiClient, $configuration);
-        $this->instrumentsClient = new InstrumentsClient($apiClient, $configuration);
-        $this->webhooksClient = new WebhooksClient($apiClient, $configuration);
-        $this->eventsClient = new EventsClient($apiClient, $configuration);
-        $this->paymentsClient = new PaymentsClient($apiClient, $configuration);
-        $this->customersClient = new CustomersClient($apiClient, $configuration);
-        $this->disputesClient = new DisputesClient($apiClient, $configuration);
-        $this->paymentLinksClient = new PaymentLinksClient($apiClient, $configuration);
-        $this->hostedPaymentsClient = new HostedPaymentsClient($apiClient, $configuration);
-        $this->riskClient = new RiskClient($apiClient, $configuration);
-        $this->reconciliationClient = new ReconciliationClient($apiClient, $configuration);
-    }
-
-    /**
-     * @return SourcesClient
-     */
-    public function getSourcesClient()
-    {
-        return $this->sourcesClient;
+        $baseApiClient = $this->getBaseApiClient($configuration);
+        parent::__construct($baseApiClient, $configuration);
+        $this->tokensClient = new TokensClient($baseApiClient, $configuration);
+        $this->customersClient = new CustomersClient($baseApiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
+        $this->paymentsClient = new PaymentsClient($baseApiClient, $configuration);
+        $this->instrumentsClient = new InstrumentsClient($baseApiClient, $configuration);
+        $this->forexClient = new ForexClient($baseApiClient, $configuration);
+        $this->disputesClient = new DisputesClient($baseApiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
+        $this->sessionsClient = new SessionsClient($baseApiClient, $configuration);
+        $this->hostedPaymentsClient = new HostedPaymentsClient($baseApiClient, $configuration);
+        $this->paymentLinksClient = new PaymentLinksClient($baseApiClient, $configuration);
+        $this->riskClient = new RiskClient($baseApiClient, $configuration);
+        $this->workflowsClient = new WorkflowsClient($baseApiClient, $configuration);
+        $this->balancesClient = new BalancesClient(
+            $this->getBalancesApiClient($configuration),
+            $configuration
+        );
+        $this->transfersClient = new TransfersClient(
+            $this->getTransfersApiClient($configuration),
+            $configuration
+        );
+        $this->accountsClient = new AccountsClient(
+            $baseApiClient,
+            $this->getFilesApiClient($configuration),
+            $configuration
+        );
     }
 
     /**
@@ -65,27 +73,11 @@ final class CheckoutApi extends CheckoutApmApi
     }
 
     /**
-     * @return InstrumentsClient
+     * @return CustomersClient
      */
-    public function getInstrumentsClient()
+    public function getCustomersClient()
     {
-        return $this->instrumentsClient;
-    }
-
-    /**
-     * @return WebhooksClient
-     */
-    public function getWebhooksClient()
-    {
-        return $this->webhooksClient;
-    }
-
-    /**
-     * @return EventsClient
-     */
-    public function getEventsClient()
-    {
-        return $this->eventsClient;
+        return $this->customersClient;
     }
 
     /**
@@ -97,11 +89,19 @@ final class CheckoutApi extends CheckoutApmApi
     }
 
     /**
-     * @return CustomersClient
+     * @return InstrumentsClient
      */
-    public function getCustomersClient()
+    public function getInstrumentsClient()
     {
-        return $this->customersClient;
+        return $this->instrumentsClient;
+    }
+
+    /**
+     * @return ForexClient
+     */
+    public function getForexClient()
+    {
+        return $this->forexClient;
     }
 
     /**
@@ -113,11 +113,19 @@ final class CheckoutApi extends CheckoutApmApi
     }
 
     /**
-     * @return PaymentLinksClient
+     * @return SessionsClient
      */
-    public function getPaymentLinksClient()
+    public function getSessionsClient()
     {
-        return $this->paymentLinksClient;
+        return $this->sessionsClient;
+    }
+
+    /**
+     * @return AccountsClient
+     */
+    public function getAccountsClient()
+    {
+        return $this->accountsClient;
     }
 
     /**
@@ -129,6 +137,14 @@ final class CheckoutApi extends CheckoutApmApi
     }
 
     /**
+     * @return PaymentLinksClient
+     */
+    public function getPaymentLinksClient()
+    {
+        return $this->paymentLinksClient;
+    }
+
+    /**
      * @return RiskClient
      */
     public function getRiskClient()
@@ -137,10 +153,62 @@ final class CheckoutApi extends CheckoutApmApi
     }
 
     /**
-     * @return ReconciliationClient
+     * @return WorkflowsClient
      */
-    public function getReconciliationClient()
+    public function getWorkflowsClient()
     {
-        return $this->reconciliationClient;
+        return $this->workflowsClient;
+    }
+
+    /**
+     * @return BalancesClient
+     */
+    public function getBalancesClient()
+    {
+        return $this->balancesClient;
+    }
+
+    /**
+     * @return TransfersClient
+     */
+    public function getTransfersClient()
+    {
+        return $this->transfersClient;
+    }
+
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
+    private function getBaseApiClient(CheckoutConfiguration $configuration)
+    {
+        return new ApiClient($configuration, $configuration->getEnvironment()->getBaseUri());
+    }
+
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
+    private function getFilesApiClient(CheckoutConfiguration $configuration)
+    {
+        return new ApiClient($configuration, $configuration->getEnvironment()->getFilesBaseUri());
+    }
+
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
+    private function getTransfersApiClient(CheckoutConfiguration $configuration)
+    {
+        return new ApiClient($configuration, $configuration->getEnvironment()->getTransfersUri());
+    }
+
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
+    private function getBalancesApiClient(CheckoutConfiguration $configuration)
+    {
+        return new ApiClient($configuration, $configuration->getEnvironment()->getBalancesUri());
     }
 }

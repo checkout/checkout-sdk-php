@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Workflows;
 
+use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 use Checkout\Workflows\Actions\WebhookWorkflowActionRequest;
@@ -23,12 +24,13 @@ class WorkflowsClientTest extends UnitTestFixture
      */
     public function init()
     {
-        $this->initMocks(PlatformType::$four);
+        $this->initMocks(PlatformType::$default);
         $this->client = new WorkflowsClient($this->apiClient, $this->configuration);
     }
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCreateWorkflow()
     {
@@ -42,6 +44,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetWorkflows()
     {
@@ -55,6 +58,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetWorkflow()
     {
@@ -68,6 +72,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdateWorkflow()
     {
@@ -81,6 +86,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldRemoveWorkflow()
     {
@@ -93,6 +99,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdateWorkflowAction()
     {
@@ -105,6 +112,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdateWorkflowCondition()
     {
@@ -117,6 +125,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function getEventTypes()
     {
@@ -130,6 +139,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetSubjectEvents()
     {
@@ -143,6 +153,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function getEvent()
     {
@@ -156,6 +167,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function reflowByEvent()
     {
@@ -168,6 +180,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function reflowBySubject()
     {
@@ -180,6 +193,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function reflowByEventAndWorkflow()
     {
@@ -192,6 +206,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function reflowBySubjectAndWorkflow()
     {
@@ -204,6 +219,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function reflow()
     {
@@ -216,6 +232,7 @@ class WorkflowsClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetActionInvocations()
     {

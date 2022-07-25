@@ -14,7 +14,7 @@ class BillingDescriptor
      */
     public $city;
 
-    //Only available in four
+    //Not available on previous
 
     /**
      * @var string

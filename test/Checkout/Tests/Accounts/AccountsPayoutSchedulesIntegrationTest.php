@@ -7,14 +7,14 @@ use Checkout\Accounts\ScheduleFrequencyDailyRequest;
 use Checkout\Accounts\ScheduleFrequencyMonthlyRequest;
 use Checkout\Accounts\ScheduleFrequencyWeeklyRequest;
 use Checkout\Accounts\UpdateScheduleRequest;
+use Checkout\CheckoutApi;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
-use Checkout\CheckoutFourSdk;
+use Checkout\CheckoutSdk;
 use Checkout\Common\Currency;
-use Checkout\Four\CheckoutApi;
-use Checkout\Four\FourOAuthScope;
+use Checkout\OAuthScope;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 
@@ -22,11 +22,12 @@ class AccountsPayoutSchedulesIntegrationTest extends SandboxTestFixture
 {
     /**
      * @before
+     * @throws
      */
     public function before()
     {
         try {
-            $this->init(PlatformType::$fourOAuth);
+            $this->init(PlatformType::$default_oauth);
         } catch (CheckoutAuthorizationException $e) {
         }
     }
@@ -149,12 +150,12 @@ class AccountsPayoutSchedulesIntegrationTest extends SandboxTestFixture
      */
     private static function getPayoutSchedulesCheckoutApi()
     {
-        $builder = CheckoutFourSdk::oAuth();
-        $builder->clientCredentials(
-            getenv("CHECKOUT_FOUR_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID"),
-            getenv("CHECKOUT_FOUR_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET")
-        );
-        $builder->scopes([FourOAuthScope::$Marketplace]);
-        return $builder->build();
+        return CheckoutSdk::builder()->oAuth()
+            ->clientCredentials(
+                getenv("CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID"),
+                getenv("CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET")
+            )
+            ->scopes([OAuthScope::$Marketplace])
+            ->build();
     }
 }

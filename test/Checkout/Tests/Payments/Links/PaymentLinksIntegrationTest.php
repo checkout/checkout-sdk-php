@@ -2,13 +2,19 @@
 
 namespace Checkout\Tests\Payments\Links;
 
-use Checkout\Common\Country;
+use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
+use Checkout\Common\PaymentSourceType;
 use Checkout\Common\Product;
+use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
 use Checkout\Payments\Links\PaymentLinkRequest;
 use Checkout\Payments\PaymentRecipient;
+use Checkout\Payments\PaymentType;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\RiskRequest;
 use Checkout\Payments\ShippingDetails;
@@ -21,6 +27,9 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
 
     /**
      * @before
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function before()
     {
@@ -29,13 +38,13 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCreateAndGetPaymentLink()
     {
-
         $request = $this->createPaymentLinkRequest();
 
-        $response = $this->defaultApi->getPaymentLinksClient()->createPaymentLink($request);
+        $response = $this->checkoutApi->getPaymentLinksClient()->createPaymentLink($request);
 
         $this->assertResponse(
             $response,
@@ -44,10 +53,19 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
             "expires_on",
             "_links",
             "_links.self",
-            "_links.redirect"
+            "_links.redirect",
+            "warnings"
         );
+        foreach ($response["warnings"] as $warning) {
+            $this->assertResponse(
+                $warning,
+                "code",
+                "value",
+                "description"
+            );
+        }
 
-        $getResponse = $this->defaultApi->getPaymentLinksClient()->getPaymentLink($response["id"]);
+        $getResponse = $this->checkoutApi->getPaymentLinksClient()->getPaymentLink($response["id"]);
 
         $this->assertResponse(
             $getResponse,
@@ -106,8 +124,12 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
         $risk = new RiskRequest();
         $risk->enabled = false;
 
+        $billingDescriptor = new BillingDescriptor();
+        $billingDescriptor->city = "London";
+        $billingDescriptor->name = "Awesome name";
+
         $paymentLinkRequest = new PaymentLinkRequest();
-        $paymentLinkRequest->amount = 1000;
+        $paymentLinkRequest->amount = 200;
         $paymentLinkRequest->reference = "reference";
         $paymentLinkRequest->currency = Currency::$GBP;
         $paymentLinkRequest->description = "Payment for Gold Necklace";
@@ -121,6 +143,10 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
         $paymentLinkRequest->locale = "en-GB";
         $paymentLinkRequest->three_ds = $theeDsRequest;
         $paymentLinkRequest->capture = true;
+        $paymentLinkRequest->expires_in = 604800;
+        $paymentLinkRequest->payment_type = PaymentType::$regular;
+        $paymentLinkRequest->billing_descriptor = $billingDescriptor;
+        $paymentLinkRequest->allow_payment_methods = array(PaymentSourceType::$card, PaymentSourceType::$ideal);
 
         return $paymentLinkRequest;
     }

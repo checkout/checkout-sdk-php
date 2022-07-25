@@ -42,7 +42,7 @@ abstract class AbstractStaticKeysCheckoutSdkBuilder extends AbstractCheckoutSdkB
         return preg_match($pattern, $key);
     }
 
-    abstract protected function setPublicKey($publicKey);
+    abstract protected function publicKey($publicKey);
 
-    abstract protected function setSecretKey($secretKey);
+    abstract protected function secretKey($secretKey);
 }

@@ -25,7 +25,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $responseSessionDetails = $this->retriable(
             function () use ($sessionId) {
-                return $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession());
+                return $this->checkoutApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession());
             }
         );
 
@@ -50,7 +50,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $responseSessionDetailsWithSecret = $this->retriable(
             function () use ($sessionSecret, $sessionId) {
-                return $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession(), $sessionSecret);
+                return $this->checkoutApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession(), $sessionSecret);
             }
         );
         $this->assertNotNull($responseSessionDetailsWithSecret);
@@ -71,7 +71,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
         $sessionId = $responseHostedSession["id"];
         $responseSessionDetails = $this->retriable(
             function () use ($sessionId) {
-                return $this->fourApi->getSessionsClient()->updateSession($sessionId, $this->getAppSession());
+                return $this->checkoutApi->getSessionsClient()->updateSession($sessionId, $this->getAppSession());
             }
         );
         $this->assertNotNull($responseSessionDetails);
@@ -96,7 +96,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $responseSessionDetails = $this->retriable(
             function () use ($threeDsMethodCompletionRequest, $sessionId) {
-                return $this->fourApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest);
+                return $this->checkoutApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest);
             }
         );
         $this->assertNotNull($responseSessionDetails);
@@ -120,7 +120,7 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $responseSessionDetailsWithSecret = $this->retriable(
             function () use ($sessionSecret, $threeDsMethodCompletionRequest, $sessionId) {
-                return $this->fourApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest, $sessionSecret);
+                return $this->checkoutApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest, $sessionSecret);
             }
         );
         $this->assertNotNull($responseSessionDetailsWithSecret);

@@ -3,6 +3,9 @@
 namespace Checkout\Tests\Transfers;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 use Checkout\Transfers\CreateTransferRequest;
@@ -14,10 +17,13 @@ class TransfersIntegrationTest extends SandboxTestFixture
 {
     /**
      * @before
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function before()
     {
-        $this->init(PlatformType::$fourOAuth);
+        $this->init(PlatformType::$default_oauth);
     }
 
     /**
@@ -38,11 +44,11 @@ class TransfersIntegrationTest extends SandboxTestFixture
         $transferRequest->source = $transferSource;
         $transferRequest->destination = $transferDestination;
 
-        $response = $this->fourApi->getTransfersClient()->initiateTransferOfFunds($transferRequest);
+        $response = $this->checkoutApi->getTransfersClient()->initiateTransferOfFunds($transferRequest);
 
         $this->assertResponse($response, "id", "status");
 
-        $transferResponse = $this->fourApi->getTransfersClient()->retrieveATransfer($response["id"]);
+        $transferResponse = $this->checkoutApi->getTransfersClient()->retrieveATransfer($response["id"]);
 
         $this->assertResponse(
             $transferResponse,
@@ -75,7 +81,7 @@ class TransfersIntegrationTest extends SandboxTestFixture
 
         $idempotencyKey = self::idempotencyKey();
 
-        $response1 = $this->fourApi->getTransfersClient()->initiateTransferOfFunds(
+        $response1 = $this->checkoutApi->getTransfersClient()->initiateTransferOfFunds(
             $transferRequest,
             $idempotencyKey
         );
@@ -83,7 +89,7 @@ class TransfersIntegrationTest extends SandboxTestFixture
         $this->assertResponse($response1, "id", "status");
 
         try {
-            $this->fourApi->getTransfersClient()->initiateTransferOfFunds(
+            $this->checkoutApi->getTransfersClient()->initiateTransferOfFunds(
                 $transferRequest,
                 $idempotencyKey
             );

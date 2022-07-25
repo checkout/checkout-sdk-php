@@ -3,28 +3,23 @@
 namespace Checkout\Tests\Payments;
 
 use Checkout\CheckoutApiException;
+use Checkout\Common\Country;
 use Checkout\Common\Currency;
-use Checkout\Common\CustomerRequest;
-use Checkout\Payments\Aggregator;
-use Checkout\Payments\PaymentRequest;
-use Checkout\Payments\ProcessingSettings;
-use Checkout\Payments\Source\RequestCardSource;
-use Checkout\Payments\Source\RequestTokenSource;
+use Checkout\Common\AccountHolder;
+use Checkout\Payments\Request\PaymentRequest;
+use Checkout\Payments\Request\Source\RequestBankAccountSource;
+use Checkout\Payments\Request\Source\RequestCardSource;
 use Checkout\Tests\TestCardSource;
-use Checkout\Tokens\CardTokenRequest;
-use DateTime;
 
 class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 {
-
     /**
      * @test
      * @throws CheckoutApiException
      */
     public function shouldMakeCardPayment()
     {
-        $paymentResponse = $this->makeCardPayment(true, 10, new DateTime());
-
+        $paymentResponse = $this->makeCardPayment();
         $this->assertResponse(
             $paymentResponse,
             "id",
@@ -40,24 +35,22 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "auth_code",
             "currency",
             "source.type",
-            //"source.id",
-            //"source.avs_check",
-            //"source.cvv_check",
-            //"source.bin",
-            //"source.card_category",
-            //"source.card_type",
+            "source.id",
+            "source.avs_check",
+            "source.cvv_check",
+            "source.bin",
+            "source.card_category",
+            "source.card_type",
             "source.expiry_month",
             "source.expiry_year",
             "source.last4",
-            //"source.scheme",
-            //"source.name",
-            //"source.fast_funds",
+            "source.scheme",
+            "source.name",
             "source.fingerprint",
             //"source.issuer",
-            //"source.issuer_country",
-            //"source.payouts",
-            //"source.product_id",
-            //"source.product_type",
+            "source.issuer_country",
+            "source.product_id",
+            "source.product_type",
             "customer",
             "customer.id",
             "customer.name",
@@ -103,7 +96,7 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "reference",
             "action_id",
             "response_code",
-            //"scheme_id",
+            "scheme_id",
             "response_summary",
             "status",
             "amount",
@@ -111,24 +104,22 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "auth_code",
             "currency",
             "source.type",
-            //"source.id",
-            //"source.avs_check",
-            //"source.cvv_check",
-            //"source.bin",
-            //"source.card_category",
-            //"source.card_type",
+            "source.id",
+            "source.avs_check",
+            "source.cvv_check",
+            "source.bin",
+            "source.card_category",
+            "source.card_type",
             "source.expiry_month",
             "source.expiry_year",
             "source.last4",
-            //"source.scheme",
-            //"source.name",
-            //"source.fast_funds",
+            "source.scheme",
+            "source.name",
             "source.fingerprint",
             //"source.issuer",
-            //"source.issuer_country",
-            //"source.payouts",
-            //"source.product_id",
-            //"source.product_type",
+            "source.issuer_country",
+            "source.product_id",
+            "source.product_type",
             "customer",
             "customer.id",
             "customer.name",
@@ -146,7 +137,6 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldTokenPayment()
     {
         $paymentResponse = $this->makeTokenPayment();
-
         $this->assertResponse(
             $paymentResponse,
             "id",
@@ -154,7 +144,7 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "reference",
             "action_id",
             "response_code",
-            //"scheme_id",
+            "scheme_id",
             "response_summary",
             "status",
             "amount",
@@ -162,31 +152,28 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "auth_code",
             "currency",
             "source.type",
-            //"source.id",
-            //"source.avs_check",
-            //"source.cvv_check",
-            //"source.bin",
-            //"source.card_category",
-            //"source.card_type",
+            "source.id",
+            "source.avs_check",
+            "source.cvv_check",
+            "source.bin",
+            "source.card_category",
+            "source.card_type",
             "source.expiry_month",
             "source.expiry_year",
             "source.last4",
-            //"source.scheme",
-            //"source.name",
-            //"source.fast_funds",
+            "source.scheme",
+            "source.name",
             "source.fingerprint",
             //"source.issuer",
-            //"source.issuer_country",
-            //"source.payouts",
-            //"source.product_id",
-            //"source.product_type",
+            "source.issuer_country",
+            "source.product_id",
+            "source.product_type",
             "customer",
             "customer.id",
             "processing",
             "processing.acquirer_transaction_id",
             "processing.retrieval_reference_number"
         );
-
         $this->assertEquals("card", $paymentResponse["source"]["type"]);
     }
 
@@ -214,68 +201,46 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $idempotencyKey = $this->idempotencyKey();
 
-        $paymentResponse1 = $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest, $idempotencyKey);
+        $paymentResponse1 = $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest, $idempotencyKey);
         $this->assertNotNull($paymentResponse1);
 
-        $paymentResponse2 = $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest, $idempotencyKey);
+        $paymentResponse2 = $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest, $idempotencyKey);
         $this->assertNotNull($paymentResponse2);
 
-        // $this->assertEquals($paymentResponse1["action_id"], $paymentResponse2["action_id"]);
+        //$this->assertEquals($paymentResponse1["action_id"], $paymentResponse2["action_id"]);
     }
-
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
-    public function shouldMakePaymentsWithAggregator()
+    public function shouldMakeBankAccountPayment()
     {
-        $phone = $this->getPhone();
-        $billingAddress = $this->getAddress();
+        $this->markTestSkipped("beta");
+        $accountHolder = new AccountHolder();
+        $accountHolder->type = "individual";
+        $accountHolder->first_name = "John";
+        $accountHolder->last_name = "Doe";
 
-        $cardTokenRequest = new CardTokenRequest();
-        $cardTokenRequest->name = TestCardSource::$VisaName;
-        $cardTokenRequest->number = TestCardSource::$VisaNumber;
-        $cardTokenRequest->expiry_year = TestCardSource::$VisaExpiryYear;
-        $cardTokenRequest->expiry_month = TestCardSource::$VisaExpiryMonth;
-        $cardTokenRequest->cvv = TestCardSource::$VisaCvv;
-        $cardTokenRequest->billing_address = $billingAddress;
-        $cardTokenRequest->phone = $phone;
-
-        $cardTokenResponse = $this->defaultApi->getTokensClient()->requestCardToken($cardTokenRequest);
-        $this->assertResponse($cardTokenResponse, "token");
-
-        $requestTokenSource = new RequestTokenSource();
-        $requestTokenSource->token = $cardTokenResponse["token"];
-
-        $customerRequest = new CustomerRequest();
-        $customerRequest->email = $this->randomEmail();
-
-        $aggregator = new Aggregator();
-        $aggregator->sub_merchant_id = "9874587412";
-        $aggregator->sub_merchant_name = "Foodics - catering business";
-        $aggregator->sub_merchant_legal_name = "Foodics catering service LLC";
-        $aggregator->sub_merchant_street = "Kuwait Street 1";
-        $aggregator->sub_merchant_city = "Kuwait City";
-        $aggregator->sub_merchant_country = "KWT";
-        $aggregator->sub_merchant_postal_code = "60000";
-        $aggregator->sub_merchant_state = "Kuwait";
-        $aggregator->sub_merchant_email = "[foodcs@support.com](mailto:foodcs@support.com)";
-        $aggregator->sub_merchant_phone = "[+965412478112](tel:+965412478112)";
-        $aggregator->sub_merchant_industry_code = "5411";
-
-        $processing = new ProcessingSettings();
-        $processing->aggregator = $aggregator;
+        $requestBankAccountSource = new RequestBankAccountSource();
+        $requestBankAccountSource->payment_method = "ach";
+        $requestBankAccountSource->account_type = "savings";
+        $requestBankAccountSource->country = Country::$US;
+        $requestBankAccountSource->account_number = "1365456745";
+        $requestBankAccountSource->bank_code = "011075150";
+        $requestBankAccountSource->account_holder = $accountHolder;
 
         $paymentRequest = new PaymentRequest();
-        $paymentRequest->source = $requestTokenSource;
-        $paymentRequest->capture = true;
-        $paymentRequest->reference = uniqid("paymentAggregator");
-        $paymentRequest->amount = 100;
-        $paymentRequest->currency = Currency::$SAR;
-        $paymentRequest->customer = $customerRequest;
-        $paymentRequest->processing = $processing;
+        $paymentRequest->source = $requestBankAccountSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$USD;
+        $paymentRequest->processing_channel_id = "pc_5jp2az55l3cuths25t5p3xhwru";
+        $paymentRequest->reference = "Bank Account Payment";
+        $paymentRequest->success_url = "https://test.checkout.com/success";
+        $paymentRequest->failure_url = "https://test.checkout.com/failure";
 
-        $paymentResponse = $this->defaultApi->getPaymentsClient()->requestPayment($paymentRequest);
+        $paymentResponse = $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+
         $this->assertResponse($paymentResponse, "id");
     }
 }

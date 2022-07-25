@@ -46,7 +46,7 @@ class ThreeDsRequest
      */
     public $challenge_indicator;
 
-    // Only available in Four
+    //Not available on previous
 
     /**
      * @var string

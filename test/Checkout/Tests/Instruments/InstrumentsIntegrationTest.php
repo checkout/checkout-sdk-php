@@ -3,23 +3,27 @@
 namespace Checkout\Tests\Instruments;
 
 use Checkout\CheckoutApiException;
-use Checkout\Common\Address;
-use Checkout\Common\Country;
-use Checkout\Common\InstrumentType;
-use Checkout\Common\Phone;
-use Checkout\Instruments\CreateInstrumentRequest;
-use Checkout\Instruments\InstrumentAccountHolder;
-use Checkout\Instruments\InstrumentCustomerRequest;
-use Checkout\Instruments\UpdateInstrumentRequest;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
+use Checkout\Common\AccountHolder;
+use Checkout\Customers\CustomerRequest;
+use Checkout\Instruments\Create\CreateCustomerInstrumentRequest;
+use Checkout\Instruments\Create\CreateTokenInstrumentRequest;
+use Checkout\Instruments\Update\UpdateCardInstrumentRequest;
+use Checkout\Instruments\Update\UpdateCustomerRequest;
+use Checkout\Instruments\Update\UpdateTokenInstrumentRequest;
 use Checkout\PlatformType;
-use Checkout\Tests\SandboxTestFixture;
-use Checkout\Tokens\CardTokenRequest;
+use Checkout\Tests\Payments\AbstractPaymentsIntegrationTest;
 
-class InstrumentsIntegrationTest extends SandboxTestFixture
+class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
 {
 
     /**
      * @before
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function before()
     {
@@ -28,69 +32,49 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCreateAndGetInstrument()
     {
+        $tokenInstrument = $this->createTokenInstrument();
 
-        $instrument = $this->createInstrument();
+        $getInstrument = $this->checkoutApi->getInstrumentsClient()->get($tokenInstrument["id"]);
         $this->assertResponse(
-            $instrument,
+            $getInstrument,
             "id",
             "type",
+            "fingerprint",
             "expiry_month",
             "expiry_year",
             "scheme",
             "last4",
             "bin",
-            //"card_type",
-            //"card_category",
+            "card_type",
+            "card_category",
             //"issuer",
-            //"issuer_country",
-            //"product_id",
-            //"product_type",
-            "fingerprint",
-            "customer.id",
-            "customer.email",
-            "customer.name"
+            "issuer_country",
+            "product_id",
+            "product_type",
+            "customer"
         );
-
-        // get
-        $this->assertResponse(
-            $this->defaultApi->getInstrumentsClient()->get($instrument["id"]),
-            "id",
-            "type",
-            "expiry_month",
-            "expiry_year",
-            //"scheme",
-            "last4",
-            "bin",
-            //"card_type",
-            //"card_category",
-            //"issuer",
-            //"issuer_country",
-            //"product_id",
-            //"product_type",
-            "fingerprint",
-            "customer.id",
-            "customer.email",
-            "customer.name"
-        );
+        $this->assertEquals($tokenInstrument["id"], $getInstrument["id"]);
+        $this->assertEquals($tokenInstrument["fingerprint"], $getInstrument["fingerprint"]);
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldUpdateAndDeleteInstrument()
+    public function shouldUpdateTokenInstrument()
     {
+        $tokenInstrument = $this->createTokenInstrument();
 
-        $instrument = $this->createInstrument();
+        $tokenResponse = $this->requestToken();
 
-        $updateInstrumentRequest = new UpdateInstrumentRequest();
-        $updateInstrumentRequest->name = "testing";
+        $updateTokenInstrumentRequest = new UpdateTokenInstrumentRequest();
+        $updateTokenInstrumentRequest->token = $tokenResponse["token"];
 
-        // update
-        $updateResponse = $this->defaultApi->getInstrumentsClient()->update($instrument["id"], $updateInstrumentRequest);
+        $updateResponse = $this->checkoutApi->getInstrumentsClient()->update($tokenInstrument["id"], $updateTokenInstrumentRequest);
         $this->assertResponse(
             $updateResponse,
             "type",
@@ -98,77 +82,131 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
             "http_metadata"
         );
         self::assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
-
-        // delete
-        $deleteResponse = $this->defaultApi->getInstrumentsClient()->delete($instrument["id"]);
-        self::assertArrayHasKey("http_metadata", $deleteResponse);
-        self::assertEquals(204, $deleteResponse["http_metadata"]->getStatusCode());
-        try {
-            $this->defaultApi->getInstrumentsClient()->delete($instrument["id"]);
-            $this->fail("shouldn't get here!");
-        } catch (CheckoutApiException $e) {
-            $this->assertEquals(self::MESSAGE_404, $e->getMessage());
-        }
+        $this->assertEquals($tokenInstrument["fingerprint"], $updateResponse["fingerprint"]);
     }
 
     /**
-     * @return mixed
+     * @test
      * @throws CheckoutApiException
      */
-    private function createInstrument()
+    public function shouldUpdateCardInstrument()
     {
-        $address = new Address();
-        $address->address_line1 = "123 Street";
-        $address->address_line2 = "Hollywood Avenue";
-        $address->city = "Los Angeles";
-        $address->state = "CA";
-        $address->zip = "91001";
-        $address->country = Country::$US;
+        $tokenInstrument = $this->createTokenInstrument();
 
-        $phone = new Phone();
-        $phone->country_code = "1";
-        $phone->number = "999555222";
-
-        $instrumentAccountHolder = new InstrumentAccountHolder();
-        $instrumentAccountHolder->billing_address = $address;
-        $instrumentAccountHolder->phone = $phone;
-
-        $customer = new InstrumentCustomerRequest();
-        $customer->email = "instrumentcustomer@checkout.com";
-        $customer->name = "Instrument Customer";
-        $customer->phone = $phone;
+        $customer = new UpdateCustomerRequest();
+        $customer->id = $tokenInstrument["customer"]["id"];
         $customer->default = true;
 
-        $token = $this->createToken()["token"];
+        $accountHolder = new AccountHolder();
+        $accountHolder->first_name = "John";
+        $accountHolder->last_name = "New";
+        $accountHolder->phone = $this->getPhone();
+        $accountHolder->billing_address = $this->getAddress();
 
-        $createInstrumentRequest = new CreateInstrumentRequest();
-        $createInstrumentRequest->type = InstrumentType::$token;
-        $createInstrumentRequest->token = $token;
-        $createInstrumentRequest->account_holder = $instrumentAccountHolder;
-        $createInstrumentRequest->customer = $customer;
 
-        return $this->defaultApi->getInstrumentsClient()->create($createInstrumentRequest);
+        $updateCardInstrumentRequest = new UpdateCardInstrumentRequest();
+        $updateCardInstrumentRequest->expiry_month = 12;
+        $updateCardInstrumentRequest->expiry_year = 2024;
+        $updateCardInstrumentRequest->name = "John New";
+        $updateCardInstrumentRequest->customer = $customer;
+        $updateCardInstrumentRequest->account_holder = $accountHolder;
+
+        $updateResponse = $this->checkoutApi->getInstrumentsClient()->update($tokenInstrument["id"], $updateCardInstrumentRequest);
+        $this->assertResponse(
+            $updateResponse,
+            "type",
+            "fingerprint"
+        );
+        self::assertArrayHasKey('http_metadata', $updateResponse);
+        self::assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
+
+
+        $cardResponse = $this->checkoutApi->getInstrumentsClient()->get($tokenInstrument["id"]);
+        $this->assertResponse(
+            $cardResponse,
+            "id",
+            "type",
+            "fingerprint",
+            "expiry_month",
+            "expiry_year",
+            "card_type",
+            "card_category",
+            "product_id",
+            "product_type",
+            "customer"
+        );
+        $this->assertEquals($updateResponse["fingerprint"], $cardResponse["fingerprint"]);
+        $this->assertEquals($tokenInstrument["customer"]["id"], $cardResponse["customer"]["id"]);
+    }
+
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldDeleteInstrument()
+    {
+        $tokenInstrument = $this->createTokenInstrument();
+
+        $deleteResponse = $this->checkoutApi->getInstrumentsClient()->delete($tokenInstrument["id"]);
+        self::assertArrayHasKey("http_metadata", $deleteResponse);
+        self::assertEquals(204, $deleteResponse["http_metadata"]->getStatusCode());
+        $this->expectException(CheckoutApiException::class);
+        $this->expectExceptionMessage(self::MESSAGE_404);
+        $this->checkoutApi->getInstrumentsClient()->get($tokenInstrument["id"]);
     }
 
     /**
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
-    private function createToken()
+    private function createTokenInstrument()
     {
-        $phone = new Phone();
-        $phone->country_code = "44";
-        $phone->number = "020 222333";
+        $customerRequest = new CustomerRequest();
+        $customerRequest->email = $this->randomEmail();
+        $customerRequest->name = "Instruments";
+        $customerRequest->phone = $this->getPhone();
 
-        $cardTokenRequest = new CardTokenRequest();
-        $cardTokenRequest->name = "Mr. Test";
-        $cardTokenRequest->number = "4242424242424242";
-        $cardTokenRequest->expiry_year = 2025;
-        $cardTokenRequest->expiry_month = 6;
-        $cardTokenRequest->cvv = "100";
-        $cardTokenRequest->billing_address = $this->getAddress();
-        $cardTokenRequest->phone = $phone;
+        $customerResponse = $this->checkoutApi->getCustomersClient()->create($customerRequest);
+        $this->assertResponse($customerResponse, "id");
 
-        return $this->defaultApi->getTokensClient()->requestCardToken($cardTokenRequest);
+        $tokenResponse = $this->requestToken();
+
+        $accountHolder = new AccountHolder();
+        $accountHolder->first_name = "John";
+        $accountHolder->last_name = "Smith";
+        $accountHolder->phone = $this->getPhone();
+        $accountHolder->billing_address = $this->getAddress();
+
+        $createCustomerInstrumentRequest = new CreateCustomerInstrumentRequest();
+        $createCustomerInstrumentRequest->id = $customerResponse["id"];
+
+        $createTokenInstrumentRequest = new CreateTokenInstrumentRequest();
+        $createTokenInstrumentRequest->token = $tokenResponse["token"];
+        $createTokenInstrumentRequest->account_holder = $accountHolder;
+        $createTokenInstrumentRequest->customer = $createCustomerInstrumentRequest;
+
+        $response = $this->checkoutApi->getInstrumentsClient()->create($createTokenInstrumentRequest);
+        $this->assertResponse(
+            $response,
+            "id",
+            "type",
+            "fingerprint",
+            "expiry_month",
+            "expiry_year",
+            "scheme",
+            "last4",
+            "bin",
+            "card_type",
+            "card_category",
+            //"issuer",
+            "issuer_country",
+            "product_id",
+            "product_type",
+            "customer"
+        );
+
+
+        return $response;
     }
 }

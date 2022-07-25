@@ -3,6 +3,7 @@
 namespace Checkout\Tests\Payments;
 
 use Checkout\CheckoutApiException;
+use Closure;
 
 class GetPaymentDetailsIntegrationTest extends AbstractPaymentsIntegrationTest
 {
@@ -17,10 +18,14 @@ class GetPaymentDetailsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $payment = $this->retriable(
             function () use (&$paymentResponse) {
-                return $this->defaultApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
-            });
+                return $this->checkoutApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
+            },
+            self::paymentIsCaptured()
+        );
 
-        $this->assertResponse($payment,
+
+        $this->assertResponse(
+            $payment,
             "id",
             "requested_on",
             "amount",
@@ -29,13 +34,23 @@ class GetPaymentDetailsIntegrationTest extends AbstractPaymentsIntegrationTest
             "reference",
             "status",
             "approved",
-            //"eci",
             "scheme_id",
             "source.id",
             "source.type",
             "source.fingerprint",
-            //"source.card_type",
+            "source.card_type",
             "customer.id",
-            "customer.name");
+            "customer.name"
+        );
+    }
+
+    /**
+     * @return Closure
+     */
+    private function paymentIsCaptured()
+    {
+        return function ($response) {
+            return array_key_exists("status", $response) && $response["status"] == "Captured";
+        };
     }
 }

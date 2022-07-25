@@ -2,6 +2,8 @@
 
 namespace Checkout\Tests\Disputes;
 
+use Checkout\AuthorizationType;
+use Checkout\CheckoutApiException;
 use Checkout\Disputes\DisputeEvidenceRequest;
 use Checkout\Disputes\DisputesClient;
 use Checkout\Disputes\DisputesQueryFilter;
@@ -18,15 +20,19 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @before
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function init()
     {
-        $this->initMocks(PlatformType::$default);
-        $this->client = new DisputesClient($this->apiClient, $this->configuration);
+        $this->initMocks(PlatformType::$previous);
+        $this->client = new DisputesClient($this->apiClient, $this->configuration, AuthorizationType::$secretKey);
     }
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldQueryDispute()
     {
@@ -41,6 +47,7 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetDisputeDetails()
     {
@@ -55,6 +62,7 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldAcceptDispute()
     {
@@ -69,6 +77,7 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldPutEvidence()
     {
@@ -83,6 +92,7 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetEvidence()
     {
@@ -97,6 +107,7 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldSubmitEvidence()
     {
@@ -111,11 +122,12 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUploadFile()
     {
         $fileRequest = new FileRequest();
-        $fileRequest->file = str_replace("\\", "/", getcwd() . "/test/Checkout/Tests/Resources/checkout.jpeg");
+        $fileRequest->file = self::getCheckoutFilePath();
 
         $this->apiClient
             ->method("submitFile")
@@ -127,6 +139,7 @@ class DisputesClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetFileDetails()
     {

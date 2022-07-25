@@ -3,6 +3,9 @@
 namespace Checkout\Tests\Customers;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\Common\Phone;
 use Checkout\Customers\CustomerRequest;
 use Checkout\PlatformType;
@@ -13,10 +16,13 @@ class CustomersIntegrationTest extends SandboxTestFixture
 
     /**
      * @before
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function before()
     {
-        $this->init(PlatformType::$default);
+        $this->init(PlatformType::$default_oauth);
     }
 
     /**
@@ -30,10 +36,10 @@ class CustomersIntegrationTest extends SandboxTestFixture
         $customerRequest->name = "Customer";
         $customerRequest->phone = $this->getPhone();
 
-        $customerResponse = $this->defaultApi->getCustomersClient()->create($customerRequest);
+        $customerResponse = $this->checkoutApi->getCustomersClient()->create($customerRequest);
         $this->assertResponse($customerResponse, "id");
 
-        $customerDetails = $this->defaultApi->getCustomersClient()->get($customerResponse["id"]);
+        $customerDetails = $this->checkoutApi->getCustomersClient()->get($customerResponse["id"]);
         $this->assertResponse(
             $customerDetails,
             "email",
@@ -56,7 +62,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
         $customerRequest->name = "Customer";
         $customerRequest->phone = $this->getPhone();
 
-        $customerResponse = $this->defaultApi->getCustomersClient()->create($customerRequest);
+        $customerResponse = $this->checkoutApi->getCustomersClient()->create($customerRequest);
         $this->assertResponse($customerResponse, "id");
 
         //Edit Customer
@@ -65,11 +71,11 @@ class CustomersIntegrationTest extends SandboxTestFixture
 
         $id = $customerResponse["id"];
 
-        $updateResponse = $this->defaultApi->getCustomersClient()->update($id, $customerRequest);
-        self::assertArrayHasKey("http_metadata", $updateResponse);
-        self::assertEquals(204, $updateResponse["http_metadata"]->getStatusCode());
+        $response = $this->checkoutApi->getCustomersClient()->update($id, $customerRequest);
+        self::assertArrayHasKey("http_metadata", $response);
+        self::assertEquals(204, $response["http_metadata"]->getStatusCode());
 
-        $customerDetails = $this->defaultApi->getCustomersClient()->get($id);
+        $customerDetails = $this->checkoutApi->getCustomersClient()->get($id);
         $this->assertResponse(
             $customerDetails,
             "email",
@@ -90,17 +96,17 @@ class CustomersIntegrationTest extends SandboxTestFixture
         $customerRequest->email = $this->randomEmail();
         $customerRequest->name = "Customer";
 
-        $customerResponse = $this->defaultApi->getCustomersClient()->create($customerRequest);
+        $customerResponse = $this->checkoutApi->getCustomersClient()->create($customerRequest);
         $this->assertResponse($customerResponse, "id");
 
         $id = $customerResponse["id"];
-        $deleteResponse = $this->defaultApi->getCustomersClient()->delete($id);
+        $deleteResponse = $this->checkoutApi->getCustomersClient()->delete($id);
         self::assertArrayHasKey("http_metadata", $deleteResponse);
         self::assertEquals(204, $deleteResponse["http_metadata"]->getStatusCode());
 
         $this->expectException(CheckoutApiException::class);
         $this->expectExceptionMessage(self::MESSAGE_404);
-        $this->defaultApi->getCustomersClient()->get($id);
+        $this->checkoutApi->getCustomersClient()->get($id);
     }
 
     public function getPhone()

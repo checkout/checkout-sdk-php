@@ -21,10 +21,13 @@ class AccountsClientTest extends UnitTestFixture
 
     /**
      * @before
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function init()
     {
-        $this->initMocks(PlatformType::$fourOAuth);
+        $this->initMocks(PlatformType::$default_oauth);
         $this->client = new AccountsClient(
             $this->apiClient,
             $this->apiClient,

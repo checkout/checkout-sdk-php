@@ -2,20 +2,12 @@
 
 namespace Checkout\Customers;
 
-use Checkout\ApiClient;
-use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
-use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
 class CustomersClient extends Client
 {
     const CUSTOMERS_PATH = "customers";
-
-    public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
-    {
-        parent::__construct($apiClient, $configuration, AuthorizationType::$secretKey);
-    }
 
     /**
      * @param $customerId
@@ -57,5 +49,4 @@ class CustomersClient extends Client
     {
         return $this->apiClient->delete($this->buildPath(self::CUSTOMERS_PATH, $customerId), $this->sdkAuthorization());
     }
-
 }

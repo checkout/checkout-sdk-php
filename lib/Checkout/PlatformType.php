@@ -4,8 +4,8 @@ namespace Checkout;
 
 final class PlatformType
 {
+    public static $previous = "previous";
     public static $default = "default";
-    public static $four = "four";
-    public static $fourOAuth = "four_oauth";
+    public static $default_oauth = "default_oauth";
     public static $custom = "custom";
 }

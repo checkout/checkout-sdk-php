@@ -2,8 +2,8 @@
 
 namespace Checkout\Accounts;
 
-use Checkout\Common\Four\AccountHolder;
-use Checkout\Common\Four\BankDetails;
+use Checkout\Common\AccountHolder;
+use Checkout\Common\BankDetails;
 use Checkout\Common\InstrumentType;
 
 class AccountsPaymentInstrument

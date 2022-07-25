@@ -3,13 +3,18 @@
 namespace Checkout\Tests\Payments\Hosted;
 
 use Checkout\CheckoutApiException;
-use Checkout\Common\Country;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
+use Checkout\Common\PaymentSourceType;
 use Checkout\Common\Product;
+use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
 use Checkout\Payments\Hosted\HostedPaymentsSessionRequest;
 use Checkout\Payments\PaymentRecipient;
+use Checkout\Payments\PaymentType;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\RiskRequest;
 use Checkout\Payments\ShippingDetails;
@@ -22,6 +27,9 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
 
     /**
      * @before
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function before()
     {
@@ -34,10 +42,9 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndGetHostedPaymentsPageDetails()
     {
-
         $request = $this->createHostedPaymentsRequest();
 
-        $response = $this->defaultApi->getHostedPaymentsClient()->createHostedPaymentsPageSession($request);
+        $response = $this->checkoutApi->getHostedPaymentsClient()->createHostedPaymentsPageSession($request);
 
         $this->assertResponse(
             $response,
@@ -45,10 +52,19 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
             "reference",
             "_links",
             "_links.self",
-            "_links.redirect"
+            "_links.redirect",
+            "warnings"
         );
+        foreach ($response["warnings"] as $warning) {
+            $this->assertResponse(
+                $warning,
+                "code",
+                "value",
+                "description"
+            );
+        }
 
-        $getResponse = $this->defaultApi->getHostedPaymentsClient()->getHostedPaymentsPageDetails($response["id"]);
+        $getResponse = $this->checkoutApi->getHostedPaymentsClient()->getHostedPaymentsPageDetails($response["id"]);
 
         $this->assertResponse(
             $getResponse,
@@ -107,6 +123,10 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $risk = new RiskRequest();
         $risk->enabled = false;
 
+        $billingDescriptor = new BillingDescriptor();
+        $billingDescriptor->city = "London";
+        $billingDescriptor->name = "Awesome name";
+
         $hostedPaymentRequest = new HostedPaymentsSessionRequest();
         $hostedPaymentRequest->amount = 1000;
         $hostedPaymentRequest->reference = "reference";
@@ -125,6 +145,9 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $hostedPaymentRequest->locale = "en-GB";
         $hostedPaymentRequest->three_ds = $theeDsRequest;
         $hostedPaymentRequest->capture = true;
+        $hostedPaymentRequest->payment_type = PaymentType::$regular;
+        $hostedPaymentRequest->billing_descriptor = $billingDescriptor;
+        $hostedPaymentRequest->allow_payment_methods = array(PaymentSourceType::$card, PaymentSourceType::$ideal);
 
         return $hostedPaymentRequest;
     }

@@ -7,7 +7,6 @@ use Checkout\Payments\RefundRequest;
 
 class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 {
-
     /**
      * @test
      * @throws CheckoutApiException
@@ -16,17 +15,34 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     {
         $paymentResponse = $this->makeCardPayment(true);
 
+        $amount = $paymentResponse["amount"];
         $refundRequest = new RefundRequest();
         $refundRequest->reference = uniqid();
+        $refundRequest->amount = $amount;
 
         $response = $this->retriable(
             function () use (&$paymentResponse, &$refundRequest) {
-                return $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest);
-            });
+                return $this->checkoutApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest);
+            }
+        );
 
-        $this->assertResponse($response,
-            "action_id",
-            "reference");
+        $this->assertResponse($response, "reference", "action_id");
+
+        $paymentDetails = $this->retriable(
+            function () use (&$paymentResponse) {
+                return $this->checkoutApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
+            }
+        );
+
+        $this->assertResponse(
+            $paymentDetails,
+            "balances.total_authorized",
+            "balances.total_captured",
+            "balances.total_refunded"
+        );
+        $this->assertEquals($amount, $paymentDetails["balances"]["total_authorized"]);
+        $this->assertEquals($amount, $paymentDetails["balances"]["total_captured"]);
+        $this->assertEquals($amount, $paymentDetails["balances"]["total_refunded"]);
     }
 
     /**
@@ -45,12 +61,15 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $response1 = $this->retriable(
             function () use (&$paymentResponse, &$refundRequest, &$idempotencyKey) {
-                return $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest, $idempotencyKey);
-            });
+                return $this->checkoutApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest, $idempotencyKey);
+            }
+        );
 
-        $this->assertResponse($response1,
+        $this->assertResponse(
+            $response1,
             "action_id",
-            "reference");
+            "reference"
+        );
 
         $refundRequest2 = new RefundRequest();
         $refundRequest2->reference = uniqid("shouldRefundCardPayment_Idempotent2");
@@ -58,10 +77,10 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $response2 = $this->retriable(
             function () use (&$paymentResponse, &$refundRequest2, &$idempotencyKey) {
-                return $this->defaultApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest2, $idempotencyKey);
-            });
+                return $this->checkoutApi->getPaymentsClient()->refundPayment($paymentResponse["id"], $refundRequest2, $idempotencyKey);
+            }
+        );
 
         $this->assertEquals($response1["action_id"], $response2["action_id"]);
     }
-
 }

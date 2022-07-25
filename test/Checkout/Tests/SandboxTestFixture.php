@@ -5,14 +5,13 @@ namespace Checkout\Tests;
 use Checkout\CheckoutApi;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
-use Checkout\CheckoutDefaultSdk;
 use Checkout\CheckoutException;
-use Checkout\CheckoutFourSdk;
+use Checkout\CheckoutSdk;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
 use Checkout\Common\Phone;
 use Checkout\Environment;
-use Checkout\Four\FourOAuthScope;
+use Checkout\OAuthScope;
 use Checkout\Payments\Payer;
 use Checkout\PlatformType;
 use Exception;
@@ -25,13 +24,13 @@ abstract class SandboxTestFixture extends TestCase
 {
 
     /**
+     * @var \Checkout\Previous\CheckoutApi
+     */
+    protected $previousApi;
+    /**
      * @var CheckoutApi
      */
-    protected $defaultApi;
-    /**
-     * @var \Checkout\Four\CheckoutApi
-     */
-    protected $fourApi;
+    protected $checkoutApi;
 
     const MESSAGE_404 = "The API response status code (404) does not indicate success.";
     const MESSAGE_403 = "The API response status code (403) does not indicate success.";
@@ -50,32 +49,34 @@ abstract class SandboxTestFixture extends TestCase
         $this->logger->pushHandler(new StreamHandler("php://stderr"));
         $this->logger->pushHandler(new StreamHandler("checkout-sdk-test-php.log"));
         switch ($platformType) {
+            case PlatformType::$previous:
+                $this->previousApi = CheckoutSdk::builder()
+                    ->previous()
+                    ->staticKeys()
+                    ->environment(Environment::sandbox())
+                    ->publicKey(getenv("CHECKOUT_PREVIOUS_PUBLIC_KEY"))
+                    ->secretKey(getenv("CHECKOUT_PREVIOUS_SECRET_KEY"))
+                    ->logger($this->logger)
+                    ->build();
+                return;
             case PlatformType::$default:
-                $builder = CheckoutDefaultSdk::staticKeys();
-                $builder->setPublicKey(getenv("CHECKOUT_PUBLIC_KEY"));
-                $builder->setSecretKey(getenv("CHECKOUT_SECRET_KEY"));
-                $builder->setEnvironment(Environment::sandbox());
-                $builder->setLogger($this->logger);
-                $this->defaultApi = $builder->build();
+                $this->checkoutApi = CheckoutSdk::builder()->staticKeys()
+                    ->publicKey(getenv("CHECKOUT_DEFAULT_PUBLIC_KEY"))
+                    ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY"))
+                    ->environment(Environment::sandbox())
+                    ->logger($this->logger)
+                    ->build();
                 return;
-            case PlatformType::$four:
-                $builder = CheckoutFourSdk::staticKeys();
-                $builder->setPublicKey(getenv("CHECKOUT_FOUR_PUBLIC_KEY"));
-                $builder->setSecretKey(getenv("CHECKOUT_FOUR_SECRET_KEY"));
-                $builder->setEnvironment(Environment::sandbox());
-                $builder->setLogger($this->logger);
-                $this->fourApi = $builder->build();
-                return;
-            case PlatformType::$fourOAuth:
-                $builder = CheckoutFourSdk::oAuth();
-                $builder->clientCredentials(getenv("CHECKOUT_FOUR_OAUTH_CLIENT_ID"), getenv("CHECKOUT_FOUR_OAUTH_CLIENT_SECRET"));
-                $builder->scopes([FourOAuthScope::$Files, FourOAuthScope::$Flow, FourOAuthScope::$Fx, FourOAuthScope::$Gateway,
-                    FourOAuthScope::$Marketplace, FourOAuthScope::$SessionsApp, FourOAuthScope::$SessionsBrowser,
-                    FourOAuthScope::$Vault, FourOAuthScope::$PayoutsBankDetails, FourOAuthScope::$TransfersCreate,
-                    FourOAuthScope::$TransfersView, FourOAuthScope::$BalancesView]);
-                $builder->setEnvironment(Environment::sandbox());
-                $builder->setLogger($this->logger);
-                $this->fourApi = $builder->build();
+            case PlatformType::$default_oauth:
+                $this->checkoutApi = CheckoutSdk::builder()->oAuth()
+                    ->clientCredentials(getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID"), getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET"))
+                    ->scopes([OAuthScope::$Files, OAuthScope::$Flow, OAuthScope::$Fx, OAuthScope::$Gateway,
+                        OAuthScope::$Marketplace, OAuthScope::$SessionsApp, OAuthScope::$SessionsBrowser,
+                        OAuthScope::$Vault, OAuthScope::$PayoutsBankDetails, OAuthScope::$TransfersCreate,
+                        OAuthScope::$TransfersView, OAuthScope::$BalancesView])
+                    ->environment(Environment::sandbox())
+                    ->logger($this->logger)
+                    ->build();
                 return;
             default:
                 $this->logger->error("Invalid platform type");

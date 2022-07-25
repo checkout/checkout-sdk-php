@@ -21,19 +21,22 @@ class VoidPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $response = $this->retriable(
             function () use (&$paymentResponse, &$voidRequest) {
-                return $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest);
-            });
+                return $this->checkoutApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest);
+            }
+        );
 
-        $this->assertResponse($response,
+        $this->assertResponse(
+            $response,
             "action_id",
-            "reference");
+            "reference"
+        );
     }
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldVoidCardPayment_Idempotent()
+    public function shouldVoidCardPaymentIdempotent()
     {
         $paymentResponse = $this->makeCardPayment();
 
@@ -44,19 +47,19 @@ class VoidPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $response1 = $this->retriable(
             function () use (&$paymentResponse, &$voidRequest, &$idempotencyKey) {
-                return $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest, $idempotencyKey);
-            });
+                return $this->checkoutApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest, $idempotencyKey);
+            }
+        );
 
         $this->assertNotNull($response1);
 
         $response2 = $this->retriable(
             function () use (&$paymentResponse, &$voidRequest, &$idempotencyKey) {
-                return $this->defaultApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest, $idempotencyKey);
-            });
+                return $this->checkoutApi->getPaymentsClient()->voidPayment($paymentResponse["id"], $voidRequest, $idempotencyKey);
+            }
+        );
 
         $this->assertNotNull($response2);
-
         $this->assertEquals($response1["action_id"], $response2["action_id"]);
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Tokens;
 
+use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 use Checkout\Tokens\ApplePayTokenRequest;
@@ -21,13 +22,14 @@ class TokensClientTest extends UnitTestFixture
      */
     public function init()
     {
-        $this->initMocks(PlatformType::$default);
+        $this->initMocks(PlatformType::$previous);
         $this->client = new TokensClient($this->apiClient, $this->configuration);
     }
 
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldRequestCardToken()
     {
@@ -42,6 +44,7 @@ class TokensClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldRequestWalletToken()
     {

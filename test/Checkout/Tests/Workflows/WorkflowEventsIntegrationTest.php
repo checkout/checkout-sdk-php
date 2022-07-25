@@ -10,10 +10,11 @@ class WorkflowEventsIntegrationTest extends AbstractWorkflowIntegrationTest
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetEventTypes()
     {
-        $response = $this->fourApi->getWorkflowsClient()->getEventTypes();
+        $response = $this->checkoutApi->getWorkflowsClient()->getEventTypes();
         $this->assertResponse($response, "items");
         $eventTypes = $response["items"];
         self::assertTrue(sizeof($eventTypes) >= 8);
@@ -38,21 +39,20 @@ class WorkflowEventsIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldGetSubjectEventAndEvents()
     {
-        $this->markTestSkipped("unstable");
         $this->createWorkflow();
 
         $cardPayment = $this->makeCardPayment(true);
 
         $paymentEvents = $this->retriable(
             function () use (&$cardPayment) {
-                return $this->fourApi->getWorkflowsClient()->getSubjectEvents($cardPayment["id"]);
+                return $this->checkoutApi->getWorkflowsClient()->getSubjectEvents($cardPayment["id"]);
             },
             $this->thereAreTwoPaymentEvents()
         );
 
         foreach ($paymentEvents["data"] as $event) {
             $this->assertResponse($event, "id", "type", "timestamp");
-            $getEvent = $this->fourApi->getWorkflowsClient()->getEvent($event["id"]);
+            $getEvent = $this->checkoutApi->getWorkflowsClient()->getEvent($event["id"]);
             $this->assertResponse(
                 $getEvent,
                 "id",

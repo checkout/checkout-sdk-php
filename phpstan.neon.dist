@@ -4,3 +4,4 @@ parameters:
     level: 1
     paths:
         - lib
+        - test

@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Sessions;
 
+use Checkout\CheckoutApiException;
 use Checkout\PlatformType;
 use Checkout\Sessions\Channel\AppSession;
 use Checkout\Sessions\SessionRequest;
@@ -21,12 +22,13 @@ class SessionsClientTest extends UnitTestFixture
      */
     public function init()
     {
-        $this->initMocks(PlatformType::$fourOAuth);
+        $this->initMocks(PlatformType::$default_oauth);
         $this->client = new SessionsClient($this->apiClient, $this->configuration);
     }
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldRequestSessionCreateSessionOkResponse()
     {

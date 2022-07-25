@@ -3,6 +3,9 @@
 namespace Checkout\Tests\Apm\Ideal;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 
@@ -11,6 +14,9 @@ class IdealIntegrationTest extends SandboxTestFixture
 
     /**
      * @before
+     * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function before()
     {
@@ -24,7 +30,7 @@ class IdealIntegrationTest extends SandboxTestFixture
     public function shouldGetInfo()
     {
         $this->markTestSkipped("unavailable");
-        $response = $this->defaultApi->getIdealClient()->getInfo();
+        $response = $this->checkoutApi->getIdealClient()->getInfo();
         $this->assertResponse(
             $response,
             "_links",
@@ -40,7 +46,7 @@ class IdealIntegrationTest extends SandboxTestFixture
      */
     public function shouldGetIssuers()
     {
-        $response = $this->defaultApi->getIdealClient()->getIssuers();
+        $response = $this->checkoutApi->getIdealClient()->getIssuers();
         $this->assertResponse(
             $response,
             "countries",

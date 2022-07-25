@@ -31,9 +31,9 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
         $sessionId = $responseBrowserSession["id"];
         $sessionSecret = $responseBrowserSession["session_secret"];
 
-        $responseSessionDetails = $this->fourApi->getSessionsClient()->getSessionDetails($sessionId);
+        $responseSessionDetails = $this->checkoutApi->getSessionsClient()->getSessionDetails($sessionId);
         $this->assertNotNull($responseSessionDetails);
-        $responseSessionDetailsWithSecret = $this->fourApi->getSessionsClient()->getSessionDetails(
+        $responseSessionDetailsWithSecret = $this->checkoutApi->getSessionsClient()->getSessionDetails(
             $sessionId,
             $sessionSecret
         );
@@ -60,9 +60,9 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
         $sessionId = $responseNonHostedSession["id"];
         $sessionSecret = $responseNonHostedSession["session_secret"];
 
-        $responseSessionDetails = $this->fourApi->getSessionsClient()->getSessionDetails($sessionId);
+        $responseSessionDetails = $this->checkoutApi->getSessionsClient()->getSessionDetails($sessionId);
         $this->assertNotNull($responseSessionDetails);
-        $responseSessionDetailsWithSecret = $this->fourApi->getSessionsClient()->getSessionDetails(
+        $responseSessionDetailsWithSecret = $this->checkoutApi->getSessionsClient()->getSessionDetails(
             $sessionId,
             $sessionSecret
         );

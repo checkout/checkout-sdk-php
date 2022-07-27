@@ -3,14 +3,15 @@
 namespace Checkout\Tests\Risk;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
-use Checkout\Common\InstrumentType;
-use Checkout\Instruments\CreateInstrumentRequest;
-use Checkout\Instruments\InstrumentAccountHolder;
+use Checkout\Common\AccountHolder;
+use Checkout\Instruments\Create\CreateTokenInstrumentRequest;
 use Checkout\PlatformType;
 use Checkout\Risk\Device;
 use Checkout\Risk\Location;
@@ -36,8 +37,8 @@ class RiskIntegrationTest extends SandboxTestFixture
     /**
      * @before
      * @throws CheckoutAuthorizationException
-     * @throws \Checkout\CheckoutArgumentException
-     * @throws \Checkout\CheckoutException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function before()
     {
@@ -79,7 +80,7 @@ class RiskIntegrationTest extends SandboxTestFixture
         $customerRequest->name = "User";
         $customerRequest->phone = $this->getPhone();
 
-        $customerResponse = $this->defaultApi->getCustomersClient()->create($customerRequest);
+        $customerResponse = $this->checkoutApi->getCustomersClient()->create($customerRequest);
 
         $customerSourcePrism = new CustomerSourcePrism();
         $customerSourcePrism->id = $customerResponse["id"];
@@ -103,18 +104,17 @@ class RiskIntegrationTest extends SandboxTestFixture
         $cardTokenRequest->billing_address = $this->getAddress();
         $cardTokenRequest->phone = $this->getPhone();
 
-        $cardToken = $this->defaultApi->getTokensClient()->requestCardToken($cardTokenRequest);
+        $cardToken = $this->checkoutApi->getTokensClient()->requestCardToken($cardTokenRequest);
 
-        $instrumentAccountHolder = new InstrumentAccountHolder();
+        $instrumentAccountHolder = new AccountHolder();
         $instrumentAccountHolder->billing_address = $this->getAddress();
         $instrumentAccountHolder->phone = $this->getPhone();
 
-        $createInstrumentRequest = new CreateInstrumentRequest();
-        $createInstrumentRequest->type = InstrumentType::$token;
+        $createInstrumentRequest = new CreateTokenInstrumentRequest();
         $createInstrumentRequest->token = $cardToken["token"];
         $createInstrumentRequest->account_holder = $instrumentAccountHolder;
 
-        $instrumentsResponse = $this->defaultApi->getInstrumentsClient()->create($createInstrumentRequest);
+        $instrumentsResponse = $this->checkoutApi->getInstrumentsClient()->create($createInstrumentRequest);
 
         $idSourcePrism = new IdSourcePrism();
         $idSourcePrism->id = $instrumentsResponse["id"];
@@ -139,7 +139,7 @@ class RiskIntegrationTest extends SandboxTestFixture
         $cardTokenRequest->billing_address = $this->getAddress();
         $cardTokenRequest->phone = $this->getPhone();
 
-        $cardToken = $this->defaultApi->getTokensClient()->requestCardToken($cardTokenRequest);
+        $cardToken = $this->checkoutApi->getTokensClient()->requestCardToken($cardTokenRequest);
 
         $riskRequestTokenSource = new RiskRequestTokenSource();
         $riskRequestTokenSource->token = $cardToken["token"];
@@ -173,13 +173,13 @@ class RiskIntegrationTest extends SandboxTestFixture
         $preAuthenticationAssessmentRequest->device = $this->getDevice();
         $preAuthenticationAssessmentRequest->metadata = array("VoucherCode" => "loyalty_10", "discountApplied" => "10", "customer_id" => "2190EF321");
 
-        $response = $this->defaultApi->getRiskClient()->requestPreAuthenticationRiskScan($preAuthenticationAssessmentRequest);
+        $response = $this->checkoutApi->getRiskClient()->requestPreAuthenticationRiskScan($preAuthenticationAssessmentRequest);
         $this->assertResponse(
             $response,
             "assessment_id",
             "result",
             "result.decision",
-            //"result.details",
+            "result.details",
             "_links"
         );
     }
@@ -219,13 +219,13 @@ class RiskIntegrationTest extends SandboxTestFixture
         $preCaptureAssessmentRequest->authentication_result = $authenticationResult;
         $preCaptureAssessmentRequest->authorization_result = $authorizationResult;
 
-        $response = $this->defaultApi->getRiskClient()->requestPreCaptureRiskScan($preCaptureAssessmentRequest);
+        $response = $this->checkoutApi->getRiskClient()->requestPreCaptureRiskScan($preCaptureAssessmentRequest);
         $this->assertResponse(
             $response,
             "assessment_id",
             "result",
             "result.decision",
-            //"result.details",
+            "result.details",
             "_links"
         );
     }

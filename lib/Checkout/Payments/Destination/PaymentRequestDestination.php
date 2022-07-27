@@ -2,7 +2,7 @@
 
 namespace Checkout\Payments\Destination;
 
-abstract class PaymentRequestDestination
+class PaymentRequestDestination
 {
     /**
      * @var string value of PaymentDestinationType

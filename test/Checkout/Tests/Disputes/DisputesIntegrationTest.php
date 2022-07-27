@@ -14,6 +14,7 @@ use DateTimeZone;
 
 class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
 {
+
     /**
      * @test
      * @throws CheckoutApiException
@@ -21,15 +22,16 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldQueryDisputes()
     {
         $disputesQueryFilter = new DisputesQueryFilter();
+        $disputesQueryFilter->limit = 100;
 
         $from = new DateTime();
-        $from->setTimezone(new DateTimeZone("America/Mexico_City"));
+        $from->setTimezone(new DateTimeZone("europe/madrid"));
         $from->sub(new DateInterval("P1Y"));
 
         $disputesQueryFilter->from = $from;
         $disputesQueryFilter->to = new DateTime(); // UTC, now
 
-        $response = $this->defaultApi->getDisputesClient()->query($disputesQueryFilter);
+        $response = $this->checkoutApi->getDisputesClient()->query($disputesQueryFilter);
         $this->assertResponse(
             $response,
             "limit",
@@ -62,10 +64,10 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
         $fileRequest->file = $this->getCheckoutFilePath();
         $fileRequest->purpose = "dispute_evidence";
 
-        $uploadFileResponse = $this->defaultApi->getDisputesClient()->uploadFile($fileRequest);
+        $uploadFileResponse = $this->checkoutApi->getDisputesClient()->uploadFile($fileRequest);
         $this->assertResponse($uploadFileResponse, "id");
 
-        $fileDetails = $this->defaultApi->getDisputesClient()->getFileDetails($uploadFileResponse["id"]);
+        $fileDetails = $this->checkoutApi->getDisputesClient()->getFileDetails($uploadFileResponse["id"]);
         $this->assertResponse(
             $fileDetails,
             "id",
@@ -92,7 +94,7 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $queryResponse = $this->retriable(
             function () use (&$filter) {
-                return $this->defaultApi->getDisputesClient()->query($filter);
+                return $this->checkoutApi->getDisputesClient()->query($filter);
             },
             $this->thereAreDisputes()
         );
@@ -104,7 +106,7 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
         $fileRequest->file = $this->getCheckoutFilePath();
         $fileRequest->purpose = "dispute_evidence";
 
-        $uploadFileResponse = $this->defaultApi->getDisputesClient()->uploadFile($fileRequest);
+        $uploadFileResponse = $this->checkoutApi->getDisputesClient()->uploadFile($fileRequest);
         $this->assertResponse($uploadFileResponse, "id");
 
         $disputeEvidenceRequest = new DisputeEvidenceRequest();
@@ -119,11 +121,11 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $disputeId = $queryResponse["data"]["0"]["id"];
 
-        $updateResponse = $this->defaultApi->getDisputesClient()->putEvidence($disputeId, $disputeEvidenceRequest);
+        $updateResponse = $this->checkoutApi->getDisputesClient()->putEvidence($disputeId, $disputeEvidenceRequest);
         self::assertArrayHasKey("http_metadata", $updateResponse);
         self::assertEquals(204, $updateResponse["http_metadata"]->getStatusCode());
 
-        $evidence = $this->defaultApi->getDisputesClient()->getEvidence($disputeId);
+        $evidence = $this->checkoutApi->getDisputesClient()->getEvidence($disputeId);
         $this->assertResponse(
             $evidence,
             "proof_of_delivery_or_service_file",

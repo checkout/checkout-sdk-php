@@ -21,11 +21,13 @@ class StaticKeysSdkCredentials extends AbstractStaticKeysSdkCredentials
     {
         switch ($authorizationType) {
             case AuthorizationType::$publicKey:
+            case AuthorizationType::$publicKeyOrOAuth:
                 if (empty($this->publicKey)) {
                     throw CheckoutAuthorizationException::invalidPublicKey();
                 }
                 return new SdkAuthorization(PlatformType::$default, $this->publicKey);
             case AuthorizationType::$secretKey:
+            case AuthorizationType::$secretKeyOrOAuth:
                 if (empty($this->secretKey)) {
                     throw CheckoutAuthorizationException::invalidSecretKey();
                 }

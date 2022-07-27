@@ -3,7 +3,9 @@
 namespace Checkout\Tests\Sessions;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\Common\ChallengeIndicatorType;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
@@ -35,12 +37,12 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
     /**
      * @before
      * @throws CheckoutAuthorizationException
-     * @throws \Checkout\CheckoutArgumentException
-     * @throws \Checkout\CheckoutException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
      */
     public function before()
     {
-        $this->init(PlatformType::$fourOAuth);
+        $this->init(PlatformType::$default_oauth);
     }
 
     /**
@@ -109,7 +111,7 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
         $sessionRequest->completion = $nonHostedCompletionInfo;
         $sessionRequest->channel_data = $channelData;
 
-        $responseNonHostedSession = $this->fourApi->getSessionsClient()->requestSession($sessionRequest);
+        $responseNonHostedSession = $this->checkoutApi->getSessionsClient()->requestSession($sessionRequest);
 
         $this->assertResponse($responseNonHostedSession, "id", "session_secret");
 
@@ -161,7 +163,7 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
         $sessionRequest->shipping_address = $shippingAddress;
         $sessionRequest->completion = $hostedCompletionInfo;
 
-        $responseHostedSession = $this->fourApi->getSessionsClient()->requestSession($sessionRequest);
+        $responseHostedSession = $this->checkoutApi->getSessionsClient()->requestSession($sessionRequest);
 
         $this->assertResponse($responseHostedSession, "id", "session_secret");
         return $responseHostedSession;

@@ -4,8 +4,8 @@ namespace Checkout\Apm;
 
 use Checkout\ApiClient;
 use Checkout\Apm\Ideal\IdealClient;
-use Checkout\Apm\Klarna\KlarnaClient;
-use Checkout\Apm\Sepa\SepaClient;
+use Checkout\Apm\Previous\Klarna\KlarnaClient;
+use Checkout\Apm\Previous\Sepa\SepaClient;
 use Checkout\CheckoutConfiguration;
 
 class CheckoutApmApi

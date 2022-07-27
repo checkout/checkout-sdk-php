@@ -15,14 +15,4 @@ class PaymentRequestIdDestination extends PaymentRequestDestination
      * @var string
      */
     public $id;
-
-    /**
-     * @var string
-     */
-    public $first_name;
-
-    /**
-     * @var string
-     */
-    public $last_name;
 }

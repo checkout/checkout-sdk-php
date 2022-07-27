@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Payments\Links;
 
+use Checkout\CheckoutApiException;
 use Checkout\Payments\Links\PaymentLinkRequest;
 use Checkout\Payments\Links\PaymentLinksClient;
 use Checkout\PlatformType;
@@ -19,12 +20,13 @@ class PaymentLinksClientTest extends UnitTestFixture
      */
     public function init()
     {
-        $this->initMocks(PlatformType::$default);
+        $this->initMocks(PlatformType::$previous);
         $this->client = new PaymentLinksClient($this->apiClient, $this->configuration);
     }
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetPaymentLink()
     {
@@ -40,6 +42,7 @@ class PaymentLinksClientTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldCreatePaymentLink()
     {

@@ -20,7 +20,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
     {
         $workflow = $this->createWorkflow();
 
-        $workflowResponse = $this->fourApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
+        $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
 
         $this->assertResponse(
             $workflowResponse,
@@ -61,7 +61,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
             }
         }
 
-        $workflows = $this->fourApi->getWorkflowsClient()->getWorkflows();
+        $workflows = $this->checkoutApi->getWorkflowsClient()->getWorkflows();
 
         foreach ($workflows["data"] as $workflow) {
             $this->assertResponse(
@@ -86,7 +86,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
         $updateWorkflowRequest->name = "PHP testing";
         $updateWorkflowRequest->active = true;
 
-        $updateWorkflowResponse = $this->fourApi->getWorkflowsClient()->updateWorkflow($workflow["id"], $updateWorkflowRequest);
+        $updateWorkflowResponse = $this->checkoutApi->getWorkflowsClient()->updateWorkflow($workflow["id"], $updateWorkflowRequest);
         $this->assertResponse($updateWorkflowResponse, "name", "active", "http_metadata");
         self::assertEquals(200, $updateWorkflowResponse["http_metadata"]->getStatusCode());
 
@@ -96,12 +96,13 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdateWorkflowAction()
     {
         $workflow = $this->createWorkflow();
 
-        $workflowResponse = $this->fourApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
+        $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
 
         $this->assertResponse(
             $workflowResponse,
@@ -122,11 +123,11 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
         $actionRequest->url = 'https://google.com/fail/fake';
         $actionRequest->signature = $signature;
 
-        $updateResponse = $this->fourApi->getWorkflowsClient()->updateWorkflowAction($workflow["id"], $actionId, $actionRequest);
+        $updateResponse = $this->checkoutApi->getWorkflowsClient()->updateWorkflowAction($workflow["id"], $actionId, $actionRequest);
         self::assertArrayHasKey("http_metadata", $updateResponse);
         self::assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
 
-        $workflowUpdated = $this->fourApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
+        $workflowUpdated = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
         $this->assertResponse($workflowUpdated, "actions");
 
         $action = $workflowUpdated["actions"][0];
@@ -137,12 +138,13 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
 
     /**
      * @test
+     * @throws CheckoutApiException
      */
     public function shouldUpdateWorkflowCondition()
     {
         $workflow = $this->createWorkflow();
 
-        $workflowResponse = $this->fourApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
+        $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
 
         $this->assertResponse(
             $workflowResponse,
@@ -180,11 +182,11 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
                 'dispute_won']
         ];
 
-        $updateResponse = $this->fourApi->getWorkflowsClient()->updateWorkflowCondition($workflow["id"], $conditionEvent["id"], $conditionRequest);
+        $updateResponse = $this->checkoutApi->getWorkflowsClient()->updateWorkflowCondition($workflow["id"], $conditionEvent["id"], $conditionRequest);
         self::assertArrayHasKey("http_metadata", $updateResponse);
         self::assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
 
-        $workflowUpdated = $this->fourApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
+        $workflowUpdated = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
         $this->assertResponse($workflowUpdated, "conditions");
 
         self::assertTrue(sizeof($workflowUpdated["conditions"]) == 3);

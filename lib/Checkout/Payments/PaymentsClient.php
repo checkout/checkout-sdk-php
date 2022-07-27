@@ -7,15 +7,16 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
+use Checkout\Payments\Request\PaymentRequest;
+use Checkout\Payments\Request\PayoutRequest;
 
 class PaymentsClient extends Client
 {
-
     const PAYMENTS_PATH = "payments";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
-        parent::__construct($apiClient, $configuration, AuthorizationType::$secretKey);
+        parent::__construct($apiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
     }
 
     /**
@@ -62,12 +63,12 @@ class PaymentsClient extends Client
 
     /**
      * @param $paymentId
-     * @param CaptureRequest|null $captureRequest
+     * @param CaptureRequest $captureRequest
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
      */
-    public function capturePayment($paymentId, CaptureRequest $captureRequest = null, $idempotencyKey = null)
+    public function capturePayment($paymentId, CaptureRequest $captureRequest, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "captures"), $captureRequest, $this->sdkAuthorization(), $idempotencyKey);
     }
@@ -94,6 +95,18 @@ class PaymentsClient extends Client
     public function voidPayment($paymentId, VoidRequest $voidRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "voids"), $voidRequest, $this->sdkAuthorization(), $idempotencyKey);
+    }
+
+    /**
+     * @param $paymentId
+     * @param AuthorizationRequest|null $authorizationRequest
+     * @param string|null $idempotencyKey
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function incrementPaymentAuthorization($paymentId, AuthorizationRequest $authorizationRequest = null, $idempotencyKey = null)
+    {
+        return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "authorizations"), $authorizationRequest, $this->sdkAuthorization(), $idempotencyKey);
     }
 
 }

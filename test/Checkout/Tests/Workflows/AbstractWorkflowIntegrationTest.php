@@ -3,7 +3,7 @@
 namespace Checkout\Tests\Workflows;
 
 use Checkout\CheckoutApiException;
-use Checkout\Tests\Payments\Four\AbstractPaymentsIntegrationTest;
+use Checkout\Tests\Payments\AbstractPaymentsIntegrationTest;
 use Checkout\Workflows\Actions\WebhookSignature;
 use Checkout\Workflows\Actions\WebhookWorkflowActionRequest;
 use Checkout\Workflows\Conditions\EntityWorkflowConditionRequest;
@@ -66,7 +66,7 @@ abstract class AbstractWorkflowIntegrationTest extends AbstractPaymentsIntegrati
 
         $response = $this->retriable(
             function () use (&$workflowRequest) {
-                return $this->fourApi->getWorkflowsClient()->createWorkflow($workflowRequest);
+                return $this->checkoutApi->getWorkflowsClient()->createWorkflow($workflowRequest);
             }
         );
 
@@ -84,7 +84,7 @@ abstract class AbstractWorkflowIntegrationTest extends AbstractPaymentsIntegrati
     public function tearDownWorkflows()
     {
         foreach ($this->workflows as $workflowId) {
-            $this->fourApi->getWorkflowsClient()->removeWorkflow($workflowId);
+            $this->checkoutApi->getWorkflowsClient()->removeWorkflow($workflowId);
         }
     }
 }

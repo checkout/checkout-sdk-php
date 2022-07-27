@@ -2,10 +2,7 @@
 
 namespace Checkout\Disputes;
 
-use Checkout\ApiClient;
-use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
-use Checkout\CheckoutConfiguration;
 use Checkout\Files\FilesClient;
 
 class DisputesClient extends FilesClient
@@ -13,11 +10,6 @@ class DisputesClient extends FilesClient
     const DISPUTES_PATH = "disputes";
     const ACCEPT_PATH = "accept";
     const EVIDENCE_PATH = "evidence";
-
-    public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
-    {
-        parent::__construct($apiClient, $configuration, AuthorizationType::$secretKey);
-    }
 
     /**
      * @param DisputesQueryFilter $filter

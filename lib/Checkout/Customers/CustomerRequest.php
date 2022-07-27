@@ -25,4 +25,10 @@ class CustomerRequest
      * @var array
      */
     public $metadata;
+
+    /**
+     * Not available on previous
+     * @var array of string
+     */
+    public $instruments;
 }

@@ -130,7 +130,7 @@ class HostedPaymentsSessionRequest
      */
     public $allow_payment_methods;
 
-    // Only available in Four
+    //Not available on previous
 
     /**
      * @var string

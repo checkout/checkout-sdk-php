@@ -3,6 +3,7 @@
 namespace Checkout\Tests\Sessions;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutAuthorizationException;
 
 class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 {
@@ -10,7 +11,7 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
     /**
      * @test
      * @throws CheckoutApiException
-     * @throws \Checkout\CheckoutAuthorizationException
+     * @throws CheckoutAuthorizationException
      */
     public function shouldTryToCompleteCardSessionBrowserSession()
     {
@@ -22,7 +23,7 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
         $sessionSecret = $sessionResponse["session_secret"];
 
         try {
-            $this->fourApi->getSessionsClient()->completeSession($sessionId);
+            $this->checkoutApi->getSessionsClient()->completeSession($sessionId);
             $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
             $this->assertEquals(self::MESSAGE_403, $e->getMessage());
@@ -31,7 +32,7 @@ class CompleteSessionsIntegrationTest extends AbstractSessionsIntegrationTest
         }
 
         try {
-            $this->fourApi->getSessionsClient()->completeSession($sessionId, $sessionSecret);
+            $this->checkoutApi->getSessionsClient()->completeSession($sessionId, $sessionSecret);
             $this->fail("shouldn't get here!");
         } catch (CheckoutApiException $e) {
             $this->assertEquals(self::MESSAGE_403, $e->getMessage());

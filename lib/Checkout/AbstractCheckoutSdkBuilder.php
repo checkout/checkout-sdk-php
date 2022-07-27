@@ -22,26 +22,32 @@ abstract class AbstractCheckoutSdkBuilder
 
     /**
      * @param Environment $environment
+     * @return $this
      */
-    public function setEnvironment(Environment $environment)
+    public function environment(Environment $environment)
     {
         $this->environment = $environment;
+        return $this;
     }
 
     /**
      * @param HttpClientBuilderInterface $httpClientBuilder
+     * @return $this
      */
-    public function setHttpClientBuilder(HttpClientBuilderInterface $httpClientBuilder)
+    public function httpClientBuilder(HttpClientBuilderInterface $httpClientBuilder)
     {
         $this->httpClientBuilder = $httpClientBuilder;
+        return $this;
     }
 
     /**
      * @param LoggerInterface $logger
+     * @return $this
      */
-    public function setLogger(LoggerInterface $logger)
+    public function logger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+        return $this;
     }
 
     /**

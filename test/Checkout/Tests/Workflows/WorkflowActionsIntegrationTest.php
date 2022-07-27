@@ -19,7 +19,7 @@ class WorkflowActionsIntegrationTest extends AbstractWorkflowIntegrationTest
 
         $paymentEvents = $this->retriable(
             function () use (&$payment) {
-                return $this->fourApi->getWorkflowsClient()->getSubjectEvents($payment["id"]);
+                return $this->checkoutApi->getWorkflowsClient()->getSubjectEvents($payment["id"]);
             }
         );
         $this->assertResponse(
@@ -27,7 +27,7 @@ class WorkflowActionsIntegrationTest extends AbstractWorkflowIntegrationTest
             "data"
         );
 
-        $workflowResponse = $this->fourApi->getWorkflowsClient()->getWorkflow($createWorkflowResponse["id"]);
+        $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($createWorkflowResponse["id"]);
         $this->assertResponse(
             $workflowResponse,
             "actions"
@@ -36,7 +36,7 @@ class WorkflowActionsIntegrationTest extends AbstractWorkflowIntegrationTest
         $actionId = $workflowResponse["actions"][0]["id"];
 
         $actionInvocations =
-            $this->fourApi->getWorkflowsClient()->getActionInvocations($paymentEvents["data"][0]["id"], $actionId);
+            $this->checkoutApi->getWorkflowsClient()->getActionInvocations($paymentEvents["data"][0]["id"], $actionId);
 
         $this->assertResponse(
             $actionInvocations,

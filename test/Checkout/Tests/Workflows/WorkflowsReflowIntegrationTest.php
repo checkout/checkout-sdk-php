@@ -22,7 +22,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
 
         $paymentEvent = $this->getSubjectEvent($payment["id"]);
 
-        $this->fourApi->getWorkflowsClient()->reflowByEvent($paymentEvent["id"]);
+        $this->checkoutApi->getWorkflowsClient()->reflowByEvent($paymentEvent["id"]);
     }
 
     /**
@@ -37,7 +37,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
 
         $this->retriable(
             function () use (&$payment) {
-                return $this->fourApi->getWorkflowsClient()->reflowBySubject($payment["id"]);
+                return $this->checkoutApi->getWorkflowsClient()->reflowBySubject($payment["id"]);
             }
         );
     }
@@ -56,7 +56,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
 
         $this->retriable(
             function () use (&$paymentEvent, $workflow) {
-                return $this->fourApi->getWorkflowsClient()->reflowByEventAndWorkflow($paymentEvent["id"], $workflow["id"]);
+                return $this->checkoutApi->getWorkflowsClient()->reflowByEventAndWorkflow($paymentEvent["id"], $workflow["id"]);
             }
         );
     }
@@ -80,7 +80,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
 
         $this->retriable(
             function () use (&$request) {
-                return $this->fourApi->getWorkflowsClient()->reflow($request);
+                return $this->checkoutApi->getWorkflowsClient()->reflow($request);
             }
         );
     }
@@ -98,7 +98,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
 
         $this->retriable(
             function () use (&$payment, $workflow) {
-                return $this->fourApi->getWorkflowsClient()->reflowBySubjectAndWorkflow($payment["id"], $workflow["id"]);
+                return $this->checkoutApi->getWorkflowsClient()->reflowBySubjectAndWorkflow($payment["id"], $workflow["id"]);
             }
         );
     }
@@ -119,7 +119,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
 
         $this->retriable(
             function () use (&$request) {
-                return $this->fourApi->getWorkflowsClient()->reflow($request);
+                return $this->checkoutApi->getWorkflowsClient()->reflow($request);
             }
         );
     }
@@ -128,7 +128,7 @@ class WorkflowsReflowIntegrationTest extends AbstractWorkflowIntegrationTest
     {
         $paymentEvents = $this->retriable(
             function () use (&$subjectId) {
-                return $this->fourApi->getWorkflowsClient()->getSubjectEvents($subjectId);
+                return $this->checkoutApi->getWorkflowsClient()->getSubjectEvents($subjectId);
             },
             $this->paymentIsApproved()
         );

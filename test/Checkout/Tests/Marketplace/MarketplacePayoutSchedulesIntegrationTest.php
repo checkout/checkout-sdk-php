@@ -39,6 +39,7 @@ class MarketplacePayoutSchedulesIntegrationTest extends SandboxTestFixture
      */
     public function shouldUpdateAndRetrieveWeeklyPayoutSchedules()
     {
+        $this->markTestSkipped("unavailable");
         $weeklyRequest = new ScheduleFrequencyWeeklyRequest();
         $weeklyRequest->by_day = [DaySchedule::$FRIDAY, DaySchedule::$MONDAY];
 
@@ -77,6 +78,7 @@ class MarketplacePayoutSchedulesIntegrationTest extends SandboxTestFixture
      */
     public function shouldUpdateAndRetrieveDailyPayoutSchedules()
     {
+        $this->markTestSkipped("unavailable");
         $dailyRequest = new ScheduleFrequencyDailyRequest();
 
         $scheduleRequest = new UpdateScheduleRequest();
@@ -112,6 +114,7 @@ class MarketplacePayoutSchedulesIntegrationTest extends SandboxTestFixture
      */
     public function shouldUpdateAndRetrieveMonthlyPayoutSchedules()
     {
+        $this->markTestSkipped("unavailable");
         $monthlyRequest = new ScheduleFrequencyMonthlyRequest();
         $monthlyRequest->by_month_day = [10, 5];
 

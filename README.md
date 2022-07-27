@@ -8,18 +8,13 @@
 
 ## Getting started
 
-```
-# Requires Python > 3.6
-pip install checkout-sdk==3.0.0b8
-```
-
 > **Version 3.0.0 is here!**
 >  <br/><br/>
 > We improved the initialization of SDK making it easier to understand the available options. <br/>
 > Now `NAS` accounts are the default instance for the SDK and `ABC` structure was moved to a `previous` prefixes. <br/>
 > If you have been using this SDK before, you may find the following important changes:
 > * Marketplace module was moved to Accounts module, same for classes and references.
-> * In most cases, IDE can help you determine from where to import, but if you’re still having issues don't hesitate to open a [ticket](https://github.com/checkout/checkout-sdk-python/issues).
+> * In most cases, IDE can help you determine from where to import, but if you’re still having issues don't hesitate to open a [ticket](https://github.com/checkout/checkout-sdk-php/issues/new/choose).
 
 
 ### :rocket: Please check in [GitHub releases](https://github.com/checkout/checkout-sdk-php/releases) for all the versions available.

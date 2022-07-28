@@ -66,7 +66,7 @@ $checkoutApi = CheckoutSdk::builder()->staticKeys()
                     ->secretKey("secret_key")
                     ->environment(Environment::sandbox()) // or production()
                     ->logger($logger) //optional, for a custom Logger
-                    ->setHttpClientBuilder() // optional, for a custom HTTP client
+                    ->httpClientBuilder($client) // optional, for a custom HTTP client
                     ->build();
 
 $paymentsClient = $checkoutApi->getPaymentsClient();
@@ -83,7 +83,7 @@ $checkoutApi = CheckoutSdk::builder()->oAuth()
                     ->scopes([OAuthScope::$Gateway, OAuthScope::$Vault]) // array of scopes
                     ->environment(Environment::sandbox()) // or production()
                     ->logger($logger) //optional, for a custom Logger
-                    ->setHttpClientBuilder() // optional, for a custom HTTP client
+                    ->httpClientBuilder($client) // optional, for a custom HTTP client
                     ->build();
 
 $paymentsClient = $checkoutApi->getPaymentsClient();
@@ -103,7 +103,7 @@ $checkoutApi = CheckoutSdk::builder()
                     ->publicKey("public_key") // optional, only required for operations related with tokens
                     ->secretKey("secret_key")
                     ->logger($logger) //optional, for a custom Logger
-                    ->setHttpClientBuilder() // optional, for a custom HTTP client
+                    ->httpClientBuilder($client) // optional, for a custom HTTP client
                     ->build();
 
 $paymentsClient = $checkoutApi->getPaymentsClient();

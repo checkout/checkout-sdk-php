@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Payments;
 
+use Checkout\CheckoutApiException;
 use Checkout\CheckoutSdk;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
@@ -12,13 +13,38 @@ use Checkout\Common\Product;
 use Checkout\Environment;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentRequest;
+use Checkout\Payments\Request\Source\Apm\RequestAlipayPlusSource;
 use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
 use Checkout\Payments\Request\Source\Apm\RequestPayPalSource;
 use Checkout\Payments\Request\Source\Apm\RequestSofortSource;
 use Checkout\Payments\Request\Source\Apm\RequestTamaraSource;
+use Exception;
 
 class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 {
+    /**
+     * @test
+     */
+    public function shouldMakeAliPayPayment()
+    {
+        $requestSource = RequestAlipayPlusSource::requestAlipayPlusCNSource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 1000;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+        }
+    }
+
     /**
      * @test
      */

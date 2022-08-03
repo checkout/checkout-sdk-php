@@ -5,19 +5,9 @@ namespace Checkout\Payments;
 class ProcessingSettings
 {
     /**
-     * @var bool
+     * @var string
      */
-    public $aft;
-
-    /**
-     * @var string value of MerchantInitiatedReason
-     */
-    public $merchant_initiated_reason;
-
-    /**
-     * @var DLocalProcessingSettings
-     */
-    public $dlocal;
+    public $order_id;
 
     /**
      * @var int
@@ -27,17 +17,37 @@ class ProcessingSettings
     /**
      * @var int
      */
+    public $discount_amount;
+
+    /**
+     * @var int
+     */
+    public $duty_amount;
+
+    /**
+     * @var int
+     */
     public $shipping_amount;
 
     /**
-     * @var Aggregator
+     * @var int
      */
-    public $aggregator;
+    public $shipping_tax_amount;
+
+    /**
+     * @var bool
+     */
+    public $aft;
 
     /**
      * @var string value of PreferredSchema
      */
     public $preferred_scheme;
+
+    /**
+     * @var string value of MerchantInitiatedReason
+     */
+    public $merchant_initiated_reason;
 
     /**
      * @var string value of ProductType
@@ -103,4 +113,16 @@ class ProcessingSettings
      * @var array of AirlineData
      */
     public $airline_data;
+
+    /**
+     * @var DLocalProcessingSettings
+     */
+    public $dlocal;
+
+    /**
+     * @var Aggregator
+     */
+    public $aggregator;
+
+
 }

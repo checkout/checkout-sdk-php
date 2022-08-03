@@ -27,12 +27,12 @@ class Product
     /**
      * @var string
      */
-    public $image_url;
+    public $commodity_code;
 
     /**
      * @var string
      */
-    public $url;
+    public $unit_of_measure;
 
     /**
      * @var int
@@ -52,15 +52,21 @@ class Product
     /**
      * @var string
      */
+    public $wxpay_goods_id;
+
+    /**
+     * @var string
+     */
+    public $image_url;
+
+    /**
+     * @var string
+     */
+    public $url;
+
+    /**
+     * @var string
+     */
     public $sku;
 
-    /**
-     * @var string
-     */
-    public $goods_id;
-
-    /**
-     * @var string
-     */
-    public $wxpay_goods_id;
 }

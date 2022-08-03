@@ -42,6 +42,11 @@ class Individual
     public $date_of_birth;
 
     /**
+     * @var PlaceOfBirth
+     */
+    public $place_of_birth;
+
+    /**
      * @var Identification
      */
     public $identification;

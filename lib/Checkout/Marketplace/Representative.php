@@ -36,4 +36,14 @@ class Representative
      * @var DateOfBirth
      */
     public $date_of_birth;
+
+    /**
+     * @var PlaceOfBirth
+     */
+    public $place_of_birth;
+
+    /**
+     * @var array values of EntityRoles
+     */
+    public $roles;
 }

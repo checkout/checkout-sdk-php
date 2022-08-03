@@ -12,6 +12,11 @@ class Company
     public $business_registration_number;
 
     /**
+     * @var string value of BusinessType
+     */
+    public $business_type;
+
+    /**
      * @var string
      */
     public $legal_name;
@@ -40,4 +45,9 @@ class Company
      * @var array of Representative
      */
     public $representatives;
+
+    /**
+     * @var EntityFinancialDetails
+     */
+    public $financial_details;
 }

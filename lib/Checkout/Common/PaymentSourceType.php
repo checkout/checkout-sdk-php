@@ -38,4 +38,8 @@ class PaymentSourceType
     public static $alipay_cn = "alipay_cn";
     public static $gcash = "gcash";
     public static $wechatpay = "wechatpay";
+    public static $dana = "dana";
+    public static $kakaopay = "kakaopay";
+    public static $truemoney = "truemoney";
+    public static $tng = "tng";
 }

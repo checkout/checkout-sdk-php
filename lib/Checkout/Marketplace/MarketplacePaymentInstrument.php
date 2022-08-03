@@ -2,7 +2,6 @@
 
 namespace Checkout\Marketplace;
 
-use Checkout\Common\Four\AccountHolder;
 use Checkout\Common\Four\BankDetails;
 use Checkout\Common\InstrumentType;
 
@@ -79,7 +78,7 @@ class MarketplacePaymentInstrument
     public $bank;
 
     /**
-     * @var AccountHolder
+     * @var AccountsAccountHolder
      */
     public $account_holder;
 }

@@ -2,7 +2,6 @@
 
 namespace Checkout\Accounts;
 
-use Checkout\Common\AccountHolder;
 use Checkout\Common\BankDetails;
 use Checkout\Common\InstrumentType;
 
@@ -79,7 +78,7 @@ class AccountsPaymentInstrument
     public $bank;
 
     /**
-     * @var AccountHolder
+     * @var AccountsAccountHolder
      */
     public $account_holder;
 }

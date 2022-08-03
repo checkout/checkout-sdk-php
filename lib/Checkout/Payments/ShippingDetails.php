@@ -16,4 +16,9 @@ class ShippingDetails
      * @var Phone
      */
     public $phone;
+
+    /**
+     * @var string
+     */
+    public $from_address_zip;
 }

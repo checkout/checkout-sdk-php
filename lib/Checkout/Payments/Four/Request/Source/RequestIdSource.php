@@ -21,4 +21,9 @@ class RequestIdSource extends AbstractRequestSource
      * @var string
      */
     public $cvv;
+
+    /**
+     * @var string
+     */
+    public $payment_method;
 }

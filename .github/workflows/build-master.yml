@@ -2,7 +2,7 @@ name: build-master
 on:
     push:
         branches:
-            - master
+            - v2
 jobs:
     build:
         if: "!contains(github.event.commits[0].message, 'Release')"

@@ -7,6 +7,27 @@
 
 ## Getting started
 
+## Getting started
+
+> **This is a Legacy Version** </br>
+> We will provide support to some features or changes on APIs until users are fully migrated to the version 3.X.X,
+> however we recommend upgrading to version 3.X.X because this support is momentary and a lot of things were fixed and changed. </br>
+> If you’re still having issues don't hesitate to open a [ticket](https://github.com/checkout/checkout-sdk-php/issues/new/choose). </br></br>
+> Remember: </br>
+> * In documentation Marketplace prefixes no longer exist, you need to search in documentation as Platforms. </br>
+> * The `default` prefixes on versions < 6, in documentation you need to search as `previous` </br>
+> * In documentation `Four` prefixes no longer exist, your need to search as `default`.
+
+### :book: Checkout our official documentation.
+
+* [Official Docs (Four)](https://docs.checkout.com/)
+* [Official Docs (Previous/Current default)](https://docs.checkout.com/previous)
+
+### :books: Check out our official API documentation guide, where you can also find more usage examples.
+
+* [API Reference (Four)](https://api-reference.checkout.com/)
+* [API Reference (Previous/Current default)](https://api-reference.checkout.com/previous)
+
 Packages and sources are available from [Packagist](https://packagist.org/packages/checkout/checkout-sdk-php).
 
 #### Composer
@@ -28,7 +49,7 @@ This SDK can be used with two different pair of API keys provided by Checkout. H
 
 | Account System | Public Key (example)                    | Secret Key (example)                    |
 |----------------|-----------------------------------------|-----------------------------------------|
-| default        | pk_g650ff27-7c42-4ce1-ae90-5691a188ee7b | sk_gk3517a8-3z01-45fq-b4bd-4282384b0a64 |
+| Previous        | pk_g650ff27-7c42-4ce1-ae90-5691a188ee7b | sk_gk3517a8-3z01-45fq-b4bd-4282384b0a64 |
 | Four           | pk_pkhpdtvabcf7hdgpwnbhw7r2uic          | sk_m73dzypy7cf3gf5d2xr4k7sxo4e          |
 
 Note: sandbox keys have a `test_` or `sbox_` identifier, for Default and Four accounts respectively.
@@ -37,9 +58,9 @@ Note: sandbox keys have a `test_` or `sbox_` identifier, for Default and Four ac
 
 If you don't have your own API keys, you can sign up for a test account [here](https://www.checkout.com/get-test-account).
 
-## Default
+## Previous
 
-Default keys client instantiation can be done as follows:
+Previous keys client instantiation can be done as follows:
 
 ```php
 $builder = CheckoutDefaultSdk::staticKeys();
@@ -93,16 +114,9 @@ All the API responses that do not fall in the 2** status codes, the SDK will thr
 
 The exception encapsulates `http_metadata` and `$error_details`, if available.
 
-More documentation related to Checkout API and the SDK is available at:
-
-* [Official Docs (Default)](https://docs.checkout.com/)
-* [Official Docs (Four)](https://docs.checkout.com/four)
-* [API Reference (Default)](https://api-reference.checkout.com/)
-* [API Reference (Four)](https://api-reference.checkout.com/preview/crusoe/)
-
 ## Building from source
 
-Once you checkout the code from GitHub, the project can be built using composer:
+Once you check out the code from GitHub, the project can be built using composer:
 
 ```
 composer update

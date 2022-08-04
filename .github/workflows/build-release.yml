@@ -2,7 +2,7 @@ name: build-release
 on:
     push:
         branches:
-            - master
+            - v2
         paths:
             - version.json
 

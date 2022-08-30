@@ -50,6 +50,11 @@ class ProcessingSettings
     public $merchant_initiated_reason;
 
     /**
+     * @var int
+     */
+    public $campaign_id;
+
+    /**
      * @var string value of ProductType
      */
     public $product_type;

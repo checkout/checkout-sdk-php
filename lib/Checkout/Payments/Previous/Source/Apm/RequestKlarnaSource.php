@@ -76,4 +76,9 @@ class RequestKlarnaSource extends AbstractRequestSource
      * @var array
      */
     public $attachment;
+
+    /**
+     * @var array
+     */
+    public $custom_payment_method_ids;
 }

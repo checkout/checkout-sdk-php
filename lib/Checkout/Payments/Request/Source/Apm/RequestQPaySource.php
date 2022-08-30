@@ -1,9 +1,9 @@
 <?php
 
-namespace Checkout\Payments\Previous\Source\Apm;
+namespace Checkout\Payments\Request\Source\Apm;
 
 use Checkout\Common\PaymentSourceType;
-use Checkout\Payments\Previous\Source\AbstractRequestSource;
+use Checkout\Payments\Request\Source\AbstractRequestSource;
 
 class RequestQPaySource extends AbstractRequestSource
 {

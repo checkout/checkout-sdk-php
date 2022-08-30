@@ -13,9 +13,14 @@ use Checkout\Common\Product;
 use Checkout\Environment;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentRequest;
+use Checkout\Payments\Request\Source\Apm\RequestAfterPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestAlipayPlusSource;
+use Checkout\Payments\Request\Source\Apm\RequestBenefitSource;
+use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
+use Checkout\Payments\Request\Source\Apm\RequestMbwaySource;
 use Checkout\Payments\Request\Source\Apm\RequestPayPalSource;
+use Checkout\Payments\Request\Source\Apm\RequestQPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestSofortSource;
 use Checkout\Payments\Request\Source\Apm\RequestTamaraSource;
 use Exception;
@@ -280,5 +285,120 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
             "payment_type",
             "status"
         );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeAfterPayPayment()
+    {
+        $requestSource = new RequestAfterPaySource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeBenefitPayment()
+    {
+        $requestSource = new RequestBenefitSource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeQPayPayment()
+    {
+        $requestSource = new RequestQPaySource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeMbwayPayment()
+    {
+        $requestSource = new RequestMbwaySource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeGiropayPayment()
+    {
+        $requestSource = new RequestGiropaySource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+        }
     }
 }

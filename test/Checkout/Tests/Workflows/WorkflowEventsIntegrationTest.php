@@ -17,7 +17,7 @@ class WorkflowEventsIntegrationTest extends AbstractWorkflowIntegrationTest
         $response = $this->checkoutApi->getWorkflowsClient()->getEventTypes();
         $this->assertResponse($response, "items");
         $eventTypes = $response["items"];
-        self::assertTrue(sizeof($eventTypes) >= 8);
+        self::assertTrue(sizeof($eventTypes) >= 7);
 
         foreach ($eventTypes as $eventType) {
             $this->assertResponse(

@@ -7,6 +7,11 @@ use Checkout\Payments\Request\Source\AbstractRequestSource;
 
 class RequestAlipayPlusSource extends AbstractRequestSource
 {
+    public static function requestAlipayPlusSource()
+    {
+        return new RequestAlipayPlusSource(PaymentSourceType::$alipay_plus);
+    }
+
     public static function requestAlipayPlusCNSource()
     {
         return new RequestAlipayPlusSource(PaymentSourceType::$alipay_cn);

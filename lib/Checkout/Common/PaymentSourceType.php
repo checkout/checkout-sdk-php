@@ -36,10 +36,14 @@ class PaymentSourceType
     public static $bank_account = "bank_account";
     public static $alipay_hk = "alipay_hk";
     public static $alipay_cn = "alipay_cn";
+    public static $alipay_plus = "alipay_plus";
     public static $gcash = "gcash";
     public static $wechatpay = "wechatpay";
     public static $dana = "dana";
     public static $kakaopay = "kakaopay";
     public static $truemoney = "truemoney";
     public static $tng = "tng";
+    public static $afterpay = "afterpay";
+    public static $benefit = "benefit";
+    public static $mbway = "mbway";
 }

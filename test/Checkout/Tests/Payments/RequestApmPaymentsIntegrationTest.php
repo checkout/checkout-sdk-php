@@ -15,13 +15,19 @@ use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\Apm\RequestAfterPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestAlipayPlusSource;
+use Checkout\Payments\Request\Source\Apm\RequestBancontactSource;
 use Checkout\Payments\Request\Source\Apm\RequestBenefitSource;
 use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
+use Checkout\Payments\Request\Source\Apm\RequestKnetSource;
 use Checkout\Payments\Request\Source\Apm\RequestMbwaySource;
+use Checkout\Payments\Request\Source\Apm\RequestMultiBancoSource;
+use Checkout\Payments\Request\Source\Apm\RequestP24Source;
 use Checkout\Payments\Request\Source\Apm\RequestPayPalSource;
+use Checkout\Payments\Request\Source\Apm\RequestPostFinanceSource;
 use Checkout\Payments\Request\Source\Apm\RequestQPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestSofortSource;
+use Checkout\Payments\Request\Source\Apm\RequestStcPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestTamaraSource;
 use Exception;
 
@@ -392,6 +398,158 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->capture = true;
         $paymentRequest->amount = 10;
         $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakePrzelewy24Payment()
+    {
+        $requestSource = new RequestP24Source();
+        $requestSource->payment_country = Country::$PL;
+        $requestSource->account_holder_name = "Bruce Wayne";
+        $requestSource->account_holder_email = "bruce@wayne-enterprises.com";
+        $requestSource->billing_descriptor = "P24 Demo Payment";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeKnetPayment()
+    {
+        $requestSource = new RequestKnetSource();
+        $requestSource->language = "en";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$KWD;
+        $paymentRequest->capture = true;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeBancontactPayment()
+    {
+        $requestSource = new RequestBancontactSource();
+        $requestSource->payment_country = Country::$BE;
+        $requestSource->account_holder_name = "Bruce Wayne";
+        $requestSource->billing_descriptor = "CKO Demo - bancontact";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 100;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeMultiBancoPayment()
+    {
+        $requestSource = new RequestMultiBancoSource();
+        $requestSource->payment_country = Country::$PT;
+        $requestSource->account_holder_name = "Bruce Wayne";
+        $requestSource->billing_descriptor = "CKO Demo - bancontact";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakePostFinancePayment()
+    {
+        $requestSource = new RequestPostFinanceSource();
+        $requestSource->payment_country = Country::$CH;
+        $requestSource->account_holder_name = "Bruce Wayne";
+        $requestSource->billing_descriptor = "CKO Demo - bancontact";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        try {
+            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeStcPayPayment()
+    {
+        $requestSource = new RequestStcPaySource();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$QAR;
+        $paymentRequest->capture = true;
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 

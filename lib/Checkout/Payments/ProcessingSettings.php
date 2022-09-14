@@ -120,6 +120,11 @@ class ProcessingSettings
     public $airline_data;
 
     /**
+     * @var string
+     */
+    public $otp_value;
+
+    /**
      * @var DLocalProcessingSettings
      */
     public $dlocal;

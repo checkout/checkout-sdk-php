@@ -8,7 +8,6 @@ use Checkout\Payments\Previous\PaymentRequest;
 use Checkout\Payments\Previous\Source\Apm\FawryProduct;
 use Checkout\Payments\Previous\Source\Apm\IntegrationType;
 use Checkout\Payments\Previous\Source\Apm\RequestAlipaySource;
-use Checkout\Payments\Previous\Source\Apm\RequestBalotoSource;
 use Checkout\Payments\Previous\Source\Apm\RequestBancontactSource;
 use Checkout\Payments\Previous\Source\Apm\RequestBenefitPaySource;
 use Checkout\Payments\Previous\Source\Apm\RequestBoletoSource;
@@ -77,43 +76,6 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->source = $requestSource;
         $paymentRequest->amount = 100;
         $paymentRequest->currency = Currency::$USD;
-
-        $paymentResponse1 = $this->retriable(
-            function () use (&$paymentRequest) {
-                return $this->previousApi->getPaymentsClient()->requestPayment($paymentRequest);
-            }
-        );
-        $this->assertResponse($paymentResponse1, "id");
-
-        $paymentResponse2 = $this->retriable(
-            function () use (&$paymentResponse1) {
-                return $this->previousApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            }
-        );
-        $this->assertResponse(
-            $paymentResponse2,
-            "id",
-            "source",
-            "amount",
-            "_links"
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function shouldMakeBalotoPayment()
-    {
-        $this->markTestSkipped("not available");
-        $requestSource = new RequestBalotoSource();
-        $requestSource->country = Country::$CO;
-        $requestSource->description = "simulate Via Baloto Demo Payment";
-        $requestSource->payer = $this->getPayer();
-
-        $paymentRequest = new PaymentRequest();
-        $paymentRequest->source = $requestSource;
-        $paymentRequest->amount = 100000;
-        $paymentRequest->currency = Currency::$COP;
 
         $paymentResponse1 = $this->retriable(
             function () use (&$paymentRequest) {

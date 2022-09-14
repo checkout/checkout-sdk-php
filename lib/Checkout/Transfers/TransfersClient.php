@@ -19,7 +19,7 @@ class TransfersClient extends Client
 
     /**
      * @param CreateTransferRequest $transferRequest
-     * @param null $idempotencyKey
+     * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
      */

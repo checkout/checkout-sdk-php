@@ -13,7 +13,6 @@ class PaymentSourceType
     public static $dlocal = "dlocal";
     public static $klarna = "klarna";
     public static $currency_account = "currency_account";
-    public static $baloto = "baloto";
     public static $boleto = "boleto";
     public static $fawry = "fawry";
     public static $giropay = "giropay";
@@ -46,4 +45,6 @@ class PaymentSourceType
     public static $afterpay = "afterpay";
     public static $benefit = "benefit";
     public static $mbway = "mbway";
+    public static $postfinance = "postfinance";
+    public static $stcpay = "stcpay";
 }

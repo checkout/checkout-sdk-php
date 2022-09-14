@@ -256,4 +256,5 @@ final class Country
     public static $ZM = "ZM";
     public static $ZW = "ZW";
     public static $PS = "PS";
+    public static $QZ = "QZ";
 }

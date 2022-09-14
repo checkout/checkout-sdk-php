@@ -47,9 +47,15 @@ class CaptureRequest
     public $items;
 
     /**
+     * @deprecated This property will be removed in the future, and should be used {@link amount_allocations} instead
      * @var MarketplaceData
      */
     public $marketplace;
+
+    /**
+     * @var array values of AmountAllocations
+     */
+    public $amount_allocations;
 
     /**
      * @var ProcessingSettings

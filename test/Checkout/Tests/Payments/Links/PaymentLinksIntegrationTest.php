@@ -6,6 +6,8 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Common\AmountAllocations;
+use Checkout\Common\Commission;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Common\PaymentSourceType;
@@ -43,6 +45,18 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
     public function shouldCreateAndGetPaymentLink()
     {
         $request = $this->createPaymentLinkRequest();
+
+        $commission = new Commission();
+        $commission->amount = 1;
+        $commission->percentage = 0.1;
+
+        $allocations = new AmountAllocations();
+        $allocations->id = "ent_sdioy6bajpzxyl3utftdp7legq";
+        $allocations->amount=100;
+        $allocations->reference = uniqid();
+        $allocations->commission = $commission;
+
+        $request->amount_allocations = array($allocations);
 
         $response = $this->checkoutApi->getPaymentLinksClient()->createPaymentLink($request);
 

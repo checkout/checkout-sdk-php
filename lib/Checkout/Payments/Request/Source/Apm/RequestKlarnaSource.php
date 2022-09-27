@@ -2,19 +2,19 @@
 
 namespace Checkout\Payments\Request\Source\Apm;
 
+use Checkout\Common\AccountHolder;
 use Checkout\Common\PaymentSourceType;
-use Checkout\Payments\BillingPlan;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 
-class RequestPayPalSource extends AbstractRequestSource
+class RequestKlarnaSource extends AbstractRequestSource
 {
     public function __construct()
     {
-        parent::__construct(PaymentSourceType::$paypal);
+        parent::__construct(PaymentSourceType::$klarna);
     }
 
     /**
-     * @var BillingPlan
+     * @var AccountHolder
      */
-    public $plan;
+    public $account_holder;
 }

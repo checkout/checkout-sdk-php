@@ -4,6 +4,7 @@ namespace Checkout\Tests\Payments;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutSdk;
+use Checkout\Common\AccountHolder;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
@@ -11,14 +12,21 @@ use Checkout\Common\CustomerRequest;
 use Checkout\Common\Phone;
 use Checkout\Common\Product;
 use Checkout\Environment;
+use Checkout\Payments\BillingPlan;
+use Checkout\Payments\BillingPlanType;
+use Checkout\Payments\PaymentCustomerRequest;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentRequest;
+use Checkout\Payments\Request\Source\Apm\FawryProduct;
 use Checkout\Payments\Request\Source\Apm\RequestAfterPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestAlipayPlusSource;
+use Checkout\Payments\Request\Source\Apm\RequestAlmaSource;
 use Checkout\Payments\Request\Source\Apm\RequestBancontactSource;
 use Checkout\Payments\Request\Source\Apm\RequestBenefitSource;
+use Checkout\Payments\Request\Source\Apm\RequestFawrySource;
 use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
+use Checkout\Payments\Request\Source\Apm\RequestKlarnaSource;
 use Checkout\Payments\Request\Source\Apm\RequestKnetSource;
 use Checkout\Payments\Request\Source\Apm\RequestMbwaySource;
 use Checkout\Payments\Request\Source\Apm\RequestMultiBancoSource;
@@ -29,6 +37,7 @@ use Checkout\Payments\Request\Source\Apm\RequestQPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestSofortSource;
 use Checkout\Payments\Request\Source\Apm\RequestStcPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestTamaraSource;
+use Closure;
 use Exception;
 
 class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
@@ -243,53 +252,32 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakePayPalPayment()
     {
-        $this->markTestSkipped("beta");
         $requestSource = new RequestPayPalSource();
 
-        $product = new Product();
+        $plan = new BillingPlan();
+        $plan->type = BillingPlanType::$channel_initiated_billing;
+        $plan->skip_shipping_address = true;
+        $plan->immutable_shipping_address = false;
+
+        $requestSource->plan = $plan;
+
+        $product = new \Checkout\Payments\Product();
         $product->name = "laptop";
-        $product->unit_price = 1000;
+        $product->unit_price = 10;
         $product->quantity = 1;
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
         $paymentRequest->capture = true;
-        $paymentRequest->amount = 1000;
+        $paymentRequest->amount = 10;
         $paymentRequest->currency = Currency::$EUR;
-        $paymentRequest->items = array($product);
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+        $paymentRequest->items = array($product);
 
-        $paymentResponse1 = $this->retriable(
-            function () use (&$paymentRequest) {
-                return $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-            }
-        );
-
-        $this->assertResponse(
-            $paymentResponse1,
-            "id",
-            "status",
-            "_links",
-            "_links.self"
-        );
-
-        $paymentResponse2 = $this->retriable(
-            function () use (&$paymentResponse1) {
-                return $this->checkoutApi->getPaymentsClient()->getPaymentDetails($paymentResponse1["id"]);
-            }
-        );
-
-        $this->assertResponse(
-            $paymentResponse2,
-            "id",
-            "requested_on",
-            "source",
-            "amount",
-            //"balances",
-            "currency",
-            "payment_type",
-            "status"
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
         );
     }
 
@@ -328,15 +316,15 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->source = $requestSource;
         $paymentRequest->capture = true;
         $paymentRequest->amount = 10;
-        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->currency = Currency::$BHD;
+        $paymentRequest->reference = uniqid();
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
     }
 
     /**
@@ -345,21 +333,24 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldMakeQPayPayment()
     {
         $requestSource = new RequestQPaySource();
+        $requestSource->description = "QPay Demo payment";
+        $requestSource->language = "en";
+        $requestSource->quantity = 1;
+        $requestSource->national_id = "070AYY010BU234M";
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->reference = $this->randomEmail();
         $paymentRequest->source = $requestSource;
         $paymentRequest->capture = true;
         $paymentRequest->amount = 10;
-        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->currency = Currency::$QAR;
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
     }
 
     /**
@@ -378,11 +369,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$apm_service_unavailable
+        );
     }
 
     /**
@@ -391,6 +381,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldMakeGiropayPayment()
     {
         $requestSource = new RequestGiropaySource();
+        $requestSource->purpose = "CKO Giropay demo";
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->reference = $this->randomEmail();
@@ -401,11 +392,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
     }
 
     /**
@@ -428,12 +418,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
     }
 
     /**
@@ -452,12 +440,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
     }
 
     /**
@@ -478,12 +464,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
     }
 
     /**
@@ -504,12 +488,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
     }
 
     /**
@@ -530,12 +512,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-            self::assertTrue(in_array("payee_not_onboarded", $ex->error_details["error_codes"]));
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
     }
 
     /**
@@ -545,18 +525,119 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     {
         $requestSource = new RequestStcPaySource();
 
+        $customerRequest = new PaymentCustomerRequest();
+        $customerRequest->email = $this->randomEmail();
+        $customerRequest->name = "Louis Smith";
+        $customerRequest->phone = $this->getPhone();
+
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
         $paymentRequest->amount = 10;
-        $paymentRequest->currency = Currency::$QAR;
+        $paymentRequest->currency = Currency::$SAR;
+        $paymentRequest->capture = true;
+        $paymentRequest->reference = uniqid();
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+        $paymentRequest->customer = $customerRequest;
+
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            "merchant_data_delegated_authentication_failed"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeAlmaPayment()
+    {
+        $requestSource = new RequestAlmaSource();
+        $requestSource->billing_address = $this->getAddress();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
         $paymentRequest->capture = true;
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        try {
-            $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
-        }
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeKlarnaPayment()
+    {
+        $accountHolder = new AccountHolder();
+        $accountHolder->first_name = "John";
+        $accountHolder->last_name = "New";
+        $accountHolder->phone = $this->getPhone();
+        $accountHolder->billing_address = $this->getAddress();
+
+        $requestSource = new RequestKlarnaSource();
+        $requestSource->account_holder = $accountHolder;
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$apm_service_unavailable
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeFawryPayment()
+    {
+        $fawryProduct = new FawryProduct();
+        $fawryProduct->product_id = "3216012345678954987";
+        $fawryProduct->quantity = 1;
+        $fawryProduct->price = 10;
+        $fawryProduct->description = "Fawry Demo Producet";
+
+
+        $requestSource = new RequestFawrySource();
+        $requestSource->description = "Fawry Demo Payment";
+        $requestSource->customer_mobile = "01058375055";
+        $requestSource->customer_email = "bruce@wayne-enterprises.com";
+        $requestSource->products = array($fawryProduct);
+
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->capture = true;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EGP;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
+    }
+
+    /**
+     * @param PaymentRequest $paymentRequest
+     * @return Closure
+     */
+    public function requestFunction(PaymentRequest $paymentRequest)
+    {
+        return function () use (&$paymentRequest) {
+            return $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+        };
     }
 }

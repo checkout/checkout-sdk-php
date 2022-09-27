@@ -2,6 +2,7 @@
 
 namespace Checkout\Apm\Previous\Klarna;
 
+use Checkout\Common\ShippingInfo;
 use Checkout\Common\PaymentSourceType;
 
 class OrderCaptureRequest
@@ -37,7 +38,7 @@ class OrderCaptureRequest
     public $klarna;
 
     /**
-     * @var KlarnaShippingInfo
+     * @var ShippingInfo
      */
     public $shipping_info;
 

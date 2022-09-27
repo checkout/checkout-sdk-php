@@ -33,11 +33,6 @@ class SessionCardSource extends SessionSource
     public $name;
 
     /**
-     * @var string value of SessionScheme
-     */
-    public $scheme;
-
-    /**
      * @var bool
      */
     public $stored;

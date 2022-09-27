@@ -5,7 +5,6 @@ namespace Checkout\Tests\Payments\Previous;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Payments\Previous\PaymentRequest;
-use Checkout\Payments\Previous\Source\Apm\FawryProduct;
 use Checkout\Payments\Previous\Source\Apm\IntegrationType;
 use Checkout\Payments\Previous\Source\Apm\RequestAlipaySource;
 use Checkout\Payments\Previous\Source\Apm\RequestBancontactSource;
@@ -25,6 +24,7 @@ use Checkout\Payments\Previous\Source\Apm\RequestPoliSource;
 use Checkout\Payments\Previous\Source\Apm\RequestQPaySource;
 use Checkout\Payments\Previous\Source\Apm\RequestRapiPagoSource;
 use Checkout\Payments\Previous\Source\Apm\RequestSofortSource;
+use Checkout\Payments\Request\Source\Apm\FawryProduct;
 
 class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 {

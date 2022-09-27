@@ -1,8 +1,8 @@
 <?php
 
-namespace Checkout\Apm\Previous\Klarna;
+namespace Checkout\Common;
 
-class KlarnaShippingInfo
+class ShippingInfo
 {
     /**
      * @var string

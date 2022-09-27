@@ -3,6 +3,7 @@
 namespace Checkout\Tests;
 
 use Checkout\CheckoutApi;
+use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
@@ -180,6 +181,24 @@ abstract class SandboxTestFixture extends TestCase
             sleep(2);
         }
         throw new AssertionFailedError("Max attempts reached!");
+    }
+
+    /**
+     * @param callable $func
+     * @param string $errorItem
+     */
+    protected function checkErrorItem(callable $func, $errorItem)
+    {
+        try {
+            $func();
+        } catch (Exception $ex) {
+            self::assertTrue($ex instanceof CheckoutApiException);
+            self::assertContains(
+                $errorItem,
+                $ex->error_details["error_codes"],
+                "Was actually: " . implode(',', $ex->error_details["error_codes"])
+            );
+        }
     }
 
     /**

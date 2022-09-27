@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Payments\Previous\Source\Apm;
+namespace Checkout\Payments\Request\Source\Apm;
 
 class FawryProduct
 {

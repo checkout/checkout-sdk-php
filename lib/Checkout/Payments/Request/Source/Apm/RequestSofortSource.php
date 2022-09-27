@@ -11,4 +11,14 @@ class RequestSofortSource extends AbstractRequestSource
     {
         parent::__construct(PaymentSourceType::$sofort);
     }
+
+    /**
+     * @var string values of Country
+     */
+    public $countryCode;
+
+    /**
+     * @var string
+     */
+    public $languageCode;
 }

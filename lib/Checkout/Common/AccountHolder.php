@@ -63,4 +63,9 @@ class AccountHolder
      * @var string
      */
     public $email;
+
+    /**
+     * @var string
+     */
+    public $gender;
 }

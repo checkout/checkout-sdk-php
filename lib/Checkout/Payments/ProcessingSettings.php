@@ -125,6 +125,26 @@ class ProcessingSettings
     public $otp_value;
 
     /**
+     * @var string value of CountryCode
+     */
+    public $purchase_country;
+
+    /**
+     * @var array of string
+     */
+    public $custom_payment_method_ids;
+
+    /**
+     * @var int
+     */
+    public $shipping_delay;
+
+    /**
+     * @var array of ShippingInfo
+     */
+    public $shipping_info;
+
+    /**
      * @var DLocalProcessingSettings
      */
     public $dlocal;

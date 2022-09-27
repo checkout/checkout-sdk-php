@@ -26,6 +26,9 @@ use DateTime;
 
 abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
 {
+    protected static $payee_not_onboarded = "payee_not_onboarded";
+    protected static $apm_service_unavailable = "apm_service_unavailable";
+
     /**
      * @before
      * @throws CheckoutAuthorizationException

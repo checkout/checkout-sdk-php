@@ -87,4 +87,9 @@ class ThreeDsRequest
      * @var string
      */
     public $cryptogram_algorithm;
+
+    /**
+     * @var string
+     */
+    public $authentication_id;
 }

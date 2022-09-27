@@ -47,4 +47,5 @@ class PaymentSourceType
     public static $mbway = "mbway";
     public static $postfinance = "postfinance";
     public static $stcpay = "stcpay";
+    public static $alma = "alma";
 }

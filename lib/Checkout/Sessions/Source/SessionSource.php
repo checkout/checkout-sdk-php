@@ -17,6 +17,11 @@ abstract class SessionSource
     public $type;
 
     /**
+     * @var string value of SessionScheme
+     */
+    public $scheme;
+
+    /**
      * @var string value of SessionAddress
      */
     public $billing_address;

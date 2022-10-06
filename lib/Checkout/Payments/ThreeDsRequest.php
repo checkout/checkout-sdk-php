@@ -46,6 +46,11 @@ class ThreeDsRequest
      */
     public $challenge_indicator;
 
+    /**
+     * @var bool
+     */
+    public $allow_upgrade;
+
     //Not available on previous
 
     /**

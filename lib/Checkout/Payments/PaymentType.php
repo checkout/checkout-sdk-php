@@ -8,5 +8,4 @@ class PaymentType
     public static $recurring = "Recurring";
     public static $moto = "MOTO";
     public static $installment = "Installment";
-    public static $unscheduled = "Unscheduled";
 }

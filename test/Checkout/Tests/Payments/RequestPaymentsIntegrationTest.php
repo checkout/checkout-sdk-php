@@ -9,6 +9,7 @@ use Checkout\Common\AccountHolder;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\RequestBankAccountSource;
 use Checkout\Payments\Request\Source\RequestCardSource;
+use Checkout\Payments\Request\Source\RequestCustomerSource;
 use Checkout\Tests\TestCardSource;
 
 class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
@@ -242,5 +243,29 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentResponse = $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
 
         $this->assertResponse($paymentResponse, "id");
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeCustomerPayment()
+    {
+        $requestSource = new RequestCustomerSource();
+        $requestSource->id = "cus_udst2tfldj6upmye2reztkmm4i";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $this->checkErrorItem(
+            function () use (&$paymentRequest) {
+                return $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+            },
+            "customer_not_found"
+        );
     }
 }

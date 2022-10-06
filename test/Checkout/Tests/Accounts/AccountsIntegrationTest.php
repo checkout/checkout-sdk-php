@@ -5,6 +5,7 @@ namespace Checkout\Tests\Accounts;
 use Checkout\Accounts\AccountsFileRequest;
 use Checkout\Accounts\ContactDetails;
 use Checkout\Accounts\DateOfBirth;
+use Checkout\Accounts\EntityEmailAddresses;
 use Checkout\Accounts\Identification;
 use Checkout\Accounts\Individual;
 use Checkout\Accounts\OnboardEntityRequest;
@@ -30,11 +31,13 @@ class AccountsIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateGetAndUpdateOnboardEntity()
     {
-
         $onboardEntityRequest = new OnboardEntityRequest();
         $onboardEntityRequest->reference = uniqid();
+        $emailAddresses = new EntityEmailAddresses();
+        $emailAddresses->primary = $this->randomEmail();
         $onboardEntityRequest->contact_details = new ContactDetails();
         $onboardEntityRequest->contact_details->phone = $this->getPhone();
+        $onboardEntityRequest->contact_details->email_addresses = $emailAddresses;
         $onboardEntityRequest->profile = new Profile();
         $onboardEntityRequest->profile->urls = array("https://www.superheroexample.com");
         $onboardEntityRequest->profile->mccs = array("0742");
@@ -60,7 +63,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
             "contact_details",
             "contact_details.phone",
             "contact_details.phone.number",
-            //"scheme",
+            "contact_details.email_addresses.primary",
             "individual",
             "individual.first_name",
             "individual.last_name",

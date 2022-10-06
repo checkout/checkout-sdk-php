@@ -10,4 +10,9 @@ class ContactDetails
      * @var Phone
      */
     public $phone;
+
+    /**
+     * @var EntityEmailAddresses
+     */
+    public $email_addresses;
 }

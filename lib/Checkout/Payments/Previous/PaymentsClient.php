@@ -7,6 +7,7 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
+use Checkout\Payments\PaymentsQueryFilter;
 use Checkout\Payments\RefundRequest;
 use Checkout\Payments\VoidRequest;
 
@@ -40,6 +41,16 @@ class PaymentsClient extends Client
     public function requestPayout(PayoutRequest $payoutRequest, $idempotencyKey = null)
     {
         return $this->apiClient->post(self::PAYMENTS_PATH, $payoutRequest, $this->sdkAuthorization(), $idempotencyKey);
+    }
+
+    /**
+     * @param PaymentsQueryFilter $queryFilter
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getPaymentsList(PaymentsQueryFilter $queryFilter)
+    {
+        return $this->apiClient->query(self::PAYMENTS_PATH, $queryFilter, $this->sdkAuthorization());
     }
 
     /**

@@ -42,6 +42,16 @@ class PaymentsClient extends Client
     }
 
     /**
+     * @param PaymentsQueryFilter $queryFilter
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getPaymentsList(PaymentsQueryFilter $queryFilter)
+    {
+        return $this->apiClient->query(self::PAYMENTS_PATH, $queryFilter, $this->sdkAuthorization());
+    }
+
+    /**
      * @param $paymentId
      * @return array
      * @throws CheckoutApiException

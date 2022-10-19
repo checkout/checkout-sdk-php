@@ -4,6 +4,7 @@ namespace Checkout\Tests\Payments\Previous;
 
 use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
+use Checkout\Payments\PaymentsQueryFilter;
 use Checkout\Payments\Previous\CaptureRequest;
 use Checkout\Payments\Previous\PaymentRequest;
 use Checkout\Payments\Previous\PaymentsClient;
@@ -82,6 +83,20 @@ class PaymentsClientTest extends UnitTestFixture
             ->willReturn("foo");
 
         $response = $this->client->requestPayout(new PayoutRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetPaymentsList()
+    {
+        $this->apiClient
+            ->method("query")
+            ->willReturn("response");
+
+        $response = $this->client->getPaymentsList(new PaymentsQueryFilter());
         $this->assertNotNull($response);
     }
 

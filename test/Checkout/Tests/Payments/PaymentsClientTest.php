@@ -7,6 +7,7 @@ use Checkout\Common\AccountHolder;
 use Checkout\Payments\AuthorizationRequest;
 use Checkout\Payments\CaptureRequest;
 use Checkout\Payments\PaymentsClient;
+use Checkout\Payments\PaymentsQueryFilter;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\PayoutRequest;
 use Checkout\Payments\Request\Source\RequestProviderTokenSource;
@@ -66,6 +67,20 @@ class PaymentsClientTest extends UnitTestFixture
             ->willReturn("response");
 
         $response = $this->client->requestPayout(new PayoutRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetPaymentsList()
+    {
+        $this->apiClient
+            ->method("query")
+            ->willReturn("response");
+
+        $response = $this->client->getPaymentsList(new PaymentsQueryFilter());
         $this->assertNotNull($response);
     }
 

@@ -358,6 +358,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeMbwayPayment()
     {
+        $this->markTestSkipped("processing_channel_id");
         $requestSource = new RequestMbwaySource();
 
         $paymentRequest = new PaymentRequest();
@@ -366,6 +367,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->capture = true;
         $paymentRequest->amount = 10;
         $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->processing_channel_id = "pc_5jp2az55l3cuths25t5p3xhwru";
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 

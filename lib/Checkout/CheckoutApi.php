@@ -11,6 +11,7 @@ use Checkout\Instruments\InstrumentsClient;
 use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
+use Checkout\Reports\ReportsClient;
 use Checkout\Risk\RiskClient;
 use Checkout\Sessions\SessionsClient;
 use Checkout\Tokens\TokensClient;
@@ -33,6 +34,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $workflowsClient;
     private $balancesClient;
     private $transfersClient;
+    private $reportsClient;
 
     public function __construct(CheckoutConfiguration $configuration)
     {
@@ -49,6 +51,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->paymentLinksClient = new PaymentLinksClient($baseApiClient, $configuration);
         $this->riskClient = new RiskClient($baseApiClient, $configuration);
         $this->workflowsClient = new WorkflowsClient($baseApiClient, $configuration);
+        $this->reportsClient = new ReportsClient($baseApiClient, $configuration);
         $this->balancesClient = new BalancesClient(
             $this->getBalancesApiClient($configuration),
             $configuration
@@ -158,6 +161,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getWorkflowsClient()
     {
         return $this->workflowsClient;
+    }
+
+    /**
+     * @return ReportsClient
+     */
+    public function getReportsClient()
+    {
+        return $this->reportsClient;
     }
 
     /**

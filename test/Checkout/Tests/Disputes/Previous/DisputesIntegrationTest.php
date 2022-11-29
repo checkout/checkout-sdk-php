@@ -80,6 +80,24 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
     }
 
     /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetDisputeSchemeFiles()
+    {
+        $disputesQueryFilter = new DisputesQueryFilter();
+        $disputesQueryFilter->limit = 5;
+
+        $queryResponse = $this->previousApi->getDisputesClient()->query($disputesQueryFilter);
+        if (array_key_exists("data", $queryResponse)) {
+            foreach ($queryResponse["data"] as $dispute) {
+                $schemeFiles = $this->previousApi->getDisputesClient()->getDisputeSchemeFiles($dispute["id"]);
+                $this->assertResponse($schemeFiles, "id", "files");
+            }
+        }
+    }
+
+    /**
      * Disabled due the time that takes to finish, run on demand
      * @throws CheckoutApiException
      */

@@ -151,4 +151,18 @@ class DisputesClientTest extends UnitTestFixture
         $this->assertNotNull($response);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetDisputeSchemeFiles()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn("foo");
+
+        $response = $this->client->getDisputeSchemeFiles("dispute_id");
+        $this->assertNotNull($response);
+    }
+
 }

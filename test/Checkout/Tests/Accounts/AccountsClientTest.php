@@ -6,6 +6,8 @@ use Checkout\Accounts\AccountsClient;
 use Checkout\Accounts\AccountsFileRequest;
 use Checkout\Accounts\AccountsPaymentInstrument;
 use Checkout\Accounts\OnboardEntityRequest;
+use Checkout\Accounts\PaymentInstrumentRequest;
+use Checkout\Accounts\PaymentInstrumentsQuery;
 use Checkout\Accounts\UpdateScheduleRequest;
 use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
@@ -141,6 +143,51 @@ class AccountsClientTest extends UnitTestFixture
             ->willReturn("response");
 
         $response = $this->client->retrievePayoutSchedule("entity_id");
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRetrievePaymentInstrumentDetails()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn("response");
+
+        $response = $this->client->retrievePaymentInstrumentDetails("entity_id", "instrument_id");
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldQueryPaymentInstruments()
+    {
+        $this->apiClient
+            ->method("query")
+            ->willReturn("response");
+
+        $response = $this->client->queryPaymentInstruments("entity_id", new PaymentInstrumentsQuery());
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateBankPaymentInstrument()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->createBankPaymentInstrument("entity_id", new PaymentInstrumentRequest());
 
         $this->assertNotNull($response);
     }

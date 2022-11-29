@@ -6,15 +6,17 @@ use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
+use Checkout\Client;
 use Checkout\Files\FilesClient;
 
-class AccountsClient extends FilesClient
+class AccountsClient extends Client
 {
     const ACCOUNTS_PATH = "accounts";
     const INSTRUMENT_PATH = "instruments";
     const FILES_PATH = "files";
     const ENTITIES_PATH = "entities";
     const PAYOUT_SCHEDULES_PATH = "payout-schedules";
+    const PAYMENT_INSTRUMENTS_PATH = "payment-instruments";
 
     private $filesApiClient;
 
@@ -37,6 +39,20 @@ class AccountsClient extends FilesClient
         return $this->apiClient->post(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH),
             $entityRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $entityId
+     * @param string $paymentInstrumentId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function retrievePaymentInstrumentDetails($entityId, $paymentInstrumentId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $paymentInstrumentId),
             $this->sdkAuthorization()
         );
     }
@@ -74,12 +90,43 @@ class AccountsClient extends FilesClient
      * @param AccountsPaymentInstrument $accountsPaymentInstrument
      * @return array
      * @throws CheckoutApiException
+     * @deprecated Use {@link createBankPaymentInstrument} instead
      */
     public function createPaymentInstrument($entityId, AccountsPaymentInstrument $accountsPaymentInstrument)
     {
         return $this->apiClient->post(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::INSTRUMENT_PATH),
             $accountsPaymentInstrument,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $entityId
+     * @param PaymentInstrumentRequest $instrumentRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function createBankPaymentInstrument($entityId, PaymentInstrumentRequest $instrumentRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH),
+            $instrumentRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $entityId
+     * @param PaymentInstrumentsQuery $query
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function queryPaymentInstruments($entityId, PaymentInstrumentsQuery $query)
+    {
+        return $this->apiClient->query(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH),
+            $query,
             $this->sdkAuthorization()
         );
     }

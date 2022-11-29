@@ -74,7 +74,7 @@ abstract class SandboxTestFixture extends TestCase
                     ->scopes([OAuthScope::$Files, OAuthScope::$Flow, OAuthScope::$Fx, OAuthScope::$Gateway,
                         OAuthScope::$Marketplace, OAuthScope::$SessionsApp, OAuthScope::$SessionsBrowser,
                         OAuthScope::$Vault, OAuthScope::$PayoutsBankDetails, OAuthScope::$TransfersCreate,
-                        OAuthScope::$TransfersView, OAuthScope::$BalancesView, OAuthScope::$Reporting])
+                        OAuthScope::$TransfersView, OAuthScope::$BalancesView])
                     ->environment(Environment::sandbox())
                     ->logger($this->logger)
                     ->build();

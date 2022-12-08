@@ -7,6 +7,7 @@ class OAuthScope
     public static $Vault = "vault";
     public static $VaultInstruments = "vault:instruments";
     public static $VaultTokenization = "vault:tokenization";
+    public static $VaultCardMetadata = "vault:card-metadata";
     public static $Gateway = "gateway";
     public static $GatewayPayment = "gateway:payment";
     public static $GatewayPaymentDetails = "gateway:payment-details";

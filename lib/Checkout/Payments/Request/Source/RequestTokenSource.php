@@ -32,5 +32,10 @@ class RequestTokenSource extends AbstractRequestSource
     /**
      * @var bool
      */
+    public $stored;
+
+    /**
+     * @var bool
+     */
     public $store_for_future_use;
 }

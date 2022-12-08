@@ -20,7 +20,7 @@ class PaymentInstrumentRequest
     public $currency;
 
     /**
-     * @var string value of Country
+     * @var string values of Country
      */
     public $country;
 

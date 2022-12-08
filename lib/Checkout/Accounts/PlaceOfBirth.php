@@ -5,7 +5,7 @@ namespace Checkout\Accounts;
 class PlaceOfBirth
 {
     /**
-     * @var string value of Country
+     * @var string values of Country
      */
     public $country;
 }

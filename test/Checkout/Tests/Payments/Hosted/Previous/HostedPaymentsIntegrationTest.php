@@ -6,6 +6,7 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Common\Product;
@@ -92,8 +93,10 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $recipient = new PaymentRecipient();
         $recipient->account_number = "1234567";
         $recipient->dob = "1985-05-15";
+        $recipient->first_name = "Mr.";
         $recipient->last_name = "Testing";
         $recipient->zip = "12345";
+        $recipient->country = Country::$ES;
 
         $product = new Product();
         $product->name = "Gold Necklace";

@@ -125,7 +125,7 @@ class ProcessingSettings
     public $otp_value;
 
     /**
-     * @var string value of CountryCode
+     * @var string values of Country
      */
     public $purchase_country;
 

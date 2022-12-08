@@ -23,7 +23,7 @@ abstract class AccountsAccountHolder
     public $date_of_birth;
 
     /**
-     * @var string value of CountryCode
+     * @var string values of Country
      */
     public $country_of_birth;
 

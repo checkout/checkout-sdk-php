@@ -8,6 +8,7 @@ use Checkout\Customers\CustomersClient;
 use Checkout\Disputes\DisputesClient;
 use Checkout\Forex\ForexClient;
 use Checkout\Instruments\InstrumentsClient;
+use Checkout\Metadata\MetadataClient;
 use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
@@ -35,6 +36,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $balancesClient;
     private $transfersClient;
     private $reportsClient;
+    private $metadataClient;
 
     public function __construct(CheckoutConfiguration $configuration)
     {
@@ -52,6 +54,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->riskClient = new RiskClient($baseApiClient, $configuration);
         $this->workflowsClient = new WorkflowsClient($baseApiClient, $configuration);
         $this->reportsClient = new ReportsClient($baseApiClient, $configuration);
+        $this->metadataClient = new MetadataClient($baseApiClient, $configuration);
         $this->balancesClient = new BalancesClient(
             $this->getBalancesApiClient($configuration),
             $configuration
@@ -185,6 +188,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getTransfersClient()
     {
         return $this->transfersClient;
+    }
+
+    /**
+     * @return MetadataClient
+     */
+    public function getMetadataClient()
+    {
+        return $this->metadataClient;
     }
 
     /**

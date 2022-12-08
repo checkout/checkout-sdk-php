@@ -26,4 +26,14 @@ class RequestIdSource extends AbstractRequestSource
      * @var string
      */
     public $payment_method;
+
+    /**
+     * @var bool
+     */
+    public $stored;
+
+    /**
+     * @var bool
+     */
+    public $store_for_future_use;
 }

@@ -14,7 +14,7 @@ class TransfersClient extends Client
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
-        parent::__construct($apiClient, $configuration, AuthorizationType::$oAuth);
+        parent::__construct($apiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
     }
 
     /**

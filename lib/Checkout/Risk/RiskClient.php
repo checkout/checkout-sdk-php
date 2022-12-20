@@ -10,6 +10,9 @@ use Checkout\Client;
 use Checkout\Risk\PreAuthentication\PreAuthenticationAssessmentRequest;
 use Checkout\Risk\PreCapture\PreCaptureAssessmentRequest;
 
+/**
+ * @deprecated Risk endpoints are no longer supported officially, This module will be removed in a future release.
+ */
 class RiskClient extends Client
 {
     const PRE_AUTHENTICATION_PATH = "risk/assessments/pre-authentication";

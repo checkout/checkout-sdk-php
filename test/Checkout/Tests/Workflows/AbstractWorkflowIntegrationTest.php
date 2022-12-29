@@ -16,7 +16,7 @@ abstract class AbstractWorkflowIntegrationTest extends AbstractPaymentsIntegrati
 
     const WORKFLOW_ENTITY_ID = "ent_kidtcgc3ge5unf4a5i6enhnr5m";
     const PROCESSING_CHANNEL_ID = "pc_5jp2az55l3cuths25t5p3xhwru";
-    const WORKFLOW_NAME = "testing";
+    const WORKFLOW_NAME = "testing-php";
     private $workflows = [];
 
     protected function createWorkflow()

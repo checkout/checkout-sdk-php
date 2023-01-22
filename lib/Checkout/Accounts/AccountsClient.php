@@ -118,6 +118,25 @@ class AccountsClient extends Client
 
     /**
      * @param string $entityId
+     * @param string $instrumentId
+     * @param UpdatePaymentInstrumentRequest $instrumentRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function updateBankPaymentInstrumentDetails(
+        $entityId,
+        $instrumentId,
+        UpdatePaymentInstrumentRequest $instrumentRequest
+    ) {
+        return $this->apiClient->patch(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $instrumentId),
+            $instrumentRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $entityId
      * @param PaymentInstrumentsQuery $query
      * @return array
      * @throws CheckoutApiException

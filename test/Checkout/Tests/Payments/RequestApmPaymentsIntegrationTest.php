@@ -23,6 +23,7 @@ use Checkout\Payments\Request\Source\Apm\RequestAlipayPlusSource;
 use Checkout\Payments\Request\Source\Apm\RequestAlmaSource;
 use Checkout\Payments\Request\Source\Apm\RequestBancontactSource;
 use Checkout\Payments\Request\Source\Apm\RequestBenefitSource;
+use Checkout\Payments\Request\Source\Apm\RequestCvConnectSource;
 use Checkout\Payments\Request\Source\Apm\RequestFawrySource;
 use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
@@ -37,6 +38,7 @@ use Checkout\Payments\Request\Source\Apm\RequestQPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestSofortSource;
 use Checkout\Payments\Request\Source\Apm\RequestStcPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestTamaraSource;
+use Checkout\Payments\Request\Source\Apm\RequestTrustlySource;
 use Closure;
 use Exception;
 
@@ -623,6 +625,51 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->capture = true;
         $paymentRequest->amount = 10;
         $paymentRequest->currency = Currency::$EGP;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeTrustlyPayment()
+    {
+        $requestSource = new RequestTrustlySource();
+        $requestSource->billing_address = $this->getAddress();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
+    }
+
+
+    /**
+     * @test
+     */
+    public function shouldMakeCvConnectPayment()
+    {
+        $requestSource = new RequestCvConnectSource();
+        $requestSource->billing_address = $this->getAddress();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 

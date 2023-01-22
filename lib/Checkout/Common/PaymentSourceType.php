@@ -48,4 +48,6 @@ class PaymentSourceType
     public static $postfinance = "postfinance";
     public static $stcpay = "stcpay";
     public static $alma = "alma";
+    public static $trustly = "trustly";
+    public static $cvconnect = "cvconnect";
 }

@@ -8,6 +8,7 @@ use Checkout\Accounts\AccountsPaymentInstrument;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\PaymentInstrumentRequest;
 use Checkout\Accounts\PaymentInstrumentsQuery;
+use Checkout\Accounts\UpdatePaymentInstrumentRequest;
 use Checkout\Accounts\UpdateScheduleRequest;
 use Checkout\CheckoutApiException;
 use Checkout\Common\Currency;
@@ -188,6 +189,21 @@ class AccountsClientTest extends UnitTestFixture
             ->willReturn("response");
 
         $response = $this->client->createBankPaymentInstrument("entity_id", new PaymentInstrumentRequest());
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateBankPaymentInstrument()
+    {
+        $this->apiClient
+            ->method("patch")
+            ->willReturn("response");
+
+        $response = $this->client->updateBankPaymentInstrumentDetails("entity_id", "instrument_id", new UpdatePaymentInstrumentRequest());
 
         $this->assertNotNull($response);
     }

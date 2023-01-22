@@ -68,4 +68,9 @@ class AccountHolder
      * @var string
      */
     public $gender;
+
+    /**
+     * @var string
+     */
+    public $middle_name;
 }

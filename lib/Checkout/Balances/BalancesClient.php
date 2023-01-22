@@ -14,19 +14,19 @@ class BalancesClient extends Client
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
-        parent::__construct($apiClient, $configuration, AuthorizationType::$oAuth);
+        parent::__construct($apiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
     }
 
     /**
-     * @param $entity_id
+     * @param $entityId
      * @param BalancesQuery $balancesQuery
      * @return array
      * @throws CheckoutApiException
      */
-    public function retrieveEntityBalances($entity_id, BalancesQuery $balancesQuery)
+    public function retrieveEntityBalances($entityId, BalancesQuery $balancesQuery)
     {
         return $this->apiClient->query(
-            $this->buildPath(self::BALANCES_PATH, $entity_id),
+            $this->buildPath(self::BALANCES_PATH, $entityId),
             $balancesQuery,
             $this->sdkAuthorization()
         );

@@ -6,14 +6,14 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Common\AccountHolderIdentification;
+use Checkout\Common\AccountHolderIdentificationType;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\RequestCardSource;
 use Checkout\Payments\Request\Source\RequestTokenSource;
-use Checkout\Payments\Sender\Identification;
-use Checkout\Payments\Sender\IdentificationType;
 use Checkout\Payments\Sender\PaymentCorporateSender;
 use Checkout\Payments\Sender\PaymentIndividualSender;
 use Checkout\Payments\Sender\PaymentInstrumentSender;
@@ -65,10 +65,10 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $customerRequest->email = $this->randomEmail();
         $customerRequest->name = "Customer";
 
-        $identification = new Identification();
+        $identification = new AccountHolderIdentification();
         $identification->issuing_country = Country::$GT;
         $identification->number = "1234";
-        $identification->type = IdentificationType::$drivingLicence;
+        $identification->type = AccountHolderIdentificationType::$driving_licence;
 
         $paymentIndividualSender = new PaymentIndividualSender();
         $paymentIndividualSender->fist_name = "Mr";

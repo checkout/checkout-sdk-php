@@ -5,11 +5,11 @@ namespace Checkout\Payments\Sender;
 use Checkout\Common\AccountHolderIdentification;
 use Checkout\Common\Address;
 
-class PaymentCorporateSender extends PaymentSender
+class PaymentGovernmentSender extends PaymentSender
 {
     public function __construct()
     {
-        parent::__construct(PaymentSenderType::$corporate);
+        parent::__construct(PaymentSenderType::$government);
     }
 
     /**

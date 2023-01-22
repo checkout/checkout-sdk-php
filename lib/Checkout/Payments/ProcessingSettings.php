@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments;
 
+use Checkout\Payments\Previous\SenderInformation;
+
 class ProcessingSettings
 {
     /**
@@ -135,6 +137,11 @@ class ProcessingSettings
     public $custom_payment_method_ids;
 
     /**
+     * @var string
+     */
+    public $merchant_callback_url;
+
+    /**
      * @var int
      */
     public $shipping_delay;
@@ -153,6 +160,17 @@ class ProcessingSettings
      * @var Aggregator
      */
     public $aggregator;
+
+
+    /**
+     * @var SenderInformation
+     */
+    public $senderInformation;
+
+    /**
+     * @var string
+     */
+    public $purpose;
 
 
 }

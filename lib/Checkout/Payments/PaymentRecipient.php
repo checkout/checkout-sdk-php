@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments;
 
+use Checkout\Common\Address;
+
 class PaymentRecipient
 {
     /**
@@ -13,6 +15,11 @@ class PaymentRecipient
      * @var string
      */
     public $account_number;
+
+    /**
+     * @var Address
+     */
+    public $address;
 
     /**
      * @var string

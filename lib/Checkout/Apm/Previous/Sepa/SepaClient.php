@@ -10,6 +10,7 @@ use Checkout\Client;
 
 class SepaClient extends Client
 {
+    const APMS_PATH = "apms";
     const  SEPA_MANDATES_PATH = "sepa/mandates";
     const  PPRO_PATH = "ppro";
     const  CANCEL_PATH = "cancel";
@@ -51,7 +52,7 @@ class SepaClient extends Client
     public function getMandateViaPPro($mandateId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId),
+            $this->buildPath(self::APMS_PATH, self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId),
             $this->sdkAuthorization()
         );
     }
@@ -64,7 +65,7 @@ class SepaClient extends Client
     public function cancelMandateViaPPro($mandateId)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
+            $this->buildPath(self::APMS_PATH, self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
             null,
             $this->sdkAuthorization()
         );

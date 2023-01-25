@@ -29,7 +29,7 @@ class SourcesIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldSepaSource()
+    public function shouldCreateSepaSource()
     {
         $this->markTestSkipped("unstable");
         $sourceData = new SourceData();

@@ -24,9 +24,11 @@ use Checkout\Payments\Request\Source\Apm\RequestAlmaSource;
 use Checkout\Payments\Request\Source\Apm\RequestBancontactSource;
 use Checkout\Payments\Request\Source\Apm\RequestBenefitSource;
 use Checkout\Payments\Request\Source\Apm\RequestCvConnectSource;
+use Checkout\Payments\Request\Source\Apm\RequestEpsSource;
 use Checkout\Payments\Request\Source\Apm\RequestFawrySource;
 use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
+use Checkout\Payments\Request\Source\Apm\RequestIllicadoSource;
 use Checkout\Payments\Request\Source\Apm\RequestKlarnaSource;
 use Checkout\Payments\Request\Source\Apm\RequestKnetSource;
 use Checkout\Payments\Request\Source\Apm\RequestMbwaySource;
@@ -376,6 +378,58 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $this->checkErrorItem(
             $this->requestFunction($paymentRequest),
             self::$apm_service_unavailable
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeEpsPayment()
+    {
+        $requestSource = new RequestEpsSource();
+        $requestSource->purpose = "Mens black t-shirt L";
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeIllicadoPayment()
+    {
+        $address = new Address();
+        $address->address_line1 = "Cecilia Chapman";
+        $address->address_line2 = "711-2880 Nulla St.";
+        $address->city = "Mankato";
+        $address->state = "Mississippi";
+        $address->zip = "96522";
+        $address->country = Country::$SA;
+
+        $requestSource = new RequestIllicadoSource();
+        $requestSource->billing_address = $address;
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->reference = $this->randomEmail();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
         );
     }
 

@@ -27,6 +27,7 @@ class PaymentSourceType
     public static $paypal = "paypal";
     public static $multibanco = "multibanco";
     public static $eps = "eps";
+    public static $illicado = "illicado";
     public static $poli = "poli";
     public static $przelewy24 = "p24";
     public static $benefitpay = "benefitpay";

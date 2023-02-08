@@ -41,5 +41,7 @@ class OAuthScope
     public static $MiddlewareMerchantsSecret = "middleware:merchants-secret";
     public static $MiddlewareMerchantsPublic = "middleware:merchants-public";
     public static $Reports = "reports";
-    public static $ReportsView = "reports-view";
+    public static $ReportsView = "reports:view";
+    public static $FinancialActions = "financial-actions";
+    public static $FinancialActionsView = "financial-actions:view";
 }

@@ -74,7 +74,8 @@ abstract class SandboxTestFixture extends TestCase
                     ->scopes([OAuthScope::$Files, OAuthScope::$Flow, OAuthScope::$Fx, OAuthScope::$Gateway,
                         OAuthScope::$Marketplace, OAuthScope::$SessionsApp, OAuthScope::$SessionsBrowser,
                         OAuthScope::$Vault, OAuthScope::$PayoutsBankDetails, OAuthScope::$TransfersCreate,
-                        OAuthScope::$TransfersView, OAuthScope::$BalancesView, OAuthScope::$VaultCardMetadata])
+                        OAuthScope::$TransfersView, OAuthScope::$BalancesView, OAuthScope::$VaultCardMetadata,
+                        OAuthScope::$FinancialActions])
                     ->environment(Environment::sandbox())
                     ->logger($this->logger)
                     ->build();
@@ -159,9 +160,10 @@ abstract class SandboxTestFixture extends TestCase
     /**
      * @param callable $func
      * @param callable|null $predicate
+     * @param int $timeout
      * @return mixed
      */
-    protected function retriable(callable $func, callable $predicate = null)
+    protected function retriable(callable $func, callable $predicate = null, $timeout = 2)
     {
         $currentAttempt = 1;
         $maxAttempts = 10;
@@ -178,7 +180,7 @@ abstract class SandboxTestFixture extends TestCase
                 $this->logger->warning("Request/Predicate failed with error '${ex}' - retry ${currentAttempt}/${maxAttempts}");
             }
             $currentAttempt++;
-            sleep(2);
+            sleep($timeout);
         }
         throw new AssertionFailedError("Max attempts reached!");
     }

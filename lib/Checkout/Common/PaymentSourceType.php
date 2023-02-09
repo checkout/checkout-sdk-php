@@ -51,4 +51,5 @@ class PaymentSourceType
     public static $alma = "alma";
     public static $trustly = "trustly";
     public static $cvconnect = "cvconnect";
+    public static $sepa = "sepa";
 }

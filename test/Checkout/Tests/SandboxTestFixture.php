@@ -8,6 +8,7 @@ use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\CheckoutSdk;
+use Checkout\Common\AccountHolder;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
 use Checkout\Common\Phone;
@@ -155,6 +156,19 @@ abstract class SandboxTestFixture extends TestCase
         $phone->country_code = "1";
         $phone->number = "4155552671";
         return $phone;
+    }
+
+    /**
+     * @return AccountHolder
+     */
+    protected function getAccountHolder()
+    {
+        $accountHolder = new AccountHolder();
+        $accountHolder->first_name = "John";
+        $accountHolder->last_name = "Doe";
+        $accountHolder->phone = $this->getPhone();
+        $accountHolder->billing_address = $this->getAddress();
+        return $accountHolder;
     }
 
     /**

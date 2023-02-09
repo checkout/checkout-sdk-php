@@ -41,6 +41,7 @@ use Checkout\Payments\Request\Source\Apm\RequestSofortSource;
 use Checkout\Payments\Request\Source\Apm\RequestStcPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestTamaraSource;
 use Checkout\Payments\Request\Source\Apm\RequestTrustlySource;
+use Checkout\Payments\Request\Source\Apm\RequestSepaSource;
 use Closure;
 use Exception;
 
@@ -718,6 +719,34 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     {
         $requestSource = new RequestCvConnectSource();
         $requestSource->billing_address = $this->getAddress();
+
+        $paymentRequest = new PaymentRequest();
+        $paymentRequest->source = $requestSource;
+        $paymentRequest->amount = 10;
+        $paymentRequest->currency = Currency::$EUR;
+        $paymentRequest->capture = true;
+        $paymentRequest->success_url = "https://testing.checkout.com/sucess";
+        $paymentRequest->failure_url = "https://testing.checkout.com/failure";
+
+        $this->checkErrorItem(
+            $this->requestFunction($paymentRequest),
+            self::$payee_not_onboarded
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldMakeSepaPayment()
+    {
+        $requestSource = new RequestSepaSource();
+        $requestSource->country = Country::$ES;
+        $requestSource->currency = Currency::$EUR;
+        $requestSource->account_number = "HU93116000060000000012345676";
+        $requestSource->bank_code = "37040044";
+        $requestSource->mandate_id = "man_12321233211";
+        $requestSource->date_of_signature = "2023-01-01";
+        $requestSource->account_holder = $this->getAccountHolder();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;

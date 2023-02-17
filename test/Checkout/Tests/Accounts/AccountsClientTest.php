@@ -8,6 +8,7 @@ use Checkout\Accounts\AccountsPaymentInstrument;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\PaymentInstrumentRequest;
 use Checkout\Accounts\PaymentInstrumentsQuery;
+use Checkout\Accounts\PlatformsFileRequest;
 use Checkout\Accounts\UpdatePaymentInstrumentRequest;
 use Checkout\Accounts\UpdateScheduleRequest;
 use Checkout\CheckoutApiException;
@@ -79,6 +80,36 @@ class AccountsClientTest extends UnitTestFixture
             ->willReturn("response");
 
         $response = $this->client->UpdateEntity("entity_id", new OnboardEntityRequest());
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateAFile()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->UpdateAFile(new PlatformsFileRequest());
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRetrieveAFile()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn("response");
+
+        $response = $this->client->RetrieveAFile("file_id");
 
         $this->assertNotNull($response);
     }

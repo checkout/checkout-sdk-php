@@ -14,6 +14,7 @@ use Checkout\Accounts\InstrumentDocument;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\PaymentInstrumentRequest;
 use Checkout\Accounts\PaymentInstrumentsQuery;
+use Checkout\Accounts\PlatformsFileRequest;
 use Checkout\Accounts\Profile;
 use Checkout\Accounts\Representative;
 use Checkout\CheckoutApi;
@@ -97,6 +98,63 @@ class AccountsIntegrationTest extends SandboxTestFixture
     /**
      * @test
      * @throws CheckoutApiException
+     */
+    public function shouldUpdateAndGetAFile()
+    {
+        $this->markTestSkipped("unavailable");
+        $onboardEntityRequest = new OnboardEntityRequest();
+        $onboardEntityRequest->reference = uniqid();
+        $emailAddresses = new EntityEmailAddresses();
+        $emailAddresses->primary = $this->randomEmail();
+        $onboardEntityRequest->contact_details = new ContactDetails();
+        $onboardEntityRequest->contact_details->phone = $this->getPhone();
+        $onboardEntityRequest->contact_details->email_addresses = $emailAddresses;
+        $onboardEntityRequest->profile = new Profile();
+        $onboardEntityRequest->profile->urls = array("https://www.superheroexample.com");
+        $onboardEntityRequest->profile->mccs = array("0742");
+        $onboardEntityRequest->individual = new Individual();
+        $onboardEntityRequest->individual->first_name = "Bruce";
+        $onboardEntityRequest->individual->last_name = "Wayne";
+        $onboardEntityRequest->individual->trading_name = "Batman's Super Hero Masks";
+        $onboardEntityRequest->individual->registered_address = $this->getAddress();
+        $onboardEntityRequest->individual->national_tax_id = "TAX123456";
+        $onboardEntityRequest->individual->date_of_birth = $this->getDateOfBirth();
+        $onboardEntityRequest->individual->identification = $this->getTestIdentification();
+
+        $response = $this->checkoutApi->getAccountsClient()->createEntity($onboardEntityRequest);
+
+        $request = new PlatformsFileRequest();
+        $request->purpose = "identity_verification";
+        $request->entity_id = $response["id"];
+
+        $updateResponse = $this->checkoutApi->getAccountsClient()->updateAFile($request);
+
+        $this->assertResponse(
+            $updateResponse,
+            "id",
+            "status",
+            "maximum_size_in_bytes",
+            "document_types_for_purpose"
+        );
+
+        $retrieveResponse = $this->checkoutApi->getAccountsClient()->retrieveAFile($updateResponse["Id"]);
+
+        $this->assertResponse(
+            $retrieveResponse,
+            "id",
+            "status",
+            "status_reasons",
+            "file_name",
+            "size",
+            "mime_type",
+            "uploaded_on",
+            "purpose"
+        );
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
@@ -170,6 +228,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
     /**
      * @test
      * @throws CheckoutApiException
+     * @deprecated Obsolete
      */
     public function shouldUploadAccountsFile()
     {
@@ -213,6 +272,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
     /**
      * @return array
      * @throws CheckoutApiException
+     * @deprecated Obsolete
      */
     public function uploadFile()
     {

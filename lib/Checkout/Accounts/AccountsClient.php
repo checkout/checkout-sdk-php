@@ -17,6 +17,7 @@ class AccountsClient extends Client
     const ENTITIES_PATH = "entities";
     const PAYOUT_SCHEDULES_PATH = "payout-schedules";
     const PAYMENT_INSTRUMENTS_PATH = "payment-instruments";
+    const PLATFORMS_FILES_PATH = "platforms-files";
 
     private $filesApiClient;
 
@@ -39,20 +40,6 @@ class AccountsClient extends Client
         return $this->apiClient->post(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH),
             $entityRequest,
-            $this->sdkAuthorization()
-        );
-    }
-
-    /**
-     * @param string $entityId
-     * @param string $paymentInstrumentId
-     * @return array
-     * @throws CheckoutApiException
-     */
-    public function retrievePaymentInstrumentDetails($entityId, $paymentInstrumentId)
-    {
-        return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $paymentInstrumentId),
             $this->sdkAuthorization()
         );
     }
@@ -86,6 +73,33 @@ class AccountsClient extends Client
     }
 
     /**
+     * @param PlatformsFileRequest $fileRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function updateAFile(PlatformsFileRequest $fileRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::PLATFORMS_FILES_PATH),
+            $fileRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $fileId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function retrieveAFile($fileId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::PLATFORMS_FILES_PATH, $fileId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
      * @param $entityId
      * @param AccountsPaymentInstrument $accountsPaymentInstrument
      * @return array
@@ -112,6 +126,20 @@ class AccountsClient extends Client
         return $this->apiClient->post(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH),
             $instrumentRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $entityId
+     * @param string $paymentInstrumentId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function retrievePaymentInstrumentDetails($entityId, $paymentInstrumentId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $paymentInstrumentId),
             $this->sdkAuthorization()
         );
     }
@@ -154,6 +182,7 @@ class AccountsClient extends Client
      * @param AccountsFileRequest $accountsFileRequest
      * @return array
      * @throws CheckoutApiException
+     * @deprecated This endpoint is no longer supported officially, please check the documentation.
      */
     public function submitFile(AccountsFileRequest $accountsFileRequest)
     {

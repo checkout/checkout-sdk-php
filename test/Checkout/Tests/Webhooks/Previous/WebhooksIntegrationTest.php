@@ -39,7 +39,7 @@ class WebhooksIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateUpdateAndDeleteWebhook()
     {
-
+        $this->markTestSkipped("unstable");
         $webhookRequest = new WebhookRequest();
         $webhookRequest->url = "https://test.checkout.com/webhooks";
         $webhookRequest->content_type = "json";

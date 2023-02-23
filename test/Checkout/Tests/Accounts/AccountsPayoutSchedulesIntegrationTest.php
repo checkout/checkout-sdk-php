@@ -158,7 +158,7 @@ class AccountsPayoutSchedulesIntegrationTest extends SandboxTestFixture
                 getenv("CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID"),
                 getenv("CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET")
             )
-            ->scopes([OAuthScope::$Marketplace])
+            ->scopes([OAuthScope::$Accounts])
             ->build();
     }
 }

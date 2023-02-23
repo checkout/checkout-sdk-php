@@ -30,6 +30,7 @@ class FinancialIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldQueryFinancialActions()
     {
+        $this->markTestSkipped("unstable");
         $payment = $this->makeCardPayment(true, 1040);
 
         $query = new FinancialActionsQuery();

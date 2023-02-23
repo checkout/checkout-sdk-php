@@ -73,7 +73,7 @@ abstract class SandboxTestFixture extends TestCase
                 $this->checkoutApi = CheckoutSdk::builder()->oAuth()
                     ->clientCredentials(getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID"), getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET"))
                     ->scopes([OAuthScope::$Files, OAuthScope::$Flow, OAuthScope::$Fx, OAuthScope::$Gateway,
-                        OAuthScope::$Marketplace, OAuthScope::$SessionsApp, OAuthScope::$SessionsBrowser,
+                        OAuthScope::$Accounts, OAuthScope::$SessionsApp, OAuthScope::$SessionsBrowser,
                         OAuthScope::$Vault, OAuthScope::$PayoutsBankDetails, OAuthScope::$TransfersCreate,
                         OAuthScope::$TransfersView, OAuthScope::$BalancesView, OAuthScope::$VaultCardMetadata,
                         OAuthScope::$FinancialActions])

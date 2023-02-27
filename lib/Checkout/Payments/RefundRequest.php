@@ -18,4 +18,11 @@ class RefundRequest
      * @var array
      */
     public $metadata;
+
+    //Not available on previous
+
+    /**
+     * @var array values of AmountAllocations
+     */
+    public $amount_allocations;
 }

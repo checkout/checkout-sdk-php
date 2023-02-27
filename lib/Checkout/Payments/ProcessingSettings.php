@@ -142,6 +142,11 @@ class ProcessingSettings
     public $merchant_callback_url;
 
     /**
+     * @var string
+     */
+    public $line_of_business;
+
+    /**
      * @var int
      */
     public $shipping_delay;

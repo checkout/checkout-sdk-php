@@ -98,6 +98,43 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldAddWorkflowAction()
+    {
+        $workflow = $this->createWorkflow();
+
+        $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
+
+        $this->assertResponse(
+            $workflowResponse,
+            'id',
+            'name',
+            'active',
+            'actions',
+            'conditions'
+        );
+
+        $signature = new WebhookSignature();
+        $signature->key = '8V8x0dLK%AyD*DNS8JJr';
+        $signature->method = 'HMACSHA256';
+
+        $actionRequest = new WebhookWorkflowActionRequest();
+        $actionRequest->url = 'https://google.com/fail/fake';
+        $actionRequest->signature = $signature;
+
+        $addResponse = $this->checkoutApi->getWorkflowsClient()->addWorkflowAction($workflow["id"], $actionRequest);
+        self::assertArrayHasKey("http_metadata", $addResponse);
+        self::assertEquals(201, $addResponse["http_metadata"]->getStatusCode());
+
+        $workflowUpdated = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
+        $this->assertResponse($workflowUpdated, "actions");
+
+        self::assertTrue(count($workflowUpdated["actions"]) > count($workflowResponse["actions"]));
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldUpdateWorkflowAction()
     {
         $workflow = $this->createWorkflow();
@@ -134,6 +171,20 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
 
         self::assertEquals($actionId, $action["id"]);
         self::assertEquals($actionRequest->url, $action["url"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRemoveWorkflowAction()
+    {
+        $workflow = $this->createWorkflow();
+        $action = $this->addAction($workflow["id"]);
+
+        $response = $this->checkoutApi->getWorkflowsClient()->removeWorkflowAction($workflow["id"], $action["id"]);
+        self::assertArrayHasKey("http_metadata", $response);
+        self::assertEquals(204, $response["http_metadata"]->getStatusCode());
     }
 
     /**

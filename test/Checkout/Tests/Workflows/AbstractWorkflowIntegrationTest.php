@@ -77,6 +77,23 @@ abstract class AbstractWorkflowIntegrationTest extends AbstractPaymentsIntegrati
         return $response;
     }
 
+    protected function addAction($workflowId)
+    {
+        $signature = new WebhookSignature();
+        $signature->key = '8V8x0dLK%AyD*DNS8JJr';
+        $signature->method = 'HMACSHA256';
+
+        $actionRequest = new WebhookWorkflowActionRequest();
+        $actionRequest->url = 'https://google.com/fail/fake';
+        $actionRequest->signature = $signature;
+
+        $response = $this->checkoutApi->getWorkflowsClient()->addWorkflowAction($workflowId, $actionRequest);
+
+        $this->assertResponse($response, "id");
+
+        return $response;
+    }
+
     /**
      * @after
      * @throws CheckoutApiException

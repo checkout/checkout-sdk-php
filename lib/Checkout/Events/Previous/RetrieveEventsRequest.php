@@ -2,9 +2,9 @@
 
 namespace Checkout\Events\Previous;
 
-use Checkout\Common\QueryFilterDateRange;
+use Checkout\Common\AbstractQueryFilter;
 
-class RetrieveEventsRequest extends QueryFilterDateRange
+class RetrieveEventsRequest extends AbstractQueryFilter
 {
     /**
      * @var string

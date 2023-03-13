@@ -28,6 +28,15 @@ class WorkflowsClient extends Client
     }
 
     /**
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getWorkflows()
+    {
+        return $this->apiClient->get(self::WORKFLOWS_PATH, $this->sdkAuthorization());
+    }
+
+    /**
      * @param CreateWorkflowRequest $createWorkflowRequest
      * @return array
      * @throws CheckoutApiException
@@ -38,15 +47,6 @@ class WorkflowsClient extends Client
     }
 
     /**
-     * @return array
-     * @throws CheckoutApiException
-     */
-    public function getWorkflows()
-    {
-        return $this->apiClient->get(self::WORKFLOWS_PATH, $this->sdkAuthorization());
-    }
-
-    /**
      * @param $workflowId
      * @return array
      * @throws CheckoutApiException
@@ -54,6 +54,16 @@ class WorkflowsClient extends Client
     public function getWorkflow($workflowId)
     {
         return $this->apiClient->get($this->buildPath(self::WORKFLOWS_PATH, $workflowId), $this->sdkAuthorization());
+    }
+
+    /**
+     * @param $workflowId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function removeWorkflow($workflowId)
+    {
+        return $this->apiClient->delete($this->buildPath(self::WORKFLOWS_PATH, $workflowId), $this->sdkAuthorization());
     }
 
     /**
@@ -73,12 +83,17 @@ class WorkflowsClient extends Client
 
     /**
      * @param $workflowId
+     * @param WorkflowActionRequest $workflowActionRequest
      * @return array
      * @throws CheckoutApiException
      */
-    public function removeWorkflow($workflowId)
+    public function addWorkflowAction($workflowId, WorkflowActionRequest $workflowActionRequest)
     {
-        return $this->apiClient->delete($this->buildPath(self::WORKFLOWS_PATH, $workflowId), $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::ACTIONS_PATH),
+            $workflowActionRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -93,6 +108,35 @@ class WorkflowsClient extends Client
         return $this->apiClient->put(
             $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::ACTIONS_PATH, $actionId),
             $workflowActionRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $workflowId
+     * @param $actionId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function removeWorkflowAction($workflowId, $actionId)
+    {
+        return $this->apiClient->delete(
+            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::ACTIONS_PATH, $actionId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $workflowId
+     * @param WorkflowConditionRequest $workflowConditionRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function addWorkflowCondition($workflowId, WorkflowConditionRequest $workflowConditionRequest)
+    {
+        return$this->apiClient->post(
+            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::CONDITIONS_PATH),
+            $workflowConditionRequest,
             $this->sdkAuthorization()
         );
     }
@@ -117,6 +161,20 @@ class WorkflowsClient extends Client
     }
 
     /**
+     * @param $workflowId
+     * @param $conditionId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function removeWorkflowCondition($workflowId, $conditionId)
+    {
+        return$this->apiClient->delete(
+            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::CONDITIONS_PATH, $conditionId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
      * @return array
      * @throws CheckoutApiException
      */
@@ -126,21 +184,6 @@ class WorkflowsClient extends Client
             $this->buildPath(self::WORKFLOWS_PATH, self::EVENT_TYPES_PATH),
             $this->sdkAuthorization()
         );
-    }
-
-    /**
-     * @param $subjectId
-     * @return array
-     * @throws CheckoutApiException
-     */
-    public function getSubjectEvents($subjectId)
-    {
-        return $this->apiClient->get($this->buildPath(
-            self::WORKFLOWS_PATH,
-            self::EVENTS_PATH,
-            self::SUBJECT_PATH,
-            $subjectId
-        ), $this->sdkAuthorization());
     }
 
     /**
@@ -158,6 +201,23 @@ class WorkflowsClient extends Client
 
     /**
      * @param $eventId
+     * @param $actionId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getActionInvocations($eventId, $actionId)
+    {
+        return $this->apiClient->get($this->buildPath(
+            self::WORKFLOWS_PATH,
+            self::EVENTS_PATH,
+            $eventId,
+            self::ACTIONS_PATH,
+            $actionId
+        ), $this->sdkAuthorization());
+    }
+
+    /**
+     * @param $eventId
      * @return array
      * @throws CheckoutApiException
      */
@@ -165,26 +225,6 @@ class WorkflowsClient extends Client
     {
         return $this->apiClient->post(
             $this->buildPath(self::WORKFLOWS_PATH, self::EVENTS_PATH, $eventId, self::REFLOW_PATH),
-            null,
-            $this->sdkAuthorization()
-        );
-    }
-
-    /**
-     * @param $subjectId
-     * @return array
-     * @throws CheckoutApiException
-     */
-    public function reflowBySubject($subjectId)
-    {
-        return $this->apiClient->post(
-            $this->buildPath(
-                self::WORKFLOWS_PATH,
-                self::EVENTS_PATH,
-                self::SUBJECT_PATH,
-                $subjectId,
-                self::REFLOW_PATH
-            ),
             null,
             $this->sdkAuthorization()
         );
@@ -213,6 +253,55 @@ class WorkflowsClient extends Client
     }
 
     /**
+     * @param ReflowRequest $reflowRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function reflow(ReflowRequest $reflowRequest)
+    {
+        return $this->apiClient->post($this->buildPath(
+            self::WORKFLOWS_PATH,
+            self::EVENTS_PATH,
+            self::REFLOW_PATH
+        ), $reflowRequest, $this->sdkAuthorization());
+    }
+
+    /**
+     * @param $subjectId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getSubjectEvents($subjectId)
+    {
+        return $this->apiClient->get($this->buildPath(
+            self::WORKFLOWS_PATH,
+            self::EVENTS_PATH,
+            self::SUBJECT_PATH,
+            $subjectId
+        ), $this->sdkAuthorization());
+    }
+
+    /**
+     * @param $subjectId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function reflowBySubject($subjectId)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::WORKFLOWS_PATH,
+                self::EVENTS_PATH,
+                self::SUBJECT_PATH,
+                $subjectId,
+                self::REFLOW_PATH
+            ),
+            null,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
      * @param $subjectId
      * @param $workflowId
      * @return array
@@ -233,36 +322,5 @@ class WorkflowsClient extends Client
             null,
             $this->sdkAuthorization()
         );
-    }
-
-    /**
-     * @param ReflowRequest $reflowRequest
-     * @return array
-     * @throws CheckoutApiException
-     */
-    public function reflow(ReflowRequest $reflowRequest)
-    {
-        return $this->apiClient->post($this->buildPath(
-            self::WORKFLOWS_PATH,
-            self::EVENTS_PATH,
-            self::REFLOW_PATH
-        ), $reflowRequest, $this->sdkAuthorization());
-    }
-
-    /**
-     * @param $eventId
-     * @param $actionId
-     * @return array
-     * @throws CheckoutApiException
-     */
-    public function getActionInvocations($eventId, $actionId)
-    {
-        return $this->apiClient->get($this->buildPath(
-            self::WORKFLOWS_PATH,
-            self::EVENTS_PATH,
-            $eventId,
-            self::ACTIONS_PATH,
-            $actionId
-        ), $this->sdkAuthorization());
     }
 }

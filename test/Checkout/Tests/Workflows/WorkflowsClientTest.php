@@ -32,20 +32,6 @@ class WorkflowsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateWorkflow()
-    {
-        $this->apiClient
-            ->method("post")
-            ->willReturn("response");
-
-        $response = $this->client->createWorkflow(new CreateWorkflowRequest());
-        $this->assertNotNull($response);
-    }
-
-    /**
-     * @test
-     * @throws CheckoutApiException
-     */
     public function shouldGetWorkflows()
     {
         $this->apiClient
@@ -53,6 +39,20 @@ class WorkflowsClientTest extends UnitTestFixture
             ->willReturn("response");
 
         $response = $this->client->getWorkflows();
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateWorkflow()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->createWorkflow(new CreateWorkflowRequest());
         $this->assertNotNull($response);
     }
 
@@ -74,6 +74,19 @@ class WorkflowsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldRemoveWorkflow()
+    {
+        $this->apiClient->method("delete")
+            ->willReturn("response");
+
+        $response = $this->client->removeWorkflow("workflow_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldUpdateWorkflow()
     {
         $this->apiClient
@@ -88,12 +101,12 @@ class WorkflowsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldRemoveWorkflow()
+    public function shouldAddWorkflowAction()
     {
-        $this->apiClient->method("delete")
+        $this->apiClient->method("post")
             ->willReturn("response");
 
-        $response = $this->client->removeWorkflow("workflow_id");
+        $response = $this->client->addWorkflowAction("workflow_id", new WebhookWorkflowActionRequest());
         $this->assertNotNull($response);
     }
 
@@ -114,12 +127,55 @@ class WorkflowsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldRemoveWorkflowAction()
+    {
+        $this->apiClient->method("delete")
+            ->willReturn("response");
+
+        $response = $this->client->removeWorkflowAction("workflow_id", "action_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldAddWorkflowCondition()
+    {
+        $this->apiClient->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->addWorkflowCondition("workflow_id", new EntityWorkflowConditionRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldUpdateWorkflowCondition()
     {
         $this->apiClient->method("put")
             ->willReturn("response");
 
-        $response = $this->client->updateWorkflowCondition("workflow_id", "action_id", new EntityWorkflowConditionRequest());
+        $response = $this->client->updateWorkflowCondition(
+            "workflow_id",
+            "condition_id",
+            new EntityWorkflowConditionRequest()
+        );
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRemoveWorkflowCondition()
+    {
+        $this->apiClient->method("delete")
+            ->willReturn("response");
+
+        $response = $this->client->removeWorkflowCondition("workflow_id", "condition_id");
         $this->assertNotNull($response);
     }
 
@@ -141,13 +197,13 @@ class WorkflowsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetSubjectEvents()
+    public function shouldGetActionInvocations()
     {
         $this->apiClient
             ->method("get")
             ->willReturn("response");
 
-        $response = $this->client->getSubjectEvents("subject_id");
+        $response = $this->client->getActionInvocations("event_id", "action_id");
         $this->assertNotNull($response);
     }
 
@@ -182,38 +238,12 @@ class WorkflowsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function reflowBySubject()
-    {
-        $this->apiClient->method("post")
-            ->willReturn("response");
-
-        $response = $this->client->reflowBySubject("subject_id");
-        $this->assertNotNull($response);
-    }
-
-    /**
-     * @test
-     * @throws CheckoutApiException
-     */
     public function reflowByEventAndWorkflow()
     {
         $this->apiClient->method("post")
             ->willReturn("response");
 
         $response = $this->client->reflowByEventAndWorkflow("event_id", "workflow_id");
-        $this->assertNotNull($response);
-    }
-
-    /**
-     * @test
-     * @throws CheckoutApiException
-     */
-    public function reflowBySubjectAndWorkflow()
-    {
-        $this->apiClient->method("post")
-            ->willReturn("response");
-
-        $response = $this->client->reflowBySubjectAndWorkflow("subject_id", "workflow_id");
         $this->assertNotNull($response);
     }
 
@@ -234,13 +264,39 @@ class WorkflowsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetActionInvocations()
+    public function shouldGetSubjectEvents()
     {
         $this->apiClient
             ->method("get")
             ->willReturn("response");
 
-        $response = $this->client->getActionInvocations("event_id", "action_id");
+        $response = $this->client->getSubjectEvents("subject_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function reflowBySubject()
+    {
+        $this->apiClient->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->reflowBySubject("subject_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function reflowBySubjectAndWorkflow()
+    {
+        $this->apiClient->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->reflowBySubjectAndWorkflow("subject_id", "workflow_id");
         $this->assertNotNull($response);
     }
 }

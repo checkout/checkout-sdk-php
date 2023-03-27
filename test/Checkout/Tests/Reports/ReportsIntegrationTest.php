@@ -100,6 +100,53 @@ class ReportsIntegrationTest extends SandboxTestFixture
         }
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetReportsFile()
+    {
+        $response = $this->checkoutApi->getReportsClient()->getAllReports($this->getQuery());
+
+        $this->assertResponse(
+            $response,
+            "count",
+            "limit",
+            "data",
+            "_links"
+        );
+
+        if (array_key_exists("data", $response)) {
+            $report = $response["data"][0];
+            $details = $this->checkoutApi->getReportsClient()->getReportDetails($report["id"]);
+
+            $this->assertResponse(
+                $details,
+                "id",
+                "created_on",
+                "type",
+                "description",
+                "account",
+                "from",
+                "to"
+            );
+
+            $this->assertEquals($report["id"], $details["id"]);
+            $this->assertEquals($report["created_on"], $details["created_on"]);
+            $this->assertEquals($report["type"], $details["type"]);
+            $this->assertEquals($report["description"], $details["description"]);
+            $this->assertEquals($report["account"], $details["account"]);
+            $this->assertEquals($report["from"], $details["from"]);
+            $this->assertEquals($report["to"], $details["to"]);
+
+            $fileId = $report["files"][0]["id"];
+
+            $file = $this->checkoutApi->getReportsClient()->getReportFile($report["id"], $fileId);
+
+            $this->assertNotNull($file["contents"]);
+        }
+    }
+
     private function getQuery()
     {
         $created_after = new DateTime();

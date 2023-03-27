@@ -57,4 +57,18 @@ class ReportsClientTest extends UnitTestFixture
         $response = $this->client->getReportDetails("report_id");
         $this->assertNotNull($response);
     }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetReportFile()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn("foo");
+
+        $response = $this->client->getReportFile("report_id", "file_id");
+        $this->assertNotNull($response);
+    }
 }

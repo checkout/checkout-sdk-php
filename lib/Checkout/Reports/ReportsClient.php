@@ -11,6 +11,7 @@ use Checkout\Client;
 class ReportsClient extends Client
 {
     const REPORTS_PATH = "reports";
+    const FILES_PATH = "files";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -35,5 +36,16 @@ class ReportsClient extends Client
     public function getReportDetails($reportId)
     {
         return $this->apiClient->get($this->buildPath(self::REPORTS_PATH, $reportId), $this->sdkAuthorization());
+    }
+
+    /**
+     * @param $reportId
+     * @param $fileId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getReportFile($reportId, $fileId)
+    {
+        return $this->apiClient->get($this->buildPath(self::REPORTS_PATH, $reportId, self::FILES_PATH, $fileId), $this->sdkAuthorization());
     }
 }

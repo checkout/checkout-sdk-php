@@ -26,6 +26,11 @@ class BrowserSession extends ChannelData
     public $java_enabled;
 
     /**
+     * @var bool
+     */
+    public $javascript_enabled;
+
+    /**
      * @var string
      */
     public $language;

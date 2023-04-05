@@ -17,6 +17,11 @@ class FinancialActionsQuery extends AbstractQueryFilter
     public $action_id;
 
     /**
+     * @var string
+     */
+    public $reference;
+
+    /**
      * @var int
      */
     public $limit;

@@ -102,7 +102,7 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
         $product = new Product();
         $product->name = "Gold Necklace";
         $product->quantity = 1;
-        $product->price = 10;
+        $product->price = 1000;
 
         $products = array($product);
 

@@ -8,7 +8,8 @@ class JsonSerializer
 {
 
     const KEYS_TRANSFORMATIONS = array(
-        "three_ds" => "3ds"
+        "three_ds" => "3ds",
+        "if_match" => "if-match"
     );
 
     /**

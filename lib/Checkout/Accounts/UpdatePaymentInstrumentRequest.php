@@ -13,4 +13,9 @@ class UpdatePaymentInstrumentRequest
      * @var bool
      */
     public $default;
+
+    /**
+     * @var Headers
+     */
+    public $headers;
 }

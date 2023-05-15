@@ -44,4 +44,8 @@ class OAuthScope
     public static $ReportsView = "reports:view";
     public static $FinancialActions = "financial-actions";
     public static $FinancialActionsView = "financial-actions:view";
+    public static $issuingClient = "issuing:client";
+    public static $issuingCardMgmt = "issuing:card-mgmt";
+    public static $issuingControlsRead = "issuing:controls-read";
+    public static $issuingControlsWrite = "issuing:controls-write";
 }

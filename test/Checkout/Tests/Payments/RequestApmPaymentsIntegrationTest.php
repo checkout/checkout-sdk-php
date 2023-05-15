@@ -758,7 +758,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $this->checkErrorItem(
             $this->requestFunction($paymentRequest),
-            self::$payee_not_onboarded
+            self::$apm_service_unavailable
         );
     }
 

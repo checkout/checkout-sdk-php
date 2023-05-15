@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Accounts;
+namespace Checkout\Common;
 
 class DocumentType
 {

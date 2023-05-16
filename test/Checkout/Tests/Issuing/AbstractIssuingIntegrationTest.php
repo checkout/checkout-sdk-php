@@ -13,6 +13,9 @@ use Checkout\Environment;
 use Checkout\Issuing\Cardholders\CardholderDocument;
 use Checkout\Issuing\Cardholders\CardholderRequest;
 use Checkout\Issuing\Cardholders\CardholderType;
+use Checkout\Issuing\Cards\Create\CardLifetime;
+use Checkout\Issuing\Cards\Create\LifetimeUnit;
+use Checkout\Issuing\Cards\Create\VirtualCardRequest;
 use Checkout\OAuthScope;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
@@ -90,5 +93,32 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
 
         $this->assertResponse($cardholderResponse, "id");
         return $cardholderResponse;
+    }
+
+    /**
+     * @param $cardholderId string
+     * @param $activate boolean
+     * @return mixed
+     * @throws CheckoutApiException
+     */
+    protected function createCard($cardholderId, $activate = false)
+    {
+        $lifetime = new CardLifetime();
+        $lifetime->unit = LifetimeUnit::$months;
+        $lifetime->value = 6;
+
+        $cardRequest = new VirtualCardRequest();
+        $cardRequest->cardholder_id = $cardholderId;
+        $cardRequest->card_product_id = "pro_3fn6pv2ikshurn36dbd3iysyha";
+        $cardRequest->lifetime = $lifetime;
+        $cardRequest->reference = "X-123456-N11";
+        $cardRequest->display_name = "John Kennedy";
+        $cardRequest->is_single_use = false;
+        $cardRequest->activate_card = $activate;
+
+        $cardResponse = $this->issuingApi->getIssuingClient()->createCard($cardRequest);
+
+        $this->assertResponse($cardResponse, "id");
+        return $cardResponse;
     }
 }

@@ -14,6 +14,9 @@ use Checkout\Issuing\Cards\Enrollment\ThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Enrollment\UpdateThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
+use Checkout\Issuing\Controls\Create\CardControlRequest;
+use Checkout\Issuing\Controls\Query\CardControlsQuery;
+use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
 
 class IssuingClient extends Client
 {
@@ -25,6 +28,7 @@ class IssuingClient extends Client
     const CREDENTIALS_PATH = "credentials";
     const REVOKE_PATH = "revoke";
     const SUSPEND_PATH = "suspend";
+    const CONTROLS_PATH = "controls";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -196,6 +200,75 @@ class IssuingClient extends Client
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SUSPEND_PATH),
             $suspendCardRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param CardControlRequest $cardControlRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function createControl(CardControlRequest $cardControlRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH),
+            $cardControlRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param CardControlsQuery $query
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getCardControls(CardControlsQuery $query)
+    {
+        return $this->apiClient->query(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH),
+            $query,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $controlId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getCardControlDetails($controlId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, $controlId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $controlId
+     * @param UpdateCardControlRequest $updateCardControlRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function updateCardControl($controlId, UpdateCardControlRequest $updateCardControlRequest)
+    {
+        return $this->apiClient->put(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, $controlId),
+            $updateCardControlRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $controlId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function removeCardControl($controlId)
+    {
+        return $this->apiClient->delete(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, $controlId),
             $this->sdkAuthorization()
         );
     }

@@ -13,6 +13,9 @@ use Checkout\Issuing\Cards\Enrollment\PasswordThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Enrollment\UpdateThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
+use Checkout\Issuing\Controls\Create\VelocityCardControlRequest;
+use Checkout\Issuing\Controls\Query\CardControlsQuery;
+use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
 use Checkout\Issuing\IssuingClient;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
@@ -213,6 +216,81 @@ class IssuingClientTest extends UnitTestFixture
             ->willReturn("foo");
 
         $response = $this->client->suspendCard("card_id", new SuspendCardRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateControl()
+    {
+
+        $this->apiClient
+            ->method("post")
+            ->willReturn("foo");
+
+        $response = $this->client->createControl(new VelocityCardControlRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetCardControls()
+    {
+
+        $this->apiClient
+            ->method("query")
+            ->willReturn("foo");
+
+        $response = $this->client->getCardControls(new CardControlsQuery());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetControlDetails()
+    {
+
+        $this->apiClient
+            ->method("get")
+            ->willReturn("foo");
+
+        $response = $this->client->getCardControlDetails("control_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardControl()
+    {
+
+        $this->apiClient
+            ->method("put")
+            ->willReturn("foo");
+
+        $response = $this->client->updateCardControl("control_id", new UpdateCardControlRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRemoveControl()
+    {
+
+        $this->apiClient
+            ->method("delete")
+            ->willReturn("foo");
+
+        $response = $this->client->removeCardControl("control_id");
         $this->assertNotNull($response);
     }
 }

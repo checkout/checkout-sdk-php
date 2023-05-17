@@ -16,6 +16,10 @@ use Checkout\Issuing\Cardholders\CardholderType;
 use Checkout\Issuing\Cards\Create\CardLifetime;
 use Checkout\Issuing\Cards\Create\LifetimeUnit;
 use Checkout\Issuing\Cards\Create\VirtualCardRequest;
+use Checkout\Issuing\Controls\Create\VelocityCardControlRequest;
+use Checkout\Issuing\Controls\VelocityLimit;
+use Checkout\Issuing\Controls\VelocityWindow;
+use Checkout\Issuing\Controls\VelocityWindowType;
 use Checkout\OAuthScope;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
@@ -120,5 +124,30 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
 
         $this->assertResponse($cardResponse, "id");
         return $cardResponse;
+    }
+
+    /**
+     * @param $cardId string
+     * @return mixed
+     * @throws CheckoutApiException
+     */
+    protected function createCardControl($cardId)
+    {
+        $windowType = new VelocityWindow();
+        $windowType->type = VelocityWindowType::$weekly;
+
+        $velocityLimit = new VelocityLimit();
+        $velocityLimit->amount_limit = 500;
+        $velocityLimit->velocity_window = $windowType;
+
+        $controlRequest = new VelocityCardControlRequest();
+        $controlRequest->description = "Max spend of 500€ per week for restaurants";
+        $controlRequest->target_id = $cardId;
+        $controlRequest->velocity_limit = $velocityLimit;
+
+        $controlResponse = $this->issuingApi->getIssuingClient()->createControl($controlRequest);
+
+        $this->assertResponse($controlResponse, "id");
+        return $controlResponse;
     }
 }

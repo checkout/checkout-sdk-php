@@ -8,7 +8,7 @@ use Checkout\Common\Phone;
 class CardholderRequest
 {
     /**
-     * @var CardholderType
+     * @var string value of CardholderType
      */
     public $type;
 

@@ -17,6 +17,7 @@ use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
 use Checkout\Issuing\Controls\Create\CardControlRequest;
 use Checkout\Issuing\Controls\Query\CardControlsQuery;
 use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
+use Checkout\Issuing\Testing\CardAuthorizationRequest;
 
 class IssuingClient extends Client
 {
@@ -29,6 +30,8 @@ class IssuingClient extends Client
     const REVOKE_PATH = "revoke";
     const SUSPEND_PATH = "suspend";
     const CONTROLS_PATH = "controls";
+    const SIMULATE_PATH = "simulate";
+    const AUTHORIZATIONS_PATH = "authorizations";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -269,6 +272,20 @@ class IssuingClient extends Client
     {
         return $this->apiClient->delete(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, $controlId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param CardAuthorizationRequest $authorizationRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function simulateAuthorization(CardAuthorizationRequest $authorizationRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::SIMULATE_PATH, self::AUTHORIZATIONS_PATH),
+            $authorizationRequest,
             $this->sdkAuthorization()
         );
     }

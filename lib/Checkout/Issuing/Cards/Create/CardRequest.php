@@ -4,7 +4,7 @@ namespace Checkout\Issuing\Cards\Create;
 
 abstract class CardRequest
 {
-    public function __construct($type)
+    protected function __construct($type)
     {
         $this->type = $type;
     }

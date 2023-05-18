@@ -150,4 +150,12 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
         $this->assertResponse($controlResponse, "id");
         return $controlResponse;
     }
+
+    /**
+     * @return string
+     */
+    protected function getPassword()
+    {
+        return "Xtui43FvfiZ";
+    }
 }

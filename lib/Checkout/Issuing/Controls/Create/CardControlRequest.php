@@ -4,7 +4,7 @@ namespace Checkout\Issuing\Controls\Create;
 
 abstract class CardControlRequest
 {
-    public function __construct($type)
+    protected function __construct($type)
     {
         $this->control_type = $type;
     }

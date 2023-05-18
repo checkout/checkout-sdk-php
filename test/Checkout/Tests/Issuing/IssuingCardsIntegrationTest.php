@@ -93,7 +93,7 @@ class IssuingCardsIntegrationTest extends AbstractIssuingIntegrationTest
     public function shouldEnrollCardIntoThreeDS()
     {
         $enrollRequest = new PasswordThreeDSEnrollmentRequest();
-        $enrollRequest->password = "Xtui43FvfiZ";
+        $enrollRequest->password = $this->getPassword();
         $enrollRequest->locale = "en-US";
         $enrollRequest->phone_number = $this->getPhone();
 
@@ -113,7 +113,7 @@ class IssuingCardsIntegrationTest extends AbstractIssuingIntegrationTest
         $securityPair->answer = "Bond. James Bond.";
 
         $enrollRequest = new UpdateThreeDSEnrollmentRequest();
-        $enrollRequest->password = "Xtui43FvfiZ";
+        $enrollRequest->password = $this->getPassword();
         $enrollRequest->security_pair = $securityPair;
         $enrollRequest->locale = "en-US";
         $enrollRequest->phone_number = $this->getPhone();

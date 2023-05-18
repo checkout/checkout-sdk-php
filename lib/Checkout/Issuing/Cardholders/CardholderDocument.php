@@ -7,7 +7,7 @@ use Checkout\Common\DocumentType;
 class CardholderDocument
 {
     /**
-     * @var DocumentType
+     * @var string value of DocumentType
      */
     public $type;
 

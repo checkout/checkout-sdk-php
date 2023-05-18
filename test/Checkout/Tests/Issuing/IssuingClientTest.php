@@ -17,6 +17,7 @@ use Checkout\Issuing\Controls\Create\VelocityCardControlRequest;
 use Checkout\Issuing\Controls\Query\CardControlsQuery;
 use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
 use Checkout\Issuing\IssuingClient;
+use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -291,6 +292,21 @@ class IssuingClientTest extends UnitTestFixture
             ->willReturn("foo");
 
         $response = $this->client->removeCardControl("control_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateAuthorization()
+    {
+
+        $this->apiClient
+            ->method("post")
+            ->willReturn("foo");
+
+        $response = $this->client->simulateAuthorization(new CardAuthorizationRequest());
         $this->assertNotNull($response);
     }
 }

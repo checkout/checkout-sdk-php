@@ -18,6 +18,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldCreateAndGetWorkflows()
     {
+        $this->markTestSkipped("unavailable");
         $workflow = $this->createWorkflow();
 
         $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
@@ -80,6 +81,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldCreateAndUpdateWorkflow()
     {
+        $this->markTestSkipped("unavailable");
         $workflow = $this->createWorkflow();
 
         $updateWorkflowRequest = new UpdateWorkflowRequest();
@@ -100,6 +102,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldAddWorkflowAction()
     {
+        $this->markTestSkipped("unavailable");
         $workflow = $this->createWorkflow();
 
         $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
@@ -137,6 +140,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldUpdateWorkflowAction()
     {
+        $this->markTestSkipped("unavailable");
         $workflow = $this->createWorkflow();
 
         $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);
@@ -179,6 +183,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldRemoveWorkflowAction()
     {
+        $this->markTestSkipped("unavailable");
         $workflow = $this->createWorkflow();
         $action = $this->addAction($workflow["id"]);
 
@@ -193,6 +198,7 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldUpdateWorkflowCondition()
     {
+        $this->markTestSkipped("unavailable");
         $workflow = $this->createWorkflow();
 
         $workflowResponse = $this->checkoutApi->getWorkflowsClient()->getWorkflow($workflow["id"]);

@@ -20,4 +20,14 @@ class TransactionSimulation
      * @var string value of Currency
      */
     public $currency;
+
+    /**
+     * @var string value of TransactionMerchant
+     */
+    public $merchant;
+
+    /**
+     * @var string value of TransactionAuthorizationType
+     */
+    public $transaction;
 }

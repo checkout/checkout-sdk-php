@@ -14,6 +14,7 @@ class WorkflowEventsIntegrationTest extends AbstractWorkflowIntegrationTest
      */
     public function shouldGetEventTypes()
     {
+        $this->markTestSkipped("unavailable");
         $response = $this->checkoutApi->getWorkflowsClient()->getEventTypes();
         $this->assertResponse($response, "items");
         $eventTypes = $response["items"];

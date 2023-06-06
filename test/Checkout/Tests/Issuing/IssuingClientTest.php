@@ -17,7 +17,10 @@ use Checkout\Issuing\Controls\Create\VelocityCardControlRequest;
 use Checkout\Issuing\Controls\Query\CardControlsQuery;
 use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
 use Checkout\Issuing\IssuingClient;
+use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
+use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
+use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -307,6 +310,60 @@ class IssuingClientTest extends UnitTestFixture
             ->willReturn("foo");
 
         $response = $this->client->simulateAuthorization(new CardAuthorizationRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateIncrementingAuthorization()
+    {
+
+        $this->apiClient
+            ->method("post")
+            ->willReturn("foo");
+
+        $response = $this->client->simulateIncrementingAuthorization(
+            "authorization_id",
+            new CardIncrementAuthorizationRequest()
+        );
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateClearing()
+    {
+
+        $this->apiClient
+            ->method("post")
+            ->willReturn("foo");
+
+        $response = $this->client->simulateClearing(
+            "authorization_id",
+            new CardClearingAuthorizationRequest()
+        );
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateReversal()
+    {
+
+        $this->apiClient
+            ->method("post")
+            ->willReturn("foo");
+
+        $response = $this->client->simulateReversal(
+            "authorization_id",
+            new CardReversalAuthorizationRequest()
+        );
         $this->assertNotNull($response);
     }
 }

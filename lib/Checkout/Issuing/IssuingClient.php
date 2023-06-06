@@ -17,7 +17,10 @@ use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
 use Checkout\Issuing\Controls\Create\CardControlRequest;
 use Checkout\Issuing\Controls\Query\CardControlsQuery;
 use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
+use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
+use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
+use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
 
 class IssuingClient extends Client
 {
@@ -32,6 +35,8 @@ class IssuingClient extends Client
     const CONTROLS_PATH = "controls";
     const SIMULATE_PATH = "simulate";
     const AUTHORIZATIONS_PATH = "authorizations";
+    const PRESENTMENTS_PATH = "presentments";
+    const REVERSALS_PATH = "reversals";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -286,6 +291,75 @@ class IssuingClient extends Client
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::SIMULATE_PATH, self::AUTHORIZATIONS_PATH),
             $authorizationRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $authorizationId
+     * @param CardIncrementAuthorizationRequest $cardIncrementAuthorizationRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function simulateIncrementingAuthorization(
+        $authorizationId,
+        CardIncrementAuthorizationRequest $cardIncrementAuthorizationRequest
+    ) {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::ISSUING_PATH,
+                self::SIMULATE_PATH,
+                self::AUTHORIZATIONS_PATH,
+                $authorizationId,
+                self::AUTHORIZATIONS_PATH
+            ),
+            $cardIncrementAuthorizationRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $authorizationId
+     * @param CardClearingAuthorizationRequest $cardClearingAuthorizationRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function simulateClearing(
+        $authorizationId,
+        CardClearingAuthorizationRequest $cardClearingAuthorizationRequest
+    ) {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::ISSUING_PATH,
+                self::SIMULATE_PATH,
+                self::AUTHORIZATIONS_PATH,
+                $authorizationId,
+                self::PRESENTMENTS_PATH
+            ),
+            $cardClearingAuthorizationRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $authorizationId
+     * @param CardReversalAuthorizationRequest $cardReversalAuthorizationRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function simulateReversal(
+        $authorizationId,
+        CardReversalAuthorizationRequest $cardReversalAuthorizationRequest
+    ) {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::ISSUING_PATH,
+                self::SIMULATE_PATH,
+                self::AUTHORIZATIONS_PATH,
+                $authorizationId,
+                self::REVERSALS_PATH
+            ),
+            $cardReversalAuthorizationRequest,
             $this->sdkAuthorization()
         );
     }

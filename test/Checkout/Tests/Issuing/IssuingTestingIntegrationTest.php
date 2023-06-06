@@ -7,14 +7,16 @@ use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\Common\Currency;
+use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
+use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
+use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
 use Checkout\Issuing\Testing\CardSimulation;
 use Checkout\Issuing\Testing\TransactionSimulation;
 use Checkout\Issuing\Testing\TransactionType;
 
 class IssuingTestingIntegrationTest extends AbstractIssuingIntegrationTest
 {
-    private $cardholder;
     private $card;
 
     /**
@@ -28,8 +30,8 @@ class IssuingTestingIntegrationTest extends AbstractIssuingIntegrationTest
         $this->markTestSkipped("Avoid creating cards all the time");
 
         $this->before();
-        $this->cardholder = $this->createCardholder();
-        $this->card = $this->createCard($this->cardholder["id"], true);
+        $cardholder = $this->createCardholder();
+        $this->card = $this->createCard($cardholder["id"], true);
     }
 
     /**
@@ -37,6 +39,92 @@ class IssuingTestingIntegrationTest extends AbstractIssuingIntegrationTest
      * @throws CheckoutApiException
      */
     public function shouldSimulateAuthorization()
+    {
+        $authorizationRequest = $this->getAuthorizationRequest();
+
+        $simulationResponse = $this->issuingApi->getIssuingClient()->simulateAuthorization($authorizationRequest);
+
+        $this->assertResponse(
+            $simulationResponse,
+            "id",
+            "status"
+        );
+        $this->assertEquals("Authorized", $simulationResponse["status"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateIncrementingAuthorization()
+    {
+        $authorizationRequest = $this->getAuthorizationRequest();
+
+        $cardIncrementAuthorizationRequest = new CardIncrementAuthorizationRequest();
+        $cardIncrementAuthorizationRequest->amount = 1;
+
+        $cardIncrementAuthorizationResponse = $this->issuingApi->getIssuingClient()->
+        simulateIncrementingAuthorization(
+            $authorizationRequest["id"],
+            $cardIncrementAuthorizationRequest
+        );
+
+        $this->assertResponse(
+            $cardIncrementAuthorizationResponse,
+            "status"
+        );
+        $this->assertEquals("Authorized", $cardIncrementAuthorizationResponse["status"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateClearing()
+    {
+        $authorizationRequest = $this->getAuthorizationRequest();
+
+        $cardClearingAuthorizationRequest = new CardClearingAuthorizationRequest();
+        $cardClearingAuthorizationRequest->amount = 1;
+
+        $cardClearingAuthorizationResponse = $this->issuingApi->getIssuingClient()->
+        simulateClearing(
+            $authorizationRequest["id"],
+            $cardClearingAuthorizationRequest
+        );
+
+        $this->assertNotNull($cardClearingAuthorizationResponse);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateReversal()
+    {
+        $authorizationRequest = $this->getAuthorizationRequest();
+
+        $cardReversalAuthorizationRequest = new CardReversalAuthorizationRequest();
+        $cardReversalAuthorizationRequest->amount = 1;
+
+        $cardReversalAuthorizationResponse = $this->issuingApi->getIssuingClient()->
+        simulateReversal(
+            $authorizationRequest["id"],
+            $cardReversalAuthorizationRequest
+        );
+
+        $this->assertResponse(
+            $cardReversalAuthorizationResponse,
+            "status"
+        );
+        $this->assertEquals("Reversed", $cardReversalAuthorizationResponse["status"]);
+    }
+
+
+    /**
+     * @return CardAuthorizationRequest
+     */
+    public function getAuthorizationRequest()
     {
         $cardSimulation = new CardSimulation();
         $cardSimulation->id = $this->card["id"];
@@ -51,14 +139,6 @@ class IssuingTestingIntegrationTest extends AbstractIssuingIntegrationTest
         $authorizationRequest = new CardAuthorizationRequest();
         $authorizationRequest->card = $cardSimulation;
         $authorizationRequest->transaction = $transactionSimulation;
-
-        $simulationResponse = $this->issuingApi->getIssuingClient()->simulateAuthorization($authorizationRequest);
-
-        $this->assertResponse(
-            $simulationResponse,
-            "id",
-            "status"
-        );
-        $this->assertEquals("Authorized", $simulationResponse["status"]);
+        return $authorizationRequest;
     }
 }

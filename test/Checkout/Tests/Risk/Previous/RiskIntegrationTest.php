@@ -52,6 +52,7 @@ class RiskIntegrationTest extends SandboxTestFixture
      */
     public function shouldPreCaptureAndAuthenticateCard()
     {
+        $this->markTestSkipped("unavailable");
         $address = new Address();
         $address->address_line1 = "123 Street";
         $address->address_line2 = "Hollywood Avenue";
@@ -76,6 +77,7 @@ class RiskIntegrationTest extends SandboxTestFixture
      */
     public function shouldPreCaptureAndAuthenticateCustomer()
     {
+        $this->markTestSkipped("unavailable");
         $customerRequest = new \Checkout\Customers\CustomerRequest();
         $customerRequest->email = $this->randomEmail();
         $customerRequest->name = "User";
@@ -96,6 +98,7 @@ class RiskIntegrationTest extends SandboxTestFixture
      */
     public function shouldPreCaptureAndAuthenticateId()
     {
+        $this->markTestSkipped("unavailable");
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = TestCardSource::$VisaName;
         $cardTokenRequest->number = TestCardSource::$VisaNumber;
@@ -132,6 +135,7 @@ class RiskIntegrationTest extends SandboxTestFixture
      */
     public function shouldPreCaptureAndAuthenticateToken()
     {
+        $this->markTestSkipped("unavailable");
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = TestCardSource::$VisaName;
         $cardTokenRequest->number = TestCardSource::$VisaNumber;

@@ -1,10 +1,14 @@
 # Checkout.com PHP SDK
 
-![build-master](https://github.com/checkout/checkout-sdk-php/workflows/build-master/badge.svg)
-[![GitHub license](https://img.shields.io/github/license/checkout/checkout-sdk-php.svg)](https://github.com/checkout/checkout-sdk-php/blob/master/LICENSE.md)
+[![build-status](https://github.com/checkout/checkout-sdk-php/workflows/build-master/badge.svg)](https://github.com/checkout/checkout-sdk-php/actions/workflows/build-master.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=checkout_checkout-sdk-php&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=checkout_checkout-sdk-php)
+
+[![build-status](https://github.com/checkout/checkout-sdk-php/workflows/build-release/badge.svg)](https://github.com/checkout/checkout-sdk-php/actions/workflows/build-release.yml)
 [![GitHub release](https://img.shields.io/github/release/checkout/checkout-sdk-php.svg)](https://GitHub.com/checkout/checkout-sdk-php/releases/)
 [![Latest Stable Version](http://poser.pugx.org/checkout/checkout-sdk-php/v)](https://packagist.org/packages/checkout/checkout-sdk-php)
+
+[![GitHub license](https://img.shields.io/github/license/checkout/checkout-sdk-php.svg)](https://github.com/checkout/checkout-sdk-php/blob/master/LICENSE.md)
+
 
 ## Getting started
 
@@ -122,7 +126,7 @@ The exception encapsulates `http_metadata` and `$error_details`, if available.
 
 ## Building from source
 
-Once you checkout the code from GitHub, the project can be built using composer:
+Once you check out the code from GitHub, the project can be built using composer:
 
 ```
 composer update

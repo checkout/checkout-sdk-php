@@ -139,7 +139,7 @@ abstract class SandboxTestFixture extends TestCase
     {
         $address = new Address();
         $address->address_line1 = "CheckoutSdk.com";
-        $address->address_line2 = "90 Tottenham Court Road";
+        $address->address_line2 = "max_10_c__";
         $address->city = "London";
         $address->state = "London";
         $address->zip = "W1T 4TJ";

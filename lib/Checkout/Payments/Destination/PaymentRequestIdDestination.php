@@ -15,4 +15,9 @@ class PaymentRequestIdDestination extends PaymentRequestDestination
      * @var string
      */
     public $id;
+
+    /**
+     * @var AccountHolder
+     */
+    public $account_holder;
 }

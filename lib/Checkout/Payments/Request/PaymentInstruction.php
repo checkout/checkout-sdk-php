@@ -28,4 +28,9 @@ class PaymentInstruction
      * @var string
      */
     public $quote_id;
+
+    /**
+     * @var string
+     */
+    public $funds_transfer_type;
 }

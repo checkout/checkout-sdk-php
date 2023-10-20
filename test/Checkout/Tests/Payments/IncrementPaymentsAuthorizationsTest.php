@@ -87,7 +87,7 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
         $customerRequest->name = "Customer";
 
         $paymentIndividualSender = new PaymentIndividualSender();
-        $paymentIndividualSender->fist_name = "Mr";
+        $paymentIndividualSender->first_name = "Mr";
         $paymentIndividualSender->last_name = "Test";
         $paymentIndividualSender->address = $address;
 

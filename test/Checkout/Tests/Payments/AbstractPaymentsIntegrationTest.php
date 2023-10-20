@@ -71,7 +71,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $identification->type = AccountHolderIdentificationType::$driving_licence;
 
         $paymentIndividualSender = new PaymentIndividualSender();
-        $paymentIndividualSender->fist_name = "Mr";
+        $paymentIndividualSender->first_name = "Mr";
         $paymentIndividualSender->last_name = "Test";
         $paymentIndividualSender->address = $address;
         $paymentIndividualSender->identification = $identification;

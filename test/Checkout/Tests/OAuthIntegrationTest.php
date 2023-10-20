@@ -40,7 +40,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
         $requestCardSource->cvv = TestCardSource::$VisaCvv;
 
         $paymentIndividualSender = new PaymentIndividualSender();
-        $paymentIndividualSender->fist_name = "Mr";
+        $paymentIndividualSender->first_name = "Mr";
         $paymentIndividualSender->last_name = "Test";
         $paymentIndividualSender->address = $this->getAddress();
 

@@ -15,7 +15,7 @@ class PaymentIndividualSender extends PaymentSender
     /**
      * @var string
      */
-    public $fist_name;
+    public $first_name;
 
     /**
      * @var string

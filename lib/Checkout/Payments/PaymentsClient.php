@@ -78,7 +78,7 @@ class PaymentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function capturePayment($paymentId, CaptureRequest $captureRequest, $idempotencyKey = null)
+    public function capturePayment($paymentId, CaptureRequest $captureRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "captures"), $captureRequest, $this->sdkAuthorization(), $idempotencyKey);
     }

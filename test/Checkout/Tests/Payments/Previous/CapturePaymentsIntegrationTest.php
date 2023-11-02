@@ -33,6 +33,24 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldFullCaptureCardPaymentWithoutRequest()
+    {
+
+        $paymentResponse = $this->makeCardPayment();
+
+        $response = $this->retriable(
+            function () use (&$paymentResponse) {
+                return $this->previousApi->getPaymentsClient()->capturePayment($paymentResponse["id"]);
+            }
+        );
+
+        $this->assertResponse($response, "action_id");
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldPartiallyCaptureCardPayment()
     {
 

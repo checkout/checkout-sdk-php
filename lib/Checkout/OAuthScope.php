@@ -48,4 +48,5 @@ class OAuthScope
     public static $issuingCardMgmt = "issuing:card-mgmt";
     public static $issuingControlsRead = "issuing:controls-read";
     public static $issuingControlsWrite = "issuing:controls-write";
+    public static $PaymentContexts = "Payment Contexts";
 }

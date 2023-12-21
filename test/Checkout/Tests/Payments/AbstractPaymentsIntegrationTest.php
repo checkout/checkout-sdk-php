@@ -11,6 +11,7 @@ use Checkout\Common\AccountHolderIdentificationType;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
+use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\RequestCardSource;
 use Checkout\Payments\Request\Source\RequestTokenSource;
@@ -76,6 +77,9 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentIndividualSender->address = $address;
         $paymentIndividualSender->identification = $identification;
 
+        $processingSettings = new ProcessingSettings();
+        $processingSettings->order_id = "ORDER";
+
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestCardSource;
         $paymentRequest->capture = $shouldCapture;
@@ -85,6 +89,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentRequest->customer = $customerRequest;
         $paymentRequest->sender = $paymentIndividualSender;
         $paymentRequest->processing_channel_id = "pc_5jp2az55l3cuths25t5p3xhwru";
+        $paymentRequest->processing = $processingSettings;
 
         if (!is_null($captureOn)) {
             $paymentRequest->capture_on = $captureOn;

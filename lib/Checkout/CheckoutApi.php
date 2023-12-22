@@ -11,6 +11,7 @@ use Checkout\Forex\ForexClient;
 use Checkout\Instruments\InstrumentsClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
+use Checkout\Payments\Contexts\PaymentContextsClient;
 use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
@@ -41,6 +42,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $metadataClient;
     private $financialClient;
     private $issuingClient;
+    private $paymentContextClient;
 
     public function __construct(CheckoutConfiguration $configuration)
     {
@@ -61,6 +63,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->metadataClient = new MetadataClient($baseApiClient, $configuration);
         $this->financialClient = new FinancialClient($baseApiClient, $configuration);
         $this->issuingClient = new IssuingClient($baseApiClient, $configuration);
+        $this->paymentContextClient = new PaymentContextsClient($baseApiClient, $configuration);
         $this->balancesClient = new BalancesClient(
             $this->getBalancesApiClient($configuration),
             $configuration
@@ -218,6 +221,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getIssuingClient()
     {
         return $this->issuingClient;
+    }
+
+    /**
+     * @return PaymentContextsClient
+     */
+    public function getPaymentContextsClient()
+    {
+        return $this->paymentContextClient;
     }
 
     /**

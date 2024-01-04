@@ -9,6 +9,7 @@ use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\CheckoutSdk;
 use Checkout\Common\DocumentType;
+use Checkout\DefaultHttpClientBuilder;
 use Checkout\Environment;
 use Checkout\Issuing\Cardholders\CardholderDocument;
 use Checkout\Issuing\Cardholders\CardholderRequest;
@@ -51,6 +52,10 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
      */
     private function createIssuingApi()
     {
+        $configClient = [
+            "timeout" => 60
+        ];
+
         return CheckoutSdk::builder()
             ->oAuth()
             ->clientCredentials(
@@ -63,6 +68,7 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
                 OAuthScope::$issuingControlsRead,
                 OAuthScope::$issuingControlsWrite])
             ->environment(Environment::sandbox())
+            ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
             ->build();
     }
 

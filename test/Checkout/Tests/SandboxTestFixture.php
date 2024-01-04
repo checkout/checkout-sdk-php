@@ -12,6 +12,7 @@ use Checkout\Common\AccountHolder;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
 use Checkout\Common\Phone;
+use Checkout\DefaultHttpClientBuilder;
 use Checkout\Environment;
 use Checkout\OAuthScope;
 use Checkout\Payments\Payer;
@@ -47,6 +48,9 @@ abstract class SandboxTestFixture extends TestCase
      */
     protected function init($platformType)
     {
+        $configClient = [
+            "timeout" => 60
+        ];
         $this->logger = new Logger("checkout-sdk-test-php");
         $this->logger->pushHandler(new StreamHandler("php://stderr"));
         $this->logger->pushHandler(new StreamHandler("checkout-sdk-test-php.log"));
@@ -58,6 +62,7 @@ abstract class SandboxTestFixture extends TestCase
                     ->environment(Environment::sandbox())
                     ->publicKey(getenv("CHECKOUT_PREVIOUS_PUBLIC_KEY"))
                     ->secretKey(getenv("CHECKOUT_PREVIOUS_SECRET_KEY"))
+                    ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
                     ->build();
                 return;
@@ -66,18 +71,23 @@ abstract class SandboxTestFixture extends TestCase
                     ->publicKey(getenv("CHECKOUT_DEFAULT_PUBLIC_KEY"))
                     ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY"))
                     ->environment(Environment::sandbox())
+                    ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
                     ->build();
                 return;
             case PlatformType::$default_oauth:
                 $this->checkoutApi = CheckoutSdk::builder()->oAuth()
-                    ->clientCredentials(getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID"), getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET"))
+                    ->clientCredentials(
+                        getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID"),
+                        getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET")
+                    )
                     ->scopes([OAuthScope::$Files, OAuthScope::$Flow, OAuthScope::$Fx, OAuthScope::$Gateway,
                         OAuthScope::$Accounts, OAuthScope::$SessionsApp, OAuthScope::$SessionsBrowser,
                         OAuthScope::$Vault, OAuthScope::$PayoutsBankDetails, OAuthScope::$TransfersCreate,
                         OAuthScope::$TransfersView, OAuthScope::$BalancesView, OAuthScope::$VaultCardMetadata,
                         OAuthScope::$FinancialActions])
                     ->environment(Environment::sandbox())
+                    ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
                     ->build();
                 return;
@@ -101,7 +111,6 @@ abstract class SandboxTestFixture extends TestCase
                 $joined = implode(".", array_slice($props, 1));
                 $this->assertResponse($testingObj, $joined);
             } else {
-                //echo "\e[0;30;45massertResponse[property] testing=" . json_encode($property) . " found=" . json_encode($obj[$property]) . "\n";
                 $this->assertNotNull($obj[$property]);
                 $this->assertNotEmpty($obj[$property]);
             }
@@ -191,7 +200,9 @@ abstract class SandboxTestFixture extends TestCase
                     return $response;
                 }
             } catch (Exception $ex) {
-                $this->logger->warning("Request/Predicate failed with error '${ex}' - retry ${currentAttempt}/${maxAttempts}");
+                $this->logger->warning(
+                    "Request/Predicate failed with error '$ex' - retry $currentAttempt/$maxAttempts"
+                );
             }
             $currentAttempt++;
             sleep($timeout);

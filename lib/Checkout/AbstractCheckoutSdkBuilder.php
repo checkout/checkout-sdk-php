@@ -16,7 +16,7 @@ abstract class AbstractCheckoutSdkBuilder
     public function __construct()
     {
         $this->environment = Environment::sandbox();
-        $this->httpClientBuilder = new DefaultHttpClientBuilder();
+        $this->httpClientBuilder = new DefaultHttpClientBuilder([]);
         $this->setDefaultLogger();
     }
 

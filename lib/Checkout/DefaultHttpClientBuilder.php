@@ -9,9 +9,9 @@ final class DefaultHttpClientBuilder implements HttpClientBuilderInterface
 
     private $client;
 
-    public function __construct()
+    public function __construct($config)
     {
-        $this->client = new GuzzleHttpClient();
+        $this->client = new GuzzleHttpClient($config);
     }
 
     /**

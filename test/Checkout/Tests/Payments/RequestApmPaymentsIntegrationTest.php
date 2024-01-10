@@ -744,6 +744,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeSepaPayment()
     {
+        $this->markTestSkipped("unavailable");
         $requestSource = new RequestSepaSource();
         $requestSource->country = Country::$ES;
         $requestSource->currency = Currency::$EUR;

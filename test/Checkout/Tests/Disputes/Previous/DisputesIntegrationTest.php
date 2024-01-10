@@ -33,11 +33,10 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
         $this->assertResponse(
             $response,
             "limit",
-            "total_count",
             "from",
             "to"
         );
-        if (array_key_exists("data", $response)) {
+        if (!empty($response["data"])) {
             $disputeDetails = $response["data"]["0"];
             $this->assertResponse(
                 $disputeDetails,

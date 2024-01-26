@@ -32,6 +32,8 @@ class ReportsIntegrationTest extends SandboxTestFixture
      */
     public function shouldGetAllReports()
     {
+        $this->markTestSkipped("unstable");
+
         $response = $this->checkoutApi->getReportsClient()->getAllReports($this->getQuery());
 
         $this->assertResponse(

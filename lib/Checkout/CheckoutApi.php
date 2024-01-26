@@ -15,6 +15,7 @@ use Checkout\Payments\Contexts\PaymentContextsClient;
 use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
+use Checkout\Payments\Sessions\PaymentSessionsClient;
 use Checkout\Reports\ReportsClient;
 use Checkout\Risk\RiskClient;
 use Checkout\Sessions\SessionsClient;
@@ -44,6 +45,8 @@ final class CheckoutApi extends CheckoutApmApi
     private $issuingClient;
     private $paymentContextClient;
 
+    private $paymentSessionsClient;
+
     public function __construct(CheckoutConfiguration $configuration)
     {
         $baseApiClient = $this->getBaseApiClient($configuration);
@@ -64,6 +67,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->financialClient = new FinancialClient($baseApiClient, $configuration);
         $this->issuingClient = new IssuingClient($baseApiClient, $configuration);
         $this->paymentContextClient = new PaymentContextsClient($baseApiClient, $configuration);
+        $this->paymentSessionsClient = new PaymentSessionsClient($baseApiClient, $configuration);
         $this->balancesClient = new BalancesClient(
             $this->getBalancesApiClient($configuration),
             $configuration
@@ -229,6 +233,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getPaymentContextsClient()
     {
         return $this->paymentContextClient;
+    }
+
+    /**
+     * @return PaymentSessionsClient
+     */
+    public function getPaymentSessionsClient()
+    {
+        return $this->paymentSessionsClient;
     }
 
     /**

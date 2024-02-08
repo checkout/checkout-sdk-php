@@ -17,6 +17,11 @@ use DateTime;
 class PaymentRequest
 {
     /**
+     * @var string
+     */
+    public $payment_context_id;
+
+    /**
      * @var AbstractRequestSource
      */
     public $source;
@@ -80,6 +85,11 @@ class PaymentRequest
      * @var ShippingDetails
      */
     public $shipping;
+
+    /**
+     * @var PaymentSegment
+     */
+    public $segment;
 
     /**
      * @var ThreeDsRequest
@@ -151,4 +161,9 @@ class PaymentRequest
      * @var array of Checkout\Payments\Product
      */
     public $items;
+
+    /**
+     * @var PaymentRetryRequest
+     */
+    public $retry;
 }

@@ -88,7 +88,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentRequest->currency = Currency::$USD;
         $paymentRequest->customer = $customerRequest;
         $paymentRequest->sender = $paymentIndividualSender;
-        $paymentRequest->processing_channel_id = "pc_5jp2az55l3cuths25t5p3xhwru";
+        $paymentRequest->processing_channel_id = getenv("CHECKOUT_PROCESSING_CHANNEL_ID");
         $paymentRequest->processing = $processingSettings;
 
         if (!is_null($captureOn)) {

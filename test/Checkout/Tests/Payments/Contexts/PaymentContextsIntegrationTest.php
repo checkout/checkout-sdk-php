@@ -31,7 +31,7 @@ class PaymentContextsIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateAndGetHostedPaymentsPageDetails()
+    public function shouldCreateAndGetPaymentContextsDetails()
     {
         $request = $this->createPaymentContextsRequest();
 

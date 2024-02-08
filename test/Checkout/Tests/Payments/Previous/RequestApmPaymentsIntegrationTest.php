@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Payments\Previous;
 
+use Checkout\Common\AccountHolder;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Payments\Previous\PaymentRequest;
@@ -12,7 +13,7 @@ use Checkout\Payments\Previous\Source\Apm\RequestBenefitPaySource;
 use Checkout\Payments\Previous\Source\Apm\RequestBoletoSource;
 use Checkout\Payments\Previous\Source\Apm\RequestEpsSource;
 use Checkout\Payments\Previous\Source\Apm\RequestFawrySource;
-use Checkout\Payments\Previous\Source\Apm\RequestGiropaySource;
+use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Previous\Source\Apm\RequestIdealSource;
 use Checkout\Payments\Previous\Source\Apm\RequestKnetSource;
 use Checkout\Payments\Previous\Source\Apm\RequestMultiBancoSource;
@@ -257,7 +258,14 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeGiropayPayment()
     {
-        $requestSource = new RequestGiropaySource();
+        $accountHolder = new AccountHolder();
+        $accountHolder->first_name = "Firstname";
+        $accountHolder->last_name = "Lastname";
+
+        $source = new RequestGiropaySource();
+        $source->account_holder = $accountHolder;
+
+        $requestSource = $source;
         $requestSource->purpose = "CKO Giropay test";
 
         $paymentRequest = new PaymentRequest();

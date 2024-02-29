@@ -21,13 +21,17 @@ class CheckoutApiException extends CheckoutException
      */
     public static function from(RequestException $requestException)
     {
-        $body = json_decode($requestException->getResponse()->getBody()->getContents(), true);
+        $response = $requestException->getResponse();
+
         $ex = new CheckoutApiException(sprintf(
             "The API response status code (%s) does not indicate success.",
             $requestException->getCode()
         ));
-        $ex->error_details = $body;
-        $ex->http_metadata = CheckoutUtils::getHttpMetadata($requestException->getResponse());
+        $ex->error_details = isset($response)
+            ? json_decode($response->getBody()->getContents(), true)
+            : [];
+        $ex->http_metadata = CheckoutUtils::getHttpMetadata($response);
+
         return $ex;
     }
 }

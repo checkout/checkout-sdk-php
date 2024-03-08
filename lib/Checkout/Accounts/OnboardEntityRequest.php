@@ -28,4 +28,9 @@ class OnboardEntityRequest
      * @var Individual
      */
     public $individual;
+
+    /**
+     * @var OnboardSubEntityDocuments
+     */
+    public $documents;
 }

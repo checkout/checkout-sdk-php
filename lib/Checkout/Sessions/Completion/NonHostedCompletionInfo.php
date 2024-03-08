@@ -13,4 +13,9 @@ class NonHostedCompletionInfo extends CompletionInfo
      * @var string
      */
     public $callback_url;
+
+    /**
+     * @var string
+     */
+    public $challenge_notification_url;
 }

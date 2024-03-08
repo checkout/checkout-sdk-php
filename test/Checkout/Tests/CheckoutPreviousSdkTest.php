@@ -36,6 +36,35 @@ class CheckoutPreviousSdkTest extends UnitTestFixture
 
     /**
      * @test
+     * @throws CheckoutArgumentException
+     */
+    public function shouldCreateCheckoutSdksWithSubdomains()
+    {
+
+        $checkoutApi1 = CheckoutSdk::builder()
+            ->previous()
+            ->staticKeys()
+            ->publicKey(parent::$validPreviousPk)
+            ->secretKey(parent::$validPreviousSk)
+            ->environment(Environment::sandbox())
+            ->environmentSubdomain("123dmain")
+            ->build();
+
+        $this->assertNotNull($checkoutApi1);
+
+        $checkoutApi2 = CheckoutSdk::builder()
+            ->previous()
+            ->staticKeys()
+            ->secretKey(parent::$validPreviousSk)
+            ->environment(Environment::sandbox())
+            ->environmentSubdomain("123dmain")
+            ->build();
+
+        $this->assertNotNull($checkoutApi2);
+    }
+
+    /**
+     * @test
      */
     public function shouldFailCreatingCheckoutSdks()
     {

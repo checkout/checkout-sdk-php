@@ -12,9 +12,9 @@ use Checkout\Instruments\InstrumentsClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
 use Checkout\Payments\Contexts\PaymentContextsClient;
-use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
+use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Sessions\PaymentSessionsClient;
 use Checkout\Reports\ReportsClient;
 use Checkout\Risk\RiskClient;
@@ -249,7 +249,13 @@ final class CheckoutApi extends CheckoutApmApi
      */
     private function getBaseApiClient(CheckoutConfiguration $configuration)
     {
-        return new ApiClient($configuration, $configuration->getEnvironment()->getBaseUri());
+        $baseUri = $configuration->getEnvironment()->getBaseUri();
+        $subdomain = $configuration->getEnvironmentSubdomain();
+
+        if ($subdomain !== null && $subdomain->getBaseUri() !== null) {
+            $baseUri = $subdomain->getBaseUri();
+        }
+        return new ApiClient($configuration, $baseUri);
     }
 
     /**

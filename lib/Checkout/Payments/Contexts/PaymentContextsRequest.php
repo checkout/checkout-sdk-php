@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Contexts;
 
+use Checkout\Common\CustomerRequest;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 use Checkout\Payments\ShippingDetails;
 
@@ -28,9 +29,19 @@ class PaymentContextsRequest
     public $payment_type;
 
     /**
+     * @var string
+     */
+    public $authorizationType;
+
+    /**
      * @var bool
      */
     public $capture;
+
+    /**
+     * @var CustomerRequest
+     */
+    public $customer;
 
     /**
      * @var ShippingDetails

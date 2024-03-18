@@ -23,4 +23,9 @@ class EntityFinancialDetails
      * @var EntityFinancialDocuments
      */
     public $documents;
+
+    /**
+     * @var string value of Currency
+     */
+    public $currency;
 }

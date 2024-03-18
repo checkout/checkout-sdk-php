@@ -50,4 +50,9 @@ class Individual
      * @var Identification
      */
     public $identification;
+
+    /**
+     * @var EntityFinancialDetails
+     */
+    public $financialDetails;
 }

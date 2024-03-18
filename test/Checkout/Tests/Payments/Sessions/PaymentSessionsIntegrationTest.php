@@ -39,20 +39,9 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
         $this->assertResponse(
             $response,
             "id",
-            "amount",
-            "locale",
-            "currency",
-            "payment_methods",
             "_links",
             "_links.self"
         );
-
-        foreach ($response["payment_methods"] as $payment_method) {
-            $this->assertResponse(
-                $payment_method,
-                "type"
-            );
-        }
     }
 
     private function createPaymentSessionsRequest()

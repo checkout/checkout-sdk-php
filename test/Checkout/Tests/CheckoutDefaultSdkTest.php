@@ -17,18 +17,45 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
      */
     public function shouldCreateCheckoutSdks()
     {
-        $this->assertNotNull(CheckoutSdk::builder()
+        $checkoutApi1 = CheckoutSdk::builder()
             ->staticKeys()
             ->publicKey(parent::$validDefaultPk)
             ->secretKey(parent::$validDefaultSk)
             ->environment(Environment::sandbox())
-            ->build());
+            ->build();
+        $this->assertNotNull($checkoutApi1);
 
-        $this->assertNotNull(CheckoutSdk::builder()
+        $checkoutApi2 = CheckoutSdk::builder()
             ->staticKeys()
             ->secretKey(parent::$validDefaultSk)
             ->environment(Environment::sandbox())
-            ->build());
+            ->build();
+        $this->assertNotNull($checkoutApi2);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutArgumentException
+     */
+    public function shouldCreateCheckoutSdksWithSubdomains()
+    {
+        $checkoutApi1 = CheckoutSdk::builder()
+            ->staticKeys()
+            ->publicKey(parent::$validDefaultPk)
+            ->secretKey(parent::$validDefaultSk)
+            ->environment(Environment::sandbox())
+            ->environmentSubdomain("123dmain")
+            ->build();
+
+        $this->assertNotNull($checkoutApi1);
+
+        $checkoutApi2 = CheckoutSdk::builder()
+            ->staticKeys()
+            ->secretKey(parent::$validDefaultSk)
+            ->environment(Environment::sandbox())
+            ->environmentSubdomain("123dmain")
+            ->build();
+        $this->assertNotNull($checkoutApi2);
     }
 
     /**

@@ -130,6 +130,11 @@ class HostedPaymentsSessionRequest
      */
     public $allow_payment_methods;
 
+    /**
+     * @var string value of PaymentSourceType
+     */
+    public $disabled_payment_methods;
+
     //Not available on previous
 
     /**

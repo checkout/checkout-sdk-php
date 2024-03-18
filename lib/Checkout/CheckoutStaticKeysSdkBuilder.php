@@ -44,7 +44,15 @@ class CheckoutStaticKeysSdkBuilder extends AbstractStaticKeysCheckoutSdkBuilder
     {
         $this->validatePublicKey($this->publicKey, self::PUBLIC_KEY_PATTERN);
         $this->validateSecretKey($this->secretKey, self::SECRET_KEY_PATTERN);
-        $configuration = new CheckoutConfiguration($this->getSdkCredentials(), $this->environment, $this->httpClientBuilder, $this->logger);
+        $configuration = new CheckoutConfiguration(
+            $this->getSdkCredentials(),
+            $this->environment,
+            $this->httpClientBuilder,
+            $this->logger
+        );
+        if ($this->environmentSubdomain !== null) {
+            $configuration->setEnvironmentSubdomain($this->environmentSubdomain);
+        }
         return new CheckoutApi($configuration);
     }
 }

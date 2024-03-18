@@ -69,6 +69,7 @@ $checkoutApi = CheckoutSdk::builder()->staticKeys()
                     ->publicKey("public_key") // optional, only required for operations related with tokens
                     ->secretKey("secret_key")
                     ->environment(Environment::sandbox()) // or production()
+                    ->environmentSubdomain("subdomain") // optional, Merchant-specific DNS name
                     ->logger($logger) //optional, for a custom Logger
                     ->httpClientBuilder($client) // optional, for a custom HTTP client
                     ->build();
@@ -86,6 +87,7 @@ $checkoutApi = CheckoutSdk::builder()->oAuth()
                     ->clientCredentials("client_id", "client_secret")
                     ->scopes([OAuthScope::$Gateway, OAuthScope::$Vault]) // array of scopes
                     ->environment(Environment::sandbox()) // or production()
+                    ->environmentSubdomain("subdomain") // optional, Merchant-specific DNS name
                     ->logger($logger) //optional, for a custom Logger
                     ->httpClientBuilder($client) // optional, for a custom HTTP client
                     ->build();
@@ -104,6 +106,7 @@ $checkoutApi = CheckoutSdk::builder()
                     ->previous()
                     ->staticKeys()
                     ->environment(Environment::sandbox()) // or production()
+                    ->environmentSubdomain("subdomain") // optional, Merchant-specific DNS name
                     ->publicKey("public_key") // optional, only required for operations related with tokens
                     ->secretKey("secret_key")
                     ->logger($logger) //optional, for a custom Logger

@@ -10,6 +10,8 @@ final class CheckoutConfiguration
 
     private $environment;
 
+    private $environmentSubdomain;
+
     private $httpClientBuilder;
 
     private $logger;
@@ -30,6 +32,7 @@ final class CheckoutConfiguration
         $this->environment = $environment;
         $this->httpClientBuilder = $httpClientBuilder;
         $this->logger = $logger;
+        $this->environmentSubdomain = null;
     }
 
     /**
@@ -46,6 +49,19 @@ final class CheckoutConfiguration
     public function getEnvironment()
     {
         return $this->environment;
+    }
+
+    /**
+     * @return EnvironmentSubdomain|null
+     */
+    public function getEnvironmentSubdomain()
+    {
+        return $this->environmentSubdomain;
+    }
+
+    public function setEnvironmentSubdomain(EnvironmentSubdomain $environmentSubdomain)
+    {
+        $this->environmentSubdomain = $environmentSubdomain;
     }
 
     /**

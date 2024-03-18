@@ -34,21 +34,22 @@ final class CheckoutApi extends CheckoutApmApi
     private $riskClient;
     private $reconciliationClient;
 
-    public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
+    public function __construct(CheckoutConfiguration $configuration)
     {
-        parent::__construct($apiClient, $configuration);
-        $this->sourcesClient = new SourcesClient($apiClient, $configuration);
-        $this->tokensClient = new TokensClient($apiClient, $configuration);
-        $this->instrumentsClient = new InstrumentsClient($apiClient, $configuration);
-        $this->webhooksClient = new WebhooksClient($apiClient, $configuration);
-        $this->eventsClient = new EventsClient($apiClient, $configuration);
-        $this->paymentsClient = new PaymentsClient($apiClient, $configuration);
-        $this->customersClient = new CustomersClient($apiClient, $configuration, AuthorizationType::$secretKey);
-        $this->disputesClient = new DisputesClient($apiClient, $configuration, AuthorizationType::$secretKey);
-        $this->paymentLinksClient = new PaymentLinksClient($apiClient, $configuration);
-        $this->hostedPaymentsClient = new HostedPaymentsClient($apiClient, $configuration);
-        $this->riskClient = new RiskClient($apiClient, $configuration);
-        $this->reconciliationClient = new ReconciliationClient($apiClient, $configuration);
+        $baseApiClient = $this->getBaseApiClient($configuration);
+        parent::__construct($baseApiClient, $configuration);
+        $this->sourcesClient = new SourcesClient($baseApiClient, $configuration);
+        $this->tokensClient = new TokensClient($baseApiClient, $configuration);
+        $this->instrumentsClient = new InstrumentsClient($baseApiClient, $configuration);
+        $this->webhooksClient = new WebhooksClient($baseApiClient, $configuration);
+        $this->eventsClient = new EventsClient($baseApiClient, $configuration);
+        $this->paymentsClient = new PaymentsClient($baseApiClient, $configuration);
+        $this->customersClient = new CustomersClient($baseApiClient, $configuration, AuthorizationType::$secretKey);
+        $this->disputesClient = new DisputesClient($baseApiClient, $configuration, AuthorizationType::$secretKey);
+        $this->paymentLinksClient = new PaymentLinksClient($baseApiClient, $configuration);
+        $this->hostedPaymentsClient = new HostedPaymentsClient($baseApiClient, $configuration);
+        $this->riskClient = new RiskClient($baseApiClient, $configuration);
+        $this->reconciliationClient = new ReconciliationClient($baseApiClient, $configuration);
     }
 
     /**
@@ -145,5 +146,20 @@ final class CheckoutApi extends CheckoutApmApi
     public function getReconciliationClient()
     {
         return $this->reconciliationClient;
+    }
+
+    /**
+     * @param CheckoutConfiguration $configuration
+     * @return ApiClient
+     */
+    private function getBaseApiClient(CheckoutConfiguration $configuration)
+    {
+        $baseUri = $configuration->getEnvironment()->getBaseUri();
+        $subdomain = $configuration->getEnvironmentSubdomain();
+
+        if ($subdomain !== null && $subdomain->getBaseUri() !== null) {
+            $baseUri = $subdomain->getBaseUri();
+        }
+        return new ApiClient($configuration, $baseUri);
     }
 }

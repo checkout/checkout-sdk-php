@@ -10,6 +10,7 @@ abstract class AbstractCheckoutSdkBuilder
 {
 
     protected $environment;
+    protected $environmentSubdomain;
     protected $httpClientBuilder;
     protected $logger;
 
@@ -27,6 +28,16 @@ abstract class AbstractCheckoutSdkBuilder
     public function environment(Environment $environment)
     {
         $this->environment = $environment;
+        return $this;
+    }
+
+    /**
+     * @param $subdomain
+     * @return $this
+     */
+    public function environmentSubdomain($subdomain)
+    {
+        $this->environmentSubdomain = new EnvironmentSubdomain($this->environment, $subdomain);
         return $this;
     }
 

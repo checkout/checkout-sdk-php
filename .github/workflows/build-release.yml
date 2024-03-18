@@ -39,6 +39,7 @@ jobs:
                     CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET }}
                     CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
                     CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
+                    CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
                 run: vendor/bin/phpunit --verbose
             -   name: Read release version
                 uses: HardNorth/github-version-generate@v1.1.1

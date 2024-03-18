@@ -60,6 +60,7 @@ abstract class SandboxTestFixture extends TestCase
                     ->previous()
                     ->staticKeys()
                     ->environment(Environment::sandbox())
+                    //->environmentSubdomain(getenv("CHECKOUT_MERCHANT_SUBDOMAIN"))
                     ->publicKey(getenv("CHECKOUT_PREVIOUS_PUBLIC_KEY"))
                     ->secretKey(getenv("CHECKOUT_PREVIOUS_SECRET_KEY"))
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
@@ -71,6 +72,7 @@ abstract class SandboxTestFixture extends TestCase
                     ->publicKey(getenv("CHECKOUT_DEFAULT_PUBLIC_KEY"))
                     ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY"))
                     ->environment(Environment::sandbox())
+                    //->environmentSubdomain(getenv("CHECKOUT_MERCHANT_SUBDOMAIN"))
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
                     ->build();
@@ -87,6 +89,7 @@ abstract class SandboxTestFixture extends TestCase
                         OAuthScope::$TransfersView, OAuthScope::$BalancesView, OAuthScope::$VaultCardMetadata,
                         OAuthScope::$FinancialActions])
                     ->environment(Environment::sandbox())
+                    //->environmentSubdomain(getenv("CHECKOUT_MERCHANT_SUBDOMAIN"))
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
                     ->build();
@@ -130,7 +133,12 @@ abstract class SandboxTestFixture extends TestCase
      */
     protected function idempotencyKey()
     {
-        return substr(uniqid(), 0, 8);
+        $s = md5(uniqid(rand(), true));
+        return substr($s, 0, 8) .
+            '-' . substr($s, 8, 4) .
+            '-' . substr($s, 12, 4) .
+            '-' . substr($s, 16, 4) .
+            '-' . substr($s, 20);
     }
 
     /**

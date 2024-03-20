@@ -46,4 +46,9 @@ class Representative
      * @var array values of EntityRoles
      */
     public $roles;
+
+    /**
+     * @var OnboardSubEntityDocuments
+     */
+    public $documents;
 }

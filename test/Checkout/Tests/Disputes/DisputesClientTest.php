@@ -124,6 +124,20 @@ class DisputesClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldGetCompiledSubmittedEvidence()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn("foo");
+
+        $response = $this->client->getCompiledSubmittedEvidence("dispute_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldUploadFile()
     {
         $fileRequest = new FileRequest();

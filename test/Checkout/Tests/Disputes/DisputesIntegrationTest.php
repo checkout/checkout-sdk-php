@@ -142,6 +142,17 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
         self::assertArrayHasKey("http_metadata", $updateResponse);
         self::assertEquals(204, $updateResponse["http_metadata"]->getStatusCode());
 
+        //Get compiled submitted evidence
+        $compiledSubmittedEvidenceResponse
+            = $this->checkoutApi->getDisputesClient()->getCompiledSubmittedEvidence($disputeId);
+        $this->assertResponse(
+            $compiledSubmittedEvidenceResponse,
+            "file_id",
+            "_links",
+            "_links.self"
+        );
+
+
         $evidence = $this->checkoutApi->getDisputesClient()->getEvidence($disputeId);
         $this->assertResponse(
             $evidence,

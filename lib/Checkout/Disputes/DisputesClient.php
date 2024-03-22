@@ -10,6 +10,7 @@ class DisputesClient extends FilesClient
     const DISPUTES_PATH = "disputes";
     const ACCEPT_PATH = "accept";
     const EVIDENCE_PATH = "evidence";
+    const SUBMITTED_PATH = "submitted";
     const SCHEME_FILES_PATH = "schemefiles";
 
     /**
@@ -91,6 +92,19 @@ class DisputesClient extends FilesClient
         return $this->apiClient->post(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH),
             null,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $disputeId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getCompiledSubmittedEvidence($disputeId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::SUBMITTED_PATH),
             $this->sdkAuthorization()
         );
     }

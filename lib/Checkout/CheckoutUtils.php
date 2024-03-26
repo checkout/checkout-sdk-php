@@ -9,7 +9,7 @@ class CheckoutUtils
 {
 
     const PROJECT_NAME = "checkout-sdk-php";
-    const PROJECT_VERSION = "3.0.21";
+    const PROJECT_VERSION = "3.1.0";
 
     /**
      * @param DateTime $date

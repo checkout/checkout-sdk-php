@@ -18,4 +18,9 @@ class Profile
      * @var string value of Currency
      */
     public $default_holding_currency;
+
+    /**
+     * @var array
+     */
+    public $holding_currencies;
 }

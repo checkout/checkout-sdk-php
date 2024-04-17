@@ -7,12 +7,17 @@ use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\Common\AccountHolder;
+use Checkout\Common\Country;
+use Checkout\Common\Currency;
 use Checkout\Customers\CustomerRequest;
 use Checkout\Instruments\Create\CreateCustomerInstrumentRequest;
+use Checkout\Instruments\Create\CreateSepaInstrumentRequest;
 use Checkout\Instruments\Create\CreateTokenInstrumentRequest;
+use Checkout\Instruments\Create\InstrumentData;
 use Checkout\Instruments\Update\UpdateCardInstrumentRequest;
 use Checkout\Instruments\Update\UpdateCustomerRequest;
 use Checkout\Instruments\Update\UpdateTokenInstrumentRequest;
+use Checkout\Payments\PaymentType;
 use Checkout\PlatformType;
 use Checkout\Tests\Payments\AbstractPaymentsIntegrationTest;
 
@@ -28,6 +33,37 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function before()
     {
         $this->init(PlatformType::$default);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateSepaInstrument()
+    {
+        $instrumentData = new InstrumentData();
+        $instrumentData->account_number = "FR7630006000011234567890189";
+        $instrumentData->country = Country::$FR;
+        $instrumentData->currency = Currency::$EUR;
+        $instrumentData->payment_type = PaymentType::$recurring;
+
+        $accountHolder = new AccountHolder();
+        $accountHolder->first_name = "John";
+        $accountHolder->last_name = "Smith";
+        $accountHolder->phone = $this->getPhone();
+        $accountHolder->billing_address = $this->getAddress();
+
+        $sepaInstrument = new CreateSepaInstrumentRequest();
+        $sepaInstrument->instrument_data = $instrumentData;
+        $sepaInstrument->account_holder = $accountHolder;
+
+        $response = $this->checkoutApi->getInstrumentsClient()->create($sepaInstrument);
+        $this->assertResponse(
+            $response,
+            "id",
+            "type",
+            "fingerprint"
+        );
     }
 
     /**

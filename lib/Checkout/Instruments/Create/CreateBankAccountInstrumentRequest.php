@@ -74,6 +74,11 @@ class CreateBankAccountInstrumentRequest extends CreateInstrumentRequest
     public $bank_details;
 
     /**
+     * @var BankDetails
+     */
+    public $bank;
+
+    /**
      * @var CreateCustomerInstrumentRequest
      */
     public $customer;

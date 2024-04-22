@@ -10,5 +10,7 @@ class InstrumentType
 
     public static $card = "card";
 
+    public static $sepa = "sepa";
+
     public static $card_token = "card_token";
 }

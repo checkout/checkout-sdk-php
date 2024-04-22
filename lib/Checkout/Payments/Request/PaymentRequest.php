@@ -166,4 +166,9 @@ class PaymentRequest
      * @var PaymentRetryRequest
      */
     public $retry;
+
+    /**
+     * @var PaymentInstruction
+     */
+    public $instruction;
 }

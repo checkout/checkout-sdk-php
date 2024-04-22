@@ -10,12 +10,12 @@ use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Common\Phone;
-use Checkout\Common\Product;
 use Checkout\Environment;
 use Checkout\Payments\BillingPlan;
 use Checkout\Payments\BillingPlanType;
 use Checkout\Payments\PaymentCustomerRequest;
 use Checkout\Payments\ProcessingSettings;
+use Checkout\Payments\Product;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\Apm\FawryProduct;
 use Checkout\Payments\Request\Source\Apm\RequestAfterPaySource;
@@ -744,7 +744,6 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeSepaPayment()
     {
-        $this->markTestSkipped("unavailable");
         $requestSource = new RequestSepaSource();
         $requestSource->country = Country::$ES;
         $requestSource->currency = Currency::$EUR;

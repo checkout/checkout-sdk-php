@@ -6,7 +6,7 @@ use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\BillingPlan;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 
-class RequestPayPalSource extends AbstractRequestSource
+class RequestPaypalSource extends AbstractRequestSource
 {
     public function __construct()
     {

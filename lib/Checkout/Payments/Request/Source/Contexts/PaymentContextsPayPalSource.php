@@ -5,7 +5,7 @@ namespace Checkout\Payments\Request\Source\Contexts;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 
-class PaymentContextsPayPalSource extends AbstractRequestSource
+class PaymentContextsPaypalSource extends AbstractRequestSource
 {
 
     public function __construct()

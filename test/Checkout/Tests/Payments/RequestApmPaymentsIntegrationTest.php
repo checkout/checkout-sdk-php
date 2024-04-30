@@ -29,12 +29,11 @@ use Checkout\Payments\Request\Source\Apm\RequestFawrySource;
 use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
 use Checkout\Payments\Request\Source\Apm\RequestIllicadoSource;
-use Checkout\Payments\Request\Source\Apm\RequestKlarnaSource;
 use Checkout\Payments\Request\Source\Apm\RequestKnetSource;
 use Checkout\Payments\Request\Source\Apm\RequestMbwaySource;
 use Checkout\Payments\Request\Source\Apm\RequestMultiBancoSource;
 use Checkout\Payments\Request\Source\Apm\RequestP24Source;
-use Checkout\Payments\Request\Source\Apm\RequestPayPalSource;
+use Checkout\Payments\Request\Source\Apm\RequestPaypalSource;
 use Checkout\Payments\Request\Source\Apm\RequestPostFinanceSource;
 use Checkout\Payments\Request\Source\Apm\RequestQPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestSofortSource;
@@ -42,6 +41,7 @@ use Checkout\Payments\Request\Source\Apm\RequestStcPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestTamaraSource;
 use Checkout\Payments\Request\Source\Apm\RequestTrustlySource;
 use Checkout\Payments\Request\Source\Apm\RequestSepaSource;
+use Checkout\Payments\Request\Source\Common\RequestKlarnaSource;
 use Closure;
 use Exception;
 
@@ -255,10 +255,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakePayPalPayment()
+    public function shouldMakePaypalPayment()
     {
         $this->markTestSkipped("unavailable");
-        $requestSource = new RequestPayPalSource();
+        $requestSource = new RequestPaypalSource();
 
         $plan = new BillingPlan();
         $plan->type = BillingPlanType::$channel_initiated_billing;

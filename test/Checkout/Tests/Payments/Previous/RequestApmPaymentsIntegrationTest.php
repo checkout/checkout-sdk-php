@@ -20,7 +20,7 @@ use Checkout\Payments\Previous\Source\Apm\RequestMultiBancoSource;
 use Checkout\Payments\Previous\Source\Apm\RequestOxxoSource;
 use Checkout\Payments\Previous\Source\Apm\RequestP24Source;
 use Checkout\Payments\Previous\Source\Apm\RequestPagoFacilSource;
-use Checkout\Payments\Previous\Source\Apm\RequestPaypalSource;
+use Checkout\Payments\Previous\Source\Apm\RequestPayPalSource;
 use Checkout\Payments\Previous\Source\Apm\RequestPoliSource;
 use Checkout\Payments\Previous\Source\Apm\RequestQPaySource;
 use Checkout\Payments\Previous\Source\Apm\RequestRapiPagoSource;
@@ -266,7 +266,6 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $source->account_holder = $accountHolder;
 
         $requestSource = $source;
-        $requestSource->purpose = "CKO Giropay test";
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;
@@ -557,9 +556,9 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakePaypalPayment()
+    public function shouldMakePayPalPayment()
     {
-        $requestSource = new RequestPaypalSource();
+        $requestSource = new RequestPayPalSource();
         $requestSource->invoice_number = "CKO00001";
         $requestSource->logo_url = "https://www.example.com/logo.jpg";
 

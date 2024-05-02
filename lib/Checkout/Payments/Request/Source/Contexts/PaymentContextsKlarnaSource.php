@@ -1,12 +1,12 @@
 <?php
 
-namespace Checkout\Payments\Request\Source\Common;
+namespace Checkout\Payments\Request\Source\Contexts;
 
 use Checkout\Common\AccountHolder;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 
-class RequestKlarnaSource extends AbstractRequestSource
+class PaymentContextsKlarnaSource extends AbstractRequestSource
 {
     public function __construct()
     {

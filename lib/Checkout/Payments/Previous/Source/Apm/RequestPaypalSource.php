@@ -5,7 +5,7 @@ namespace Checkout\Payments\Previous\Source\Apm;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Previous\Source\AbstractRequestSource;
 
-class RequestPayPalSource extends AbstractRequestSource
+class RequestPaypalSource extends AbstractRequestSource
 {
     public function __construct()
     {

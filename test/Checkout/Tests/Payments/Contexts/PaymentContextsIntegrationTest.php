@@ -16,8 +16,8 @@ use Checkout\CheckoutAuthorizationException;
 use Checkout\Payments\Contexts\PaymentContextsItems;
 use Checkout\Payments\Contexts\PaymentContextsRequest;
 use Checkout\Payments\Contexts\PaymentContextsProcessing;
-use Checkout\Payments\Request\Source\Common\RequestKlarnaSource;
-use Checkout\Payments\Request\Source\Contexts\PaymentContextsPaypalSource;
+use Checkout\Payments\Request\Source\Contexts\PaymentContextsKlarnaSource;
+use Checkout\Payments\Request\Source\Contexts\PaymentContextsPayPalSource;
 
 class PaymentContextsIntegrationTest extends SandboxTestFixture
 {
@@ -91,7 +91,7 @@ class PaymentContextsIntegrationTest extends SandboxTestFixture
         $account_holder = new AccountHolder();
         $account_holder->billing_address =  $billing_address;
 
-        $source = new RequestKlarnaSource();
+        $source = new PaymentContextsKlarnaSource();
         $source->account_holder = $account_holder;
 
         $paymentContextItems = new PaymentContextsItems();
@@ -126,7 +126,7 @@ class PaymentContextsIntegrationTest extends SandboxTestFixture
         $paymentContextItems->total_amount = 1000;
 
         $paymentContextRequest = new PaymentContextsRequest();
-        $paymentContextRequest->source = new PaymentContextsPaypalSource();
+        $paymentContextRequest->source = new PaymentContextsPayPalSource();
         $paymentContextRequest->amount = 1000;
         $paymentContextRequest->currency = Currency::$EUR;
         $paymentContextRequest->payment_type = PaymentType::$regular;

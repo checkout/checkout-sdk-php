@@ -2,48 +2,48 @@
 
 namespace Checkout\Tests\Payments;
 
-use Checkout\CheckoutApiException;
+use Closure;
+use Exception;
 use Checkout\CheckoutSdk;
-use Checkout\Common\AccountHolder;
+use Checkout\Environment;
+use Checkout\Common\Phone;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
-use Checkout\Common\CustomerRequest;
-use Checkout\Common\Phone;
-use Checkout\Environment;
-use Checkout\Payments\BillingPlan;
-use Checkout\Payments\BillingPlanType;
-use Checkout\Payments\PaymentCustomerRequest;
-use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Product;
+use Checkout\CheckoutApiException;
+use Checkout\Common\AccountHolder;
+use Checkout\Payments\BillingPlan;
+use Checkout\Common\CustomerRequest;
+use Checkout\Payments\BillingPlanType;
+use Checkout\Payments\ProcessingSettings;
+use Checkout\Payments\PaymentCustomerRequest;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\Apm\FawryProduct;
-use Checkout\Payments\Request\Source\Apm\RequestAfterPaySource;
-use Checkout\Payments\Request\Source\Apm\RequestAlipayPlusSource;
-use Checkout\Payments\Request\Source\Apm\RequestAlmaSource;
-use Checkout\Payments\Request\Source\Apm\RequestBancontactSource;
-use Checkout\Payments\Request\Source\Apm\RequestBenefitSource;
-use Checkout\Payments\Request\Source\Apm\RequestCvConnectSource;
 use Checkout\Payments\Request\Source\Apm\RequestEpsSource;
-use Checkout\Payments\Request\Source\Apm\RequestFawrySource;
-use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
-use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
-use Checkout\Payments\Request\Source\Apm\RequestIllicadoSource;
-use Checkout\Payments\Request\Source\Apm\RequestKnetSource;
-use Checkout\Payments\Request\Source\Apm\RequestMbwaySource;
-use Checkout\Payments\Request\Source\Apm\RequestMultiBancoSource;
 use Checkout\Payments\Request\Source\Apm\RequestP24Source;
-use Checkout\Payments\Request\Source\Apm\RequestPaypalSource;
-use Checkout\Payments\Request\Source\Apm\RequestPostFinanceSource;
+use Checkout\Payments\Request\Source\Apm\RequestAlmaSource;
+use Checkout\Payments\Request\Source\Apm\RequestKnetSource;
 use Checkout\Payments\Request\Source\Apm\RequestQPaySource;
+use Checkout\Payments\Request\Source\Apm\RequestSepaSource;
+use Checkout\Payments\Request\Source\Apm\RequestFawrySource;
+use Checkout\Payments\Request\Source\Apm\RequestIdealSource;
+use Checkout\Payments\Request\Source\Apm\RequestMbwaySource;
+use Checkout\Payments\Request\Source\Apm\RequestPayPalSource;
 use Checkout\Payments\Request\Source\Apm\RequestSofortSource;
 use Checkout\Payments\Request\Source\Apm\RequestStcPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestTamaraSource;
+use Checkout\Payments\Request\Source\Apm\RequestBenefitSource;
+use Checkout\Payments\Request\Source\Apm\RequestGiropaySource;
 use Checkout\Payments\Request\Source\Apm\RequestTrustlySource;
-use Checkout\Payments\Request\Source\Apm\RequestSepaSource;
-use Checkout\Payments\Request\Source\Common\RequestKlarnaSource;
-use Closure;
-use Exception;
+use Checkout\Payments\Request\Source\Apm\RequestAfterPaySource;
+use Checkout\Payments\Request\Source\Apm\RequestIllicadoSource;
+use Checkout\Payments\Request\Source\Apm\RequestCvConnectSource;
+use Checkout\Payments\Request\Source\Apm\RequestAlipayPlusSource;
+use Checkout\Payments\Request\Source\Apm\RequestBancontactSource;
+use Checkout\Payments\Request\Source\Apm\RequestMultiBancoSource;
+use Checkout\Payments\Request\Source\Apm\RequestPostFinanceSource;
+use Checkout\Payments\Request\Source\Contexts\PaymentContextsKlarnaSource;
 
 class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 {
@@ -255,10 +255,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      */
-    public function shouldMakePaypalPayment()
+    public function shouldMakePayPalPayment()
     {
         $this->markTestSkipped("unavailable");
-        $requestSource = new RequestPaypalSource();
+        $requestSource = new RequestPayPalSource();
 
         $plan = new BillingPlan();
         $plan->type = BillingPlanType::$channel_initiated_billing;
@@ -643,7 +643,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $accountHolder->phone = $this->getPhone();
         $accountHolder->billing_address = $this->getAddress();
 
-        $requestSource = new RequestKlarnaSource();
+        $requestSource = new PaymentContextsKlarnaSource();
         $requestSource->account_holder = $accountHolder;
 
         $paymentRequest = new PaymentRequest();

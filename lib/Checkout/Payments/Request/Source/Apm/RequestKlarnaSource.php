@@ -6,9 +6,6 @@ use Checkout\Common\AccountHolder;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 
-/**
- * @deprecated use Checkout\Payments\Request\Source\Common\RequestKlarnaSource instead.
- */
 class RequestKlarnaSource extends AbstractRequestSource
 {
     public function __construct()

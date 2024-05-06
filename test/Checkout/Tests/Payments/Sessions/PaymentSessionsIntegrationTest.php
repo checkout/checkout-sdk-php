@@ -8,7 +8,7 @@ use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
-use Checkout\Payments\Sessions\Billing;
+use Checkout\Payments\BillingInformation;
 use Checkout\Payments\Sessions\PaymentSessionsRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
@@ -39,6 +39,7 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
         $this->assertResponse(
             $response,
             "id",
+            "payment_session_token",
             "_links",
             "_links.self"
         );
@@ -46,7 +47,7 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
 
     private function createPaymentSessionsRequest()
     {
-        $billing = new Billing();
+        $billing = new BillingInformation();
         $billing->address = $this->getAddress();
 
         $customer = new CustomerRequest();
@@ -58,7 +59,6 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
         $paymentSessionsRequest->currency = Currency::$GBP;
         $paymentSessionsRequest->reference = "ORD-123A";
         $paymentSessionsRequest->billing = $billing;
-        $paymentSessionsRequest->customer = $customer;
         $paymentSessionsRequest->success_url = "https://example.com/payments/success";
         $paymentSessionsRequest->failure_url = "https://example.com/payments/failure";
 

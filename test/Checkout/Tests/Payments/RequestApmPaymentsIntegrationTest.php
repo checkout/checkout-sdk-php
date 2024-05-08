@@ -75,8 +75,8 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeIdealPayment()
     {
+        $this->markTestSkipped("unavailable");
         $requestSource = new RequestIdealSource();
-        $requestSource->bic = "INGBNL2A";
         $requestSource->description = "ORD50234E89";
         $requestSource->language = "nl";
 

@@ -15,11 +15,6 @@ class RequestIdealSource extends AbstractRequestSource
     /**
      * @var string
      */
-    public $bic;
-
-    /**
-     * @var string
-     */
     public $description;
 
     /**

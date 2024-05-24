@@ -78,12 +78,12 @@ class PaymentSessionsRequest
     public $payment_method_configuration;
 
     /**
-     * @var string value of PaymentMethodsType
+     * @var array of PaymentMethodsType
      */
     public $enabled_payment_methods;
 
     /**
-     * @var string value of PaymentMethodsType
+     * @var array of PaymentMethodsType
      */
     public $disabled_payment_methods;
 

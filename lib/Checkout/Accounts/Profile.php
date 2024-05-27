@@ -20,7 +20,7 @@ class Profile
     public $default_holding_currency;
 
     /**
-     * @var array
+     * @var array of Currency
      */
     public $holding_currencies;
 }

@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments;
 
+use Checkout\Common\Destination;
+
 class RefundRequest
 {
     /**
@@ -25,4 +27,19 @@ class RefundRequest
      * @var array values of AmountAllocations
      */
     public $amount_allocations;
+
+    /**
+     * @var string
+     */
+    public $capture_action_id;
+
+    /**
+     * @var Destination
+     */
+    public $destination;
+
+    /**
+     * @var array values of Order
+     */
+    public $items;
 }

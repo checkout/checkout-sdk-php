@@ -14,9 +14,9 @@ use Monolog\Logger;
 class CheckoutConfigurationTests extends MockeryTestCase
 {
     /**
-     * @test
+     * @dataProvider validSubdomainProvider
      */
-    public function shouldCreateConfiguration()
+    public function testShouldCreateConfigurationWithSubdomain($subdomain, $expectedUrl)
     {
         $credentials = new StaticKeysSdkCredentials(
             getenv("CHECKOUT_DEFAULT_SECRET_KEY"),
@@ -24,36 +24,7 @@ class CheckoutConfigurationTests extends MockeryTestCase
         );
         $httpClient = $this->createMock(HttpClientBuilderInterface::class);
 
-        $checkoutLog = new Logger("checkout-sdk-test-php");
-        $checkoutLog->pushHandler(new StreamHandler("php://stderr"));
-        $checkoutLog->pushHandler(new StreamHandler("checkout-sdk-test-php.log"));
-
-        $configuration = new CheckoutConfiguration(
-            $credentials,
-            Environment::sandbox(),
-            $httpClient,
-            $checkoutLog
-        );
-
-        $this->assertEquals(Environment::sandbox(), $configuration->getEnvironment());
-        $this->assertEquals(
-            "https://api.sandbox.checkout.com/",
-            $configuration->getEnvironment()->getBaseUri()
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function shouldCreateConfigurationWithSubdomain()
-    {
-        $credentials = new StaticKeysSdkCredentials(
-            getenv("CHECKOUT_DEFAULT_SECRET_KEY"),
-            getenv("CHECKOUT_DEFAULT_PUBLIC_KEY")
-        );
-        $httpClient = $this->createMock(HttpClientBuilderInterface::class);
-
-        $environmentSubdomain = new EnvironmentSubdomain(Environment::sandbox(), "123dmain");
+        $environmentSubdomain = new EnvironmentSubdomain(Environment::sandbox(), $subdomain);
 
         $checkoutLog = new Logger("checkout-sdk-test-php");
         $checkoutLog->pushHandler(new StreamHandler("php://stderr"));
@@ -69,16 +40,13 @@ class CheckoutConfigurationTests extends MockeryTestCase
         $configuration->setEnvironmentSubdomain($environmentSubdomain);
 
         $this->assertEquals(Environment::sandbox(), $configuration->getEnvironment());
-        $this->assertEquals(
-            "https://123dmain.api.sandbox.checkout.com/",
-            $configuration->getEnvironmentSubdomain()->getBaseUri()
-        );
+        $this->assertEquals($expectedUrl, $configuration->getEnvironmentSubdomain()->getBaseUri());
     }
 
     /**
-     * @test
+     * @dataProvider invalidSubdomainProvider
      */
-    public function shouldCreateConfigurationWithBadSubdomain()
+    public function testShouldCreateConfigurationWithBadSubdomain($subdomain, $expectedUrl)
     {
         $credentials = new StaticKeysSdkCredentials(
             getenv("CHECKOUT_DEFAULT_SECRET_KEY"),
@@ -86,7 +54,7 @@ class CheckoutConfigurationTests extends MockeryTestCase
         );
         $httpClient = $this->createMock(HttpClientBuilderInterface::class);
 
-        $environmentSubdomain = new EnvironmentSubdomain(Environment::sandbox(), "subdomain");
+        $environmentSubdomain = new EnvironmentSubdomain(Environment::sandbox(), $subdomain);
 
         $checkoutLog = new Logger("checkout-sdk-test-php");
         $checkoutLog->pushHandler(new StreamHandler("php://stderr"));
@@ -102,9 +70,26 @@ class CheckoutConfigurationTests extends MockeryTestCase
         $configuration->setEnvironmentSubdomain($environmentSubdomain);
 
         $this->assertEquals(Environment::sandbox(), $configuration->getEnvironment());
-        $this->assertEquals(
-            "https://api.sandbox.checkout.com/",
-            $configuration->getEnvironmentSubdomain()->getBaseUri()
-        );
+        $this->assertEquals($expectedUrl, $configuration->getEnvironmentSubdomain()->getBaseUri());
+    }
+
+    public function validSubdomainProvider()
+    {
+        return [
+            ["123dmain", "https://123dmain.api.sandbox.checkout.com/"],
+            ["123domain", "https://123domain.api.sandbox.checkout.com/"],
+            ["1234domain", "https://1234domain.api.sandbox.checkout.com/"],
+            ["12345domain", "https://12345domain.api.sandbox.checkout.com/"],
+        ];
+    }
+
+    public function invalidSubdomainProvider()
+    {
+        return [
+            ["", "https://api.sandbox.checkout.com/"],
+            ["123", "https://api.sandbox.checkout.com/"],
+            ["123bad", "https://api.sandbox.checkout.com/"],
+            ["12345domainBad", "https://api.sandbox.checkout.com/"],
+        ];
     }
 }

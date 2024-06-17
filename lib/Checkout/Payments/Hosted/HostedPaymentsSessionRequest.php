@@ -36,6 +36,11 @@ class HostedPaymentsSessionRequest
     public $description;
 
     /**
+     * @var string
+     */
+    public $display_name;
+
+    /**
      * @var CustomerRequest
      */
     public $customer;

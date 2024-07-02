@@ -135,6 +135,7 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $hostedPaymentRequest->reference = "reference";
         $hostedPaymentRequest->currency = Currency::$GBP;
         $hostedPaymentRequest->description = "Payment for Gold Necklace";
+        $hostedPaymentRequest->display_name = "Merchant Name";
         $hostedPaymentRequest->customer = $customerRequest;
         $hostedPaymentRequest->shipping = $shippingDetails;
         $hostedPaymentRequest->billing = $billingInformation;

@@ -258,6 +258,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeGiropayPayment()
     {
+        $this->markTestSkipped("unavailable");
         $accountHolder = new AccountHolder();
         $accountHolder->first_name = "Firstname";
         $accountHolder->last_name = "Lastname";

@@ -7,6 +7,7 @@ use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Payments\AuthorizationRequest;
 use Checkout\Payments\AuthorizationType;
+use Checkout\Payments\Request\PartialAuthorization;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\RequestCardSource;
 use Checkout\Payments\Sender\PaymentIndividualSender;
@@ -27,7 +28,10 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
         $authorizationRequest->reference = uniqid();
         $authorizationRequest->metadata = array("param1" => "value1", "param2" => "value2");
 
-        $authorizationResponse = $this->checkoutApi->getPaymentsClient()->incrementPaymentAuthorization($paymentResponse["id"], $authorizationRequest);
+        $authorizationResponse = $this->checkoutApi->getPaymentsClient()->incrementPaymentAuthorization(
+            $paymentResponse["id"],
+            $authorizationRequest
+        );
 
         $this->assertResponse(
             $authorizationResponse,
@@ -60,8 +64,16 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
 
         $idempotencyKey = $this->idempotencyKey();
 
-        $authorizationResponse = $this->checkoutApi->getPaymentsClient()->incrementPaymentAuthorization($paymentResponse["id"], $authorizationRequest, $idempotencyKey);
-        $authorizationResponse2 = $this->checkoutApi->getPaymentsClient()->incrementPaymentAuthorization($paymentResponse["id"], $authorizationRequest, $idempotencyKey);
+        $authorizationResponse = $this->checkoutApi->getPaymentsClient()->incrementPaymentAuthorization(
+            $paymentResponse["id"],
+            $authorizationRequest,
+            $idempotencyKey
+        );
+        $authorizationResponse2 = $this->checkoutApi->getPaymentsClient()->incrementPaymentAuthorization(
+            $paymentResponse["id"],
+            $authorizationRequest,
+            $idempotencyKey
+        );
 
         $this->assertEquals($authorizationResponse["action_id"], $authorizationResponse2["action_id"]);
     }
@@ -91,12 +103,16 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
         $paymentIndividualSender->last_name = "Test";
         $paymentIndividualSender->address = $address;
 
+        $partialAuthorization = new PartialAuthorization();
+        $partialAuthorization->enabled = true;
+
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestCardSource;
         $paymentRequest->capture = false;
         $paymentRequest->reference = uniqid();
         $paymentRequest->amount = 10;
         $paymentRequest->authorization_type = AuthorizationType::$estimated;
+        $paymentRequest->partial_authorization = $partialAuthorization;
         $paymentRequest->currency = Currency::$EUR;
         $paymentRequest->customer = $customerRequest;
         $paymentRequest->sender = $paymentIndividualSender;

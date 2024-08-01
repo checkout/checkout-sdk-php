@@ -62,6 +62,11 @@ class PaymentRequest
     public $authorization_type;
 
     /**
+     * @var PartialAuthorization
+     */
+    public $partial_authorization;
+
+    /**
      * @var bool
      */
     public $capture;

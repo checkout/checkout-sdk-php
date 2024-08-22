@@ -50,7 +50,11 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $responseSessionDetailsWithSecret = $this->retriable(
             function () use ($sessionSecret, $sessionId) {
-                return $this->checkoutApi->getSessionsClient()->updateSession($sessionId, $this->getBrowserSession(), $sessionSecret);
+                return $this->checkoutApi->getSessionsClient()->updateSession(
+                    $sessionId,
+                    $this->getBrowserSession(),
+                    $sessionSecret
+                );
             }
         );
         $this->assertNotNull($responseSessionDetailsWithSecret);
@@ -96,7 +100,10 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $responseSessionDetails = $this->retriable(
             function () use ($threeDsMethodCompletionRequest, $sessionId) {
-                return $this->checkoutApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest);
+                return $this->checkoutApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator(
+                    $sessionId,
+                    $threeDsMethodCompletionRequest
+                );
             }
         );
         $this->assertNotNull($responseSessionDetails);
@@ -120,7 +127,11 @@ class UpdateSessionsIntegrationTest extends AbstractSessionsIntegrationTest
 
         $responseSessionDetailsWithSecret = $this->retriable(
             function () use ($sessionSecret, $threeDsMethodCompletionRequest, $sessionId) {
-                return $this->checkoutApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator($sessionId, $threeDsMethodCompletionRequest, $sessionSecret);
+                return $this->checkoutApi->getSessionsClient()->updateThreeDsMethodCompletionIndicator(
+                    $sessionId,
+                    $threeDsMethodCompletionRequest,
+                    $sessionSecret
+                );
             }
         );
         $this->assertNotNull($responseSessionDetailsWithSecret);

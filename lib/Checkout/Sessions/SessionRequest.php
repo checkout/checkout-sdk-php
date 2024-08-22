@@ -2,12 +2,14 @@
 
 namespace Checkout\Sessions;
 
+use Checkout\Common\Currency;
 use Checkout\Common\ChallengeIndicatorType;
 use Checkout\Sessions\Channel\ChannelData;
-use Checkout\Sessions\Completion\CompletionInfo;
 use Checkout\Sessions\Source\SessionSource;
+use Checkout\Sessions\Completion\CompletionInfo;
+use Checkout\Sessions\Source\SessionCardSource;
 
-class SessionRequest
+final class SessionRequest
 {
     /**
      * @var SessionSource
@@ -50,7 +52,7 @@ class SessionRequest
     public $account_info;
 
     /**
-     * @var ChallengeIndicatorType
+     * @var string value of ChallengeIndicatorType
      */
     public $challenge_indicator;
 
@@ -108,4 +110,23 @@ class SessionRequest
      * @var Installment
      */
     public $installment;
+
+    /**
+     * @var Optimization
+     */
+    public $optimization;
+
+    /**
+     * @var InitialTransaction
+     */
+    public $initial_transaction;
+
+    public function __construct()
+    {
+        $this->source = new SessionCardSource();
+        $this->authentication_type = AuthenticationType::$regular;
+        $this->authentication_category = Category::$payment;
+        $this->challenge_indicator = ChallengeIndicatorType::$no_preference;
+        $this->transaction_type = TransactionType::$goods_service;
+    }
 }

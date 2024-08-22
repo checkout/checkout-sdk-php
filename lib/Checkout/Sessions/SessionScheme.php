@@ -2,12 +2,12 @@
 
 namespace Checkout\Sessions;
 
-class SessionScheme
+final class SessionScheme
 {
-    public static $visa = "visa";
-    public static $mastercard = "mastercard";
-    public static $jcb = "jcb";
     public static $amex = "amex";
-    public static $diners = "diners";
     public static $cartes_bancaires = "cartes_bancaires";
+    public static $diners = "diners";
+    public static $jcb = "jcb";
+    public static $mastercard = "mastercard";
+    public static $visa = "visa";
 }

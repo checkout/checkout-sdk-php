@@ -47,7 +47,6 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
      */
     public function shouldRequestAndGetCardSessionAppSession()
     {
-        $this->markTestSkipped("unstable");
         $appSession = $this->getAppSession();
         $responseNonHostedSession = $this->createNonHostedSession(
             $appSession,
@@ -59,7 +58,35 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
         $this->assertNotNull($responseNonHostedSession);
 
         $sessionId = $responseNonHostedSession["id"];
-        $sessionSecret = $responseNonHostedSession["session_secret"];
+
+        $responseSessionDetails = $this->checkoutApi->getSessionsClient()->getSessionDetails($sessionId);
+        $this->assertNotNull($responseSessionDetails);
+        $responseSessionDetailsWithSecret = $this->checkoutApi->getSessionsClient()->getSessionDetails(
+            $sessionId
+        );
+        $this->assertNotNull($responseSessionDetailsWithSecret);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     * @throws CheckoutAuthorizationException
+     */
+    public function shouldRequestAndGetCardSessionMerchantInitiatedSession()
+    {
+        $this->markTestSkipped("unavailable");
+        $merchantInitiatedSession = $this->getMerchantInitiatedSession();
+        $responseMerchantInitiatedSession = $this->createNonHostedSession(
+            $merchantInitiatedSession,
+            Category::$payment,
+            ChallengeIndicatorType::$no_preference,
+            TransactionType::$goods_service
+        );
+
+        $this->assertNotNull($responseMerchantInitiatedSession);
+
+        $sessionId = $responseMerchantInitiatedSession["id"];
+        $sessionSecret = $responseMerchantInitiatedSession["session_secret"];
 
         $responseSessionDetails = $this->checkoutApi->getSessionsClient()->getSessionDetails($sessionId);
         $this->assertNotNull($responseSessionDetails);

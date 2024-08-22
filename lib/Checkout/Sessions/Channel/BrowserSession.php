@@ -2,7 +2,7 @@
 
 namespace Checkout\Sessions\Channel;
 
-class BrowserSession extends ChannelData
+final class BrowserSession extends ChannelData
 {
 
     public function __construct()

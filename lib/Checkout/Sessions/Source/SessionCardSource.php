@@ -4,7 +4,7 @@ namespace Checkout\Sessions\Source;
 
 use Checkout\Sessions\SessionSourceType;
 
-class SessionCardSource extends SessionSource
+final class SessionCardSource extends SessionSource
 {
 
     public function __construct()
@@ -35,7 +35,7 @@ class SessionCardSource extends SessionSource
     /**
      * @var bool
      */
-    public $stored;
+    public $stored = false;
 
     /**
      * @var bool

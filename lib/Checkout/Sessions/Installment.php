@@ -12,10 +12,10 @@ class Installment
     /**
      * @var int
      */
-    public $days_between_payments;
+    public $days_between_payments = 1;
 
     /**
      * @var string
      */
-    public $expiry;
+    public $expiry = "99991231";
 }

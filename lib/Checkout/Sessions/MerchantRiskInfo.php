@@ -2,6 +2,8 @@
 
 namespace Checkout\Sessions;
 
+use DateTime;
+
 class MerchantRiskInfo
 {
     /**
@@ -28,4 +30,34 @@ class MerchantRiskInfo
      * @var string value of ShippingIndicator
      */
     public $shipping_indicator;
+
+    /**
+     * @var string value of ReorderItemsIndicatorType
+     */
+    public $reorder_items_indicator;
+
+    /**
+     * @var string value of PreOrderPurchaseIndicatorType
+     */
+    public $pre_order_purchase_indicator;
+
+    /**
+     * @var DateTime
+     */
+    public $pre_order_date;
+
+    /**
+     * @var string
+     */
+    public $gift_card_amount;
+
+    /**
+     * @var string
+     */
+    public $gift_card_currency;
+
+    /**
+     * @var string
+     */
+    public $gift_card_count;
 }

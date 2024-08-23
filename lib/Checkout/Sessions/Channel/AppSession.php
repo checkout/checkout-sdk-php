@@ -2,9 +2,8 @@
 
 namespace Checkout\Sessions\Channel;
 
-class AppSession extends ChannelData
+final class AppSession extends ChannelData
 {
-
     public function __construct()
     {
         parent::__construct(ChannelType::$app);
@@ -46,7 +45,7 @@ class AppSession extends ChannelData
     public $sdk_interface_type;
 
     /**
-     * @var array of UIElements
+     * @var array of Checkout\Sessions\UIElements
      */
     public $sdk_ui_elements;
 }

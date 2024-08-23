@@ -16,6 +16,8 @@ use Checkout\Sessions\Category;
 use Checkout\Sessions\Channel\AppSession;
 use Checkout\Sessions\Channel\BrowserSession;
 use Checkout\Sessions\Channel\ChannelData;
+use Checkout\Sessions\Channel\MerchantInitiatedSession;
+use Checkout\Sessions\Channel\RequestType;
 use Checkout\Sessions\Channel\SdkEphemeralPublicKey;
 use Checkout\Sessions\Channel\SdkInterfaceType;
 use Checkout\Sessions\Channel\ThreeDsMethodCompletion;
@@ -205,5 +207,13 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
         $appSession->sdk_ui_elements = array(UIElements::$single_select, UIElements::$html_other);
 
         return $appSession;
+    }
+
+    protected function getMerchantInitiatedSession()
+    {
+        $merchantInitiatedSession = new MerchantInitiatedSession();
+        $merchantInitiatedSession->request_type = RequestType::$recurring_transaction;
+
+        return $merchantInitiatedSession;
     }
 }

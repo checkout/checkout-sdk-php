@@ -27,11 +27,16 @@ class JsonSerializer
             return !is_null($value);
         });
         foreach ($array as $key => $value) {
-            // customization
             if ($value instanceof DateTime) {
                 $array[$key] = CheckoutUtils::formatDate($value);
+            } elseif (is_array($value)) {
+                $array[$key] = $this->normalize($value);
             } elseif (is_object($value)) {
-                $array[$key] = $this->normalize(get_object_vars($value));
+                if (PHP_VERSION_ID >= 70100 && is_iterable($value)) {
+                    $array[$key] = $this->normalize(iterator_to_array($value));
+                } else {
+                    $array[$key] = $this->normalize(get_object_vars($value));
+                }
             }
             $array = $this->applyKeysTransformations($array, $key);
         }

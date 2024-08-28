@@ -5,7 +5,7 @@
 
 [![build-status](https://github.com/checkout/checkout-sdk-php/workflows/build-release/badge.svg)](https://github.com/checkout/checkout-sdk-php/actions/workflows/build-release.yml)
 [![GitHub release](https://img.shields.io/github/release/checkout/checkout-sdk-php.svg)](https://GitHub.com/checkout/checkout-sdk-php/releases/)
-[![Latest Stable Version](http://poser.pugx.org/checkout/checkout-sdk-php/v)](https://packagist.org/packages/checkout/checkout-sdk-php)
+[![Latest Stable Version](https://poser.pugx.org/checkout/checkout-sdk-php/v)](https://packagist.org/packages/checkout/checkout-sdk-php)
 
 [![GitHub license](https://img.shields.io/github/license/checkout/checkout-sdk-php.svg)](https://github.com/checkout/checkout-sdk-php/blob/master/LICENSE.md)
 
@@ -49,9 +49,9 @@
 This SDK can be used with two different pair of API keys provided by Checkout. However, using different API keys imply using specific API features. Please find in the table below the types of keys that can be used within this SDK.
 
 | Account System | Public Key (example)                    | Secret Key (example)                    |
-|----------------|-----------------------------------------| --------------------------------------- |
-| Default        | pk_pkhpdtvabcf7hdgpwnbhw7r2uic          | sk_m73dzypy7cf3gf5d2xr4k7sxo4e          |
-| Previous       | pk_g650ff27-7c42-4ce1-ae90-5691a188ee7b | sk_gk3517a8-3z01-45fq-b4bd-4282384b0a64 |
+|----------------|-----------------------------------------|-----------------------------------------|
+| Default        | pk_zyxwabcde123pqrstu876vwxyt           | sk_abcdef98765mnopqr4321ghijk           |
+| Previous       | pk_f3456789-ab12-cd34-ef56-7890ghijklmn | sk_hijklmn0-1234-5678-abcd-efgh98765432 |
 
 Note: sandbox keys have a `sbox_` or `test_` identifier, for Default and Previous accounts respectively.
 

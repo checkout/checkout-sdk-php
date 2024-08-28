@@ -25,7 +25,7 @@ final class EnvironmentSubdomain
         $apiUrl = $environment->getBaseUri();
         $newEnvironment = $apiUrl;
 
-        $regex = '/^[0-9a-z]{8,11}$/';
+        $regex = '/^[0-9a-z]+$/';
         if (preg_match($regex, $subdomain)) {
             $urlParts = parse_url($apiUrl);
             $newHost = $subdomain . '.' . $urlParts['host'];

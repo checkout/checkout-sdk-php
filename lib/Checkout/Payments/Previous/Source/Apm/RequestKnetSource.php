@@ -3,7 +3,9 @@
 namespace Checkout\Payments\Previous\Source\Apm;
 
 use Checkout\Common\PaymentSourceType;
+use Checkout\Payments\PaymentMethodDetails;
 use Checkout\Payments\Previous\Source\AbstractRequestSource;
+use Checkout\Tokens\ApplePayTokenData;
 
 class RequestKnetSource extends AbstractRequestSource
 {
@@ -51,4 +53,19 @@ class RequestKnetSource extends AbstractRequestSource
      * @var string
      */
     public $ptlf;
+
+    /**
+     * @var string
+     */
+    public $token_type;
+
+    /**
+     * @var ApplePayTokenData
+     */
+    public $token_data;
+
+    /**
+     * @var PaymentMethodDetails
+     */
+    public $payment_method_details;
 }

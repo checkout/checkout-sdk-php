@@ -8,6 +8,7 @@ use Checkout\Tests\UnitTestFixture;
 use Checkout\Workflows\Actions\WebhookWorkflowActionRequest;
 use Checkout\Workflows\Conditions\EntityWorkflowConditionRequest;
 use Checkout\Workflows\CreateWorkflowRequest;
+use Checkout\Workflows\Events\EventTypesRequest;
 use Checkout\Workflows\Reflows\ReflowByEventsRequest;
 use Checkout\Workflows\UpdateWorkflowRequest;
 use Checkout\Workflows\WorkflowsClient;
@@ -176,6 +177,20 @@ class WorkflowsClientTest extends UnitTestFixture
             ->willReturn("response");
 
         $response = $this->client->removeWorkflowCondition("workflow_id", "condition_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldTestWorkflow()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn("response");
+
+        $response = $this->client->testWorkflow("workflow_id", new EventTypesRequest());
         $this->assertNotNull($response);
     }
 

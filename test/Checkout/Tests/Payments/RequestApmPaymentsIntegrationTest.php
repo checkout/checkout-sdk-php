@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Payments;
 
+use Checkout\Payments\PaymentMethodDetails;
 use Closure;
 use Exception;
 use Checkout\CheckoutSdk;
@@ -489,8 +490,14 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeKnetPayment()
     {
+        $paymentMethodDetails = new PaymentMethodDetails();
+        $paymentMethodDetails->display_name = "name";
+        $paymentMethodDetails->type = "type";
+        $paymentMethodDetails->network = "card_network";
+
         $requestSource = new RequestKnetSource();
         $requestSource->language = "en";
+        $requestSource->payment_method_details = $paymentMethodDetails;
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;

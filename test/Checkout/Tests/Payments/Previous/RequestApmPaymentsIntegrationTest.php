@@ -5,6 +5,7 @@ namespace Checkout\Tests\Payments\Previous;
 use Checkout\Common\AccountHolder;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
+use Checkout\Payments\PaymentMethodDetails;
 use Checkout\Payments\Previous\PaymentRequest;
 use Checkout\Payments\Previous\Source\Apm\IntegrationType;
 use Checkout\Payments\Previous\Source\Apm\RequestAlipaySource;
@@ -486,8 +487,14 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeKnetPayment()
     {
+        $paymentMethodDetails = new PaymentMethodDetails();
+        $paymentMethodDetails->display_name = "name";
+        $paymentMethodDetails->type = "type";
+        $paymentMethodDetails->network = "card_network";
+
         $requestSource = new RequestKnetSource();
         $requestSource->language = "en";
+        $requestSource->payment_method_details = $paymentMethodDetails;
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestSource;

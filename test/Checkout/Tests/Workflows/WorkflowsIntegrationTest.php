@@ -7,6 +7,7 @@ use Checkout\Workflows\Actions\WebhookSignature;
 use Checkout\Workflows\Actions\WebhookWorkflowActionRequest;
 use Checkout\Workflows\Conditions\EventWorkflowConditionRequest;
 use Checkout\Workflows\Conditions\WorkflowConditionType;
+use Checkout\Workflows\Events\EventTypesRequest;
 use Checkout\Workflows\UpdateWorkflowRequest;
 use PHPUnit\Framework\AssertionFailedError;
 
@@ -247,5 +248,47 @@ class WorkflowsIntegrationTest extends AbstractWorkflowIntegrationTest
         $this->assertResponse($workflowUpdated, "conditions");
 
         self::assertTrue(sizeof($workflowUpdated["conditions"]) == 3);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateAndTestWorkflows()
+    {
+        $this->markTestSkipped("unstable");
+        $workflow = $this->createWorkflow();
+
+        $eventTypesRequest = new EventTypesRequest();
+        $eventTypesRequest->event_types = [
+            'payment_approved',
+            'payment_declined',
+            'card_verification_declined',
+            'card_verified',
+            'payment_authorization_incremented',
+            'payment_authorization_increment_declined',
+            'payment_capture_declined',
+            'payment_captured',
+            'payment_refund_declined',
+            'payment_refunded',
+            'payment_void_declined',
+            'payment_voided',
+            'dispute_canceled',
+            'dispute_evidence_required',
+            'dispute_expired',
+            'dispute_lost',
+            'dispute_resolved',
+            'dispute_won'
+        ];
+
+        $testWorkflowResponse = $this->checkoutApi->getWorkflowsClient()->testWorkflow(
+            $workflow["id"],
+            $eventTypesRequest
+        );
+
+        self::assertNotNull($testWorkflowResponse);
+
+        self::assertArrayHasKey("http_metadata", $testWorkflowResponse);
+        self::assertEquals(200, $testWorkflowResponse["http_metadata"]->getStatusCode());
     }
 }

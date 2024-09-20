@@ -13,4 +13,14 @@ class UpdateWorkflowRequest
      * @var bool
      */
     public $active;
+
+    /**
+     * @var array of WorkflowConditionRequest
+     */
+    public $conditions;
+
+    /**
+     * @var array of WorkflowActionRequest
+     */
+    public $actions;
 }

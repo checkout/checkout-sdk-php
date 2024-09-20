@@ -9,6 +9,7 @@ use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Workflows\Actions\WorkflowActionRequest;
 use Checkout\Workflows\Conditions\WorkflowConditionRequest;
+use Checkout\Workflows\Events\EventTypesRequest;
 use Checkout\Workflows\Reflows\ReflowRequest;
 
 class WorkflowsClient extends Client
@@ -21,6 +22,7 @@ class WorkflowsClient extends Client
     const SUBJECT_PATH = "subject";
     const REFLOW_PATH = "reflow";
     const WORKFLOW_PATH = "workflow";
+    const TEST_PATH = "test";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -170,6 +172,21 @@ class WorkflowsClient extends Client
     {
         return$this->apiClient->delete(
             $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::CONDITIONS_PATH, $conditionId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param $workflowId
+     * @param EventTypesRequest $eventTypesRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function testWorkflow($workflowId, EventTypesRequest $eventTypesRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::TEST_PATH),
+            $eventTypesRequest,
             $this->sdkAuthorization()
         );
     }

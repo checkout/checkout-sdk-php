@@ -268,7 +268,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $requestSource->plan = $plan;
 
-        $product = new \Checkout\Payments\Product();
+        $product = new Product();
         $product->name = "laptop";
         $product->unit_price = 10;
         $product->quantity = 1;

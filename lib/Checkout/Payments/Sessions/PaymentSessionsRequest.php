@@ -2,13 +2,17 @@
 
 namespace Checkout\Payments\Sessions;
 
+use Checkout\Payments\Request\PaymentRetryRequest;
+use Checkout\Payments\RiskRequest;
+use Checkout\Payments\Sender\PaymentSender;
 use Checkout\Payments\ShippingDetails;
 use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\PaymentCustomerRequest;
-use Checkout\Payments\Sessions\PaymentMethodConfiguration;
+use Checkout\Payments\ThreeDsRequest;
+use DateTime;
 
 class PaymentSessionsRequest
 {
@@ -66,6 +70,11 @@ class PaymentSessionsRequest
      * @var ProcessingSettings
      */
     public $processing;
+
+    /**
+     * @var string
+     */
+    public $processing_channel_id;
 
     /**
      * @var DateTime
@@ -148,7 +157,17 @@ class PaymentSessionsRequest
     public $capture;
 
     /**
+     * @var DateTime
+     */
+    public $capture_on;
+
+    /**
      * @var string
      */
     public $ip_address;
+
+    /**
+     * @var int
+     */
+    public $tax_amount;
 }

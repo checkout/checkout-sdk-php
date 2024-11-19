@@ -7,6 +7,8 @@ use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
 use Checkout\Payments\AuthorizationRequest;
 use Checkout\Payments\AuthorizationType;
+use Checkout\Payments\PreferredExperiences;
+use Checkout\Payments\Request\Authentication;
 use Checkout\Payments\Request\PartialAuthorization;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\RequestCardSource;
@@ -106,6 +108,9 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
         $partialAuthorization = new PartialAuthorization();
         $partialAuthorization->enabled = true;
 
+        $authentication = new Authentication();
+        $authentication->preferred_experiences = PreferredExperiences::$googleSpa;
+
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestCardSource;
         $paymentRequest->capture = false;
@@ -113,6 +118,7 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
         $paymentRequest->amount = 10;
         $paymentRequest->authorization_type = AuthorizationType::$estimated;
         $paymentRequest->partial_authorization = $partialAuthorization;
+        $paymentRequest->authentication = $authentication;
         $paymentRequest->currency = Currency::$EUR;
         $paymentRequest->customer = $customerRequest;
         $paymentRequest->sender = $paymentIndividualSender;

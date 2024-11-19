@@ -57,6 +57,11 @@ class PaymentRequest
     public $description;
 
     /**
+     * @var Authentication
+     */
+    public $authentication;
+
+    /**
      * @var string value of AuthorizationType
      */
     public $authorization_type;

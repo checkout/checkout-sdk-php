@@ -5,7 +5,7 @@ namespace Checkout\Payments\Request;
 class Authentication
 {
     /**
-     * @var string value of PreferredExperiences
+     * @var array List of PreferredExperiences
      */
     public $preferred_experiences;
 }

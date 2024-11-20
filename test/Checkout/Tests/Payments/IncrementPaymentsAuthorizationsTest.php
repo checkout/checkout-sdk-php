@@ -109,7 +109,7 @@ class IncrementPaymentsAuthorizationsTest extends AbstractPaymentsIntegrationTes
         $partialAuthorization->enabled = true;
 
         $authentication = new Authentication();
-        $authentication->preferred_experiences = PreferredExperiences::$googleSpa;
+        $authentication->preferred_experiences = [PreferredExperiences::$googleSpa];
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestCardSource;

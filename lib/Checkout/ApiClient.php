@@ -3,8 +3,9 @@
 namespace Checkout;
 
 use Checkout\Common\AbstractQueryFilter;
+use Checkout\Common\RequestMetrics;
 use Checkout\Files\FileRequest;
-use Common\TelemetryQueue;
+use Checkout\Common\TelemetryQueue;
 use Exception;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
@@ -146,9 +147,11 @@ class ApiClient
 
             if ($this->enableTelemetry) {
                 $currentRequestId = uniqid();
-                $lastRequestMetric = $this->requestMetricsQueue->dequeue();
+                $lastRequestMetric = new RequestMetrics();
+                $dequeuedMetric = $this->requestMetricsQueue->dequeue();
+
                 
-                if ($lastRequestMetric !== null) {
+                if ($dequeuedMetric !== null) {
                     $lastRequestMetric->requestId = $currentRequestId;
                     $headers["Cko-Sdk-Telemetry"] = base64_encode(json_encode([
                         'prev-request-id' => $lastRequestMetric->prevRequestId,
@@ -237,6 +240,7 @@ class ApiClient
         
         return $this->handleRequest($method, $path, $authorization, $requestOptions);
     }
+
 
     // /**
     //  * @param $path

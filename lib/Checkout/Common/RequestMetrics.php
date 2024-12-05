@@ -1,6 +1,6 @@
 <?php
 
-namespace Common;
+namespace Checkout\Common;
 
 class RequestMetrics
 {
@@ -8,7 +8,7 @@ class RequestMetrics
     public $requestId;
     public $prevRequestDuration;
 
-    public function __construct($prevRequestId, $requestId, $prevRequestDuration)
+    public function __construct($prevRequestId = null, $requestId = null, $prevRequestDuration = null)
     {
         $this->prevRequestId = $prevRequestId;
         $this->requestId = $requestId;

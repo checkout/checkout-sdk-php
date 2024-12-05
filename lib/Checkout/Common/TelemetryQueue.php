@@ -1,6 +1,6 @@
 <?php
 
-namespace Common;
+namespace Checkout\Common;
 
 class TelemetryQueue
 {

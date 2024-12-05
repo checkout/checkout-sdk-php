@@ -54,7 +54,8 @@ class CheckoutStaticKeysPreviousSdkBuilder extends AbstractStaticKeysCheckoutSdk
             $this->getSdkCredentials(),
             $this->environment,
             $this->httpClientBuilder,
-            $this->logger
+            $this->logger,
+            $this->enableTelemetry
         );
         if ($this->environmentSubdomain !== null) {
             $configuration->setEnvironmentSubdomain($this->environmentSubdomain);

@@ -13,12 +13,14 @@ abstract class AbstractCheckoutSdkBuilder
     protected $environmentSubdomain;
     protected $httpClientBuilder;
     protected $logger;
+    protected $enableTelemetry;
 
     public function __construct()
     {
         $this->environment = Environment::sandbox();
         $this->httpClientBuilder = new DefaultHttpClientBuilder([]);
         $this->setDefaultLogger();
+        $this->enableTelemetry = true;
     }
 
     /**
@@ -50,6 +52,15 @@ abstract class AbstractCheckoutSdkBuilder
         $this->httpClientBuilder = $httpClientBuilder;
         return $this;
     }
+    /**
+     * @param bool $enableTelemetry
+     * @return $this
+     */
+    public function enableTelemetry($enableTelemetry)
+    {
+        $this->enableTelemetry = $enableTelemetry;
+        return $this;
+    }
 
     /**
      * @param LoggerInterface $logger
@@ -70,7 +81,8 @@ abstract class AbstractCheckoutSdkBuilder
             $this->getSdkCredentials(),
             $this->environment,
             $this->httpClientBuilder,
-            $this->logger
+            $this->logger,
+            $this->enableTelemetry
         );
     }
 

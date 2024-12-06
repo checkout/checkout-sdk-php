@@ -140,6 +140,15 @@ class ApiClient
         return $this->submit($path, $fileRequest, $authorization, "path");
     }
 
+    /**
+     * Summary of handleRequest
+     * @param $method
+     * @param $path
+     * @param \Checkout\SdkAuthorization $authorization
+     * @param array $requestOptions
+     * @throws \Checkout\CheckoutApiException
+     * @return array
+     */
     private function handleRequest($method, $path, SdkAuthorization $authorization, array $requestOptions)
     {
         try {

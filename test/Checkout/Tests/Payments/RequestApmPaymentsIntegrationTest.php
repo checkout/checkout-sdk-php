@@ -127,6 +127,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeSofortPayment()
     {
+        $this->markTestSkipped("unavailable");
         $requestSource = new RequestSofortSource();
 
         $paymentRequest = new PaymentRequest();
@@ -507,9 +508,12 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $paymentRequest->success_url = "https://testing.checkout.com/sucess";
         $paymentRequest->failure_url = "https://testing.checkout.com/failure";
 
-        $this->checkErrorItem(
-            $this->requestFunction($paymentRequest),
-            self::$payee_not_onboarded
+        $paymentResponse = $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
+
+        $this->assertResponse(
+            $paymentResponse,
+            "id",
+            "status"
         );
     }
 

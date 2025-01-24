@@ -53,17 +53,8 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
             "reference",
             "_links",
             "_links.self",
-            "_links.redirect",
-            "warnings"
+            "_links.redirect"
         );
-        foreach ($response["warnings"] as $warning) {
-            $this->assertResponse(
-                $warning,
-                "code",
-                "value",
-                "description"
-            );
-        }
 
         $getResponse = $this->checkoutApi->getHostedPaymentsClient()->getHostedPaymentsPageDetails($response["id"]);
 

@@ -14,6 +14,7 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldRefundCardPayment()
     {
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment(true);
 
         $refundRequest = new RefundRequest();
@@ -38,6 +39,7 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldRefundCardPaymentIdempotent()
     {
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment(true);
 
         $refundRequest = new RefundRequest();

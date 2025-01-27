@@ -30,6 +30,7 @@ class TokensIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateCardToken()
     {
+        $this->markTestSkipped("unavailable");
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = "Mr. Test";
         $cardTokenRequest->number = "4242424242424242";

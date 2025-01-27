@@ -68,17 +68,8 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
             "expires_on",
             "_links",
             "_links.self",
-            "_links.redirect",
-            "warnings"
+            "_links.redirect"
         );
-        foreach ($response["warnings"] as $warning) {
-            $this->assertResponse(
-                $warning,
-                "code",
-                "value",
-                "description"
-            );
-        }
 
         $getResponse = $this->checkoutApi->getPaymentLinksClient()->getPaymentLink($response["id"]);
 

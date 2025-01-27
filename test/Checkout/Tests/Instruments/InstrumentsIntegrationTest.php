@@ -142,7 +142,7 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
 
         $updateCardInstrumentRequest = new UpdateCardInstrumentRequest();
         $updateCardInstrumentRequest->expiry_month = 12;
-        $updateCardInstrumentRequest->expiry_year = 2024;
+        $updateCardInstrumentRequest->expiry_year = 2030;
         $updateCardInstrumentRequest->name = "John New";
         $updateCardInstrumentRequest->customer = $customer;
         $updateCardInstrumentRequest->account_holder = $accountHolder;

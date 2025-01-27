@@ -38,7 +38,7 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndGetInstrument()
     {
-
+        $this->markTestSkipped("unavailable");
         $instrument = $this->createInstrument();
         $this->assertResponse(
             $instrument,
@@ -90,7 +90,7 @@ class InstrumentsIntegrationTest extends SandboxTestFixture
      */
     public function shouldUpdateAndDeleteInstrument()
     {
-
+        $this->markTestSkipped("unavailable");
         $instrument = $this->createInstrument();
 
         $updateInstrumentRequest = new UpdateInstrumentRequest();

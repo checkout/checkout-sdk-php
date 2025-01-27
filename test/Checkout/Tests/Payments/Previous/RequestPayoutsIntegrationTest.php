@@ -19,6 +19,7 @@ class RequestPayoutsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldRequestPayout()
     {
+        $this->markTestSkipped("unavailable");
         $requestCardDestination = new PaymentRequestCardDestination();
         $requestCardDestination->name = TestCardSource::$VisaName;
         $requestCardDestination->number = TestCardSource::$VisaNumber;

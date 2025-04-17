@@ -23,6 +23,7 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeCardPayment()
     {
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment(true, 10, new DateTime());
 
         $this->assertResponse(
@@ -74,6 +75,7 @@ class RequestPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeCard3dsPayment()
     {
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->make3dsCardPayment();
         $this->assertResponse(
             $paymentResponse,

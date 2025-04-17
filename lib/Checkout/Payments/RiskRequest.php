@@ -13,4 +13,9 @@ class RiskRequest
      * @var string
      */
     public $device_session_id;
+
+    /**
+     * @var DeviceDetails
+     */
+    public $device;
 }

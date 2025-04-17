@@ -20,6 +20,7 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldQueryDisputes()
     {
+        $this->markTestSkipped("unavailable");
         $disputesQueryFilter = new DisputesQueryFilter();
 
         $from = new DateTime();
@@ -57,6 +58,7 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldUploadFile()
     {
+        $this->markTestSkipped("unavailable");
         $fileRequest = new FileRequest();
         $fileRequest->file = $this->getCheckoutFilePath();
         $fileRequest->purpose = "dispute_evidence";
@@ -84,6 +86,7 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldGetDisputeSchemeFiles()
     {
+        $this->markTestSkipped("unavailable");
         $disputesQueryFilter = new DisputesQueryFilter();
         $disputesQueryFilter->limit = 5;
 

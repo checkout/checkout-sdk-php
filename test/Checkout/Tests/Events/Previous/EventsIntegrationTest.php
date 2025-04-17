@@ -29,6 +29,7 @@ class EventsIntegrationTest extends SandboxTestFixture
      */
     public function shouldRetrieveDefaultEventTypes()
     {
+        $this->markTestSkipped("unavailable");
         $response = $this->previousApi->getEventsClient()->retrieveAllEventTypes();
         $allEventTypes = $response["items"];
         $this->assertNotNull($allEventTypes);

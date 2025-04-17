@@ -11,10 +11,14 @@ use Checkout\Common\AccountHolderIdentificationType;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\CustomerRequest;
+use Checkout\Payments\DeviceDetails;
+use Checkout\Payments\DeviceProvider;
+use Checkout\Payments\Network;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\RequestCardSource;
 use Checkout\Payments\Request\Source\RequestTokenSource;
+use Checkout\Payments\RiskRequest;
 use Checkout\Payments\Sender\PaymentCorporateSender;
 use Checkout\Payments\Sender\PaymentIndividualSender;
 use Checkout\Payments\Sender\PaymentInstrumentSender;
@@ -80,6 +84,38 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $processingSettings = new ProcessingSettings();
         $processingSettings->order_id = "ORDER";
 
+        $network = new Network();
+        $network->ipv4 = "192.168.1.100";
+        $network->tor = false;
+        $network->vpn = false;
+        $network->proxy = true;
+
+        $provider = new DeviceProvider();
+        $provider->name = "DeviceIDProviderExample";
+        $provider->version = "1.0.0";
+
+        $deviceDetails = new DeviceDetails();
+        $deviceDetails->user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...";
+        $deviceDetails->network = $network;
+        $deviceDetails->provider = $provider;
+        $deviceDetails->timestamp = date('c');
+        $deviceDetails->timezone = "+2";
+        $deviceDetails->virtual_machine = false;
+        $deviceDetails->incognito = false;
+        $deviceDetails->jailbroken = false;
+        $deviceDetails->rooted = false;
+        $deviceDetails->java_enabled = false;
+        $deviceDetails->javascript_enabled = true;
+        $deviceDetails->language = "es-ES";
+        $deviceDetails->color_depth = "24";
+        $deviceDetails->screen_height = "1080";
+        $deviceDetails->screen_width = "1920";
+
+        $riskRequest = new RiskRequest();
+        $riskRequest->enabled = true;
+        $riskRequest->device_session_id = "dsid_jfgrt56dgrte64trgdfer34e56";
+        $riskRequest->device = $deviceDetails;
+
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestCardSource;
         $paymentRequest->capture = $shouldCapture;
@@ -90,6 +126,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentRequest->sender = $paymentIndividualSender;
         $paymentRequest->processing_channel_id = getenv("CHECKOUT_PROCESSING_CHANNEL_ID");
         $paymentRequest->processing = $processingSettings;
+        $paymentRequest->risk = $riskRequest;
 
         if (!is_null($captureOn)) {
             $paymentRequest->capture_on = $captureOn;

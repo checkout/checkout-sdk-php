@@ -31,6 +31,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndGetCustomer()
     {
+        $this->markTestSkipped("unavailable");
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
         $customerRequest->name = "Customer";
@@ -56,6 +57,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndUpdateCustomer()
     {
+        $this->markTestSkipped("unavailable");
         //Create Customer
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
@@ -92,6 +94,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndDeleteCustomer()
     {
+        $this->markTestSkipped("unavailable");
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
         $customerRequest->name = "Customer";

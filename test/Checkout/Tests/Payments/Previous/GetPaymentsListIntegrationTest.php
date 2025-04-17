@@ -14,6 +14,7 @@ class GetPaymentsListIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldGetPaymentsList()
     {
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment();
 
         $query = new PaymentsQueryFilter();

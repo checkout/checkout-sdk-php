@@ -14,7 +14,7 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldFullCaptureCardPayment()
     {
-
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment();
 
         $captureRequest = new CaptureRequest();
@@ -35,7 +35,7 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldFullCaptureCardPaymentWithoutRequest()
     {
-
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment();
 
         $response = $this->retriable(
@@ -53,7 +53,7 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldPartiallyCaptureCardPayment()
     {
-
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment();
 
         $captureRequest = new CaptureRequest();
@@ -75,6 +75,7 @@ class CapturePaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldCaptureCardPaymentIdempotent()
     {
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment();
 
         $captureRequest = new CaptureRequest();

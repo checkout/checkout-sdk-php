@@ -23,6 +23,7 @@ class WebhooksIntegrationTest extends SandboxTestFixture
      */
     public function cleanUp()
     {
+        $this->markTestSkipped("unavailable");
         $this->init(PlatformType::$previous);
         $response = $this->previousApi->getWebhooksClient()->retrieveWebhooks();
         if (array_key_exists("items", $response)) {

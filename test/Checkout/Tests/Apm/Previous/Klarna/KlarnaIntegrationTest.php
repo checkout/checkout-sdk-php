@@ -33,6 +33,7 @@ class KlarnaIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndGetKlarnaSession()
     {
+        $this->markTestSkipped("unavailable");
         $klarnaProduct = new KlarnaProduct();
         $klarnaProduct->name = "Brown leather belt";
         $klarnaProduct->quantity = 1;

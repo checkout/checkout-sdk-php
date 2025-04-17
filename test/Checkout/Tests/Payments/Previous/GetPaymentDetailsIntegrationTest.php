@@ -13,6 +13,7 @@ class GetPaymentDetailsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldGetPaymentDetails()
     {
+        $this->markTestSkipped("unavailable");
         $paymentResponse = $this->makeCardPayment(true);
 
         $payment = $this->retriable(

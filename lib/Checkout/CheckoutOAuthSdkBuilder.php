@@ -84,8 +84,10 @@ class CheckoutOAuthSdkBuilder extends AbstractCheckoutSdkBuilder
             $this->getSdkCredentials(),
             $this->environment,
             $this->httpClientBuilder,
-            $this->logger
+            $this->logger,
+            $this->enableTelemetry
         );
+        // $configuration = $this->getCheckoutConfiguration();
         if ($this->environmentSubdomain !== null) {
             $configuration->setEnvironmentSubdomain($this->environmentSubdomain);
         }

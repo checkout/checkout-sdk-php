@@ -15,24 +15,29 @@ final class CheckoutConfiguration
     private $httpClientBuilder;
 
     private $logger;
+    
+    private $enableTelemetry;
 
     /**
      * @param SdkCredentialsInterface $sdkCredentials
      * @param Environment $environment
      * @param HttpClientBuilderInterface $httpClientBuilder
      * @param LoggerInterface $logger
+     * @param bool $enableTelemetry
      */
     public function __construct(
         SdkCredentialsInterface    $sdkCredentials,
         Environment                $environment,
         HttpClientBuilderInterface $httpClientBuilder,
-        LoggerInterface            $logger
+        LoggerInterface            $logger,
+        $enableTelemetry = true
     ) {
         $this->sdkCredentials = $sdkCredentials;
         $this->environment = $environment;
         $this->httpClientBuilder = $httpClientBuilder;
         $this->logger = $logger;
         $this->environmentSubdomain = null;
+        $this ->enableTelemetry = $enableTelemetry;
     }
 
     /**
@@ -78,5 +83,13 @@ final class CheckoutConfiguration
     public function getLogger()
     {
         return $this->logger;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnableTelemetry()
+    {
+        return $this->enableTelemetry;
     }
 }

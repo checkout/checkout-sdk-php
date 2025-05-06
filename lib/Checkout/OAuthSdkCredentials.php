@@ -85,10 +85,14 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
      */
     private function getAccessToken()
     {
+        printf("ClientId: %s\n", $this->clientId);
+        printf("ClientSecret: %s\n", $this->clientSecret);
+    
         if (!is_null($this->accessToken) && $this->accessToken->isValid()) {
             return $this->accessToken;
         }
         try {
+            printf("Scope string: %s\n", implode(" ", $this->scopes));
             $response = $this->client->request("POST", $this->authorizationUri, [
                 "verify" => false,
                 "headers" => [
@@ -101,7 +105,10 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
                     "scope" => implode(" ", $this->scopes)
                 ]
             ]);
+            printf($response);
             $body = json_decode($response->getBody(), true);
+            printf("This is a body!");
+            print_r($body);
             $expirationDate = new DateTime();
             $expirationDate->add(new DateInterval("PT" . $body["expires_in"] . "S"));
             $this->accessToken = new OAuthAccessToken($body["access_token"], $expirationDate);

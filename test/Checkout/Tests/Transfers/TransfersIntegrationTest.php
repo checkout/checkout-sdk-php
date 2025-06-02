@@ -6,6 +6,7 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Common\Currency;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 use Checkout\Transfers\CreateTransferRequest;
@@ -35,6 +36,7 @@ class TransfersIntegrationTest extends SandboxTestFixture
         $transferSource = new TransferSource();
         $transferSource->id = "ent_kidtcgc3ge5unf4a5i6enhnr5m";
         $transferSource->amount = 100;
+        $transferSource->currency = Currency::$GBP;
 
         $transferDestination = new TransferDestination();
         $transferDestination->id = "ent_w4jelhppmfiufdnatam37wrfc4";
@@ -52,6 +54,10 @@ class TransfersIntegrationTest extends SandboxTestFixture
         );
 
         $this->assertResponse($response1, "id", "status");
+
+        $response2 = $this->checkoutApi->getTransfersClient()->retrieveATransfer($response1["id"]);
+
+        $this->assertResponse($response2, "id", "status", "source", "destination");
 
         try {
             $this->checkoutApi->getTransfersClient()->initiateTransferOfFunds(

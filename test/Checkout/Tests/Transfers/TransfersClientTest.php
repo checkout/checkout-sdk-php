@@ -39,7 +39,7 @@ class TransfersClientTest extends UnitTestFixture
 
         $transferRequest = new CreateTransferRequest();
 
-        $response = $this->client->initiateTransferOfFunds($transferRequest);
+        $response = $this->client->initiateTransferOfFunds($transferRequest, "idempotency_id");
 
         $this->assertNotNull($response);
     }

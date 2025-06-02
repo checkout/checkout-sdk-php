@@ -2,6 +2,8 @@
 
 namespace Checkout\Transfers;
 
+use Checkout\Common\Currency;
+
 class TransferSource
 {
     /**
@@ -13,4 +15,9 @@ class TransferSource
      * @var int
      */
     public $amount;
+
+    /**
+     * @var string value of Currency
+     */
+    public $currency;
 }

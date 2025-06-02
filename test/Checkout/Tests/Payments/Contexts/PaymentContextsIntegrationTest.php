@@ -2,22 +2,22 @@
 
 namespace Checkout\Tests\Payments\Contexts;
 
-use Checkout\PlatformType;
+use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
+use Checkout\Common\AccountHolder;
 use Checkout\Common\Address;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
-use Checkout\CheckoutException;
-use Checkout\CheckoutApiException;
-use Checkout\Common\AccountHolder;
-use Checkout\Payments\PaymentType;
-use Checkout\Tests\SandboxTestFixture;
-use Checkout\CheckoutArgumentException;
-use Checkout\CheckoutAuthorizationException;
 use Checkout\Payments\Contexts\PaymentContextsItems;
-use Checkout\Payments\Contexts\PaymentContextsRequest;
 use Checkout\Payments\Contexts\PaymentContextsProcessing;
+use Checkout\Payments\Contexts\PaymentContextsRequest;
+use Checkout\Payments\PaymentType;
 use Checkout\Payments\Request\Source\Contexts\PaymentContextsKlarnaSource;
 use Checkout\Payments\Request\Source\Contexts\PaymentContextsPayPalSource;
+use Checkout\PlatformType;
+use Checkout\Tests\SandboxTestFixture;
 
 class PaymentContextsIntegrationTest extends SandboxTestFixture
 {
@@ -82,6 +82,7 @@ class PaymentContextsIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreatePaymentContextsKlarna()
     {
+        $this->markTestSkipped("unavailable");
         $processing = new PaymentContextsProcessing();
         $processing->locale = "en-GB";
 
@@ -89,7 +90,7 @@ class PaymentContextsIntegrationTest extends SandboxTestFixture
         $billing_address->country = Country::$DE;
 
         $account_holder = new AccountHolder();
-        $account_holder->billing_address =  $billing_address;
+        $account_holder->billing_address = $billing_address;
 
         $source = new PaymentContextsKlarnaSource();
         $source->account_holder = $account_holder;

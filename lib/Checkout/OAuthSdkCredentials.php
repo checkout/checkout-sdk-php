@@ -95,16 +95,16 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
                     "Content-Type" => "application/x-www-form-urlencoded"
                 ],
                 "form_params" => [
+                    "grant_type" => "client_credentials",
                     "client_id" => $this->clientId,
                     "client_secret" => $this->clientSecret,
-                    "grant_type" => "client_credentials",
                     "scope" => implode(" ", $this->scopes)
                 ]
             ]);
             $body = json_decode($response->getBody(), true);
             $expirationDate = new DateTime();
             $expirationDate->add(new DateInterval("PT" . $body["expires_in"] . "S"));
-            $this->accessToken = new OAuthAccessToken($body["access_token"], $expirationDate);
+            $this->accessToken = new OAuthAccessToken($body["access_token"], $body["token_type"], $expirationDate);
             return $this->accessToken;
         } catch (Exception $e) {
             throw new CheckoutException($e->getMessage());

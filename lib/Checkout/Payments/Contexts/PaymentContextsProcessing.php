@@ -40,12 +40,12 @@ class PaymentContextsProcessing
     public $user_action;
 
     /**
-     * @var string value of PaymentContextsPartnerCustomerRiskData
+     * @var array of PaymentContextsPartnerCustomerRiskData
      */
     public $partner_customer_risk_data;
 
     /**
-     * @var array of Checkout\Payments\Contexts\PaymentContextsAirlineData
+     * @var array of PaymentContextsAirlineData
      */
     public $airline_data;
 }

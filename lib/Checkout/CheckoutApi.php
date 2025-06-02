@@ -8,6 +8,7 @@ use Checkout\Customers\CustomersClient;
 use Checkout\Disputes\DisputesClient;
 use Checkout\Financial\FinancialClient;
 use Checkout\Forex\ForexClient;
+use Checkout\Forward\ForwardClient;
 use Checkout\Instruments\InstrumentsClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
@@ -47,6 +48,8 @@ final class CheckoutApi extends CheckoutApmApi
 
     private $paymentSessionsClient;
 
+    private $forwardClient;
+
     public function __construct(CheckoutConfiguration $configuration)
     {
         $baseApiClient = $this->getBaseApiClient($configuration);
@@ -68,6 +71,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->issuingClient = new IssuingClient($baseApiClient, $configuration);
         $this->paymentContextClient = new PaymentContextsClient($baseApiClient, $configuration);
         $this->paymentSessionsClient = new PaymentSessionsClient($baseApiClient, $configuration);
+        $this->forwardClient = new ForwardClient($baseApiClient, $configuration);
         $this->balancesClient = new BalancesClient(
             $this->getBalancesApiClient($configuration),
             $configuration
@@ -241,6 +245,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getPaymentSessionsClient()
     {
         return $this->paymentSessionsClient;
+    }
+
+    /**
+     * @return ForwardClient
+     */
+    public function getForwardClient()
+    {
+        return $this->forwardClient;
     }
 
     /**

@@ -49,4 +49,6 @@ class OAuthScope
     public static $issuingControlsRead = "issuing:controls-read";
     public static $issuingControlsWrite = "issuing:controls-write";
     public static $PaymentContexts = "Payment Contexts";
+
+    public static $Forward = "forward";
 }

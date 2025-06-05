@@ -5,12 +5,16 @@ namespace Checkout\Payments;
 class DeviceProvider
 {
     /**
-     * @var string
+     * The unique identifier for the device (Optional)
+     *
+     * @var string|null
      */
-    public $name;
+    public $id;
 
     /**
-     * @var string
+     * The name of the provider that generated the device identifier (Optional)
+     *
+     * @var string|null
      */
-    public $version;
+    public $name;
 }

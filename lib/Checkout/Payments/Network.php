@@ -5,27 +5,37 @@ namespace Checkout\Payments;
 class Network
 {
     /**
-     * @var string
+     * The device's IPV4 address. Not required if you provide the ipv6 field (Optional)
+     *
+     * @var string|null
      */
     public $ipv4;
 
     /**
-     * @var string
+     * The device's IPV6 address. Not required if you provide the ipv4 field (Optional)
+     *
+     * @var string|null
      */
     public $ipv6;
 
     /**
-     * @var bool
+     * Specifies if the Tor network was used in the browser session (Optional)
+     *
+     * @var bool|null
      */
     public $tor;
 
     /**
-     * @var bool
+     * Specifies if a virtual private network (VPN) was used in the browser session (Optional)
+     *
+     * @var bool|null
      */
     public $vpn;
 
     /**
-     * @var bool
+     * Specifies if a proxy was used in the browser session (Optional)
+     *
+     * @var bool|null
      */
     public $proxy;
 }

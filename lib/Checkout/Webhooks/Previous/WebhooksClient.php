@@ -12,28 +12,40 @@ class WebhooksClient extends Client
 {
     const WEBHOOKS_PATH = "webhooks";
 
-    public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
-    {
-        parent::__construct($apiClient, $configuration, AuthorizationType::$secretKey);
+    public function __construct(
+        ApiClient $apiClient,
+        CheckoutConfiguration $configuration
+    ) {
+        parent::__construct(
+            $apiClient,
+            $configuration,
+            AuthorizationType::$secretKey
+        );
     }
 
     /**
      * @return array
      * @throws CheckoutApiException
      */
-    public function retrieveWebhooks()
+    public function retrieveWebhooks(): array
     {
-        return $this->apiClient->get(self::WEBHOOKS_PATH, $this->sdkAuthorization());
+        return $this->apiClient->get(
+            self::WEBHOOKS_PATH,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
-     * @param $webhookId
+     * @param string $webhookId
      * @return array
      * @throws CheckoutApiException
      */
-    public function retrieveWebhook($webhookId)
+    public function retrieveWebhook(string $webhookId): array
     {
-        return $this->apiClient->get($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $this->sdkAuthorization());
+        return $this->apiClient->get(
+            $this->buildPath(self::WEBHOOKS_PATH, $webhookId),
+            $this->sdkAuthorization()
+        );
     }
 
     /**
@@ -42,41 +54,62 @@ class WebhooksClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function registerWebhook(WebhookRequest $webhookRequest, $idempotencyKey = null)
-    {
-        return $this->apiClient->post(self::WEBHOOKS_PATH, $webhookRequest, $this->sdkAuthorization(), $idempotencyKey);
+    public function registerWebhook(
+        WebhookRequest $webhookRequest,
+        ?string $idempotencyKey = null
+    ): array {
+        return $this->apiClient->post(
+            self::WEBHOOKS_PATH,
+            $webhookRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
     }
 
     /**
-     * @param $webhookId
+     * @param string $webhookId
      * @param WebhookRequest $webhookRequest
      * @return array
      * @throws CheckoutApiException
      */
-    public function updateWebhook($webhookId, WebhookRequest $webhookRequest)
-    {
-        return $this->apiClient->put($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $webhookRequest, $this->sdkAuthorization());
+    public function updateWebhook(
+        string $webhookId,
+        WebhookRequest $webhookRequest
+    ): array {
+        return $this->apiClient->put(
+            $this->buildPath(self::WEBHOOKS_PATH, $webhookId),
+            $webhookRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
-     * @param $webhookId
+     * @param string $webhookId
      * @param WebhookRequest $webhookRequest
      * @return array
      * @throws CheckoutApiException
      */
-    public function patchWebhook($webhookId, WebhookRequest $webhookRequest)
-    {
-        return $this->apiClient->patch($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $webhookRequest, $this->sdkAuthorization());
+    public function patchWebhook(
+        string $webhookId,
+        WebhookRequest $webhookRequest
+    ): array {
+        return $this->apiClient->patch(
+            $this->buildPath(self::WEBHOOKS_PATH, $webhookId),
+            $webhookRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**
-     * @param $webhookId
+     * @param string $webhookId
      * @return array
      * @throws CheckoutApiException
      */
-    public function removeWebhook($webhookId)
+    public function removeWebhook(string $webhookId): array
     {
-        return $this->apiClient->delete($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $this->sdkAuthorization());
+        return $this->apiClient->delete(
+            $this->buildPath(self::WEBHOOKS_PATH, $webhookId),
+            $this->sdkAuthorization()
+        );
     }
-
 }

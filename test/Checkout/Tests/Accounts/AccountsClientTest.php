@@ -11,6 +11,9 @@ use Checkout\Accounts\PaymentInstrumentsQuery;
 use Checkout\Accounts\UpdatePaymentInstrumentRequest;
 use Checkout\Accounts\UpdateScheduleRequest;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\Common\Currency;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
@@ -46,7 +49,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->CreateEntity(new OnboardEntityRequest());
 
@@ -61,7 +64,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->GetEntity("entity_id");
 
@@ -76,7 +79,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->UpdateEntity("entity_id", new OnboardEntityRequest());
 
@@ -91,7 +94,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->CreatePaymentInstrument("entity_id", new AccountsPaymentInstrument());
 
@@ -106,7 +109,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("submitFileFilesApi")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $fileRequest = new AccountsFileRequest();
         $fileRequest->file = "filepath";
@@ -126,7 +129,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->updatePayoutSchedule("entity_id", Currency::$USD, new UpdateScheduleRequest());
 
@@ -141,7 +144,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->retrievePayoutSchedule("entity_id");
 
@@ -156,7 +159,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->retrievePaymentInstrumentDetails("entity_id", "instrument_id");
 
@@ -171,7 +174,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("query")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->queryPaymentInstruments("entity_id", new PaymentInstrumentsQuery());
 
@@ -186,7 +189,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->createBankPaymentInstrument("entity_id", new PaymentInstrumentRequest());
 
@@ -201,9 +204,13 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("patch")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
-        $response = $this->client->updateBankPaymentInstrumentDetails("entity_id", "instrument_id", new UpdatePaymentInstrumentRequest());
+        $response = $this->client->updateBankPaymentInstrumentDetails(
+            "entity_id",
+            "instrument_id",
+            new UpdatePaymentInstrumentRequest()
+        );
 
         $this->assertNotNull($response);
     }

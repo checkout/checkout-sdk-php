@@ -20,14 +20,13 @@ use DateTime;
 
 abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
 {
-
     /**
      * @before
      * @throws CheckoutAuthorizationException
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
-    public function before()
+    public function before(): void
     {
         $this->init(PlatformType::$previous);
     }
@@ -39,8 +38,11 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
      * @return array
      * @throws CheckoutApiException
      */
-    protected function makeCardPayment($shouldCapture = false, $amount = 10, $captureOn = null)
-    {
+    protected function makeCardPayment(
+        ?bool $shouldCapture = false,
+        int $amount = 10,
+        ?DateTime $captureOn = null
+    ): array {
         $phone = $this->getPhone();
         $billingAddress = $this->getAddress();
 
@@ -60,12 +62,13 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentRequest->amount = $amount;
         $paymentRequest->currency = Currency::$GBP;
 
-        if (!is_null($captureOn)) {
+        if ($captureOn !== null) {
             $paymentRequest->capture_on = $captureOn;
         }
 
         $paymentResponse = $this->previousApi->getPaymentsClient()->requestPayment($paymentRequest);
         $this->assertResponse($paymentResponse, "id");
+
         return $paymentResponse;
     }
 
@@ -73,7 +76,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
      * @return array
      * @throws CheckoutApiException
      */
-    protected function makeTokenPayment()
+    protected function makeTokenPayment(): array
     {
         $phone = $this->getPhone();
         $billingAddress = $this->getAddress();
@@ -115,7 +118,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
      * @return array
      * @throws CheckoutApiException
      */
-    protected function make3dsCardPayment($attemptN3d = false)
+    protected function make3dsCardPayment(bool $attemptN3d = false): array
     {
         $phone = $this->getPhone();
         $billingAddress = $this->getAddress();
@@ -154,5 +157,4 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
 
         return $paymentResponse;
     }
-
 }

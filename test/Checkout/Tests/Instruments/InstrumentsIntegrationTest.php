@@ -30,7 +30,7 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
-    public function before()
+    public function before(): void
     {
         $this->init(PlatformType::$default);
     }
@@ -110,7 +110,10 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $updateTokenInstrumentRequest = new UpdateTokenInstrumentRequest();
         $updateTokenInstrumentRequest->token = $tokenResponse["token"];
 
-        $updateResponse = $this->checkoutApi->getInstrumentsClient()->update($tokenInstrument["id"], $updateTokenInstrumentRequest);
+        $updateResponse = $this->checkoutApi->getInstrumentsClient()->update(
+            $tokenInstrument["id"],
+            $updateTokenInstrumentRequest
+        );
         $this->assertResponse(
             $updateResponse,
             "type",
@@ -147,7 +150,10 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $updateCardInstrumentRequest->customer = $customer;
         $updateCardInstrumentRequest->account_holder = $accountHolder;
 
-        $updateResponse = $this->checkoutApi->getInstrumentsClient()->update($tokenInstrument["id"], $updateCardInstrumentRequest);
+        $updateResponse = $this->checkoutApi->getInstrumentsClient()->update(
+            $tokenInstrument["id"],
+            $updateCardInstrumentRequest
+        );
         $this->assertResponse(
             $updateResponse,
             "type",

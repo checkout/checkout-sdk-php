@@ -25,11 +25,11 @@ use PHPUnit\Framework\TestCase;
 
 abstract class SandboxTestFixture extends TestCase
 {
-
     /**
      * @var \Checkout\Previous\CheckoutApi
      */
     protected $previousApi;
+
     /**
      * @var CheckoutApi
      */
@@ -42,25 +42,25 @@ abstract class SandboxTestFixture extends TestCase
     private $logger;
 
     /**
+     * @param mixed $platformType
      * @throws CheckoutAuthorizationException
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
-    protected function init($platformType)
+    protected function init($platformType): void
     {
-        $configClient = [
-            "timeout" => 60
-        ];
+        $configClient = ["timeout" => 60];
+
         $this->logger = new Logger("checkout-sdk-test-php");
         $this->logger->pushHandler(new StreamHandler("php://stderr"));
         $this->logger->pushHandler(new StreamHandler("checkout-sdk-test-php.log"));
+
         switch ($platformType) {
             case PlatformType::$previous:
                 $this->previousApi = CheckoutSdk::builder()
                     ->previous()
                     ->staticKeys()
                     ->environment(Environment::sandbox())
-                    //->environmentSubdomain(getenv("CHECKOUT_MERCHANT_SUBDOMAIN"))
                     ->publicKey(getenv("CHECKOUT_PREVIOUS_PUBLIC_KEY"))
                     ->secretKey(getenv("CHECKOUT_PREVIOUS_SECRET_KEY"))
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
@@ -68,28 +68,39 @@ abstract class SandboxTestFixture extends TestCase
                     ->build();
                 return;
             case PlatformType::$default:
-                $this->checkoutApi = CheckoutSdk::builder()->staticKeys()
+                $this->checkoutApi = CheckoutSdk::builder()
+                    ->staticKeys()
                     ->publicKey(getenv("CHECKOUT_DEFAULT_PUBLIC_KEY"))
                     ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY"))
                     ->environment(Environment::sandbox())
-                    //->environmentSubdomain(getenv("CHECKOUT_MERCHANT_SUBDOMAIN"))
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
                     ->build();
                 return;
             case PlatformType::$default_oauth:
-                $this->checkoutApi = CheckoutSdk::builder()->oAuth()
+                $this->checkoutApi = CheckoutSdk::builder()
+                    ->oAuth()
                     ->clientCredentials(
                         getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID"),
                         getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET")
                     )
-                    ->scopes([OAuthScope::$Files, OAuthScope::$Flow, OAuthScope::$Fx, OAuthScope::$Gateway,
-                        OAuthScope::$Accounts, OAuthScope::$SessionsApp, OAuthScope::$SessionsBrowser,
-                        OAuthScope::$Vault, OAuthScope::$PayoutsBankDetails, OAuthScope::$TransfersCreate,
-                        OAuthScope::$TransfersView, OAuthScope::$BalancesView, OAuthScope::$VaultCardMetadata,
-                        OAuthScope::$FinancialActions])
+                    ->scopes([
+                        OAuthScope::$Files,
+                        OAuthScope::$Flow,
+                        OAuthScope::$Fx,
+                        OAuthScope::$Gateway,
+                        OAuthScope::$Accounts,
+                        OAuthScope::$SessionsApp,
+                        OAuthScope::$SessionsBrowser,
+                        OAuthScope::$Vault,
+                        OAuthScope::$PayoutsBankDetails,
+                        OAuthScope::$TransfersCreate,
+                        OAuthScope::$TransfersView,
+                        OAuthScope::$BalancesView,
+                        OAuthScope::$VaultCardMetadata,
+                        OAuthScope::$FinancialActions
+                    ])
                     ->environment(Environment::sandbox())
-                    //->environmentSubdomain(getenv("CHECKOUT_MERCHANT_SUBDOMAIN"))
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
                     ->build();
@@ -100,17 +111,14 @@ abstract class SandboxTestFixture extends TestCase
         }
     }
 
-    protected function assertResponse($obj, ...$properties)
+    protected function assertResponse($obj, ...$properties): void
     {
         $this->assertNotNull($obj);
         $this->assertNotEmpty($properties);
         foreach ($properties as $property) {
             if (strpos($property, ".") !== false) {
-                // "a.b.c" to "a","b","c"
                 $props = explode(".", $property);
-                // value("a")
                 $testingObj = $obj[$props[0]];
-                // collect to "b.c"
                 $joined = implode(".", array_slice($props, 1));
                 $this->assertResponse($testingObj, $joined);
             } else {
@@ -120,18 +128,12 @@ abstract class SandboxTestFixture extends TestCase
         }
     }
 
-    /**
-     * @return string
-     */
-    protected function randomEmail()
+    protected function randomEmail(): string
     {
         return uniqid() . "@checkout-sdk-net.com";
     }
 
-    /**
-     * @return false|string
-     */
-    protected function idempotencyKey()
+    protected function idempotencyKey(): string
     {
         $s = md5(uniqid(rand(), true));
         return substr($s, 0, 8) .
@@ -141,18 +143,12 @@ abstract class SandboxTestFixture extends TestCase
             '-' . substr($s, 20);
     }
 
-    /**
-     * @return string
-     */
-    public static function getCheckoutFilePath()
+    public static function getCheckoutFilePath(): string
     {
         return __DIR__ . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR . "checkout.jpeg";
     }
 
-    /**
-     * @return Address
-     */
-    protected function getAddress()
+    protected function getAddress(): Address
     {
         $address = new Address();
         $address->address_line1 = "CheckoutSdk.com";
@@ -164,10 +160,7 @@ abstract class SandboxTestFixture extends TestCase
         return $address;
     }
 
-    /**
-     * @return Phone
-     */
-    protected function getPhone()
+    protected function getPhone(): Phone
     {
         $phone = new Phone();
         $phone->country_code = "1";
@@ -175,10 +168,7 @@ abstract class SandboxTestFixture extends TestCase
         return $phone;
     }
 
-    /**
-     * @return AccountHolder
-     */
-    protected function getAccountHolder()
+    protected function getAccountHolder(): AccountHolder
     {
         $accountHolder = new AccountHolder();
         $accountHolder->first_name = "John";
@@ -188,14 +178,11 @@ abstract class SandboxTestFixture extends TestCase
         return $accountHolder;
     }
 
-    /**
-     * @param callable $func
-     * @param callable|null $predicate
-     * @param int $timeout
-     * @return mixed
-     */
-    protected function retriable(callable $func, callable $predicate = null, $timeout = 2)
-    {
+    protected function retriable(
+        callable $func,
+        ?callable $predicate = null,
+        int $timeout = 2
+    ) {
         $currentAttempt = 1;
         $maxAttempts = 10;
         while ($currentAttempt <= $maxAttempts) {
@@ -218,11 +205,7 @@ abstract class SandboxTestFixture extends TestCase
         throw new AssertionFailedError("Max attempts reached!");
     }
 
-    /**
-     * @param callable $func
-     * @param string $errorItem
-     */
-    protected function checkErrorItem(callable $func, $errorItem)
+    protected function checkErrorItem(callable $func, string $errorItem): void
     {
         try {
             $func();
@@ -236,10 +219,7 @@ abstract class SandboxTestFixture extends TestCase
         }
     }
 
-    /**
-     * @return Payer
-     */
-    protected function getPayer()
+    protected function getPayer(): Payer
     {
         $payer = new Payer();
         $payer->email = "bruce@wayne-enterprises.com";

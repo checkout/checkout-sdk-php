@@ -34,7 +34,7 @@ class KlarnaClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->createCreditSession(new CreditSessionRequest());
         $this->assertNotNull($response);
@@ -48,7 +48,7 @@ class KlarnaClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getCreditSession("session_id");
         $this->assertNotNull($response);
@@ -62,7 +62,7 @@ class KlarnaClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->capturePayment("payment_id", new OrderCaptureRequest());
         $this->assertNotNull($response);
@@ -76,7 +76,7 @@ class KlarnaClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->voidPayment("payment_id", new VoidRequest());
         $this->assertNotNull($response);

@@ -3,6 +3,9 @@
 namespace Checkout\Tests\Transfers;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 use Checkout\Transfers\CreateTransferRequest;
@@ -35,7 +38,7 @@ class TransfersClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $transferRequest = new CreateTransferRequest();
 
@@ -52,7 +55,7 @@ class TransfersClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
 
         $response = $this->client->retrieveATransfer("transfer_id");

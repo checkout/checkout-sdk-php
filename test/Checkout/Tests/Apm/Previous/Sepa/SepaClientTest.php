@@ -3,6 +3,9 @@
 namespace Checkout\Tests\Apm\Previous\Sepa;
 
 use Checkout\Apm\Previous\Sepa\SepaClient;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -32,7 +35,7 @@ class SepaClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getMandate("mandate_id");
         $this->assertNotNull($response);
@@ -45,7 +48,7 @@ class SepaClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->cancelMandate("mandate_id");
         $this->assertNotNull($response);
@@ -58,7 +61,7 @@ class SepaClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getMandateViaPPro("mandate_id");
         $this->assertNotNull($response);
@@ -71,7 +74,7 @@ class SepaClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->cancelMandateViaPPro("mandate_id");
         $this->assertNotNull($response);

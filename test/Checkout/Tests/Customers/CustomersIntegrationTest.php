@@ -109,7 +109,7 @@ class CustomersIntegrationTest extends SandboxTestFixture
         $this->checkoutApi->getCustomersClient()->get($id);
     }
 
-    public function getPhone()
+    public function getPhone(): Phone
     {
         $phone = new Phone();
         $phone->country_code = "1";

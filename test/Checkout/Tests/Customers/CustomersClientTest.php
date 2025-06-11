@@ -4,6 +4,9 @@ namespace Checkout\Tests\Customers;
 
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\Customers\CustomerRequest;
 use Checkout\Customers\CustomersClient;
 use Checkout\PlatformType;
@@ -25,7 +28,11 @@ class CustomersClientTest extends UnitTestFixture
     public function init()
     {
         $this->initMocks(PlatformType::$previous);
-        $this->client = new CustomersClient($this->apiClient, $this->configuration, AuthorizationType::$secretKeyOrOAuth);
+        $this->client = new CustomersClient(
+            $this->apiClient,
+            $this->configuration,
+            AuthorizationType::$secretKeyOrOAuth
+        );
     }
 
 
@@ -38,7 +45,7 @@ class CustomersClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->get("customer_id");
         $this->assertNotNull($response);
@@ -53,7 +60,7 @@ class CustomersClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->create(new CustomerRequest());
         $this->assertNotNull($response);
@@ -68,7 +75,7 @@ class CustomersClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("patch")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->update("customer_id", new CustomerRequest());
         $this->assertNotNull($response);
@@ -81,7 +88,7 @@ class CustomersClientTest extends UnitTestFixture
     public function shouldDeleteCustomer()
     {
         $this->apiClient->method("delete")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->delete("customer_id");
 

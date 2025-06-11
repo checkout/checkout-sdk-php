@@ -33,7 +33,7 @@ class HostedPaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->getHostedPaymentsPageDetails("id");
         $this->assertNotNull($response);
@@ -49,7 +49,7 @@ class HostedPaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->createHostedPaymentsPageSession(new HostedPaymentsSessionRequest());
         $this->assertNotNull($response);

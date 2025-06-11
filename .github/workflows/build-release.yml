@@ -1,4 +1,5 @@
 name: build-release
+
 on:
     push:
         branches:
@@ -9,53 +10,63 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+
         steps:
-            -   uses: actions/checkout@v2
-            -   name: Setup PHP 5.6
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: "5.6"
-                    coverage: none
-            -   name: Installed version
-                run: php -v
-            -   name: Remove PHPStan
-                run: composer remove --dev phpstan/phpstan
-            -   name: Composer validate
-                run: composer validate
-            -   name: Composer install
-                run: composer install
-            -   name: Run PHPUnit
-                env:
-                    CHECKOUT_PROCESSING_CHANNEL_ID: ${{ secrets.IT_CHECKOUT_PROCESSING_CHANNEL_ID }}
-                    CHECKOUT_PREVIOUS_SECRET_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_SECRET_KEY }}
-                    CHECKOUT_PREVIOUS_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_PUBLIC_KEY }}
-                    CHECKOUT_DEFAULT_SECRET_KEY: ${{ secrets.IT_CHECKOUT_DEFAULT_SECRET_KEY }}
-                    CHECKOUT_DEFAULT_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_DEFAULT_PUBLIC_KEY }}
-                    CHECKOUT_DEFAULT_OAUTH_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_CLIENT_ID }}
-                    CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET }}
-                    CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID }}
-                    CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET }}
-                    CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID }}
-                    CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET }}
-                    CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
-                    CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
-                    CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
-                run: vendor/bin/phpunit --verbose
-            -   name: Read release version
-                uses: HardNorth/github-version-generate@v1.1.1
-                with:
-                    version-source: file
-                    version-file: 'version.json'
-                    version-file-extraction-pattern: '"version":\s*"([^"]+)"'
-            -   name: Print release version
-                run: echo "Releasing $CURRENT_VERSION"
-            -   name: Create GitHub release
-                uses: actions/create-release@v1
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                with:
-                    tag_name: ${{ env.CURRENT_VERSION }}
-                    release_name: ${{ env.CURRENT_VERSION }}
-                    body: ${{ github.event.head_commit.message }}
-                    draft: false
-                    prerelease: false
+            - uses: actions/checkout@v2
+
+            - name: Setup PHP 7.1
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "7.1"
+                  coverage: none
+
+            - name: Installed version
+              run: php -v
+
+            - name: Composer validate
+              run: composer validate
+
+            - name: Composer update with promises:^1.5
+              run: |
+                  composer remove guzzlehttp/promises --no-update
+                  composer require guzzlehttp/promises:^1.5 --no-update
+                  composer update --prefer-dist --no-interaction
+
+            - name: Run PHPUnit
+              env:
+                  CHECKOUT_PROCESSING_CHANNEL_ID: ${{ secrets.IT_CHECKOUT_PROCESSING_CHANNEL_ID }}
+                  CHECKOUT_PREVIOUS_SECRET_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_SECRET_KEY }}
+                  CHECKOUT_PREVIOUS_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_PUBLIC_KEY }}
+                  CHECKOUT_DEFAULT_SECRET_KEY: ${{ secrets.IT_CHECKOUT_DEFAULT_SECRET_KEY }}
+                  CHECKOUT_DEFAULT_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_DEFAULT_PUBLIC_KEY }}
+                  CHECKOUT_DEFAULT_OAUTH_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_CLIENT_ID }}
+                  CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET }}
+                  CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID }}
+                  CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET }}
+                  CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID }}
+                  CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET }}
+                  CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
+                  CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
+                  CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
+              run: vendor/bin/phpunit --verbose
+
+            - name: Read release version
+              uses: HardNorth/github-version-generate@v1.1.1
+              with:
+                  version-source: file
+                  version-file: 'version.json'
+                  version-file-extraction-pattern: '"version":\s*"([^"]+)"'
+
+            - name: Print release version
+              run: echo "Releasing $CURRENT_VERSION"
+
+            - name: Create GitHub release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ env.CURRENT_VERSION }}
+                  release_name: ${{ env.CURRENT_VERSION }}
+                  body: ${{ github.event.head_commit.message }}
+                  draft: false
+                  prerelease: false

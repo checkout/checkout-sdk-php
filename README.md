@@ -33,12 +33,36 @@
 * [API Reference (Default)](https://api-reference.checkout.com/)
 * [API Reference (Previous)](https://api-reference.checkout.com/previous)
 
+### ⚠️ PHP 8.1+ Compatibility
+
+If you’re using PHP 8.1 or newer, you may encounter warnings such as:
+
+```
+Deprecated: implicitly marking parameter as nullable is deprecated
+```
+
+This is caused by older dependencies (e.g. guzzlehttp/promises:^1.x or phpunit/phpunit:^5.7) that are no longer compatible with PHP 8.1+.
+
+✅ To fix this, update your dev dependencies:
+
+```bash
+composer require phpunit/phpunit:^9.5 --dev --with-all-dependencies
+```
+
+And if you’re using PHP 8+ and no longer need to support PHP 7.1, you may also upgrade Guzzle:
+
+```bash
+composer require guzzlehttp/guzzle:^7.4 guzzlehttp/promises:^2.0 --with-all-dependencies
+```
+
+These updates ensure compatibility with modern PHP versions but drop support for PHP 7.1.
+
 #### Composer
 
 ```json
 {
   "require": {
-    "php": ">=5.6",
+    "php": ">=7.1",
     "checkout/checkout-sdk-php": "version"
   }
 }

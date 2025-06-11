@@ -33,7 +33,7 @@ class MetadataClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->requestCardMetadata(new CardMetadataRequest());
         $this->assertNotNull($response);

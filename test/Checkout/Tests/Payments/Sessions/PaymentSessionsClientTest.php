@@ -33,7 +33,7 @@ class PaymentSessionsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->createPaymentSessions(new PaymentSessionsRequest());
         $this->assertNotNull($response);

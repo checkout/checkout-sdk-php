@@ -120,7 +120,7 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
         return $responseNonHostedSession;
     }
 
-    protected function getPhone()
+    protected function getPhone(): Phone
     {
         $phone = new Phone();
         $phone->number = "0204567895";

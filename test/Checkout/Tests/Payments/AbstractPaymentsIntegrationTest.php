@@ -40,7 +40,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
-    public function before()
+    public function before(): void
     {
         $this->init(PlatformType::$default);
     }
@@ -49,11 +49,14 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
      * @param bool $shouldCapture
      * @param int $amount
      * @param DateTime|null $captureOn
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
-    protected function makeCardPayment($shouldCapture = false, $amount = 10, $captureOn = null)
-    {
+    protected function makeCardPayment(
+        bool $shouldCapture = false,
+        int $amount = 10,
+        ?DateTime $captureOn = null
+    ): array {
         $phone = $this->getPhone();
         $address = $this->getAddress();
 
@@ -75,14 +78,14 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $identification->number = "1234";
         $identification->type = AccountHolderIdentificationType::$driving_licence;
 
-        $paymentIndividualSender = new PaymentIndividualSender();
-        $paymentIndividualSender->first_name = "Mr";
-        $paymentIndividualSender->last_name = "Test";
-        $paymentIndividualSender->address = $address;
-        $paymentIndividualSender->identification = $identification;
+        $sender = new PaymentIndividualSender();
+        $sender->first_name = "Mr";
+        $sender->last_name = "Test";
+        $sender->address = $address;
+        $sender->identification = $identification;
 
-        $processingSettings = new ProcessingSettings();
-        $processingSettings->order_id = "ORDER";
+        $processing = new ProcessingSettings();
+        $processing->order_id = "ORDER";
 
         $network = new Network();
         $network->ipv4 = "192.168.1.100";
@@ -92,7 +95,6 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
 
         $provider = new DeviceProvider();
         $provider->name = "DeviceIDProviderExample";
-        $provider->version = "1.0.0";
 
         $deviceDetails = new DeviceDetails();
         $deviceDetails->user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...";
@@ -111,10 +113,10 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $deviceDetails->screen_height = "1080";
         $deviceDetails->screen_width = "1920";
 
-        $riskRequest = new RiskRequest();
-        $riskRequest->enabled = true;
-        $riskRequest->device_session_id = "dsid_jfgrt56dgrte64trgdfer34e56";
-        $riskRequest->device = $deviceDetails;
+        $risk = new RiskRequest();
+        $risk->enabled = true;
+        $risk->device_session_id = "dsid_jfgrt56dgrte64trgdfer34e56";
+        $risk->device = $deviceDetails;
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestCardSource;
@@ -123,12 +125,12 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentRequest->amount = $amount;
         $paymentRequest->currency = Currency::$USD;
         $paymentRequest->customer = $customerRequest;
-        $paymentRequest->sender = $paymentIndividualSender;
+        $paymentRequest->sender = $sender;
         $paymentRequest->processing_channel_id = getenv("CHECKOUT_PROCESSING_CHANNEL_ID");
-        $paymentRequest->processing = $processingSettings;
-        $paymentRequest->risk = $riskRequest;
+        $paymentRequest->processing = $processing;
+        $paymentRequest->risk = $risk;
 
-        if (!is_null($captureOn)) {
+        if ($captureOn !== null) {
             $paymentRequest->capture_on = $captureOn;
         }
 
@@ -139,10 +141,10 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
     }
 
     /**
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
-    protected function makeTokenPayment()
+    protected function makeTokenPayment(): array
     {
         $cardTokenResponse = $this->requestToken();
 
@@ -152,7 +154,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
 
-        $paymentInstrumentSender = new PaymentInstrumentSender();
+        $sender = new PaymentInstrumentSender();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestTokenSource;
@@ -161,7 +163,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentRequest->amount = 10;
         $paymentRequest->currency = Currency::$USD;
         $paymentRequest->customer = $customerRequest;
-        $paymentRequest->sender = $paymentInstrumentSender;
+        $paymentRequest->sender = $sender;
 
         $paymentResponse = $this->checkoutApi->getPaymentsClient()->requestPayment($paymentRequest);
         $this->assertResponse($paymentResponse, "id");
@@ -171,10 +173,10 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
 
     /**
      * @param bool $attemptN3d
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
-    protected function make3dsCardPayment($attemptN3d = false)
+    protected function make3dsCardPayment(bool $attemptN3d = false): array
     {
         $requestCardSource = new RequestCardSource();
         $requestCardSource->name = TestCardSource::$VisaName;
@@ -197,9 +199,9 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $customerRequest->email = $this->randomEmail();
         $customerRequest->name = "Customer";
 
-        $paymentCorporateSender = new PaymentCorporateSender();
-        $paymentCorporateSender->company_name = "Testing Inc.";
-        $paymentCorporateSender->address = $this->getAddress();
+        $sender = new PaymentCorporateSender();
+        $sender->company_name = "Testing Inc.";
+        $sender->address = $this->getAddress();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->source = $requestCardSource;
@@ -209,7 +211,7 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
         $paymentRequest->currency = Currency::$USD;
         $paymentRequest->customer = $customerRequest;
         $paymentRequest->three_ds = $threeDsRequest;
-        $paymentRequest->sender = $paymentCorporateSender;
+        $paymentRequest->sender = $sender;
         $paymentRequest->success_url = "https://test.checkout.com/success";
         $paymentRequest->failure_url = "https://test.checkout.com/failure";
 
@@ -220,10 +222,10 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
     }
 
     /**
-     * @return mixed
+     * @return array
      * @throws CheckoutApiException
      */
-    protected function requestToken()
+    protected function requestToken(): array
     {
         $cardTokenRequest = new CardTokenRequest();
         $cardTokenRequest->name = TestCardSource::$VisaName;
@@ -239,5 +241,4 @@ abstract class AbstractPaymentsIntegrationTest extends SandboxTestFixture
 
         return $cardTokenResponse;
     }
-
 }

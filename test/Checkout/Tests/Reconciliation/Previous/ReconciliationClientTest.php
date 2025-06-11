@@ -2,6 +2,9 @@
 
 namespace Checkout\Tests\Reconciliation\Previous;
 
+use Checkout\CheckoutArgumentException;
+use Checkout\CheckoutAuthorizationException;
+use Checkout\CheckoutException;
 use Checkout\Common\QueryFilterDateRange;
 use Checkout\PlatformType;
 use Checkout\Reconciliation\Previous\ReconciliationClient;
@@ -34,7 +37,7 @@ class ReconciliationClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->queryPaymentsReport(new ReconciliationQueryPaymentsFilter());
         $this->assertNotNull($response);
@@ -47,7 +50,7 @@ class ReconciliationClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->singlePaymentReport("payment_id");
         $this->assertNotNull($response);
@@ -60,7 +63,7 @@ class ReconciliationClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->queryStatementsReport(new QueryFilterDateRange());
         $this->assertNotNull($response);
@@ -73,7 +76,7 @@ class ReconciliationClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->retrieveCsvPaymentReport(new QueryFilterDateRange());
         $this->assertNotNull($response);
@@ -86,7 +89,7 @@ class ReconciliationClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->retrieveCsvSingleStatementReport("statement_id");
         $this->assertNotNull($response);
@@ -99,7 +102,7 @@ class ReconciliationClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->retrieveCsvStatementsReport(new QueryFilterDateRange());
         $this->assertNotNull($response);

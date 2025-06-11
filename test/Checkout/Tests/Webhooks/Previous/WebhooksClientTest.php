@@ -33,7 +33,7 @@ class WebhooksClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->retrieveWebhooks();
         $this->assertNotNull($response);
@@ -47,7 +47,7 @@ class WebhooksClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->retrieveWebhook("webhook_id");
         $this->assertNotNull($response);
@@ -61,7 +61,7 @@ class WebhooksClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->registerWebhook(new WebhookRequest());
         $this->assertNotNull($response);
@@ -75,7 +75,7 @@ class WebhooksClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->updateWebhook("webhook_id", new WebhookRequest());
         $this->assertNotNull($response);
@@ -89,7 +89,7 @@ class WebhooksClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("patch")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->patchWebhook("webhook_id", new WebhookRequest());
         $this->assertNotNull($response);
@@ -102,7 +102,7 @@ class WebhooksClientTest extends UnitTestFixture
     public function shouldRemoveWebhook()
     {
         $this->apiClient->method("delete")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->removeWebhook("webhook_id");
         $this->assertNotNull($response);

@@ -52,7 +52,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->createCardholder(new CardholderRequest());
         $this->assertNotNull($response);
@@ -67,7 +67,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getCardholder("cardholder_id");
         $this->assertNotNull($response);
@@ -82,7 +82,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getCardholderCards("cardholder_id");
         $this->assertNotNull($response);
@@ -97,7 +97,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->createCard(new PhysicalCardRequest());
         $this->assertNotNull($response);
@@ -112,7 +112,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getCardDetails("card_id");
         $this->assertNotNull($response);
@@ -127,7 +127,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->enrollThreeDS("card_id", new PasswordThreeDSEnrollmentRequest());
         $this->assertNotNull($response);
@@ -142,7 +142,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("patch")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->updateThreeDSEnrollment("card_id", new UpdateThreeDSEnrollmentRequest());
         $this->assertNotNull($response);
@@ -157,7 +157,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getCardThreeDSDetails("card_id");
         $this->assertNotNull($response);
@@ -172,7 +172,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->activateCard("card_id");
         $this->assertNotNull($response);
@@ -187,7 +187,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getCardCredentials("card_id", new CardCredentialsQuery());
         $this->assertNotNull($response);
@@ -202,7 +202,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->revokeCard("card_id", new RevokeCardRequest());
         $this->assertNotNull($response);
@@ -217,7 +217,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->suspendCard("card_id", new SuspendCardRequest());
         $this->assertNotNull($response);
@@ -232,7 +232,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->createControl(new VelocityCardControlRequest());
         $this->assertNotNull($response);
@@ -247,7 +247,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getCardControls(new CardControlsQuery());
         $this->assertNotNull($response);
@@ -262,7 +262,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getCardControlDetails("control_id");
         $this->assertNotNull($response);
@@ -277,7 +277,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("put")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->updateCardControl("control_id", new UpdateCardControlRequest());
         $this->assertNotNull($response);
@@ -292,7 +292,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("delete")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->removeCardControl("control_id");
         $this->assertNotNull($response);
@@ -307,7 +307,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->simulateAuthorization(new CardAuthorizationRequest());
         $this->assertNotNull($response);
@@ -322,7 +322,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->simulateIncrementingAuthorization(
             "authorization_id",
@@ -340,7 +340,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->simulateClearing(
             "authorization_id",
@@ -358,7 +358,7 @@ class IssuingClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->simulateReversal(
             "authorization_id",

@@ -24,7 +24,7 @@ class EventsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function retrieveAllEventTypes($version = null)
+    public function retrieveAllEventTypes(?string $version = null): array
     {
         $path = "event-types";
         if (!empty($version)) {
@@ -38,28 +38,28 @@ class EventsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function retrieveEvents(RetrieveEventsRequest $eventsRequest = null)
+    public function retrieveEvents(?RetrieveEventsRequest $eventsRequest = null): array
     {
         return $this->apiClient->query(self::EVENTS_PATH, $eventsRequest, $this->sdkAuthorization());
     }
 
     /**
-     * @param $eventId
+     * @param string $eventId
      * @return array
      * @throws CheckoutApiException
      */
-    public function retrieveEvent($eventId)
+    public function retrieveEvent(string $eventId): array
     {
         return $this->apiClient->get($this->buildPath(self::EVENTS_PATH, $eventId), $this->sdkAuthorization());
     }
 
     /**
-     * @param $eventId
-     * @param $notificationId
+     * @param string $eventId
+     * @param string $notificationId
      * @return array
      * @throws CheckoutApiException
      */
-    public function retrieveEventNotification($eventId, $notificationId)
+    public function retrieveEventNotification(string $eventId, string $notificationId): array
     {
         return $this->apiClient->get(
             $this->buildPath(self::EVENTS_PATH, $eventId, $notificationId),
@@ -68,12 +68,12 @@ class EventsClient extends Client
     }
 
     /**
-     * @param $eventId
-     * @param $webhookId
+     * @param string $eventId
+     * @param string $webhookId
      * @return array
      * @throws CheckoutApiException
      */
-    public function retryWebhook($eventId, $webhookId)
+    public function retryWebhook(string $eventId, string $webhookId): array
     {
         return $this->apiClient->post($this->buildPath(
             self::EVENTS_PATH,

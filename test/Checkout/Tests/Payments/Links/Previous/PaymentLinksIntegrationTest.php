@@ -77,7 +77,7 @@ class PaymentLinksIntegrationTest extends SandboxTestFixture
         );
     }
 
-    private function createPaymentLinkRequest()
+    private function createPaymentLinkRequest(): PaymentLinkRequest
     {
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();

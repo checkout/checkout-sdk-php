@@ -35,7 +35,7 @@ class RiskClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->requestPreAuthenticationRiskScan(new PreAuthenticationAssessmentRequest());
         $this->assertNotNull($response);
@@ -50,7 +50,7 @@ class RiskClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->requestPreCaptureRiskScan(new PreCaptureAssessmentRequest());
         $this->assertNotNull($response);

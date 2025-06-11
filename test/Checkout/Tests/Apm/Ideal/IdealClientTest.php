@@ -31,7 +31,7 @@ class IdealClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getInfo();
         $this->assertNotNull($response);
@@ -45,7 +45,7 @@ class IdealClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getIssuers();
         $this->assertNotNull($response);

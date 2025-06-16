@@ -38,7 +38,7 @@
 ```json
 {
   "require": {
-    "php": ">=5.6",
+    "php": ">=7.1",
     "checkout/checkout-sdk-php": "version"
   }
 }

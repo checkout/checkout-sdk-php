@@ -73,12 +73,12 @@ class PaymentsClient extends Client
 
     /**
      * @param $paymentId
-     * @param CaptureRequest $captureRequest
+     * @param CaptureRequest|null $captureRequest
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
      */
-    public function capturePayment($paymentId, CaptureRequest $captureRequest = null, $idempotencyKey = null)
+    public function capturePayment($paymentId, ?CaptureRequest $captureRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "captures"), $captureRequest, $this->sdkAuthorization(), $idempotencyKey);
     }
@@ -90,7 +90,7 @@ class PaymentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function refundPayment($paymentId, RefundRequest $refundRequest = null, $idempotencyKey = null)
+    public function refundPayment($paymentId, ?RefundRequest $refundRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "refunds"), $refundRequest, $this->sdkAuthorization(), $idempotencyKey);
     }
@@ -102,7 +102,7 @@ class PaymentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function voidPayment($paymentId, VoidRequest $voidRequest = null, $idempotencyKey = null)
+    public function voidPayment($paymentId, ?VoidRequest $voidRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "voids"), $voidRequest, $this->sdkAuthorization(), $idempotencyKey);
     }
@@ -114,7 +114,7 @@ class PaymentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function incrementPaymentAuthorization($paymentId, AuthorizationRequest $authorizationRequest = null, $idempotencyKey = null)
+    public function incrementPaymentAuthorization($paymentId, ?AuthorizationRequest $authorizationRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "authorizations"), $authorizationRequest, $this->sdkAuthorization(), $idempotencyKey);
     }

@@ -80,7 +80,7 @@ class PaymentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function capturePayment($paymentId, CaptureRequest $captureRequest = null, $idempotencyKey = null)
+    public function capturePayment($paymentId, ?CaptureRequest $captureRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "captures"), $captureRequest, $this->sdkAuthorization(), $idempotencyKey);
     }
@@ -92,7 +92,7 @@ class PaymentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function refundPayment($paymentId, RefundRequest $refundRequest = null, $idempotencyKey = null)
+    public function refundPayment($paymentId, ?RefundRequest $refundRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "refunds"), $refundRequest, $this->sdkAuthorization(), $idempotencyKey);
     }
@@ -104,7 +104,7 @@ class PaymentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function voidPayment($paymentId, VoidRequest $voidRequest = null, $idempotencyKey = null)
+    public function voidPayment($paymentId, ?VoidRequest $voidRequest = null, $idempotencyKey = null)
     {
         return $this->apiClient->post($this->buildPath(self::PAYMENTS_PATH, $paymentId, "voids"), $voidRequest, $this->sdkAuthorization(), $idempotencyKey);
     }

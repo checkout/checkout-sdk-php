@@ -38,7 +38,7 @@ class EventsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function retrieveEvents(RetrieveEventsRequest $eventsRequest = null)
+    public function retrieveEvents(?RetrieveEventsRequest $eventsRequest = null)
     {
         return $this->apiClient->query(self::EVENTS_PATH, $eventsRequest, $this->sdkAuthorization());
     }

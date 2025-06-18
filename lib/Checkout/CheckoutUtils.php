@@ -15,18 +15,18 @@ class CheckoutUtils
      * @param DateTime $date
      * @return string
      */
-    public static function formatDate(DateTime $date)
+    public static function formatDate(DateTime $date): string
     {
         return $date->format("Y-m-d\TH:i:sO");
     }
 
     /**
-     * @param Response $http_response
+     * @param Response|null $http_response
      * @return HttpMetadata
      */
-    public static function getHttpMetadata($http_response = null)
+    public static function getHttpMetadata(?Response $http_response = null): ?HttpMetadata
     {
-        if ($http_response == null) {
+        if (!$http_response) {
             return null;
         }
         return new HttpMetadata(

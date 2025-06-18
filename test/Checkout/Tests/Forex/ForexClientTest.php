@@ -34,7 +34,7 @@ class ForexClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->requestQuote(new QuoteRequest());
         $this->assertNotNull($response);
@@ -49,7 +49,7 @@ class ForexClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getRates(new RatesQueryFilter());
         $this->assertNotNull($response);

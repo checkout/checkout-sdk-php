@@ -49,7 +49,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->requestPayment($request);
         $this->assertNotNull($response);
@@ -64,7 +64,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->requestPayout(new PayoutRequest());
         $this->assertNotNull($response);
@@ -78,7 +78,7 @@ class PaymentsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("query")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->getPaymentsList(new PaymentsQueryFilter());
         $this->assertNotNull($response);
@@ -93,7 +93,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->getPaymentDetails("payment_id");
         $this->assertNotNull($response);
@@ -108,7 +108,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->getPaymentActions("payment_id");
         $this->assertNotNull($response);
@@ -123,7 +123,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->capturePayment("payment_id", new CaptureRequest());
         $this->assertNotNull($response);
@@ -138,7 +138,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->refundPayment("payment_id", new RefundRequest());
         $this->assertNotNull($response);
@@ -153,7 +153,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->voidPayment("payment_id", new VoidRequest());
         $this->assertNotNull($response);
@@ -168,7 +168,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->incrementPaymentAuthorization("payment_id", new AuthorizationRequest());
         $this->assertNotNull($response);
@@ -183,7 +183,7 @@ class PaymentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->incrementPaymentAuthorization(
             "payment_id",

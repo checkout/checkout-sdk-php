@@ -33,7 +33,7 @@ class PaymentContextsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->createPaymentContexts(new PaymentContextsRequest());
         $this->assertNotNull($response);
@@ -48,7 +48,7 @@ class PaymentContextsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->getPaymentContextDetails("id");
         $this->assertNotNull($response);

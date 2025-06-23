@@ -2,6 +2,8 @@
 
 namespace Checkout\Forward\Requests;
 
+use Checkout\Forward\Requests\Signatures\AbstractSignature;
+
 class DestinationRequest
 {
     /**
@@ -33,4 +35,12 @@ class DestinationRequest
      * @var string
      */
     public $body;
+
+    /**
+     * Optional configuration to add a signature to the forwarded HTTP request. (Optional)
+     *
+     * @var AbstractSignature
+     */
+    public $signature;
+
 }

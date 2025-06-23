@@ -39,7 +39,7 @@ class FinancialClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->query(new FinancialActionsQuery());
         $this->assertNotNull($response);

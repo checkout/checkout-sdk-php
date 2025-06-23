@@ -38,7 +38,7 @@ class ReportsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getAllReports(new ReportsQuery());
         $this->assertNotNull($response);
@@ -52,7 +52,7 @@ class ReportsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getReportDetails("report_id");
         $this->assertNotNull($response);
@@ -66,7 +66,7 @@ class ReportsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->getReportFile("report_id", "file_id");
         $this->assertNotNull($response);

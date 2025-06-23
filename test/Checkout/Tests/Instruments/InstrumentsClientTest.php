@@ -40,7 +40,7 @@ class InstrumentsClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->create(new CreateBankAccountInstrumentRequest());
         $this->assertNotNull($response);
@@ -54,7 +54,7 @@ class InstrumentsClientTest extends UnitTestFixture
     public function shouldGetInstrument()
     {
         $this->apiClient->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
 
         $response = $this->client->get("instrument_id");
@@ -68,7 +68,7 @@ class InstrumentsClientTest extends UnitTestFixture
     public function shouldUpdateInstrument()
     {
         $this->apiClient->method("patch")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
 
         $response = $this->client->update("instrument_id", new UpdateCardInstrumentRequest());
@@ -82,7 +82,7 @@ class InstrumentsClientTest extends UnitTestFixture
     public function shouldDeleteInstruments()
     {
         $this->apiClient->method("delete")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $response = $this->client->delete("instrument_id");
         $this->assertNotNull($response);
@@ -95,7 +95,7 @@ class InstrumentsClientTest extends UnitTestFixture
     public function shouldGetBankAccountFieldFormatting()
     {
         $this->apiClient->method("query")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
 
         $request = new BankAccountFieldQuery();
         $request->payment_network = PaymentNetwork::$local;

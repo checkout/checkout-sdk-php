@@ -19,7 +19,7 @@ class FinancialIntegrationTest extends AbstractPaymentsIntegrationTest
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
-    public function before()
+    public function before(): void
     {
         $this->init(PlatformType::$default_oauth);
     }

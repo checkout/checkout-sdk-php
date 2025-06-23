@@ -33,7 +33,7 @@ class PaymentLinksClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->getPaymentLink("id");
         $this->assertNotNull($response);
@@ -49,7 +49,7 @@ class PaymentLinksClientTest extends UnitTestFixture
 
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->createPaymentLink(new PaymentLinkRequest());
         $this->assertNotNull($response);

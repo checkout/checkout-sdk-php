@@ -32,7 +32,7 @@ class ForwardClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
         $response = $this->client->forwardAnApiRequest(new ForwardRequest());
         $this->assertNotNull($response);
     }
@@ -45,7 +45,7 @@ class ForwardClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("foo");
+            ->willReturn(["foo"]);
         $response = $this->client->getForwardRequest("forward_id");
         $this->assertNotNull($response);
     }

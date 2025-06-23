@@ -34,7 +34,7 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->requestSession(new SessionRequest());
         $this->assertNotNull($response);
@@ -47,7 +47,7 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->getSessionDetails("id");
         $this->assertNotNull($response);
@@ -60,7 +60,7 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->getSessionDetails("id", "sessionSecr3t");
         $this->assertNotNull($response);
@@ -73,7 +73,7 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->updateSession("id", new AppSession());
         $this->assertNotNull($response);
@@ -86,7 +86,7 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->updateSession("id", new AppSession(), "sessionSecr3t");
         $this->assertNotNull($response);
@@ -99,7 +99,7 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->completeSession("id");
         $this->assertNotNull($response);
@@ -112,7 +112,7 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->completeSession("id", "sessionSecr3t");
         $this->assertNotNull($response);
@@ -125,7 +125,7 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
         $response = $this->client->updateThreeDsMethodCompletionIndicator("id", new ThreeDsMethodCompletionRequest());
         $this->assertNotNull($response);
@@ -138,9 +138,13 @@ class SessionsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn("response");
+            ->willReturn(["response"]);
 
-        $response = $this->client->updateThreeDsMethodCompletionIndicator("id", new ThreeDsMethodCompletionRequest(), "sessionSecr3t");
+        $response = $this->client->updateThreeDsMethodCompletionIndicator(
+            "id",
+            new ThreeDsMethodCompletionRequest(),
+            "sessionSecr3t"
+        );
         $this->assertNotNull($response);
     }
 

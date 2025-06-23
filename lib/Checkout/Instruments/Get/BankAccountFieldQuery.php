@@ -3,6 +3,8 @@
 namespace Checkout\Instruments\Get;
 
 use Checkout\Common\AbstractQueryFilter;
+use Checkout\CheckoutUtils;
+use DateTime;
 
 class BankAccountFieldQuery extends AbstractQueryFilter
 {
@@ -21,16 +23,22 @@ class BankAccountFieldQuery extends AbstractQueryFilter
      */
     public $payment_network = null;
 
-    public function normalized()
+    public function getEncodedQueryParameters(): string
     {
-        $normalized = new BankAccountFieldQuery();
-        foreach (self::KEYS_TRANSFORMATIONS as $originalKey => $modifiedKey) {
-            unset($normalized->$originalKey);
-            if ($this->{$originalKey}) {
-                $normalized->$modifiedKey = $this->$originalKey;
+        $vars = get_object_vars($this);
+        $query = [];
+
+        foreach ($vars as $key => $value) {
+            if ($value !== null) {
+                $transformedKey = self::KEYS_TRANSFORMATIONS[$key] ?? $key;
+
+                $query[$transformedKey] = $value instanceof DateTime
+                    ? urlencode(CheckoutUtils::formatDate($value))
+                    : $value;
             }
         }
-        return $normalized;
+
+        return http_build_query($query);
     }
 
 }

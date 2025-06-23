@@ -10,96 +10,104 @@ use GuzzleHttp\Psr7\Response;
 
 class ApiClient
 {
-
     private $configuration;
-
     private $client;
-
     private $jsonSerializer;
-
     private $logger;
-
     private $baseUri;
 
-    public function __construct(CheckoutConfiguration $configuration, $baseUri = null)
+    public function __construct(CheckoutConfiguration $configuration, ?string $baseUri = null)
     {
         $this->configuration = $configuration;
         $this->client = $configuration->getHttpClientBuilder()->getClient();
         $this->jsonSerializer = new JsonSerializer();
         $this->logger = $this->configuration->getLogger();
-        $this->baseUri = $baseUri != null ? $baseUri : $this->configuration->getEnvironment()->getBaseUri();
+        $this->baseUri = $baseUri !== null
+            ? $baseUri
+            : $this->configuration->getEnvironment()->getBaseUri();
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
-    public function get($path, SdkAuthorization $authorization)
+    public function get(string $path, SdkAuthorization $authorization): array
     {
         return $this->invoke("GET", $path, null, $authorization);
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param mixed $body
      * @param SdkAuthorization $authorization
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
      */
-    public function post($path, $body, SdkAuthorization $authorization, $idempotencyKey = null)
-    {
-        return $this->invoke("POST", $path, is_null($body)
-            ? $body
-            : $this->jsonSerializer->serialize($body), $authorization, $idempotencyKey);
+    public function post(
+        string $path,
+        $body,
+        SdkAuthorization $authorization,
+        ?string $idempotencyKey = null
+    ): array {
+        return $this->invoke(
+            "POST",
+            $path,
+            $body === null ? null : $this->jsonSerializer->serialize($body),
+            $authorization,
+            $idempotencyKey
+        );
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param mixed $body
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
-    public function put($path, $body, SdkAuthorization $authorization)
+    public function put(string $path, $body, SdkAuthorization $authorization): array
     {
         return $this->invoke("PUT", $path, $this->jsonSerializer->serialize($body), $authorization);
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param mixed $body
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
-    public function patch($path, $body, SdkAuthorization $authorization)
+    public function patch(string $path, $body, SdkAuthorization $authorization): array
     {
         return $this->invoke("PATCH", $path, $this->jsonSerializer->serialize($body), $authorization);
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
-    public function delete($path, SdkAuthorization $authorization)
+    public function delete(string $path, SdkAuthorization $authorization): array
     {
         return $this->invoke("DELETE", $path, null, $authorization);
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param AbstractQueryFilter $body
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
-    public function query($path, AbstractQueryFilter $body, SdkAuthorization $authorization)
-    {
+    public function query(
+        string $path,
+        AbstractQueryFilter $body,
+        SdkAuthorization $authorization
+    ): array {
         $this->logger->info("GET " . $path);
         $queryParameters = $body->getEncodedQueryParameters();
         if (!empty($queryParameters)) {
@@ -109,39 +117,49 @@ class ApiClient
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
-    public function submitFile($path, FileRequest $fileRequest, SdkAuthorization $authorization)
-    {
+    public function submitFile(
+        string $path,
+        FileRequest $fileRequest,
+        SdkAuthorization $authorization
+    ): array {
         return $this->submit($path, $fileRequest, $authorization, "file");
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
-    public function submitFileFilesApi($path, FileRequest $fileRequest, SdkAuthorization $authorization)
-    {
+    public function submitFileFilesApi(
+        string $path,
+        FileRequest $fileRequest,
+        SdkAuthorization $authorization
+    ): array {
         return $this->submit($path, $fileRequest, $authorization, "path");
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param FileRequest $fileRequest
      * @param SdkAuthorization $authorization
-     * @param $multipart
+     * @param string $multipart
      * @return array
      * @throws CheckoutApiException
      */
-    private function submit($path, FileRequest $fileRequest, SdkAuthorization $authorization, $multipart)
-    {
+    private function submit(
+        string $path,
+        FileRequest $fileRequest,
+        SdkAuthorization $authorization,
+        string $multipart
+    ): array {
         try {
             $this->logger->info("POST " . $path . " file: " . $fileRequest->file);
             $headers = $this->getHeaders($authorization, null, null);
@@ -157,7 +175,8 @@ class ApiClient
                         "name" => "purpose",
                         "contents" => $fileRequest->purpose
                     ]
-                ]]);
+                ]
+            ]);
             return $this->getResponseContents($response);
         } catch (Exception $e) {
             $this->logger->error($path . " error: " . $e->getMessage());
@@ -171,14 +190,19 @@ class ApiClient
     /**
      * @param string $method
      * @param string $path
-     * @param $body
+     * @param mixed $body
      * @param SdkAuthorization $authorization
-     * @param null $idempotencyKey
+     * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
      */
-    private function invoke($method, $path, $body, SdkAuthorization $authorization, $idempotencyKey = null)
-    {
+    private function invoke(
+        string $method,
+        string $path,
+        $body,
+        SdkAuthorization $authorization,
+        ?string $idempotencyKey = null
+    ): array {
         try {
             $this->logger->info($method . " " . $path);
             $headers = $this->getHeaders($authorization, "application/json", $idempotencyKey);
@@ -197,11 +221,7 @@ class ApiClient
         }
     }
 
-    /**
-     * @param string $path
-     * @return string
-     */
-    private function getRequestUrl($path)
+    private function getRequestUrl(string $path): string
     {
         return $this->baseUri . $path;
     }
@@ -213,8 +233,11 @@ class ApiClient
      * @return array
      * @throws CheckoutAuthorizationException
      */
-    private function getHeaders(SdkAuthorization $authorization, $contentType, $idempotencyKey)
-    {
+    private function getHeaders(
+        SdkAuthorization $authorization,
+        ?string $contentType,
+        ?string $idempotencyKey
+    ): array {
         $headers = [
             "User-agent" => CheckoutUtils::PROJECT_NAME . "/" . CheckoutUtils::PROJECT_VERSION,
             "Accept" => "application/json",
@@ -230,10 +253,10 @@ class ApiClient
     }
 
     /**
-     * @param $response
+     * @param Response $response
      * @return array
      */
-    private function getResponseContents($response)
+    private function getResponseContents(Response $response): array
     {
         $contentType = $response->getHeader("Content-Type");
         if (in_array("text/csv", $contentType)) {
@@ -244,18 +267,17 @@ class ApiClient
 
     /**
      * @param Response|null $http_response
-     * @param string|array $data
+     * @param string|array|null $data
      * @return array
      */
-    private static function createResponse($http_response = null, $data = null)
+    private static function createResponse(?Response $http_response = null, $data = null): array
     {
-        $response = array();
-        if ($http_response != null) {
+        $response = [];
+        if ($http_response !== null) {
             $response["http_metadata"] = CheckoutUtils::getHttpMetadata($http_response);
         }
-        if ($data != null) {
+        if ($data !== null) {
             if (is_array($data)) {
-                //Validate if array is sequential, basically list contents
                 if (array_keys($data) !== range(0, count($data) - 1)) {
                     $response = array_merge($response, $data);
                 } else {

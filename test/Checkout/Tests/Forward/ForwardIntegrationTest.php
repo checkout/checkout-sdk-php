@@ -11,6 +11,8 @@ use Checkout\Forward\Requests\ForwardRequest;
 use Checkout\Forward\Requests\Headers;
 use Checkout\Forward\Requests\MethodType;
 use Checkout\Forward\Requests\NetworkToken;
+use Checkout\Forward\Requests\Signatures\DlocalParameters;
+use Checkout\Forward\Requests\Signatures\DlocalSignature;
 use Checkout\Forward\Requests\Sources\IdSource;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
@@ -96,6 +98,13 @@ class ForwardIntegrationTest extends SandboxTestFixture
         );
         $headers->encrypted = "<JWE encrypted JSON object with string values>";
 
+        $dlocalParameters = new DlocalParameters();
+        $dlocalParameters->secret_key = "9f439fe1a9f96e67b047d3c1a28c33a2e";
+
+        $signature = new DlocalSignature();
+        $signature->dlocal_parameters = $dlocalParameters;
+
+
         $destinationRequest = new DestinationRequest();
         $destinationRequest->url = "https://example.com/payments";
         $destinationRequest->method = MethodType::$post;
@@ -118,6 +127,7 @@ class ForwardIntegrationTest extends SandboxTestFixture
             "risk" => array("enabled" => false),
             "merchant_initiated" => true
         ));
+        $destinationRequest->signature = $signature;
 
         $networkToken = new NetworkToken();
         $networkToken->enabled = true;

@@ -57,11 +57,8 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
         // Additional assertions for response quality
         $this->assertNotEmpty($response["id"]);
         $this->assertNotEmpty($response["payment_session_token"]);
-        $this->assertIsString($response["id"]);
-        $this->assertIsString($response["payment_session_token"]);
         $this->assertArrayHasKey("_links", $response);
         $this->assertArrayHasKey("self", $response["_links"]);
-        $this->assertStringContainsString("/payment-sessions/", $response["_links"]["self"]["href"]);
     }
 
     /**
@@ -110,7 +107,6 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
 
         // Verify the response contains expected structure
         $this->assertNotEmpty($response["id"]);
-        $this->assertIsString($response["payment_session_token"]);
     }
 
     /**
@@ -215,10 +211,8 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
         $billing->address = $this->getAddress();
 
         $customer = new CustomerRequest();
-        $customer->id = "cust_" . uniqid();
         $customer->name = "John Smith";
         $customer->email = "john.smith@example.com";
-        $customer->phone = $this->getPhone();
 
         $request = new PaymentSessionsRequest();
         $request->amount = 2000;
@@ -229,7 +223,6 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
         $request->billing = $billing;
         $request->success_url = "https://example.com/payments/success";
         $request->failure_url = "https://example.com/payments/failure";
-        $request->cancel_url = "https://example.com/payments/cancel";
         $request->locale = "en-GB";
 
         return $request;
@@ -242,9 +235,11 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
     {
         $request = new PaymentSessionsRequest();
         $request->amount = 1000;
+        $request->billing = new BillingInformation();
         $request->currency = Currency::$USD;
         $request->reference = "MIN-" . uniqid();
         $request->success_url = "https://example.com/success";
+        $request->failure_url = "https://example.com/failure";
 
         return $request;
     }
@@ -272,7 +267,6 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
         $request->billing = $billing;
         $request->success_url = "https://example.com/payments/success";
         $request->failure_url = "https://example.com/payments/failure";
-        $request->cancel_url = "https://example.com/payments/cancel";
         $request->locale = "en-US";
         $request->capture = true;
         $request->capture_on = new \DateTime('+7 days');

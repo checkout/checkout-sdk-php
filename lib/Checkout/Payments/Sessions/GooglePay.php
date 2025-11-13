@@ -4,11 +4,11 @@ namespace Checkout\Payments\Sessions;
 
 use Checkout\Common\AccountHolder;
 
-class Card
+class GooglePay
 {
     /**
      * Specifies whether you intend to store the cardholder's payment details.
-     * Values: disabled, enabled, collect_consent
+     * Values: disabled, enabled
      * @var string value of StorePaymentDetailsType
      */
     public $store_payment_details;

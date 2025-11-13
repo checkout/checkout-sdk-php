@@ -4,29 +4,23 @@ namespace Checkout\Payments;
 
 use DateTime;
 
-class Passenger
+class AccommodationGuest
 {
     /**
-     * The passenger's first name.
+     * The guest's first name.
      * @var string
      */
     public $first_name;
 
     /**
-     * The passenger's last name.
+     * The guest's last name.
      * @var string
      */
     public $last_name;
 
     /**
-     * The passenger's date of birth.
+     * The guest's date of birth.
      * @var DateTime
      */
     public $date_of_birth;
-
-    /**
-     * The passenger's address information.
-     * @var PassengerAddress
-     */
-    public $address;
 }

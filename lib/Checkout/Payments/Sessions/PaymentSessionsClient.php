@@ -28,4 +28,25 @@ class PaymentSessionsClient extends Client
         return $this->apiClient->post(self::PAYMENT_SESSIONS, $paymentSessionsRequest, $this->sdkAuthorization());
     }
 
+    /**
+     * @param PaymentSessionCompleteRequest $paymentSessionCompleteRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function completePaymentSession(PaymentSessionCompleteRequest $paymentSessionCompleteRequest)
+    {
+        return $this->apiClient->post(self::PAYMENT_SESSIONS . "/complete", $paymentSessionCompleteRequest, $this->sdkAuthorization());
+    }
+
+    /**
+     * @param string $sessionId
+     * @param PaymentSessionSubmitRequest $paymentSessionSubmitRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function submitPaymentSession($sessionId, PaymentSessionSubmitRequest $paymentSessionSubmitRequest)
+    {
+        return $this->apiClient->post(self::PAYMENT_SESSIONS . "/" . $sessionId . "/submit", $paymentSessionSubmitRequest, $this->sdkAuthorization());
+    }
+
 }

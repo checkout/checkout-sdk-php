@@ -50,11 +50,9 @@ jobs:
               run: vendor/bin/phpunit --verbose
 
             - name: Read release version
-              uses: HardNorth/github-version-generate@v1.1.1
-              with:
-                  version-source: file
-                  version-file: 'version.json'
-                  version-file-extraction-pattern: '"version":\s*"([^"]+)"'
+              run: |
+                  VERSION=$(cat version.json | grep -o '"version":\s*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"')
+                  echo "CURRENT_VERSION=$VERSION" >> $GITHUB_ENV
 
             - name: Print release version
               run: echo "Releasing $CURRENT_VERSION"

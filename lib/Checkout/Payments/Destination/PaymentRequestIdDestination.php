@@ -3,6 +3,7 @@
 namespace Checkout\Payments\Destination;
 
 use Checkout\Payments\PaymentDestinationType;
+use Checkout\Common\AccountHolder;
 
 class PaymentRequestIdDestination extends PaymentRequestDestination
 {

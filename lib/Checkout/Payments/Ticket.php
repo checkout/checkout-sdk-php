@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments;
 
+use DateTime;
+
 class Ticket
 {
     /**
@@ -10,7 +12,7 @@ class Ticket
     public $number;
 
     /**
-     * @var string
+     * @var DateTime
      */
     public $issue_date;
 
@@ -18,6 +20,11 @@ class Ticket
      * @var string
      */
     public $issuing_carrier_code;
+
+    /**
+     * @var string
+     */
+    public $travel_package_indicator;
 
     /**
      * @var string

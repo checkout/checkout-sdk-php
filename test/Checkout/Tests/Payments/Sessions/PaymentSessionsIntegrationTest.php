@@ -136,7 +136,8 @@ class PaymentSessionsIntegrationTest extends SandboxTestFixture
         $request = $this->createPaymentSubmitRequest();
 
         try {
-            $response = $this->checkoutApi->getPaymentSessionsClient()->submitPaymentSession(self::$paymentSessionId, $request);
+            $response =
+                $this->checkoutApi->getPaymentSessionsClient()->submitPaymentSession(self::$paymentSessionId, $request);
 
             // Validate successful submission response
             $this->assertNotNull($response);

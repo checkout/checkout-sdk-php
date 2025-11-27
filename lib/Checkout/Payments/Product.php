@@ -7,6 +7,16 @@ class Product
     /**
      * @var string
      */
+    public $type;
+
+    /**
+     * @var string value of ProductSubType
+     */
+    public $sub_type;
+
+    /**
+     * @var string
+     */
     public $name;
 
     /**

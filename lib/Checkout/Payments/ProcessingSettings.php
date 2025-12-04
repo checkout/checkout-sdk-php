@@ -240,4 +240,14 @@ class ProcessingSettings
      */
     public $purpose;
 
+    /**
+     * @var string
+     */
+    public $affiliate_id;
+
+    /**
+     * @var string
+     */
+    public $affiliate_url;
+
 }

@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments;
 
+use DateTime;
+
 class FlightLegDetails
 {
     /**
@@ -30,7 +32,7 @@ class FlightLegDetails
 
     /**
      * The departure date in YYYY-MM-DD format.
-     * @var string
+     * @var DateTime
      */
     public $departure_date;
 

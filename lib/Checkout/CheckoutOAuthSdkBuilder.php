@@ -62,7 +62,11 @@ class CheckoutOAuthSdkBuilder extends AbstractCheckoutSdkBuilder
                     "Invalid configuration. Please specify an Environment or a specific OAuth authorization URI."
                 );
             }
-            $this->authorizationUri = $this->environment->getAuthorizationUri();
+            if ($this->environmentSubdomain !== null) {
+                $this->authorizationUri = $this->environmentSubdomain->getAuthorizationUri();
+            } else {
+                $this->authorizationUri = $this->environment->getAuthorizationUri();
+            }
         }
         return OAuthSdkCredentials::init(
             $this->httpClientBuilder,

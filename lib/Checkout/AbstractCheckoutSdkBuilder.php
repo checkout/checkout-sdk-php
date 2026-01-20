@@ -10,7 +10,7 @@ abstract class AbstractCheckoutSdkBuilder
 {
 
     protected $environment;
-    protected $environmentSubdomain;
+    protected $environmentSubdomain = null;
     protected $httpClientBuilder;
     protected $logger;
 

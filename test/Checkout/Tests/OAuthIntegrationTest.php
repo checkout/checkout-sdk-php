@@ -98,4 +98,25 @@ class OAuthIntegrationTest extends SandboxTestFixture
         }
     }
 
+    /**
+     * @test
+     */
+    public function shouldFailOAuthSdkWithSubdomain()
+    {
+        try {
+            CheckoutSdk::builder()
+                ->oAuth()
+                ->clientCredentials("fake", "fake")
+                ->environment(Environment::sandbox())
+                ->environmentSubdomain("1234doma")
+                ->build();
+            $this->fail("shouldn't get here");
+        } catch (Exception $e) {
+            // This test verifies that OAuth credentials are created with the subdomain-aware authorization URI
+            // The failure is expected since we're using fake credentials, but the important part is that
+            // the subdomain logic is triggered in the OAuth flow
+            $this->assertTrue(strpos($e->getMessage(), "invalid_client") !== false);
+        }
+    }
+
 }

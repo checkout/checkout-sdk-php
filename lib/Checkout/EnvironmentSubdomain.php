@@ -5,6 +5,7 @@ namespace Checkout;
 final class EnvironmentSubdomain
 {
     private $baseUri;
+    private $authorizationUri;
 
     /**
      * @param Environment $environment
@@ -12,22 +13,26 @@ final class EnvironmentSubdomain
      */
     public function __construct(Environment $environment, $subdomain)
     {
-        $this->baseUri = $this->addSubdomainToApiUrlEnvironment($environment, $subdomain);
+        $this->baseUri = $this->createUrlWithSubdomain($environment->getBaseUri(), $subdomain);
+        $this->authorizationUri = $this->createUrlWithSubdomain($environment->getAuthorizationUri(), $subdomain);
     }
 
     /**
-     * @param $environment
-     * @param $subdomain
-     * @return string
+     * Applies subdomain transformation to any given URL.
+     * If the subdomain is valid (alphanumeric pattern), prepends it to the host.
+     * Otherwise, returns the original URL unchanged.
+     *
+     * @param string $originalUrl the original URL to transform
+     * @param string $subdomain the subdomain to prepend
+     * @return string the transformed URL with subdomain, or original URL if subdomain is invalid
      */
-    private function addSubdomainToApiUrlEnvironment($environment, $subdomain)
+    private function createUrlWithSubdomain($originalUrl, $subdomain)
     {
-        $apiUrl = $environment->getBaseUri();
-        $newEnvironment = $apiUrl;
+        $newEnvironment = $originalUrl;
 
         $regex = '/^[0-9a-z]+$/';
         if (preg_match($regex, $subdomain)) {
-            $urlParts = parse_url($apiUrl);
+            $urlParts = parse_url($originalUrl);
             $newHost = $subdomain . '.' . $urlParts['host'];
 
             $newUrl = $urlParts['scheme'] . '://' . $newHost;
@@ -50,5 +55,13 @@ final class EnvironmentSubdomain
     public function getBaseUri()
     {
         return $this->baseUri;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthorizationUri()
+    {
+        return $this->authorizationUri;
     }
 }

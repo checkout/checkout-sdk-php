@@ -56,6 +56,9 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
     /**
      * @test
      * @throws CheckoutApiException
+     *
+     * Uploads a file via Disputes (Files) API. Also validates INT-1597: the SDK sends
+     * Content-Length so the API accepts the request; without it the upload would fail.
      */
     public function shouldUploadFile()
     {

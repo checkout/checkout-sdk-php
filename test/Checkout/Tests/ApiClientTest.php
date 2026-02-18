@@ -49,7 +49,7 @@ class ApiClientTest extends MockeryTestCase
         }, 'capture_request');
 
         $stack->setHandler(function () {
-            return \GuzzleHttp\Promise\promise_for(
+            return \GuzzleHttp\Promise\Create::promiseFor(
                 new Response(200, ['Content-Type' => 'application/json'], '{"id":"file_123"}')
             );
         });
@@ -97,11 +97,11 @@ class ApiClientTest extends MockeryTestCase
 
         $response = $apiClient->submitFile('files', $fileRequest, $authorization);
 
-        // assertInternalType for PHPUnit 5.7 (PHP 7.1), assertIsArray for PHPUnit 9 (PHP 7.4+)
+        // assertIsArray for PHPUnit 7.5+, assertThat+IsType for PHPUnit 5.7 (PHP 7.1) – avoids PHPStan/PHPUnit 9 removal of assertInternalType
         if (method_exists($this, 'assertIsArray')) {
             $this->assertIsArray($response);
         } else {
-            $this->assertInternalType('array', $response);
+            $this->assertThat($response, new \PHPUnit\Framework\Constraint\IsType('array'));
         }
         $this->assertArrayHasKey('id', $response);
         $this->assertNotNull($this->capturedRequest, 'Expected the outgoing request to have been captured');

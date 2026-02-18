@@ -16,7 +16,7 @@ class FilesClient extends Client
     ];
 
     /**
-     * @param FileRequest $fileRequest
+     * @param FileRequest $fileRequest File path must be application-controlled; do not pass untrusted user input.
      * @return array
      * @throws CheckoutApiException
      */

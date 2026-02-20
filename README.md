@@ -12,7 +12,7 @@
 
 ## Getting started
 
-> **Version 3.0.0 is here!**
+> **Version 4.0.0 is here!**
 >  <br/><br/>
 > We improved the initialization of SDK making it easier to understand the available options. <br/>
 > Now `NAS` accounts are the default instance for the SDK and `ABC` structure was moved to a `previous` prefixes. <br/>
@@ -143,7 +143,7 @@ $paymentsClient->refundPayment("payment_id");
 
 ### PHP Settings
 
-For operations that require file upload (Disputes or Marketplace) the configuration `extension=fileinfo` must be enabled in the `php.ini`.
+For operations that require file upload (Disputes or Marketplace) the configuration `extension=fileinfo` must be enabled in the `php.ini`. File paths passed to the SDK must be controlled by your application (e.g. from validated uploads); do not use paths taken directly from untrusted user input.
 
 ## Exception handling
 

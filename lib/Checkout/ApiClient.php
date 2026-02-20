@@ -6,6 +6,7 @@ use Checkout\Common\AbstractQueryFilter;
 use Checkout\Files\FileRequest;
 use Exception;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Stream;
 use GuzzleHttp\Psr7\Response;
 
 class ApiClient
@@ -163,13 +164,23 @@ class ApiClient
         try {
             $this->logger->info("POST " . $path . " file: " . $fileRequest->file);
             $headers = $this->getHeaders($authorization, null, null);
+
+            // Provide a stream with explicit size so Guzzle can set Content-Length correctly.
+            // Without this, stream->getSize() may return null (e.g. some stream wrappers),
+            // causing Guzzle to use Transfer-Encoding: chunked, which many upload APIs reject.
+            $filePath = $fileRequest->file;
+            $fileSize = filesize($filePath);
+            $fileHandle = fopen($filePath, "r");
+            $fileStream = new Stream($fileHandle, ["size" => $fileSize]);
+
             $response = $this->client->request("POST", $this->getRequestUrl($path), [
                 "verify" => false,
                 "headers" => $headers,
                 "multipart" => [
                     [
                         "name" => $multipart,
-                        "contents" => fopen($fileRequest->file, "r")
+                        "contents" => $fileStream,
+                        "filename" => basename($filePath)
                     ],
                     [
                         "name" => "purpose",

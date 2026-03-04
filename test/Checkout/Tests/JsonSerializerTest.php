@@ -4,6 +4,8 @@ namespace Checkout\Tests;
 
 use Checkout\CheckoutUtils;
 use Checkout\JsonSerializer;
+use Checkout\Tokens\GooglePayTokenData;
+use Checkout\Tokens\GooglePayTokenRequest;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 
@@ -131,5 +133,28 @@ class JsonSerializerTest extends TestCase
         }
 
         $this->assertEquals($expected, $serializer->serialize($input));
+    }
+
+    /**
+     * Ensures Google Pay token_data.signedMessage is serialized without escaping forward slashes.
+     * The API expects the exact signedMessage string; escaping / to \/ causes token_data_invalid.
+     */
+    public function testSerializeGooglePayTokenDataDoesNotEscapeSlashesInSignedMessage()
+    {
+        $serializer = new JsonSerializer();
+        $signedMessage = '{"encryptedMessage":"a/b/c","ephemeralPublicKey":"BKY7\\u003d","tag":"YI/H+Tv\\u003d"}';
+        $tokenData = new GooglePayTokenData();
+        $tokenData->signature = 'MEUCIBfoo=';
+        $tokenData->protocolVersion = 'ECv1';
+        $tokenData->signedMessage = $signedMessage;
+        $request = new GooglePayTokenRequest();
+        $request->token_data = $tokenData;
+
+        $json = $serializer->serialize($request);
+
+        // Verify slashes are not escaped
+        $this->assertFalse(strpos($json, '\\/') !== false, 'Forward slashes in signedMessage must not be escaped');
+        $decoded = json_decode($json, true);
+        $this->assertSame($signedMessage, $decoded['token_data']['signedMessage']);
     }
 }

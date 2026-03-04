@@ -59,8 +59,13 @@ class RefundPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
         $this->assertResponse($response, "reference", "action_id");
 
         $paymentDetails = $this->retriable(
-            function () use (&$paymentResponse) {
-                return $this->checkoutApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
+            function () use (&$paymentResponse, $amount) {
+                $details = $this->checkoutApi->getPaymentsClient()->getPaymentDetails($paymentResponse["id"]);
+                // Retry until refund is processed
+                if ($details["balances"]["total_refunded"] != $amount) {
+                    throw new \Exception("Refund not processed yet");
+                }
+                return $details;
             }
         );
 

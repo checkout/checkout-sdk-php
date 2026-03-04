@@ -122,8 +122,12 @@ abstract class SandboxTestFixture extends TestCase
                 $joined = implode(".", array_slice($props, 1));
                 $this->assertResponse($testingObj, $joined);
             } else {
+                $this->assertArrayHasKey($property, $obj);
                 $this->assertNotNull($obj[$property]);
-                $this->assertNotEmpty($obj[$property]);
+                // Allow 0 as valid value for numeric fields
+                if (!is_numeric($obj[$property])) {
+                    $this->assertNotEmpty($obj[$property]);
+                }
             }
         }
     }

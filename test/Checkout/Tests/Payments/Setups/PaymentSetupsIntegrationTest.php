@@ -53,7 +53,8 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $this->assertEquals($request->processing_channel_id, $response["processing_channel_id"]);
         $this->assertEquals($request->amount, $response["amount"]);
         $this->assertEquals($request->currency, $response["currency"]);
-        $this->assertEquals($request->payment_type, $response["payment_type"]);
+        // API returns lowercase payment_type despite spec saying PascalCase
+        $this->assertEquals(strtolower($request->payment_type), strtolower($response["payment_type"]));
         $this->assertEquals($request->reference, $response["reference"]);
         $this->assertEquals($request->description, $response["description"]);
     }
@@ -102,7 +103,8 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $this->assertEquals($paymentSetupsRequest->processing_channel_id, $response["processing_channel_id"]);
         $this->assertEquals($paymentSetupsRequest->amount, $response["amount"]);
         $this->assertEquals($paymentSetupsRequest->currency, $response["currency"]);
-        $this->assertEquals($paymentSetupsRequest->payment_type, $response["payment_type"]);
+        // API returns lowercase payment_type despite spec saying PascalCase
+        $this->assertEquals(strtolower($paymentSetupsRequest->payment_type), strtolower($response["payment_type"]));
         $this->assertEquals($paymentSetupsRequest->reference, $response["reference"]);
         $this->assertEquals($paymentSetupsRequest->description, $response["description"]);
     }

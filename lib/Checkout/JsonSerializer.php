@@ -18,7 +18,10 @@ class JsonSerializer
      */
     public function serialize($body)
     {
-        return json_encode($this->normalize(is_array($body) ? $body : get_object_vars($body)));
+        return json_encode(
+            $this->normalize(is_array($body) ? $body : get_object_vars($body)),
+            JSON_UNESCAPED_SLASHES
+        );
     }
 
     private function normalize(array $props)

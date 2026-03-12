@@ -10,7 +10,7 @@ class AirlineData
     public $ticket;
 
     /**
-     * @var Passenger
+     * @var array of Passenger
      */
     public $passenger;
 

@@ -8,3 +8,4 @@ vendor/*
 .idea
 *.log
 .DS_*
+.cursor

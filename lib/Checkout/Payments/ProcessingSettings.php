@@ -50,7 +50,7 @@ class ProcessingSettings
 
     /**
      * Partner-specific customer risk data for enhanced fraud detection.
-     * @var array of PartnerCustomerRiskData
+     * @var PartnerCustomerRiskData
      */
     public $partner_customer_risk_data;
 

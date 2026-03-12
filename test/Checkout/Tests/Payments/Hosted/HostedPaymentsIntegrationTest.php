@@ -13,11 +13,15 @@ use Checkout\Common\PaymentSourceType;
 use Checkout\Common\Product;
 use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
+use Checkout\Payments\CustomerSummary;
 use Checkout\Payments\Hosted\HostedPaymentsSessionRequest;
 use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\PaymentType;
 use Checkout\Payments\ProcessingSettings;
+use Checkout\Payments\Request\PaymentInstruction;
+use Checkout\Payments\Request\PaymentRetryRequest;
 use Checkout\Payments\RiskRequest;
+use Checkout\Payments\Sender\PaymentInstrumentSender;
 use Checkout\Payments\ShippingDetails;
 use Checkout\Payments\ThreeDsRequest;
 use Checkout\PlatformType;
@@ -32,7 +36,7 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
      * @throws CheckoutArgumentException
      * @throws CheckoutException
      */
-    public function before()
+    public function before(): void
     {
         $this->init(PlatformType::$default);
     }
@@ -41,7 +45,7 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateAndGetHostedPaymentsPageDetails()
+    public function shouldCreateAndGetHostedPaymentsPageDetails(): void
     {
         $request = $this->createHostedPaymentsRequest();
 
@@ -78,11 +82,17 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         );
     }
 
-    private function createHostedPaymentsRequest()
+    private function createHostedPaymentsRequest(): HostedPaymentsSessionRequest
     {
+        $customerSummary = new CustomerSummary();
+        $customerSummary->registration_date = "2023-05-01";
+        $customerSummary->total_order_count = 5;
+        $customerSummary->is_returning_customer = true;
+
         $customerRequest = new CustomerRequest();
         $customerRequest->email = $this->randomEmail();
         $customerRequest->name = "Customer";
+        $customerRequest->summary = $customerSummary;
 
         $billingInformation = new BillingInformation();
         $billingInformation->address = $this->getAddress();
@@ -105,11 +115,9 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $product->quantity = 1;
         $product->price = 1000;
 
-        $products = array($product);
-
-        $theeDsRequest = new ThreeDsRequest();
-        $theeDsRequest->enabled = false;
-        $theeDsRequest->attempt_n3d = false;
+        $threeDsRequest = new ThreeDsRequest();
+        $threeDsRequest->enabled = false;
+        $threeDsRequest->attempt_n3d = false;
 
         $processing = new ProcessingSettings();
         $processing->aft = true;
@@ -120,6 +128,12 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $billingDescriptor = new BillingDescriptor();
         $billingDescriptor->city = "London";
         $billingDescriptor->name = "Awesome name";
+
+        $customerRetry = new PaymentRetryRequest();
+        $customerRetry->max_attempts = 2;
+
+        $instruction = new PaymentInstruction();
+        $instruction->purpose = "fund";
 
         $hostedPaymentRequest = new HostedPaymentsSessionRequest();
         $hostedPaymentRequest->amount = 1000;
@@ -132,17 +146,20 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $hostedPaymentRequest->billing = $billingInformation;
         $hostedPaymentRequest->recipient = $recipient;
         $hostedPaymentRequest->processing = $processing;
-        $hostedPaymentRequest->products = $products;
+        $hostedPaymentRequest->products = array($product);
         $hostedPaymentRequest->risk = $risk;
         $hostedPaymentRequest->success_url = "https://example.com/payments/success";
         $hostedPaymentRequest->cancel_url = "https://example.com/payments/cancel";
         $hostedPaymentRequest->failure_url = "https://example.com/payments/failure";
         $hostedPaymentRequest->locale = "en-GB";
-        $hostedPaymentRequest->three_ds = $theeDsRequest;
+        $hostedPaymentRequest->three_ds = $threeDsRequest;
         $hostedPaymentRequest->capture = true;
         $hostedPaymentRequest->payment_type = PaymentType::$regular;
         $hostedPaymentRequest->billing_descriptor = $billingDescriptor;
         $hostedPaymentRequest->allow_payment_methods = array(PaymentSourceType::$card, PaymentSourceType::$ideal);
+        $hostedPaymentRequest->customer_retry = $customerRetry;
+        $hostedPaymentRequest->sender = new PaymentInstrumentSender();
+        $hostedPaymentRequest->instruction = $instruction;
 
         return $hostedPaymentRequest;
     }

@@ -19,21 +19,25 @@ class HostedPaymentsClient extends Client
     }
 
     /**
-     * @param $id
+     * Get Hosted Payments Page details
+     *
+     * @param string $id
      * @return array
      * @throws CheckoutApiException
      */
-    public function getHostedPaymentsPageDetails($id)
+    public function getHostedPaymentsPageDetails(string $id): array
     {
         return $this->apiClient->get($this->buildPath(self::HOSTED_PAYMENTS, $id), $this->sdkAuthorization());
     }
 
     /**
+     * Create a Hosted Payments Page session
+     *
      * @param HostedPaymentsSessionRequest $hostedPaymentRequest
      * @return array
      * @throws CheckoutApiException
      */
-    public function createHostedPaymentsPageSession(HostedPaymentsSessionRequest $hostedPaymentRequest)
+    public function createHostedPaymentsPageSession(HostedPaymentsSessionRequest $hostedPaymentRequest): array
     {
         return $this->apiClient->post(self::HOSTED_PAYMENTS, $hostedPaymentRequest, $this->sdkAuthorization());
     }

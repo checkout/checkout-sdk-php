@@ -18,9 +18,9 @@ class HostedPaymentsClientTest extends UnitTestFixture
     /**
      * @before
      */
-    public function init()
+    public function init(): void
     {
-        $this->initMocks(PlatformType::$previous);
+        $this->initMocks(PlatformType::$default);
         $this->client = new HostedPaymentsClient($this->apiClient, $this->configuration);
     }
 
@@ -28,25 +28,22 @@ class HostedPaymentsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldGetHostedPaymentsPageDetails()
+    public function shouldGetHostedPaymentsPageDetails(): void
     {
-
         $this->apiClient
             ->method("get")
             ->willReturn(["response"]);
 
-        $response = $this->client->getHostedPaymentsPageDetails("id");
+        $response = $this->client->getHostedPaymentsPageDetails("hpp_xGQBg0AXl3cM");
         $this->assertNotNull($response);
     }
-
 
     /**
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldCreateHostedPaymentsPageSession()
+    public function shouldCreateHostedPaymentsPageSession(): void
     {
-
         $this->apiClient
             ->method("post")
             ->willReturn(["response"]);
@@ -54,5 +51,4 @@ class HostedPaymentsClientTest extends UnitTestFixture
         $response = $this->client->createHostedPaymentsPageSession(new HostedPaymentsSessionRequest());
         $this->assertNotNull($response);
     }
-
 }

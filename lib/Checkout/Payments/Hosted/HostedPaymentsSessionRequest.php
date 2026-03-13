@@ -3,12 +3,15 @@
 namespace Checkout\Payments\Hosted;
 
 use Checkout\Common\CustomerRequest;
-use Checkout\Common\MarketplaceData;
 use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
 use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\ProcessingSettings;
+use Checkout\Payments\Request\PaymentInstruction;
+use Checkout\Payments\Request\PaymentRetryRequest;
 use Checkout\Payments\RiskRequest;
+use Checkout\Payments\Sender\PaymentSender;
+use Checkout\Payments\Sessions\PaymentMethodConfiguration;
 use Checkout\Payments\ShippingDetails;
 use Checkout\Payments\ThreeDsRequest;
 use DateTime;
@@ -139,6 +142,26 @@ class HostedPaymentsSessionRequest
      * @var string value of PaymentSourceType
      */
     public $disabled_payment_methods;
+
+    /**
+     * @var PaymentRetryRequest
+     */
+    public $customer_retry;
+
+    /**
+     * @var PaymentSender
+     */
+    public $sender;
+
+    /**
+     * @var PaymentInstruction
+     */
+    public $instruction;
+
+    /**
+     * @var PaymentMethodConfiguration
+     */
+    public $payment_method_configuration;
 
     //Not available on previous
 

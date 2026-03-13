@@ -2,6 +2,8 @@
 
 namespace Checkout\Common;
 
+use Checkout\Payments\CustomerSummary;
+
 class CustomerRequest
 {
     /**
@@ -20,7 +22,17 @@ class CustomerRequest
     public $name;
 
     /**
+     * @var string
+     */
+    public $tax_number;
+
+    /**
      * @var Phone
      */
     public $phone;
+
+    /**
+     * @var CustomerSummary
+     */
+    public $summary;
 }

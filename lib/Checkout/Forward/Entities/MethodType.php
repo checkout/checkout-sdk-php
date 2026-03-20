@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Forward\Requests;
+namespace Checkout\Forward\Entities;
 
 final class MethodType
 {

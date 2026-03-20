@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Forward\Requests\Sources;
+namespace Checkout\Forward\Entities\Sources;
 
 class AbstractSource
 {

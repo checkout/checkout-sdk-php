@@ -2,7 +2,9 @@
 
 namespace Checkout\Forward\Requests;
 
-use Checkout\Forward\Requests\Signatures\AbstractSignature;
+use Checkout\Forward\Entities\Signatures\AbstractSignature;
+use Checkout\Forward\Entities\MethodType;
+use Checkout\Forward\Entities\Headers;
 
 class DestinationRequest
 {

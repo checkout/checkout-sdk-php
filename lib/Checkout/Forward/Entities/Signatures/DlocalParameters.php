@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Forward\Requests\Signatures;
+namespace Checkout\Forward\Entities\Signatures;
 
 class DlocalParameters
 {

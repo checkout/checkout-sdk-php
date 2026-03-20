@@ -2,7 +2,8 @@
 
 namespace Checkout\Forward\Requests;
 
-use Checkout\Forward\Requests\Sources\AbstractSource;
+use Checkout\Forward\Entities\Sources\AbstractSource;
+use Checkout\Forward\Entities\NetworkToken;
 
 class ForwardRequest
 {

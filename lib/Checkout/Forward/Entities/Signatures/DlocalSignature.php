@@ -1,8 +1,8 @@
 <?php
 
-namespace Checkout\Forward\Requests\Signatures;
+namespace Checkout\Forward\Entities\Signatures;
 
-use Checkout\Forward\Requests\Sources\SourceType;
+use Checkout\Forward\Entities\Sources\SourceType;
 
 class DlocalSignature extends AbstractSignature
 {

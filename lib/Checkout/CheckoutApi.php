@@ -9,6 +9,11 @@ use Checkout\Disputes\DisputesClient;
 use Checkout\Financial\FinancialClient;
 use Checkout\Forex\ForexClient;
 use Checkout\Forward\ForwardClient;
+use Checkout\Identities\FaceAuthentication\FaceAuthenticationClient;
+use Checkout\Identities\IdDocumentVerification\IdDocumentVerificationClient;
+use Checkout\Identities\IdentityVerification\IdentityVerificationClient;
+use Checkout\Identities\AmlScreening\AmlScreeningClient;
+use Checkout\Identities\Applicants\ApplicantsClient;
 use Checkout\Instruments\InstrumentsClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
@@ -53,6 +58,16 @@ final class CheckoutApi extends CheckoutApmApi
 
     private $forwardClient;
 
+    private $faceAuthenticationClient;
+
+    private $idDocumentVerificationClient;
+
+    private $identityVerificationClient;
+
+    private $amlScreeningClient;
+
+    private $applicantsClient;
+
     public function __construct(CheckoutConfiguration $configuration)
     {
         $baseApiClient = $this->getBaseApiClient($configuration);
@@ -76,6 +91,11 @@ final class CheckoutApi extends CheckoutApmApi
         $this->paymentSessionsClient = new PaymentSessionsClient($baseApiClient, $configuration);
         $this->paymentSetupsClient = new PaymentSetupsClient($baseApiClient, $configuration);
         $this->forwardClient = new ForwardClient($baseApiClient, $configuration);
+        $this->faceAuthenticationClient = new FaceAuthenticationClient($baseApiClient, $configuration);
+        $this->idDocumentVerificationClient = new IdDocumentVerificationClient($baseApiClient, $configuration);
+        $this->identityVerificationClient = new IdentityVerificationClient($baseApiClient, $configuration);
+        $this->amlScreeningClient = new AmlScreeningClient($baseApiClient, $configuration);
+        $this->applicantsClient = new ApplicantsClient($baseApiClient, $configuration);
         $this->balancesClient = new BalancesClient(
             $this->getBalancesApiClient($configuration),
             $configuration
@@ -265,6 +285,46 @@ final class CheckoutApi extends CheckoutApmApi
     public function getForwardClient()
     {
         return $this->forwardClient;
+    }
+
+    /**
+     * @return FaceAuthenticationClient
+     */
+    public function getFaceAuthenticationClient()
+    {
+        return $this->faceAuthenticationClient;
+    }
+
+    /**
+     * @return IdDocumentVerificationClient
+     */
+    public function getIdDocumentVerificationClient()
+    {
+        return $this->idDocumentVerificationClient;
+    }
+
+    /**
+     * @return IdentityVerificationClient
+     */
+    public function getIdentityVerificationClient()
+    {
+        return $this->identityVerificationClient;
+    }
+
+    /**
+     * @return AmlScreeningClient
+     */
+    public function getAmlScreeningClient()
+    {
+        return $this->amlScreeningClient;
+    }
+
+    /**
+     * @return ApplicantsClient
+     */
+    public function getApplicantsClient()
+    {
+        return $this->applicantsClient;
     }
 
     /**

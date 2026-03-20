@@ -353,11 +353,7 @@ class FaceAuthenticationIntegrationTest extends SandboxTestFixture
         );
 
         if (isset($response["face_authentication_id"])) {
-<<<<<<< HEAD
             $this->assertTrue(strpos($response["face_authentication_id"], "face_auth_") === 0, "Face authentication ID should start with 'face_auth_'");
-=======
-            $this->assertStringStartsWith("face_auth_", $response["face_authentication_id"]);
->>>>>>> 90603e9 (Identities modules unit + integration tests)
         }
 
         // Validate timestamps

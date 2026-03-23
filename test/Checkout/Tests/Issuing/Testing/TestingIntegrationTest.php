@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Tests\Issuing;
+namespace Checkout\Tests\Issuing\Testing;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
@@ -14,8 +14,9 @@ use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
 use Checkout\Issuing\Testing\CardSimulation;
 use Checkout\Issuing\Testing\TransactionSimulation;
 use Checkout\Issuing\Testing\TransactionType;
+use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
 
-class IssuingTestingIntegrationTest extends AbstractIssuingIntegrationTest
+class TestingIntegrationTest extends AbstractIssuingIntegrationTest
 {
     private $card;
 
@@ -59,13 +60,16 @@ class IssuingTestingIntegrationTest extends AbstractIssuingIntegrationTest
     public function shouldSimulateIncrementingAuthorization()
     {
         $authorizationRequest = $this->getAuthorizationRequest();
+        
+        // First simulate authorization to get the authorization response with ID
+        $authorizationResponse = $this->issuingApi->getIssuingClient()->simulateAuthorization($authorizationRequest);
 
         $cardIncrementAuthorizationRequest = new CardIncrementAuthorizationRequest();
         $cardIncrementAuthorizationRequest->amount = 1;
 
         $cardIncrementAuthorizationResponse = $this->issuingApi->getIssuingClient()->
         simulateIncrementingAuthorization(
-            $authorizationRequest["id"],
+            $authorizationResponse["id"],
             $cardIncrementAuthorizationRequest
         );
 
@@ -83,13 +87,16 @@ class IssuingTestingIntegrationTest extends AbstractIssuingIntegrationTest
     public function shouldSimulateClearing()
     {
         $authorizationRequest = $this->getAuthorizationRequest();
+        
+        // First simulate authorization to get the authorization response with ID
+        $authorizationResponse = $this->issuingApi->getIssuingClient()->simulateAuthorization($authorizationRequest);
 
         $cardClearingAuthorizationRequest = new CardClearingAuthorizationRequest();
         $cardClearingAuthorizationRequest->amount = 1;
 
         $cardClearingAuthorizationResponse = $this->issuingApi->getIssuingClient()->
         simulateClearing(
-            $authorizationRequest["id"],
+            $authorizationResponse["id"],
             $cardClearingAuthorizationRequest
         );
 
@@ -103,13 +110,16 @@ class IssuingTestingIntegrationTest extends AbstractIssuingIntegrationTest
     public function shouldSimulateReversal()
     {
         $authorizationRequest = $this->getAuthorizationRequest();
+        
+        // First simulate authorization to get the authorization response with ID
+        $authorizationResponse = $this->issuingApi->getIssuingClient()->simulateAuthorization($authorizationRequest);
 
         $cardReversalAuthorizationRequest = new CardReversalAuthorizationRequest();
         $cardReversalAuthorizationRequest->amount = 1;
 
         $cardReversalAuthorizationResponse = $this->issuingApi->getIssuingClient()->
         simulateReversal(
-            $authorizationRequest["id"],
+            $authorizationResponse["id"],
             $cardReversalAuthorizationRequest
         );
 

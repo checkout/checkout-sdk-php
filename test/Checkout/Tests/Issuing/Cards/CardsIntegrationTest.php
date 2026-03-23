@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Tests\Issuing;
+namespace Checkout\Tests\Issuing\Cards;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
@@ -14,8 +14,9 @@ use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Revoke\RevokeReason;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendReason;
+use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
 
-class IssuingCardsIntegrationTest extends AbstractIssuingIntegrationTest
+class CardsIntegrationTest extends AbstractIssuingIntegrationTest
 {
     private $cardholder;
     private $card;

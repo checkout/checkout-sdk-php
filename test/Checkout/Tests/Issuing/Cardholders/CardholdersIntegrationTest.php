@@ -1,14 +1,15 @@
 <?php
 
-namespace Checkout\Tests\Issuing;
+namespace Checkout\Tests\Issuing\Cardholders;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\Issuing\Cardholders\CardholderType;
+use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
 
-class IssuingCardholdersIntegrationTest extends AbstractIssuingIntegrationTest
+class CardholdersIntegrationTest extends AbstractIssuingIntegrationTest
 {
     private $cardholder;
 

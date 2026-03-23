@@ -1,6 +1,6 @@
 <?php
 
-namespace Checkout\Tests\Issuing;
+namespace Checkout\Tests\Issuing\Controls;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
@@ -12,8 +12,9 @@ use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
 use Checkout\Issuing\Controls\VelocityLimit;
 use Checkout\Issuing\Controls\VelocityWindow;
 use Checkout\Issuing\Controls\VelocityWindowType;
+use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
 
-class IssuingControlsIntegrationTest extends AbstractIssuingIntegrationTest
+class ControlsIntegrationTest extends AbstractIssuingIntegrationTest
 {
     private $cardholder;
     private $card;

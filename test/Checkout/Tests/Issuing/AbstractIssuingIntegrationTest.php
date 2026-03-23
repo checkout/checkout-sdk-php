@@ -63,10 +63,10 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
                 getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET")
             )
             ->scopes([
-                OAuthScope::$issuingClient,
-                OAuthScope::$issuingCardMgmt,
-                OAuthScope::$issuingControlsRead,
-                OAuthScope::$issuingControlsWrite])
+                OAuthScope::$IssuingClient,
+                OAuthScope::$IssuingCardMgmt,
+                OAuthScope::$IssuingControlsRead,
+                OAuthScope::$IssuingControlsWrite])
             ->environment(Environment::sandbox())
             ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
             ->build();

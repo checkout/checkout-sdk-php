@@ -26,6 +26,9 @@ use Checkout\Issuing\ControlGroups\Requests\ControlGroupQuery;
 use Checkout\Issuing\ControlProfiles\Requests\CreateControlProfileRequest;
 use Checkout\Issuing\ControlProfiles\Requests\UpdateControlProfileRequest;
 use Checkout\Issuing\ControlProfiles\Requests\ControlProfileQuery;
+use Checkout\Issuing\Disputes\Requests\CreateDisputeRequest;
+use Checkout\Issuing\Disputes\Requests\EscalateDisputeRequest;
+use Checkout\Issuing\Disputes\Requests\SubmitDisputeRequest;
 
 class IssuingClient extends Client
 {
@@ -46,6 +49,10 @@ class IssuingClient extends Client
     const AUTHORIZATIONS_PATH = "authorizations";
     const PRESENTMENTS_PATH = "presentments";
     const REVERSALS_PATH = "reversals";
+    const DISPUTES_PATH = "disputes";
+    const CANCEL_PATH = "cancel";
+    const ESCALATE_PATH = "escalate";
+    const SUBMIT_PATH = "submit";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -557,6 +564,110 @@ class IssuingClient extends Client
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId, self::REMOVE_PATH, $targetId),
             null,
             $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Create an Issuing dispute
+     *
+     * Create a dispute for an Issuing transaction. For full guidance, see Manage Issuing disputes.
+     * The transaction must already be cleared and not refunded.
+     * For the card scheme to process the chargeback, you must submit the dispute using either this endpoint,
+     * or the Submit an Issuing dispute endpoint.
+     *
+     * @param string $idempotencyKey (Required)
+     * @param CreateDisputeRequest $createDisputeRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function createDispute($idempotencyKey, CreateDisputeRequest $createDisputeRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH),
+            $createDisputeRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
+    }
+
+    /**
+     * Get an Issuing dispute
+     *
+     * Retrieve the details of an Issuing dispute.
+     *
+     * @param string $disputeId (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getDispute($disputeId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Cancel an Issuing dispute
+     *
+     * Cancel an Issuing dispute.
+     * If you decide not to proceed with a dispute, you can cancel it either:
+     * - Before you submit it
+     * - While the dispute status is processing and status_reason is chargeback_pending or chargeback_processed
+     * For more information, see Cancel a dispute.
+     *
+     * @param string $disputeId (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function cancelDispute($disputeId)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::CANCEL_PATH),
+            null,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Escalate an Issuing dispute
+     *
+     * Escalate an Issuing dispute to pre-arbitration or arbitration.
+     *
+     * @param string $disputeId (Required)
+     * @param string $idempotencyKey (Required)
+     * @param EscalateDisputeRequest $escalateDisputeRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function escalateDispute($disputeId, $idempotencyKey, EscalateDisputeRequest $escalateDisputeRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::ESCALATE_PATH),
+            $escalateDisputeRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
+    }
+
+    /**
+     * Submit an Issuing dispute
+     *
+     * Submit an Issuing dispute to the card scheme for processing.
+     *
+     * @param string $disputeId (Required)
+     * @param string $idempotencyKey (Required)
+     * @param SubmitDisputeRequest $submitDisputeRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function submitDispute($disputeId, $idempotencyKey, SubmitDisputeRequest $submitDisputeRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::SUBMIT_PATH),
+            $submitDisputeRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
         );
     }
 }

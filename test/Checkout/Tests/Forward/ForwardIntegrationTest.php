@@ -430,7 +430,7 @@ class ForwardIntegrationTest extends SandboxTestFixture
         );
 
         // Validate name format (1-64 alphanumeric and underscore)
-        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9_]{1,64}$/', $response["name"]);
+        $this->assertRegExp('/^[a-zA-Z0-9_]{1,64}$/', $response["name"]);
 
         // Version should be positive integer
         $this->assertTrue(is_int($response["version"]));

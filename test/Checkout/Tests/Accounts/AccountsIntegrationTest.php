@@ -7,6 +7,7 @@ use Checkout\Accounts\Company;
 use Checkout\Accounts\ContactDetails;
 use Checkout\Accounts\DateOfBirth;
 use Checkout\Accounts\EntityEmailAddresses;
+use Checkout\Accounts\EntityRoles;
 use Checkout\Accounts\Identification;
 use Checkout\Accounts\Individual;
 use Checkout\Accounts\InstrumentDetailsFasterPayments;
@@ -16,6 +17,10 @@ use Checkout\Accounts\PaymentInstrumentRequest;
 use Checkout\Accounts\PaymentInstrumentsQuery;
 use Checkout\Accounts\Profile;
 use Checkout\Accounts\Representative;
+use Checkout\Accounts\ReserveRules\Requests\CreateReserveRuleRequest;
+use Checkout\Accounts\ReserveRules\Requests\UpdateReserveRuleRequest;
+use Checkout\Accounts\ReserveRules\Entities\Rolling;
+use Checkout\Accounts\ReserveRules\Entities\HoldingDuration;
 use Checkout\CheckoutApi;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
@@ -192,6 +197,264 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $identification->national_id_number = "AB123456C";
 
         return $identification;
+    }
+
+    /**
+     * @test
+     * @skip API temporarily unavailable
+     * @throws CheckoutApiException
+     */
+    public function shouldGetSubEntityMembers()
+    {
+        $entityId = $this->createTestEntity();
+
+        $response = $this->checkoutApi->getAccountsClient()->getSubEntityMembers($entityId);
+
+        // Verify the response structure without requiring data to be non-empty
+        $this->assertArrayHasKey("data", $response);
+        $this->assertTrue(is_array($response["data"]));
+    }
+
+    /**
+     * @test
+     * @skip API temporarily unavailable
+     * @throws CheckoutApiException
+     */
+    public function shouldReinviteSubEntityMember()
+    {
+        $entityId = $this->createTestEntity();
+        
+        // First get the actual sub-entity members
+        $membersResponse = $this->checkoutApi->getAccountsClient()->getSubEntityMembers($entityId);
+        $this->assertArrayHasKey("data", $membersResponse);
+        $this->assertTrue(is_array($membersResponse["data"]));
+        
+        // Skip if no members exist (need actual invited users to reinvite)
+        if (empty($membersResponse["data"])) {
+            $this->markTestSkipped("No sub-entity members available to reinvite. Members must be invited through Hosted Onboarding first.");
+            return;
+        }
+        
+        // Use the first available member's ID
+        $firstMember = $membersResponse["data"][0];
+        $this->assertArrayHasKey("user_id", $firstMember);
+        $userId = $firstMember["user_id"];
+
+        // Now reinvite the actual user
+        $response = $this->checkoutApi->getAccountsClient()->reinviteSubEntityMember($entityId, $userId);
+
+        $this->assertArrayHasKey("id", $response);
+        $this->assertEquals($userId, $response["id"]);
+    }
+
+    /**
+     * @test
+     * @skip API temporarily unavailable
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateReserveRule()
+    {
+        $entityId = $this->createTestEntity();
+        $request = $this->buildValidReserveRuleRequest();
+
+        $response = $this->checkoutApi->getAccountsClient()->createReserveRule($entityId, $request);
+
+        $this->validateReserveRuleIdResponse($response);
+    }
+
+    /**
+     * @test
+     * @skip API temporarily unavailable
+     * @throws CheckoutApiException
+     */
+    public function shouldGetReserveRules()
+    {
+        $entityId = $this->createTestEntity();
+        
+        // First create a reserve rule
+        $createRequest = $this->buildValidReserveRuleRequest();
+        $this->checkoutApi->getAccountsClient()->createReserveRule($entityId, $createRequest);
+
+        $response = $this->checkoutApi->getAccountsClient()->getReserveRules($entityId);
+
+        $this->validateReserveRulesResponse($response);
+    }
+
+    /**
+     * @test
+     * @skip API temporarily unavailable
+     * @throws CheckoutApiException
+     */
+    public function shouldGetReserveRuleDetails()
+    {
+        $entityId = $this->createTestEntity();
+        
+        // First create a reserve rule
+        $createRequest = $this->buildValidReserveRuleRequest();
+        $createResponse = $this->checkoutApi->getAccountsClient()->createReserveRule($entityId, $createRequest);
+        $reserveRuleId = $createResponse["id"];
+
+        $response = $this->checkoutApi->getAccountsClient()->getReserveRuleDetails($entityId, $reserveRuleId);
+
+        $this->validateReserveRuleResponse($response, $createRequest);
+    }
+
+    /**
+     * @test
+     * @skip API temporarily unavailable
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateReserveRule()
+    {
+        $entityId = $this->createTestEntity();
+        
+        // First create a reserve rule
+        $createRequest = $this->buildValidReserveRuleRequest();
+        $createResponse = $this->checkoutApi->getAccountsClient()->createReserveRule($entityId, $createRequest);
+        
+        $reserveRuleId = $createResponse["id"];
+        
+        // Extract ETag from response headers if available
+        $etag = null;
+        if (isset($createResponse["http_metadata"])) {
+            $headers = $createResponse["http_metadata"]->getHeaders();
+            if (isset($headers["Etag"]) && is_array($headers["Etag"])) {
+                $etag = $headers["Etag"][0];
+            }
+        }
+        
+        $updateRequest = $this->buildUpdateReserveRuleRequest();
+        $response = $this->checkoutApi->getAccountsClient()->updateReserveRule($entityId, $reserveRuleId, $etag, $updateRequest);
+
+        $this->validateReserveRuleIdResponse($response);
+    }
+
+    /**
+     * Creates a test entity for sub-entity operations and reserve rules testing
+     * Creates a Company entity with Representatives to generate sub-entity members
+     * @return string
+     * @throws CheckoutApiException
+     */
+    private function createTestEntity()
+    {
+        $onboardEntityRequest = new OnboardEntityRequest();
+        $onboardEntityRequest->reference = uniqid("test_entity_");
+        
+        // Add required contact details
+        $emailAddresses = new EntityEmailAddresses();
+        $emailAddresses->primary = $this->randomEmail();
+        $onboardEntityRequest->contact_details = new ContactDetails();
+        $onboardEntityRequest->contact_details->phone = $this->getPhone();
+        $onboardEntityRequest->contact_details->email_addresses = $emailAddresses;
+        
+        // Add required profile information
+        $onboardEntityRequest->profile = new Profile();
+        $onboardEntityRequest->profile->urls = array("https://www.example-test-entity.com");
+        $onboardEntityRequest->profile->mccs = array("0742");
+        
+        // Create a Company entity with Representatives (generates sub-entity members)
+        $representative = new Representative();
+        $representative->first_name = "John";
+        $representative->last_name = "Representative";
+        $representative->address = $this->getAddress();
+        $representative->identification = new Identification();
+        $representative->identification->national_id_number = "AB123456C";
+        $representative->date_of_birth = $this->getDateOfBirth();
+        $representative->phone = $this->getPhone();
+        
+        // Set up the company details
+        $onboardEntityRequest->company = new Company();
+        $onboardEntityRequest->company->business_registration_number = "01234567";
+        $onboardEntityRequest->company->legal_name = "Test Sub-Entity Company Inc.";
+        $onboardEntityRequest->company->trading_name = "Test Sub-Entity Trading";
+        $onboardEntityRequest->company->principal_address = $this->getAddress();
+        $onboardEntityRequest->company->registered_address = $this->getAddress();
+        $onboardEntityRequest->company->representatives = array($representative);
+
+        $response = $this->checkoutApi->getAccountsClient()->createEntity($onboardEntityRequest);
+        return $response["id"];
+    }
+
+    /**
+     * Builds a valid reserve rule request for testing
+     * @return CreateReserveRuleRequest
+     */
+    private function buildValidReserveRuleRequest()
+    {
+        $request = new CreateReserveRuleRequest();
+        $request->type = "rolling";
+        $request->valid_from = date('c', strtotime('+1 day')); // 1 day from now
+        
+        $rolling = new Rolling();
+        $rolling->percentage = 10.0;
+        
+        $holdingDuration = new HoldingDuration();
+        $holdingDuration->weeks = 4;
+        $rolling->holding_duration = $holdingDuration;
+        
+        $request->rolling = $rolling;
+        
+        return $request;
+    }
+
+    /**
+     * Builds an update reserve rule request for testing
+     * @return UpdateReserveRuleRequest
+     */
+    private function buildUpdateReserveRuleRequest()
+    {
+        $request = new UpdateReserveRuleRequest();
+        $request->type = "rolling";
+        
+        $rolling = new Rolling();
+        $rolling->percentage = 15.0;
+        
+        $holdingDuration = new HoldingDuration();
+        $holdingDuration->weeks = 6;
+        $rolling->holding_duration = $holdingDuration;
+        
+        $request->rolling = $rolling;
+        
+        return $request;
+    }
+
+    /**
+     * Validates reserve rule ID response
+     * @param array $response
+     */
+    private function validateReserveRuleIdResponse($response)
+    {
+        $this->assertResponse($response, "id");
+        $this->assertNotEmpty($response["id"]);
+    }
+
+    /**
+     * Validates reserve rules list response
+     * @param array $response
+     */
+    private function validateReserveRulesResponse($response)
+    {
+        $this->assertResponse($response, "data");
+        $this->assertNotNull($response["data"]);
+        if (!empty($response["data"])) {
+            $firstRule = $response["data"][0];
+            $this->assertArrayHasKey("id", $firstRule);
+            $this->assertArrayHasKey("type", $firstRule);
+        }
+    }
+
+    /**
+     * Validates reserve rule response against original request
+     * @param array $response
+     * @param CreateReserveRuleRequest $originalRequest
+     */
+    private function validateReserveRuleResponse($response, $originalRequest)
+    {
+        $this->assertResponse($response, "id", "type", "valid_from");
+        $this->assertEquals($originalRequest->type, $response["type"]);
+        $this->assertArrayHasKey("rolling", $response);
+        $this->assertEquals($originalRequest->rolling->percentage, $response["rolling"]["percentage"]);
+        $this->assertEquals($originalRequest->rolling->holding_duration->weeks, $response["rolling"]["holding_duration"]["weeks"]);
     }
 
     /**

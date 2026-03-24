@@ -49,41 +49,36 @@ class ApiClient
      */
     public function post(
         string $path,
-        $body,
+        $requestBody,
         SdkAuthorization $authorization,
         ?string $idempotencyKey = null
     ): array {
-        return $this->invoke(
-            "POST",
-            $path,
-            $body === null ? null : $this->jsonSerializer->serialize($body),
-            $authorization,
-            $idempotencyKey
-        );
+        return $this->invoke("POST", $path, $requestBody, $authorization, $idempotencyKey);
     }
 
     /**
      * @param string $path
-     * @param mixed $body
+     * @param mixed $requestBody
      * @param SdkAuthorization $authorization
+     * @param mixed $headers
      * @return array
      * @throws CheckoutApiException
      */
-    public function put(string $path, $body, SdkAuthorization $authorization): array
+    public function put(string $path, $requestBody, SdkAuthorization $authorization, $headers = null): array
     {
-        return $this->invoke("PUT", $path, $this->jsonSerializer->serialize($body), $authorization);
+        return $this->invoke("PUT", $path, $requestBody, $authorization, null, $headers);
     }
 
     /**
      * @param string $path
-     * @param mixed $body
+     * @param mixed $requestBody
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
-    public function patch(string $path, $body, SdkAuthorization $authorization): array
+    public function patch(string $path, $requestBody, SdkAuthorization $authorization): array
     {
-        return $this->invoke("PATCH", $path, $this->jsonSerializer->serialize($body), $authorization);
+        return $this->invoke("PATCH", $path, $requestBody, $authorization);
     }
 
     /**
@@ -99,18 +94,18 @@ class ApiClient
 
     /**
      * @param string $path
-     * @param AbstractQueryFilter $body
+     * @param AbstractQueryFilter $requestBody
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
      */
     public function query(
         string $path,
-        AbstractQueryFilter $body,
+        AbstractQueryFilter $requestBody,
         SdkAuthorization $authorization
     ): array {
         $this->logger->info("GET " . $path);
-        $queryParameters = $body->getEncodedQueryParameters();
+        $queryParameters = $requestBody->getEncodedQueryParameters();
         if (!empty($queryParameters)) {
             $path .= "?" . $queryParameters;
         }
@@ -204,23 +199,44 @@ class ApiClient
      * @param mixed $body
      * @param SdkAuthorization $authorization
      * @param string|null $idempotencyKey
+     * @param mixed $headers
      * @return array
      * @throws CheckoutApiException
      */
     private function invoke(
         string $method,
         string $path,
-        $body,
+        $requestBody,
         SdkAuthorization $authorization,
-        ?string $idempotencyKey = null
+        ?string $idempotencyKey = null,
+        $headers = null
     ): array {
         try {
             $this->logger->info($method . " " . $path);
-            $headers = $this->getHeaders($authorization, "application/json", $idempotencyKey);
+
+            // Build up the headers
+            $requestHeaders = $this->getHeaders($authorization, "application/json", $idempotencyKey, $headers);
+
+            // Build up the body
+            $body = null;
+            if ($requestBody !== null) {
+                if (is_array($requestBody) && $this->isMultipartFormData($requestBody)) {
+                    // Handle multipart form data content
+                    $body = $requestBody;
+                } elseif (is_string($requestBody) && $this->isFormUrlEncodedContent($requestBody)) {
+                    // Handle form URL encoded content
+                    $body = $requestBody;
+                } else {
+                    // Default: serialize to JSON
+                    $body = $this->jsonSerializer->serialize($requestBody);
+                }
+            }
+
+            // Make the call
             $response = $this->client->request($method, $this->getRequestUrl($path), [
                 "verify" => false,
                 "body" => $body,
-                "headers" => $headers
+                "headers" => $requestHeaders
             ]);
             return $this->getResponseContents($response);
         } catch (Exception $e) {
@@ -241,13 +257,15 @@ class ApiClient
      * @param SdkAuthorization $authorization
      * @param string|null $contentType
      * @param string|null $idempotencyKey
+     * @param mixed $customHeaders
      * @return array
      * @throws CheckoutAuthorizationException
      */
     private function getHeaders(
         SdkAuthorization $authorization,
         ?string $contentType,
-        ?string $idempotencyKey
+        ?string $idempotencyKey,
+        $customHeaders = null
     ): array {
         $headers = [
             "User-agent" => CheckoutUtils::PROJECT_NAME . "/" . CheckoutUtils::PROJECT_VERSION,
@@ -260,7 +278,66 @@ class ApiClient
         if (!empty($idempotencyKey)) {
             $headers["Cko-Idempotency-Key"] = $idempotencyKey;
         }
+        
+        // Add custom headers using reflection
+        if ($customHeaders !== null) {
+            $reflection = new \ReflectionClass($customHeaders);
+            foreach ($reflection->getProperties() as $property) {
+                $property->setAccessible(true);
+                $value = $property->getValue($customHeaders);
+                if ($value !== null && $value !== '') {
+                    // Convert property name to HTTP header format
+                    $headerName = $this->convertPropertyToHeader($property->getName());
+                    $headers[$headerName] = (string)$value;
+                }
+            }
+        }
+        
         return $headers;
+    }
+
+    /**
+     * Convert PHP property name to HTTP header format
+     * @param string $propertyName
+     * @return string
+     */
+    private function convertPropertyToHeader(string $propertyName): string
+    {
+        // Convert snake_case to Pascal-Case for HTTP headers
+        $parts = explode('_', $propertyName);
+        return implode('-', array_map('ucfirst', $parts));
+    }
+
+    /**
+     * Check if request body represents multipart form data
+     * @param mixed $requestBody
+     * @return bool
+     */
+    private function isMultipartFormData($requestBody): bool
+    {
+        // Check if it's an array with multipart structure (name, contents, filename)
+        if (is_array($requestBody)) {
+            foreach ($requestBody as $item) {
+                if (is_array($item) && isset($item['name']) && isset($item['contents'])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if request body is form URL encoded content
+     * @param mixed $requestBody
+     * @return bool
+     */
+    private function isFormUrlEncodedContent($requestBody): bool
+    {
+        // Check if it's a string that looks like URL encoded form data (key=value&key2=value2)
+        if (is_string($requestBody)) {
+            return preg_match('/^[^=]+=[^&]*(&[^=]+=[^&]*)*$/', $requestBody) === 1;
+        }
+        return false;
     }
 
     /**

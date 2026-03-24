@@ -8,6 +8,9 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Files\FilesClient;
+use Checkout\Accounts\ReserveRules\Requests\CreateReserveRuleRequest;
+use Checkout\Accounts\ReserveRules\Requests\UpdateReserveRuleRequest;
+use Checkout\Accounts\Headers;
 
 class AccountsClient extends Client
 {
@@ -17,6 +20,8 @@ class AccountsClient extends Client
     const ENTITIES_PATH = "entities";
     const PAYOUT_SCHEDULES_PATH = "payout-schedules";
     const PAYMENT_INSTRUMENTS_PATH = "payment-instruments";
+    const MEMBERS_PATH = "members";
+    const RESERVE_RULES_PATH = "reserve-rules";
 
     private $filesApiClient;
 
@@ -190,6 +195,124 @@ class AccountsClient extends Client
         return $this->apiClient->get(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYOUT_SCHEDULES_PATH),
             $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get sub-entity Members
+     *
+     * Retrieve information on all users of a sub-entity that has been invited through Hosted Onboarding.
+     *
+     * @param string $entityId The ID of the sub-entity (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getSubEntityMembers($entityId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::MEMBERS_PATH),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Reinvite a sub-entity member
+     *
+     * Resend an invitation to the user of a sub-entity.
+     *
+     * @param string $entityId The ID of the sub-entity (Required)
+     * @param string $userId The ID of the invited user (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function reinviteSubEntityMember($entityId, $userId)
+    {
+        return $this->apiClient->put(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::MEMBERS_PATH, $userId),
+            null,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Add a reserve rule
+     *
+     * Create a sub-entity reserve rule.
+     *
+     * @param string $entityId The sub-entity's ID
+     * @param CreateReserveRuleRequest $createRequest The create request
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function createReserveRule($entityId, CreateReserveRuleRequest $createRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::RESERVE_RULES_PATH),
+            $createRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Query reserve rules
+     *
+     * Fetch all of the reserve rules for a sub-entity.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getReserveRules($entityId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::RESERVE_RULES_PATH),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get reserve rule details
+     *
+     * Retrieve the details of a specific reserve rule.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @param string $reserveRuleId The reserve rule ID (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getReserveRuleDetails($entityId, $reserveRuleId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::RESERVE_RULES_PATH, $reserveRuleId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Update reserve rule
+     *
+     * Update an upcoming reserve rule. Only reserve rules that have never been active can be updated.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @param string $reserveRuleId The reserve rule ID (Required)
+     * @param string $etag The ETag value for safe update (Required)
+     * @param UpdateReserveRuleRequest $updateRequest The update request (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function updateReserveRule($entityId, $reserveRuleId, $etag, UpdateReserveRuleRequest $updateRequest)
+    {
+        $headers = null;
+        if ($etag !== null) {
+            $headers = new Headers();
+            $headers->if_match = $etag;
+        }
+        
+        return $this->apiClient->put(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::RESERVE_RULES_PATH, $reserveRuleId),
+            $updateRequest,
+            $this->sdkAuthorization(),
+            $headers
         );
     }
 }

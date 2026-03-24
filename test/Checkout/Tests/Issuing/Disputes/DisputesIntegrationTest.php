@@ -235,7 +235,7 @@ class DisputesIntegrationTest extends AbstractIssuingIntegrationTest
             "disputed_amount.currency"
         );
 
-        $this->assertStringStartsWith("idsp_", $response["id"]);
+        $this->assertTrue(strpos($response["id"], "idsp_") === 0, "Dispute ID should start with 'idsp_'");
         $this->assertEquals($request->transaction_id, $response["transaction_id"]);
         $this->assertEquals($request->reason, $response["reason"]);
         $this->assertEquals("created", $response["status"]);

@@ -272,7 +272,7 @@ class ApplicantsIntegrationTest extends SandboxTestFixture
             "modified_on"
         );
 
-        $this->assertStringStartsWith("aplt_", $response["id"]);
+        $this->assertTrue(strpos($response["id"], "aplt_") === 0, "Applicant ID should start with 'aplt_'");
 
         // Validate timestamps
         if (isset($response["created_on"])) {

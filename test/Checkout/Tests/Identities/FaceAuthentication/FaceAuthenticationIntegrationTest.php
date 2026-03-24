@@ -325,8 +325,8 @@ class FaceAuthenticationIntegrationTest extends SandboxTestFixture
             "created_on"
         );
 
-        $this->assertStringStartsWith("face_auth_", $response["id"] ?? "");
-        $this->assertStringStartsWith("aplt_", $response["applicant_id"] ?? "");
+        $this->assertTrue(strpos($response["id"] ?? "", "face_auth_") === 0, "Face auth ID should start with 'face_auth_'");
+        $this->assertTrue(strpos($response["applicant_id"] ?? "", "aplt_") === 0, "Applicant ID should start with 'aplt_'");
 
         // Validate timestamps
         if (isset($response["created_on"])) {
@@ -353,7 +353,7 @@ class FaceAuthenticationIntegrationTest extends SandboxTestFixture
         );
 
         if (isset($response["face_authentication_id"])) {
-            $this->assertStringStartsWith("face_auth_", $response["face_authentication_id"]);
+            $this->assertTrue(strpos($response["face_authentication_id"], "face_auth_") === 0, "Face authentication ID should start with 'face_auth_'");
         }
 
         // Validate timestamps

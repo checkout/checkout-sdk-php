@@ -367,8 +367,8 @@ class IdDocumentVerificationIntegrationTest extends SandboxTestFixture
             "created_on"
         );
 
-        $this->assertStringStartsWith("iddoc_", $response["id"] ?? "");
-        $this->assertStringStartsWith("aplt_", $response["applicant_id"] ?? "");
+        $this->assertTrue(strpos($response["id"] ?? "", "iddoc_") === 0, "ID should start with 'iddoc_'");
+        $this->assertTrue(strpos($response["applicant_id"] ?? "", "aplt_") === 0, "Applicant ID should start with 'aplt_'");
 
         // Validate timestamps
         if (isset($response["created_on"])) {
@@ -395,7 +395,7 @@ class IdDocumentVerificationIntegrationTest extends SandboxTestFixture
         );
 
         if (isset($response["id_document_verification_id"])) {
-            $this->assertStringStartsWith("iddoc_", $response["id_document_verification_id"]);
+            $this->assertTrue(strpos($response["id_document_verification_id"], "iddoc_") === 0, "ID document verification ID should start with 'iddoc_'");
         }
 
         // Validate timestamps

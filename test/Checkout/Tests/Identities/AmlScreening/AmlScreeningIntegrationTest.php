@@ -196,8 +196,8 @@ class AmlScreeningIntegrationTest extends SandboxTestFixture
             "modified_on"
         );
 
-        $this->assertStringStartsWith("scr_", $response["id"]);
-        $this->assertStringStartsWith("aplt_", $response["applicant_id"]);
+        $this->assertTrue(strpos($response["id"], "scr_") === 0, "Screening ID should start with 'scr_'");
+        $this->assertTrue(strpos($response["applicant_id"], "aplt_") === 0, "Applicant ID should start with 'aplt_'");
 
         // Validate timestamps
         if (isset($response["created_on"])) {

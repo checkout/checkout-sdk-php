@@ -10,4 +10,11 @@ class UpdateControlProfileRequest
      * @var string
      */
     public $name;
+
+    /**
+     * The control profile description. (Optional)
+     *
+     * @var string
+     */
+    public $description;
 }

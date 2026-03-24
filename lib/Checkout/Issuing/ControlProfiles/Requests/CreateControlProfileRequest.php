@@ -10,4 +10,11 @@ class CreateControlProfileRequest
      * @var string
      */
     public $name;
+
+    /**
+     * Control profile description. (Optional)
+     *
+     * @var string
+     */
+    public $description;
 }

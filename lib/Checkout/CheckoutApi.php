@@ -17,6 +17,7 @@ use Checkout\Identities\Applicants\ApplicantsClient;
 use Checkout\Instruments\InstrumentsClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
+use Checkout\NetworkTokens\NetworkTokensClient;
 use Checkout\Payments\Contexts\PaymentContextsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
@@ -48,6 +49,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $transfersClient;
     private $reportsClient;
     private $metadataClient;
+    private $networkTokensClient;
     private $financialClient;
     private $issuingClient;
     private $paymentContextClient;
@@ -85,6 +87,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->workflowsClient = new WorkflowsClient($baseApiClient, $configuration);
         $this->reportsClient = new ReportsClient($baseApiClient, $configuration);
         $this->metadataClient = new MetadataClient($baseApiClient, $configuration);
+        $this->networkTokensClient = new NetworkTokensClient($baseApiClient, $configuration);
         $this->financialClient = new FinancialClient($baseApiClient, $configuration);
         $this->issuingClient = new IssuingClient($baseApiClient, $configuration);
         $this->paymentContextClient = new PaymentContextsClient($baseApiClient, $configuration);
@@ -237,6 +240,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getMetadataClient()
     {
         return $this->metadataClient;
+    }
+
+    /**
+     * @return NetworkTokensClient
+     */
+    public function getNetworkTokensClient()
+    {
+        return $this->networkTokensClient;
     }
 
     /**

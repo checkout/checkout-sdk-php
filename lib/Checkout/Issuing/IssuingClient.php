@@ -21,6 +21,14 @@ use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
+use Checkout\Issuing\ControlGroups\Requests\CreateControlGroupRequest;
+use Checkout\Issuing\ControlGroups\Requests\ControlGroupQuery;
+use Checkout\Issuing\ControlProfiles\Requests\CreateControlProfileRequest;
+use Checkout\Issuing\ControlProfiles\Requests\UpdateControlProfileRequest;
+use Checkout\Issuing\ControlProfiles\Requests\ControlProfileQuery;
+use Checkout\Issuing\Disputes\Requests\CreateDisputeRequest;
+use Checkout\Issuing\Disputes\Requests\EscalateDisputeRequest;
+use Checkout\Issuing\Disputes\Requests\SubmitDisputeRequest;
 
 class IssuingClient extends Client
 {
@@ -33,10 +41,18 @@ class IssuingClient extends Client
     const REVOKE_PATH = "revoke";
     const SUSPEND_PATH = "suspend";
     const CONTROLS_PATH = "controls";
+    const CONTROL_GROUPS_PATH = "control-groups";
+    const CONTROL_PROFILES_PATH = "control-profiles";
+    const ADD_PATH = "add";
+    const REMOVE_PATH = "remove";
     const SIMULATE_PATH = "simulate";
     const AUTHORIZATIONS_PATH = "authorizations";
     const PRESENTMENTS_PATH = "presentments";
     const REVERSALS_PATH = "reversals";
+    const DISPUTES_PATH = "disputes";
+    const CANCEL_PATH = "cancel";
+    const ESCALATE_PATH = "escalate";
+    const SUBMIT_PATH = "submit";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -361,6 +377,297 @@ class IssuingClient extends Client
             ),
             $cardReversalAuthorizationRequest,
             $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Create a control group
+     *
+     * Creates a control group and applies it to the specified target.
+     * @param CreateControlGroupRequest $createControlGroupRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function createControlGroup(CreateControlGroupRequest $createControlGroupRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_GROUPS_PATH),
+            $createControlGroupRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get a target's control groups
+     *
+     * Retrieves a list of control groups applied to the specified target.
+     * @param ControlGroupQuery $query
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getControlGroups(ControlGroupQuery $query)
+    {
+        return $this->apiClient->query(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_GROUPS_PATH),
+            $query,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get control group details
+     *
+     * Retrieves the details of a control group you created previously.
+     * @param $controlGroupId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getControlGroupDetails($controlGroupId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_GROUPS_PATH, $controlGroupId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Remove a control group
+     *
+     * Removes the control group and all the controls it contains.
+     * If you want to reapply an equivalent control group to the card, you'll need to create a new control group.
+     * @param $controlGroupId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function removeControlGroup($controlGroupId)
+    {
+        return $this->apiClient->delete(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_GROUPS_PATH, $controlGroupId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Create a control profile
+     *
+     * Creates a control profile.
+     * @param CreateControlProfileRequest $createControlProfileRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function createControlProfile(CreateControlProfileRequest $createControlProfileRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH),
+            $createControlProfileRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get all control profiles
+     *
+     * Retrieves a list of control profiles for the currently authenticated client, or for a specific card if a card ID is provided.
+     * @param ControlProfileQuery $query
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getControlProfiles(ControlProfileQuery $query = null)
+    {
+        return $this->apiClient->query(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH),
+            $query,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get control profile details
+     *
+     * Retrieves the details of an existing control profile.
+     * @param $controlProfileId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getControlProfileDetails($controlProfileId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Update a control profile
+     *
+     * Update the control profile.
+     * @param string $controlProfileId
+     * @param UpdateControlProfileRequest $updateControlProfileRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function updateControlProfile($controlProfileId, UpdateControlProfileRequest $updateControlProfileRequest)
+    {
+        return $this->apiClient->patch(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId),
+            $updateControlProfileRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Remove a control profile
+     *
+     * Removes the control profile. A control profile cannot be removed if it is used by a control.
+     * @param $controlProfileId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function removeControlProfile($controlProfileId)
+    {
+        return $this->apiClient->delete(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Add target to control profile
+     *
+     * Adds a target to an existing control profile.
+     * @param string $controlProfileId
+     * @param string $targetId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function addTargetToControlProfile($controlProfileId, $targetId)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId, self::ADD_PATH, $targetId),
+            null,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Remove target from control profile
+     *
+     * Removes a target from an existing control profile.
+     * @param string $controlProfileId
+     * @param string $targetId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function removeTargetFromControlProfile($controlProfileId, $targetId)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId, self::REMOVE_PATH, $targetId),
+            null,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Create an Issuing dispute
+     *
+     * Create a dispute for an Issuing transaction. For full guidance, see Manage Issuing disputes.
+     * The transaction must already be cleared and not refunded.
+     * For the card scheme to process the chargeback, you must submit the dispute using either this endpoint,
+     * or the Submit an Issuing dispute endpoint.
+     *
+     * @param string $idempotencyKey (Required)
+     * @param CreateDisputeRequest $createDisputeRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function createDispute($idempotencyKey, CreateDisputeRequest $createDisputeRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH),
+            $createDisputeRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
+    }
+
+    /**
+     * Get an Issuing dispute
+     *
+     * Retrieve the details of an Issuing dispute.
+     *
+     * @param string $disputeId (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getDispute($disputeId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Cancel an Issuing dispute
+     *
+     * Cancel an Issuing dispute.
+     * If you decide not to proceed with a dispute, you can cancel it either:
+     * - Before you submit it
+     * - While the dispute status is processing and status_reason is chargeback_pending or chargeback_processed
+     * For more information, see Cancel a dispute.
+     *
+     * @param string $disputeId (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function cancelDispute($disputeId)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::CANCEL_PATH),
+            null,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Escalate an Issuing dispute
+     *
+     * Escalate an Issuing dispute to pre-arbitration or arbitration.
+     *
+     * @param string $disputeId (Required)
+     * @param string $idempotencyKey (Required)
+     * @param EscalateDisputeRequest $escalateDisputeRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function escalateDispute($disputeId, $idempotencyKey, EscalateDisputeRequest $escalateDisputeRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::ESCALATE_PATH),
+            $escalateDisputeRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
+    }
+
+    /**
+     * Submit an Issuing dispute
+     *
+     * Submit an Issuing dispute to the card scheme for processing.
+     *
+     * @param string $disputeId (Required)
+     * @param string $idempotencyKey (Required)
+     * @param SubmitDisputeRequest $submitDisputeRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function submitDispute($disputeId, $idempotencyKey, SubmitDisputeRequest $submitDisputeRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::SUBMIT_PATH),
+            $submitDisputeRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
         );
     }
 }

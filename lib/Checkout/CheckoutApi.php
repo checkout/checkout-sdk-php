@@ -9,9 +9,15 @@ use Checkout\Disputes\DisputesClient;
 use Checkout\Financial\FinancialClient;
 use Checkout\Forex\ForexClient;
 use Checkout\Forward\ForwardClient;
+use Checkout\Identities\FaceAuthentication\FaceAuthenticationClient;
+use Checkout\Identities\IdDocumentVerification\IdDocumentVerificationClient;
+use Checkout\Identities\IdentityVerification\IdentityVerificationClient;
+use Checkout\Identities\AmlScreening\AmlScreeningClient;
+use Checkout\Identities\Applicants\ApplicantsClient;
 use Checkout\Instruments\InstrumentsClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
+use Checkout\NetworkTokens\NetworkTokensClient;
 use Checkout\Payments\Contexts\PaymentContextsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
@@ -43,6 +49,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $transfersClient;
     private $reportsClient;
     private $metadataClient;
+    private $networkTokensClient;
     private $financialClient;
     private $issuingClient;
     private $paymentContextClient;
@@ -52,6 +59,16 @@ final class CheckoutApi extends CheckoutApmApi
     private $paymentSetupsClient;
 
     private $forwardClient;
+
+    private $faceAuthenticationClient;
+
+    private $idDocumentVerificationClient;
+
+    private $identityVerificationClient;
+
+    private $amlScreeningClient;
+
+    private $applicantsClient;
 
     public function __construct(CheckoutConfiguration $configuration)
     {
@@ -70,12 +87,18 @@ final class CheckoutApi extends CheckoutApmApi
         $this->workflowsClient = new WorkflowsClient($baseApiClient, $configuration);
         $this->reportsClient = new ReportsClient($baseApiClient, $configuration);
         $this->metadataClient = new MetadataClient($baseApiClient, $configuration);
+        $this->networkTokensClient = new NetworkTokensClient($baseApiClient, $configuration);
         $this->financialClient = new FinancialClient($baseApiClient, $configuration);
         $this->issuingClient = new IssuingClient($baseApiClient, $configuration);
         $this->paymentContextClient = new PaymentContextsClient($baseApiClient, $configuration);
         $this->paymentSessionsClient = new PaymentSessionsClient($baseApiClient, $configuration);
         $this->paymentSetupsClient = new PaymentSetupsClient($baseApiClient, $configuration);
         $this->forwardClient = new ForwardClient($baseApiClient, $configuration);
+        $this->faceAuthenticationClient = new FaceAuthenticationClient($baseApiClient, $configuration);
+        $this->idDocumentVerificationClient = new IdDocumentVerificationClient($baseApiClient, $configuration);
+        $this->identityVerificationClient = new IdentityVerificationClient($baseApiClient, $configuration);
+        $this->amlScreeningClient = new AmlScreeningClient($baseApiClient, $configuration);
+        $this->applicantsClient = new ApplicantsClient($baseApiClient, $configuration);
         $this->balancesClient = new BalancesClient(
             $this->getBalancesApiClient($configuration),
             $configuration
@@ -220,6 +243,14 @@ final class CheckoutApi extends CheckoutApmApi
     }
 
     /**
+     * @return NetworkTokensClient
+     */
+    public function getNetworkTokensClient()
+    {
+        return $this->networkTokensClient;
+    }
+
+    /**
      * @return FinancialClient
      */
     public function getFinancialClient()
@@ -265,6 +296,46 @@ final class CheckoutApi extends CheckoutApmApi
     public function getForwardClient()
     {
         return $this->forwardClient;
+    }
+
+    /**
+     * @return FaceAuthenticationClient
+     */
+    public function getFaceAuthenticationClient()
+    {
+        return $this->faceAuthenticationClient;
+    }
+
+    /**
+     * @return IdDocumentVerificationClient
+     */
+    public function getIdDocumentVerificationClient()
+    {
+        return $this->idDocumentVerificationClient;
+    }
+
+    /**
+     * @return IdentityVerificationClient
+     */
+    public function getIdentityVerificationClient()
+    {
+        return $this->identityVerificationClient;
+    }
+
+    /**
+     * @return AmlScreeningClient
+     */
+    public function getAmlScreeningClient()
+    {
+        return $this->amlScreeningClient;
+    }
+
+    /**
+     * @return ApplicantsClient
+     */
+    public function getApplicantsClient()
+    {
+        return $this->applicantsClient;
     }
 
     /**

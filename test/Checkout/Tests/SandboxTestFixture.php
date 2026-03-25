@@ -85,20 +85,32 @@ abstract class SandboxTestFixture extends TestCase
                         getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET")
                     )
                     ->scopes([
+                        OAuthScope::$Accounts,
+                        OAuthScope::$BalancesView,
                         OAuthScope::$Files,
+                        OAuthScope::$FinancialActions,
                         OAuthScope::$Flow,
+                        OAuthScope::$Forward,
+                        OAuthScope::$ForwardSecrets,
                         OAuthScope::$Fx,
                         OAuthScope::$Gateway,
-                        OAuthScope::$Accounts,
+                        OAuthScope::$IssuingCardMgmt,
+                        OAuthScope::$IssuingClient,
+                        OAuthScope::$IssuingControlsRead,
+                        OAuthScope::$IssuingControlsWrite,
+                        OAuthScope::$IssuingDisputesRead,
+                        OAuthScope::$IssuingDisputesWrite,
+                        OAuthScope::$IssuingTransactionsRead,
+                        OAuthScope::$PaymentsSearch,
+                        OAuthScope::$PayoutsBankDetails,
                         OAuthScope::$SessionsApp,
                         OAuthScope::$SessionsBrowser,
-                        OAuthScope::$Vault,
-                        OAuthScope::$PayoutsBankDetails,
                         OAuthScope::$TransfersCreate,
                         OAuthScope::$TransfersView,
-                        OAuthScope::$BalancesView,
+                        OAuthScope::$Vault,
+                        OAuthScope::$VaultApmeEnrollment,
                         OAuthScope::$VaultCardMetadata,
-                        OAuthScope::$FinancialActions
+                        OAuthScope::$VaultRealTimeAccountUpdater
                     ])
                     ->environment(Environment::sandbox())
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))

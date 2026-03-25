@@ -14,6 +14,9 @@ use Checkout\Issuing\Cards\Enrollment\ThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Enrollment\UpdateThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
+use Checkout\Issuing\Cards\Update\UpdateCardRequest;
+use Checkout\Issuing\Cards\Renew\RenewCardRequest;
+use Checkout\Issuing\Cards\ScheduleRevocation\ScheduleRevocationRequest;
 use Checkout\Issuing\Controls\Create\CardControlRequest;
 use Checkout\Issuing\Controls\Query\CardControlsQuery;
 use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
@@ -29,6 +32,7 @@ use Checkout\Issuing\ControlProfiles\Requests\ControlProfileQuery;
 use Checkout\Issuing\Disputes\Requests\CreateDisputeRequest;
 use Checkout\Issuing\Disputes\Requests\EscalateDisputeRequest;
 use Checkout\Issuing\Disputes\Requests\SubmitDisputeRequest;
+use Checkout\Issuing\Transactions\Requests\TransactionsQuery;
 
 class IssuingClient extends Client
 {
@@ -53,6 +57,9 @@ class IssuingClient extends Client
     const CANCEL_PATH = "cancel";
     const ESCALATE_PATH = "escalate";
     const SUBMIT_PATH = "submit";
+    const TRANSACTIONS_PATH = "transactions";
+    const RENEW_PATH = "renew";
+    const SCHEDULE_REVOCATION_PATH = "schedule-revocation";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -668,6 +675,117 @@ class IssuingClient extends Client
             $submitDisputeRequest,
             $this->sdkAuthorization(),
             $idempotencyKey
+        );
+    }
+
+    /**
+     * Get transactions
+     *
+     * Retrieve a list of issuing transactions. You can filter the results using optional query parameters.
+     *
+     * @param TransactionsQuery $query
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getListTransactions(TransactionsQuery $query = null)
+    {
+        return $this->apiClient->query(
+            $this->buildPath(self::ISSUING_PATH, self::TRANSACTIONS_PATH),
+            $query,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get transaction details
+     *
+     * Retrieve the details of a specific issuing transaction.
+     *
+     * @param string $transactionId (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getSingleTransaction($transactionId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ISSUING_PATH, self::TRANSACTIONS_PATH, $transactionId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Update card details
+     *
+     * Update the details of an issued card.
+     * Only the fields for which you provide values will be updated.
+     *
+     * @param string $cardId - The card's unique identifier. (Required)
+     * @param UpdateCardRequest $updateCardRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function updateCardDetails($cardId, UpdateCardRequest $updateCardRequest)
+    {
+        return $this->apiClient->patch(
+            $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId),
+            $updateCardRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Renew a card
+     *
+     * Renew an active, inactive, or suspended card. A card cannot be renewed if it is revoked, expired, or is a single use virtual card.
+     * The renewed card will have a different, nonconsecutive number (PAN), expiry date, and CVV.
+     *
+     * @param string $cardId - The card's unique identifier. (Required)
+     * @param RenewCardRequest $renewCardRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function renewCard($cardId, RenewCardRequest $renewCardRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::RENEW_PATH),
+            $renewCardRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Schedule card revocation
+     *
+     * Schedules a card to be revoked at 00:00(UTC) on a specified date.
+     *
+     * @param string $cardId - The card's unique identifier.(Required)
+     * @param ScheduleRevocationRequest $scheduleRevocationRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function scheduleCardRevocation($cardId, ScheduleRevocationRequest $scheduleRevocationRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SCHEDULE_REVOCATION_PATH),
+            $scheduleRevocationRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Delete scheduled revocation
+     *
+     * Delete a card's scheduled revocation.
+     *
+     * @param string $cardId - The card's unique identifier. (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function deleteScheduledCardRevocation($cardId)
+    {
+        return $this->apiClient->delete(
+            $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SCHEDULE_REVOCATION_PATH),
+            $this->sdkAuthorization()
         );
     }
 }

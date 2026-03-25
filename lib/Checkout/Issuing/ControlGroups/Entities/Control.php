@@ -2,6 +2,7 @@
 
 namespace Checkout\Issuing\ControlGroups\Entities;
 
+use Checkout\Issuing\ControlGroups\Entities\MidLimit;
 use Checkout\Issuing\Controls\MccLimit;
 use Checkout\Issuing\Controls\VelocityLimit;
 

@@ -94,6 +94,7 @@ abstract class SandboxTestFixture extends TestCase
                         OAuthScope::$ForwardSecrets,
                         OAuthScope::$Fx,
                         OAuthScope::$Gateway,
+                        OAuthScope::$GatewayPaymentCancellations,
                         OAuthScope::$IssuingCardMgmt,
                         OAuthScope::$IssuingClient,
                         OAuthScope::$IssuingControlsRead,

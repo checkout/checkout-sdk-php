@@ -7,6 +7,7 @@ use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\Issuing\Cardholders\CardholderType;
+use Checkout\Issuing\Cardholders\UpdateCardholderRequest;
 use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
 
 class CardholdersIntegrationTest extends AbstractIssuingIntegrationTest
@@ -76,5 +77,38 @@ class CardholdersIntegrationTest extends AbstractIssuingIntegrationTest
             $this->assertEquals($this->cardholder["id"], $card["id"]);
             $this->assertEquals("cli_p6jeowdtuxku3azxgt2qa7kq7a", $card["client_id"]);
         }
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardholder()
+    {
+        $updateRequest = $this->buildUpdateCardholderRequest();
+        
+        $updateResponse = $this->issuingApi->getIssuingClient()->updateCardholder($this->cardholder["id"], $updateRequest);
+
+        $this->assertResponse($updateResponse, "last_modified_date", "_links");
+        $this->assertNotNull($updateResponse["last_modified_date"]);
+        
+        // Verify the update by fetching cardholder details
+        $updatedCardholder = $this->issuingApi->getIssuingClient()->getCardholder($this->cardholder["id"]);
+        $this->assertEquals("UpdatedName", $updatedCardholder["first_name"]);
+    }
+
+    /**
+     * @return UpdateCardholderRequest
+     */
+    private function buildUpdateCardholderRequest()
+    {
+        $address = $this->getAddress();
+        
+        $request = new UpdateCardholderRequest();
+        $request->first_name = "UpdatedName";
+        $request->email = "updated.john.kennedy@myemaildomain.com";
+        $request->billing_address = $address;
+
+        return $request;
     }
 }

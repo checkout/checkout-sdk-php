@@ -24,6 +24,9 @@ use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
+use Checkout\Issuing\Testing\SimulateRefundRequest;
+use Checkout\Issuing\CardholderAccessTokens\CardholderAccessTokenRequest;
+use Checkout\Issuing\Cardholders\UpdateCardholderRequest;
 use Checkout\Issuing\ControlGroups\Requests\CreateControlGroupRequest;
 use Checkout\Issuing\ControlGroups\Requests\ControlGroupQuery;
 use Checkout\Issuing\ControlProfiles\Requests\CreateControlProfileRequest;
@@ -60,6 +63,10 @@ class IssuingClient extends Client
     const TRANSACTIONS_PATH = "transactions";
     const RENEW_PATH = "renew";
     const SCHEDULE_REVOCATION_PATH = "schedule-revocation";
+    const REFUNDS_PATH = "refunds";
+    const ACCESS_PATH = "access";
+    const CONNECT_PATH = "connect";
+    const TOKEN_PATH = "token";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -785,6 +792,64 @@ class IssuingClient extends Client
     {
         return $this->apiClient->delete(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SCHEDULE_REVOCATION_PATH),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Simulate refund
+     *
+     * Simulate the refund of an existing approved authorization, after it has been cleared.
+     *
+     * @param string $authorizationId - The transaction's unique identifier. (Required)
+     * @param SimulateRefundRequest $simulateRefundRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function simulateRefund($authorizationId, SimulateRefundRequest $simulateRefundRequest)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::SIMULATE_PATH, self::AUTHORIZATIONS_PATH, $authorizationId, self::REFUNDS_PATH),
+            $simulateRefundRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Request an access token
+     *
+     * OAuth endpoint to exchange your access key ID and access key secret for an access token.
+     *
+     * @param CardholderAccessTokenRequest $cardholderAccessTokenRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function requestCardholderAccessToken(CardholderAccessTokenRequest $cardholderAccessTokenRequest)
+    {
+        $formData = $this->createFormUrlEncodedContent($cardholderAccessTokenRequest);
+        
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::ACCESS_PATH, self::CONNECT_PATH, self::TOKEN_PATH),
+            $formData,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Update a cardholder
+     *
+     * Updates the details of an existing cardholder.
+     *
+     * @param string $cardholderId - The cardholder's unique identifier. (Required)
+     * @param UpdateCardholderRequest $updateCardholderRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function updateCardholder($cardholderId, UpdateCardholderRequest $updateCardholderRequest)
+    {
+        return $this->apiClient->patch(
+            $this->buildPath(self::ISSUING_PATH, self::CARDHOLDERS_PATH, $cardholderId),
+            $updateCardholderRequest,
             $this->sdkAuthorization()
         );
     }

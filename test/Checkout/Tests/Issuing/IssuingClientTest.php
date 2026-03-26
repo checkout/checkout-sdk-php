@@ -24,6 +24,9 @@ use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
+use Checkout\Issuing\Testing\SimulateRefundRequest;
+use Checkout\Issuing\CardholderAccessTokens\CardholderAccessTokenRequest;
+use Checkout\Issuing\Cardholders\UpdateCardholderRequest;
 use Checkout\Issuing\Transactions\Requests\TransactionsQuery;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
@@ -467,6 +470,49 @@ class IssuingClientTest extends UnitTestFixture
             ->willReturn(["foo"]);
 
         $response = $this->client->deleteScheduledCardRevocation("card_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateRefund()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["foo"]);
+
+        $response = $this->client->simulateRefund("authorization_id", new SimulateRefundRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRequestCardholderAccessToken()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["access_token" => "token123", "token_type" => "bearer", "expires_in" => 3600]);
+
+        $response = $this->client->requestCardholderAccessToken(new CardholderAccessTokenRequest());
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("access_token", $response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardholder()
+    {
+        $this->apiClient
+            ->method("patch")
+            ->willReturn(["last_modified_date" => "2019-09-10T10:11:12Z"]);
+
+        $response = $this->client->updateCardholder("cardholder_id", new UpdateCardholderRequest());
         $this->assertNotNull($response);
     }
 }

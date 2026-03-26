@@ -14,6 +14,7 @@ use Checkout\Accounts\ReserveRules\Requests\CreateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Requests\UpdateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Entities\Rolling;
 use Checkout\Accounts\ReserveRules\Entities\HoldingDuration;
+use Checkout\Accounts\Files\Requests\UploadFileRequest;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
@@ -319,6 +320,79 @@ class AccountsClientTest extends UnitTestFixture
     }
 
     /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUploadFile()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn([
+                "id" => "file_6lbss42ezvoufcb2beo76rvwly",
+                "maximum_size_in_bytes" => 4194304,
+                "document_types_for_purpose" => ["image/jpeg", "image/png", "image/jpg"],
+                "_links" => [
+                    "upload" => [
+                        "href" => "https://s3.eu-west-1.amazonaws.com/mp-files-api-staging-prod/ent_ociwguf5a5fe3ndmpnvpnwsi3e/file_6lbss42ezvoufcb2beo76rvwly?AWSAccessKeyId=ASIX4BFJOBCQFLAMPKU3&Expires=1661355993&x-amz-security-token=some_token"
+                    ],
+                    "self" => [
+                        "href" => "https://files.checkout.com/files/file_6lbss42ezvoufcb2beo76rvwly"
+                    ]
+                ]
+            ]);
+
+        $fileRequest = $this->buildUploadFileRequest();
+        $response = $this->client->uploadFile("entity_id", $fileRequest);
+
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("id", $response);
+        $this->assertArrayHasKey("maximum_size_in_bytes", $response);
+        $this->assertArrayHasKey("document_types_for_purpose", $response);
+        $this->assertArrayHasKey("_links", $response);
+        $this->assertEquals("file_6lbss42ezvoufcb2beo76rvwly", $response["id"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRetrieveFile()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn([
+                "id" => "file_6lbss42ezvoufcb2beo76rvwly",
+                "status" => "valid",
+                "status_reasons" => null,
+                "size" => 1024,
+                "mime_type" => "application/pdf",
+                "uploaded_on" => "2020-12-01T15:01:01Z",
+                "purpose" => "identity_verification",
+                "_links" => [
+                    "download" => [
+                        "href" => "https://s3.eu-west-1.amazonaws.com/mp-files-api-clean-prod/ent_ociwguf5a5fe3ndmpnvpnwsi3e/file_6lbss42ezvoufcb2beo76rvwly?X-Amz-Expires=3600&x-amz-security-token=some_token"
+                    ],
+                    "self" => [
+                        "href" => "https://files.checkout.com/files/file_6lbss42ezvoufcb2beo76rvwly"
+                    ]
+                ]
+            ]);
+
+        $response = $this->client->retrieveFile("entity_id", "file_6lbss42ezvoufcb2beo76rvwly");
+
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("id", $response);
+        $this->assertArrayHasKey("status", $response);
+        $this->assertArrayHasKey("size", $response);
+        $this->assertArrayHasKey("mime_type", $response);
+        $this->assertArrayHasKey("uploaded_on", $response);
+        $this->assertArrayHasKey("purpose", $response);
+        $this->assertArrayHasKey("_links", $response);
+        $this->assertEquals("file_6lbss42ezvoufcb2beo76rvwly", $response["id"]);
+        $this->assertEquals("valid", $response["status"]);
+    }
+
+    /**
      * Helper method to build CreateReserveRuleRequest
      */
     private function buildCreateReserveRuleRequest()
@@ -355,6 +429,17 @@ class AccountsClientTest extends UnitTestFixture
         $rolling->holding_duration = $holdingDuration;
         
         $request->rolling = $rolling;
+        
+        return $request;
+    }
+
+    /**
+     * Helper method to build UploadFileRequest
+     */
+    private function buildUploadFileRequest()
+    {
+        $request = new UploadFileRequest();
+        $request->purpose = "identity_verification";
         
         return $request;
     }

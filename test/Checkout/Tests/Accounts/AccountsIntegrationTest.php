@@ -21,6 +21,7 @@ use Checkout\Accounts\ReserveRules\Requests\CreateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Requests\UpdateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Entities\Rolling;
 use Checkout\Accounts\ReserveRules\Entities\HoldingDuration;
+use Checkout\Accounts\Files\Requests\UploadFileRequest;
 use Checkout\CheckoutApi;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
@@ -330,6 +331,27 @@ class AccountsIntegrationTest extends SandboxTestFixture
     }
 
     /**
+     * @test
+     * @skip API temporarily unavailable
+     * @throws CheckoutApiException
+     */
+    public function shouldUploadAndRetrieveFile()
+    {
+        $entityId = $this->createTestEntity();
+
+        // Test upload file
+        $uploadRequest = $this->buildFileUploadRequest();
+        $uploadResponse = $this->checkoutApi->getAccountsClient()->uploadFile($entityId, $uploadRequest);
+
+        $this->validateFileUploadResponse($uploadResponse);
+
+        // Test retrieve file id
+        $fileId = $uploadResponse["id"];
+        $retrieveResponse = $this->checkoutApi->getAccountsClient()->retrieveFile($entityId, $fileId);
+        $this->validateFileRetrieveResponse($retrieveResponse);
+    }
+
+    /**
      * Creates a test entity for sub-entity operations and reserve rules testing
      * Creates a Company entity with Representatives to generate sub-entity members
      * @return string
@@ -346,7 +368,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $onboardEntityRequest->contact_details = new ContactDetails();
         $onboardEntityRequest->contact_details->phone = $this->getPhone();
         $onboardEntityRequest->contact_details->email_addresses = $emailAddresses;
-        
+
         // Add required profile information
         $onboardEntityRequest->profile = new Profile();
         $onboardEntityRequest->profile->urls = array("https://www.example-test-entity.com");
@@ -416,6 +438,60 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $request->rolling = $rolling;
         
         return $request;
+    }
+
+    /**
+     * Build a file upload request for testing
+     * @return UploadFileRequest
+     */
+    private function buildFileUploadRequest()
+    {
+        $request = new UploadFileRequest();
+        $request->purpose = "identity_verification";
+        
+        return $request;
+    }
+
+    /**
+     * Validates file upload response
+     * @param array $response
+     */
+    private function validateFileUploadResponse($response)
+    {
+        $this->assertArrayHasKey("id", $response);
+        $this->assertArrayHasKey("maximum_size_in_bytes", $response);
+        $this->assertArrayHasKey("document_types_for_purpose", $response);
+        $this->assertArrayHasKey("_links", $response);
+        
+        $this->assertNotEmpty($response["id"]);
+        $this->assertTrue(is_int($response["maximum_size_in_bytes"]));
+        $this->assertTrue(is_array($response["document_types_for_purpose"]));
+        $this->assertArrayHasKey("upload", $response["_links"]);
+        $this->assertArrayHasKey("self", $response["_links"]);
+    }
+
+    /**
+     * Validates file retrieve response
+     * @param array $response
+     */
+    private function validateFileRetrieveResponse($response)
+    {
+        $this->assertArrayHasKey("id", $response);
+        $this->assertArrayHasKey("status", $response);
+        $this->assertArrayHasKey("size", $response);
+        $this->assertArrayHasKey("uploaded_on", $response);
+        $this->assertArrayHasKey("purpose", $response);
+        $this->assertArrayHasKey("status_reasons", $response);
+        $this->assertArrayHasKey("_links", $response);
+        
+        $this->assertNotEmpty($response["id"]);
+        $this->assertNotEmpty($response["status"]);
+        $this->assertTrue(is_int($response["size"]));
+        $this->assertNotEmpty($response["uploaded_on"]);
+        $this->assertNotEmpty($response["purpose"]);
+        $this->assertTrue(is_array($response["status_reasons"]));
+        $this->assertArrayHasKey("upload", $response["_links"]);
+        $this->assertArrayHasKey("self", $response["_links"]);
     }
 
     /**

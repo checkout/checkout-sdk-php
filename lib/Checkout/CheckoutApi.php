@@ -24,6 +24,7 @@ use Checkout\Payments\Links\PaymentLinksClient;
 use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Sessions\PaymentSessionsClient;
 use Checkout\Payments\Setups\PaymentSetupsClient;
+use Checkout\PaymentMethods\PaymentMethodsClient;
 use Checkout\Reports\ReportsClient;
 use Checkout\Risk\RiskClient;
 use Checkout\Sessions\SessionsClient;
@@ -70,6 +71,8 @@ final class CheckoutApi extends CheckoutApmApi
 
     private $applicantsClient;
 
+    private $paymentMethodsClient;
+
     public function __construct(CheckoutConfiguration $configuration)
     {
         $baseApiClient = $this->getBaseApiClient($configuration);
@@ -112,6 +115,7 @@ final class CheckoutApi extends CheckoutApmApi
             $this->getFilesApiClient($configuration),
             $configuration
         );
+        $this->paymentMethodsClient = new PaymentMethodsClient($baseApiClient, $configuration);
     }
 
     /**
@@ -336,6 +340,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getApplicantsClient()
     {
         return $this->applicantsClient;
+    }
+
+    /**
+     * @return PaymentMethodsClient
+     */
+    public function getPaymentMethodsClient()
+    {
+        return $this->paymentMethodsClient;
     }
 
     /**

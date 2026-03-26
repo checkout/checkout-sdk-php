@@ -226,8 +226,7 @@ abstract class SandboxTestFixture extends TestCase
     {
         try {
             $func();
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
+        } catch (CheckoutApiException $ex) {
             self::assertContains(
                 $errorItem,
                 $ex->error_details["error_codes"],

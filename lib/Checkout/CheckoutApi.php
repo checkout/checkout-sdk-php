@@ -28,6 +28,7 @@ use Checkout\PaymentMethods\PaymentMethodsClient;
 use Checkout\Reports\ReportsClient;
 use Checkout\Risk\RiskClient;
 use Checkout\Sessions\SessionsClient;
+use Checkout\StandaloneAccountUpdater\StandaloneAccountUpdaterClient;
 use Checkout\Tokens\TokensClient;
 use Checkout\Transfers\TransfersClient;
 use Checkout\Workflows\WorkflowsClient;
@@ -73,6 +74,8 @@ final class CheckoutApi extends CheckoutApmApi
 
     private $paymentMethodsClient;
 
+    private $standaloneAccountUpdaterClient;
+
     public function __construct(CheckoutConfiguration $configuration)
     {
         $baseApiClient = $this->getBaseApiClient($configuration);
@@ -116,6 +119,7 @@ final class CheckoutApi extends CheckoutApmApi
             $configuration
         );
         $this->paymentMethodsClient = new PaymentMethodsClient($baseApiClient, $configuration);
+        $this->standaloneAccountUpdaterClient = new StandaloneAccountUpdaterClient($baseApiClient, $configuration);
     }
 
     /**
@@ -348,6 +352,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getPaymentMethodsClient()
     {
         return $this->paymentMethodsClient;
+    }
+
+    /**
+     * @return StandaloneAccountUpdaterClient
+     */
+    public function getStandaloneAccountUpdaterClient()
+    {
+        return $this->standaloneAccountUpdaterClient;
     }
 
     /**

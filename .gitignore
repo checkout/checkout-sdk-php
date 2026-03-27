@@ -10,3 +10,4 @@ vendor/*
 .DS_*
 .cursor
 .vscode
+composer

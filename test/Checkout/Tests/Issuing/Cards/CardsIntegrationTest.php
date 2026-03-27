@@ -14,6 +14,9 @@ use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Revoke\RevokeReason;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendReason;
+use Checkout\Issuing\Cards\Update\UpdateCardRequest;
+use Checkout\Issuing\Cards\Renew\RenewCardRequest;
+use Checkout\Issuing\Cards\ScheduleRevocation\ScheduleRevocationRequest;
 use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
 
 class CardsIntegrationTest extends AbstractIssuingIntegrationTest
@@ -213,5 +216,91 @@ class CardsIntegrationTest extends AbstractIssuingIntegrationTest
         $cardResponse = $this->issuingApi->getIssuingClient()->getCardDetails($card["id"]);
 
         $this->assertEquals("suspended", $cardResponse["status"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardDetails()
+    {
+        $card = $this->createCard($this->cardholder["id"]);
+
+        $updateRequest = new UpdateCardRequest();
+        $updateRequest->reference = "UPDATED-REF-123";
+        
+        $updateResponse = $this->issuingApi->getIssuingClient()->updateCardDetails($card["id"], $updateRequest);
+
+        $this->assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
+        
+        $this->assertResponse(
+            $updateResponse,
+            "id",
+            "last_modified_date"
+        );
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRenewCard()
+    {
+        $card = $this->createCard($this->cardholder["id"]);
+
+        $renewRequest = new RenewCardRequest();
+        $renewRequest->reference = "RENEW-REF-123";
+        
+        $renewResponse = $this->issuingApi->getIssuingClient()->renewCard($card["id"], $renewRequest);
+
+        $this->assertEquals(201, $renewResponse["http_metadata"]->getStatusCode());
+        
+        $this->assertResponse(
+            $renewResponse,
+            "id",
+            "display_name",
+            "last_four",
+            "expiry_month",
+            "expiry_year"
+        );
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldScheduleCardRevocation()
+    {
+        $card = $this->createCard($this->cardholder["id"]);
+
+        $scheduleRequest = new ScheduleRevocationRequest();
+        $scheduleRequest->revocation_date = date('Y-m-d', strtotime('+7 days'));
+        
+        $scheduleResponse = $this->issuingApi->getIssuingClient()->scheduleCardRevocation($card["id"], $scheduleRequest);
+
+        $this->assertEquals(200, $scheduleResponse["http_metadata"]->getStatusCode());
+        
+        $this->assertResponse($scheduleResponse, "_links");
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldDeleteScheduledCardRevocation()
+    {
+        $card = $this->createCard($this->cardholder["id"]);
+        
+        // First schedule a revocation
+        $scheduleRequest = new ScheduleRevocationRequest();
+        $scheduleRequest->revocation_date = date('Y-m-d', strtotime('+7 days'));
+        $this->issuingApi->getIssuingClient()->scheduleCardRevocation($card["id"], $scheduleRequest);
+        
+        // Then delete the scheduled revocation
+        $deleteResponse = $this->issuingApi->getIssuingClient()->deleteScheduledCardRevocation($card["id"]);
+
+        $this->assertEquals(200, $deleteResponse["http_metadata"]->getStatusCode());
+        
+        $this->assertResponse($deleteResponse, "_links");
     }
 }

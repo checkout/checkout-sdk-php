@@ -11,6 +11,7 @@ use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
+use Checkout\Issuing\Testing\SimulateRefundRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -115,5 +116,32 @@ class TestingClientTest extends UnitTestFixture
         $this->assertNotNull($response);
         $this->assertArrayHasKey("id", $response);
         $this->assertEquals("sim_12345", $response["id"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateRefund()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn([]);
+
+        $request = $this->buildSimulateRefundRequest();
+        $response = $this->client->simulateRefund("auth_12345", $request);
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @return SimulateRefundRequest
+     */
+    private function buildSimulateRefundRequest()
+    {
+        $request = new SimulateRefundRequest();
+        $request->amount = 1000;
+
+        return $request;
     }
 }

@@ -13,6 +13,9 @@ use Checkout\Issuing\Cards\Enrollment\PasswordThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Enrollment\UpdateThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
+use Checkout\Issuing\Cards\Update\UpdateCardRequest;
+use Checkout\Issuing\Cards\Renew\RenewCardRequest;
+use Checkout\Issuing\Cards\ScheduleRevocation\ScheduleRevocationRequest;
 use Checkout\Issuing\Controls\Create\VelocityCardControlRequest;
 use Checkout\Issuing\Controls\Query\CardControlsQuery;
 use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
@@ -21,6 +24,10 @@ use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
+use Checkout\Issuing\Testing\SimulateRefundRequest;
+use Checkout\Issuing\CardholderAccessTokens\CardholderAccessTokenRequest;
+use Checkout\Issuing\Cardholders\UpdateCardholderRequest;
+use Checkout\Issuing\Transactions\Requests\TransactionsQuery;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -364,6 +371,148 @@ class IssuingClientTest extends UnitTestFixture
             "authorization_id",
             new CardReversalAuthorizationRequest()
         );
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetTransactions()
+    {
+        $this->apiClient
+            ->method("query")
+            ->willReturn(["foo"]);
+
+        $response = $this->client->getListTransactions(new TransactionsQuery());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetTransactionsWithEmptyQuery()
+    {
+        $this->apiClient
+            ->method("query")
+            ->willReturn(["data" => []]);
+
+        $query = new TransactionsQuery();
+        $response = $this->client->getListTransactions($query);
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetTransactionDetails()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn(["foo"]);
+
+        $response = $this->client->getSingleTransaction("transaction_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardDetails()
+    {
+        $this->apiClient
+            ->method("patch")
+            ->willReturn(["foo"]);
+
+        $response = $this->client->updateCardDetails("card_id", new UpdateCardRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRenewCard()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["foo"]);
+
+        $response = $this->client->renewCard("card_id", new RenewCardRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldScheduleCardRevocation()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["foo"]);
+
+        $response = $this->client->scheduleCardRevocation("card_id", new ScheduleRevocationRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldDeleteScheduledCardRevocation()
+    {
+        $this->apiClient
+            ->method("delete")
+            ->willReturn(["foo"]);
+
+        $response = $this->client->deleteScheduledCardRevocation("card_id");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateRefund()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["foo"]);
+
+        $response = $this->client->simulateRefund("authorization_id", new SimulateRefundRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRequestCardholderAccessToken()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["access_token" => "token123", "token_type" => "bearer", "expires_in" => 3600]);
+
+        $response = $this->client->requestCardholderAccessToken(new CardholderAccessTokenRequest());
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("access_token", $response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardholder()
+    {
+        $this->apiClient
+            ->method("patch")
+            ->willReturn(["last_modified_date" => "2019-09-10T10:11:12Z"]);
+
+        $response = $this->client->updateCardholder("cardholder_id", new UpdateCardholderRequest());
         $this->assertNotNull($response);
     }
 }

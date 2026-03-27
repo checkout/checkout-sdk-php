@@ -12,6 +12,7 @@ class DisputesClient extends FilesClient
     const EVIDENCE_PATH = "evidence";
     const SUBMITTED_PATH = "submitted";
     const SCHEME_FILES_PATH = "schemefiles";
+    const ARBITRATION_PATH = "arbitration";
 
     /**
      * @param DisputesQueryFilter $filter
@@ -118,6 +119,33 @@ class DisputesClient extends FilesClient
     {
         return $this->apiClient->get(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::SCHEME_FILES_PATH),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $disputeId - The dispute identifier. (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function submitArbitrationEvidence($disputeId)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::ARBITRATION_PATH),
+            null,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * @param string $disputeId - The dispute identifier. (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getCompiledSubmittedArbitrationEvidence($disputeId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::ARBITRATION_PATH, self::SUBMITTED_PATH),
             $this->sdkAuthorization()
         );
     }

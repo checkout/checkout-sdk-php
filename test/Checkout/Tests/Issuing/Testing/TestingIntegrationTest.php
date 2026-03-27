@@ -11,6 +11,7 @@ use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
+use Checkout\Issuing\Testing\SimulateRefundRequest;
 use Checkout\Issuing\Testing\CardSimulation;
 use Checkout\Issuing\Testing\TransactionSimulation;
 use Checkout\Issuing\Testing\TransactionType;
@@ -130,6 +131,37 @@ class TestingIntegrationTest extends AbstractIssuingIntegrationTest
         $this->assertEquals("Reversed", $cardReversalAuthorizationResponse["status"]);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateRefund()
+    {
+        $authorizationRequest = $this->getAuthorizationRequest();
+        $simulationResponse = $this->issuingApi->getIssuingClient()->simulateAuthorization($authorizationRequest);
+        
+        // Clear the authorization first
+        $clearingRequest = new CardClearingAuthorizationRequest();
+        $clearingRequest->amount = 100;
+        $this->issuingApi->getIssuingClient()->simulateClearing($simulationResponse["id"], $clearingRequest);
+        
+        // Now simulate refund
+        $refundRequest = $this->buildSimulateRefundRequest();
+        $refundResponse = $this->issuingApi->getIssuingClient()->simulateRefund($simulationResponse["id"], $refundRequest);
+        
+        $this->assertNotNull($refundResponse);
+    }
+
+
+    /**
+     * @return SimulateRefundRequest
+     */
+    private function buildSimulateRefundRequest()
+    {
+        $request = new SimulateRefundRequest();
+        $request->amount = 50;
+        return $request;
+    }
 
     /**
      * @return CardAuthorizationRequest

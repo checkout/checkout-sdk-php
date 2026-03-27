@@ -9,3 +9,4 @@ vendor/*
 *.log
 .DS_*
 .cursor
+.vscode

@@ -134,7 +134,7 @@ class HostedPaymentsSessionRequest
     public $billing_descriptor;
 
     /**
-     * @var string value of PaymentSourceType
+     * @var string[] value of PaymentSourceType
      */
     public $allow_payment_methods;
 

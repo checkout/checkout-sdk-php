@@ -31,7 +31,7 @@ jobs:
                     fi
                   else
                     # Windows - usar chocolatey con repositorios oficiales
-                    choco install php --version=${{ matrix.php-version }}
+                    choco install php --version=${{ matrix.php-version }} --force
                   fi
 
             - name: Installed version

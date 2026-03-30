@@ -23,7 +23,7 @@ class ReportsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getAllReports(ReportsQuery $filter)
+    public function getAllReports(ReportsQuery $filter): array
     {
         return $this->apiClient->query(self::REPORTS_PATH, $filter, $this->sdkAuthorization());
     }
@@ -33,7 +33,7 @@ class ReportsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getReportDetails($reportId)
+    public function getReportDetails($reportId): array
     {
         return $this->apiClient->get($this->buildPath(self::REPORTS_PATH, $reportId), $this->sdkAuthorization());
     }
@@ -44,7 +44,7 @@ class ReportsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getReportFile($reportId, $fileId)
+    public function getReportFile($reportId, $fileId): array
     {
         return $this->apiClient->get($this->buildPath(self::REPORTS_PATH, $reportId, self::FILES_PATH, $fileId), $this->sdkAuthorization());
     }

@@ -10,6 +10,7 @@ use Checkout\Client;
 use Checkout\Files\FilesClient;
 use Checkout\Accounts\ReserveRules\Requests\CreateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Requests\UpdateReserveRuleRequest;
+use Checkout\Accounts\Files\Requests\UploadFileRequest;
 use Checkout\Accounts\Headers;
 
 class AccountsClient extends Client
@@ -313,6 +314,43 @@ class AccountsClient extends Client
             $updateRequest,
             $this->sdkAuthorization(),
             $headers
+        );
+    }
+
+    /**
+     * Upload a file
+     *
+     * Upload documentation required for full due diligence for a sub-entity.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @param UploadFileRequest $fileRequest The file upload request (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function uploadFile($entityId, UploadFileRequest $fileRequest)
+    {
+        return $this->filesApiClient->post(
+            $this->buildPath(self::ENTITIES_PATH, $entityId, self::FILES_PATH),
+            $fileRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Retrieve a file
+     *
+     * Retrieve information about a previously uploaded file for a sub-entity.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @param string $fileId The file ID (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function retrieveFile($entityId, $fileId)
+    {
+        return $this->filesApiClient->get(
+            $this->buildPath(self::ENTITIES_PATH, $entityId, self::FILES_PATH, $fileId),
+            $this->sdkAuthorization()
         );
     }
 }

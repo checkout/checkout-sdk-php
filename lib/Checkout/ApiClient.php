@@ -214,23 +214,29 @@ class ApiClient
         try {
             $this->logger->info($method . " " . $path);
 
-            // Build up the headers
-            $requestHeaders = $this->getHeaders($authorization, "application/json", $idempotencyKey, $headers);
-
-            // Build up the body
-            $body = null;
+            // Determine body and content type for the request depending on the incoming requestBody
             if ($requestBody !== null) {
                 if (is_array($requestBody) && $this->isMultipartFormData($requestBody)) {
                     // Handle multipart form data content
                     $body = $requestBody;
+                    $contentType = null; // Let Guzzle set multipart content type
                 } elseif (is_string($requestBody) && $this->isFormUrlEncodedContent($requestBody)) {
                     // Handle form URL encoded content
                     $body = $requestBody;
+                    $contentType = "application/x-www-form-urlencoded";
                 } else {
-                    // Default: serialize to JSON
+                    // Default: JSON call, serialize body to JSON
                     $body = $this->jsonSerializer->serialize($requestBody);
+                    $contentType = "application/json";
                 }
+            } else {
+                // Empty default
+                $body = null;
+                $contentType = "application/json";
             }
+
+            // Build up the headers with correct content type
+            $requestHeaders = $this->getHeaders($authorization, $contentType, $idempotencyKey, $headers);
 
             // Make the call
             $response = $this->client->request($method, $this->getRequestUrl($path), [

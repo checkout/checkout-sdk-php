@@ -18,15 +18,18 @@ use Checkout\Instruments\InstrumentsClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
 use Checkout\NetworkTokens\NetworkTokensClient;
+use Checkout\Payments\ApplePay\ApplePayClient;
 use Checkout\Payments\Contexts\PaymentContextsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
 use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\Sessions\PaymentSessionsClient;
 use Checkout\Payments\Setups\PaymentSetupsClient;
+use Checkout\PaymentMethods\PaymentMethodsClient;
 use Checkout\Reports\ReportsClient;
 use Checkout\Risk\RiskClient;
 use Checkout\Sessions\SessionsClient;
+use Checkout\StandaloneAccountUpdater\StandaloneAccountUpdaterClient;
 use Checkout\Tokens\TokensClient;
 use Checkout\Transfers\TransfersClient;
 use Checkout\Workflows\WorkflowsClient;
@@ -70,16 +73,30 @@ final class CheckoutApi extends CheckoutApmApi
 
     private $applicantsClient;
 
+    private $paymentMethodsClient;
+
+    private $standaloneAccountUpdaterClient;
+
+    private $applePayClient;
+
     public function __construct(CheckoutConfiguration $configuration)
     {
         $baseApiClient = $this->getBaseApiClient($configuration);
         parent::__construct($baseApiClient, $configuration);
         $this->tokensClient = new TokensClient($baseApiClient, $configuration);
-        $this->customersClient = new CustomersClient($baseApiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
+        $this->customersClient = new CustomersClient(
+            $baseApiClient,
+            $configuration,
+            AuthorizationType::$secretKeyOrOAuth
+        );
         $this->paymentsClient = new PaymentsClient($baseApiClient, $configuration);
         $this->instrumentsClient = new InstrumentsClient($baseApiClient, $configuration);
         $this->forexClient = new ForexClient($baseApiClient, $configuration);
-        $this->disputesClient = new DisputesClient($baseApiClient, $configuration, AuthorizationType::$secretKeyOrOAuth);
+        $this->disputesClient = new DisputesClient(
+            $baseApiClient,
+            $configuration,
+            AuthorizationType::$secretKeyOrOAuth
+        );
         $this->sessionsClient = new SessionsClient($baseApiClient, $configuration);
         $this->hostedPaymentsClient = new HostedPaymentsClient($baseApiClient, $configuration);
         $this->paymentLinksClient = new PaymentLinksClient($baseApiClient, $configuration);
@@ -112,6 +129,9 @@ final class CheckoutApi extends CheckoutApmApi
             $this->getFilesApiClient($configuration),
             $configuration
         );
+        $this->paymentMethodsClient = new PaymentMethodsClient($baseApiClient, $configuration);
+        $this->standaloneAccountUpdaterClient = new StandaloneAccountUpdaterClient($baseApiClient, $configuration);
+        $this->applePayClient = new ApplePayClient($baseApiClient, $configuration);
     }
 
     /**
@@ -336,6 +356,30 @@ final class CheckoutApi extends CheckoutApmApi
     public function getApplicantsClient()
     {
         return $this->applicantsClient;
+    }
+
+    /**
+     * @return PaymentMethodsClient
+     */
+    public function getPaymentMethodsClient()
+    {
+        return $this->paymentMethodsClient;
+    }
+
+    /**
+     * @return StandaloneAccountUpdaterClient
+     */
+    public function getStandaloneAccountUpdaterClient()
+    {
+        return $this->standaloneAccountUpdaterClient;
+    }
+
+    /**
+     * @return ApplePayClient
+     */
+    public function getApplePayClient()
+    {
+        return $this->applePayClient;
     }
 
     /**

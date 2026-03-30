@@ -22,7 +22,7 @@ class InstrumentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function create(CreateInstrumentRequest $createInstrumentRequest)
+    public function create(CreateInstrumentRequest $createInstrumentRequest): array
     {
         return $this->apiClient->post(self::INSTRUMENTS_PATH, $createInstrumentRequest, $this->sdkAuthorization());
     }
@@ -32,7 +32,7 @@ class InstrumentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function get($instrumentId)
+    public function get($instrumentId): array
     {
         return $this->apiClient->get($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $this->sdkAuthorization());
     }
@@ -43,7 +43,7 @@ class InstrumentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function update($instrumentId, UpdateInstrumentRequest $updateInstrumentRequest)
+    public function update($instrumentId, UpdateInstrumentRequest $updateInstrumentRequest): array
     {
         return $this->apiClient->patch($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $updateInstrumentRequest, $this->sdkAuthorization());
     }
@@ -53,7 +53,7 @@ class InstrumentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function delete($instrumentId)
+    public function delete($instrumentId): array
     {
         return $this->apiClient->delete($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $this->sdkAuthorization());
     }

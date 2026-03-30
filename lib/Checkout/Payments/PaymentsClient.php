@@ -174,4 +174,69 @@ class PaymentsClient extends Client
         );
     }
 
+    /**
+     * @param string $paymentId - The unique payment identifier. (Required)
+     * @param CancelScheduledRetryRequest|null $cancellationRequest
+     * @param string|null $idempotencyKey
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function cancelAScheduledRetry(
+        string $paymentId,
+        ?CancelScheduledRetryRequest $cancelScheduledRetryRequest = null,
+        ?string $idempotencyKey = null
+    ): array {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::PAYMENTS_PATH,
+                $paymentId,
+                "cancellations"
+            ),
+            $cancelScheduledRetryRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
+    }
+
+    /**
+     * @param string $paymentId - The unique payment identifier. (Required)
+     * @param ReversePaymentRequest|null $reversePaymentRequest
+     * @param string|null $idempotencyKey
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function reversePayment(
+        string $paymentId,
+        ?ReversePaymentRequest $reversePaymentRequest = null,
+        ?string $idempotencyKey = null
+    ): array {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::PAYMENTS_PATH,
+                $paymentId,
+                "reversals"
+            ),
+            $reversePaymentRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
+    }
+
+    /**
+     * @param SearchPaymentRequest $searchPaymentRequest
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function searchPayments(SearchPaymentRequest $searchPaymentRequest): array
+    {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::PAYMENTS_PATH,
+                "search"
+            ),
+            $searchPaymentRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
 }

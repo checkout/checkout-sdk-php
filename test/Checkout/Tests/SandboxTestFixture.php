@@ -94,6 +94,7 @@ abstract class SandboxTestFixture extends TestCase
                         OAuthScope::$ForwardSecrets,
                         OAuthScope::$Fx,
                         OAuthScope::$Gateway,
+                        OAuthScope::$GatewayPaymentCancellations,
                         OAuthScope::$IssuingCardMgmt,
                         OAuthScope::$IssuingClient,
                         OAuthScope::$IssuingControlsRead,
@@ -225,8 +226,7 @@ abstract class SandboxTestFixture extends TestCase
     {
         try {
             $func();
-        } catch (Exception $ex) {
-            self::assertTrue($ex instanceof CheckoutApiException);
+        } catch (CheckoutApiException $ex) {
             self::assertContains(
                 $errorItem,
                 $ex->error_details["error_codes"],

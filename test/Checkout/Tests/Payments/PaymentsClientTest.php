@@ -5,6 +5,7 @@ namespace Checkout\Tests\Payments;
 use Checkout\CheckoutApiException;
 use Checkout\Common\AccountHolder;
 use Checkout\Payments\AuthorizationRequest;
+use Checkout\Payments\CancelScheduledRetryRequest;
 use Checkout\Payments\CaptureRequest;
 use Checkout\Payments\PaymentsClient;
 use Checkout\Payments\PaymentsQueryFilter;
@@ -12,6 +13,8 @@ use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\PayoutRequest;
 use Checkout\Payments\Request\Source\RequestProviderTokenSource;
 use Checkout\Payments\RefundRequest;
+use Checkout\Payments\ReversePaymentRequest;
+use Checkout\Payments\SearchPaymentRequest;
 use Checkout\Payments\VoidRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
@@ -190,6 +193,84 @@ class PaymentsClientTest extends UnitTestFixture
             new AuthorizationRequest(),
             "idempotency_key"
         );
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCancelPayment()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["response"]);
+
+        $response = $this->client->cancelAScheduledRetry("payment_id", new CancelScheduledRetryRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCancelPaymentIdempotently()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["response"]);
+
+        $response = $this->client->cancelAScheduledRetry(
+            "payment_id",
+            new CancelScheduledRetryRequest(),
+            "idempotency_key"
+        );
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldReversePayment()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["response"]);
+
+        $response = $this->client->reversePayment("payment_id", new ReversePaymentRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldReversePaymentIdempotently()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["response"]);
+
+        $response = $this->client->reversePayment(
+            "payment_id",
+            new ReversePaymentRequest(),
+            "idempotency_key"
+        );
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSearchPayments()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn(["response"]);
+
+        $response = $this->client->searchPayments(new SearchPaymentRequest());
         $this->assertNotNull($response);
     }
 }

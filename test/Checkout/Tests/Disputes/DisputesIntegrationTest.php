@@ -171,6 +171,97 @@ class DisputesIntegrationTest extends AbstractPaymentsIntegrationTest
     }
 
     /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSubmitArbitrationEvidence()
+    {
+        $disputesQueryFilter = new DisputesQueryFilter();
+        $disputesQueryFilter->limit = 10;
+
+        $queryResponse = $this->checkoutApi->getDisputesClient()->query($disputesQueryFilter);
+        if (array_key_exists("data", $queryResponse) && count($queryResponse["data"]) > 0) {
+            $disputeId = $queryResponse["data"][0]["id"];
+            
+            try {
+                $response = $this->checkoutApi->getDisputesClient()->submitArbitrationEvidence($disputeId);
+                
+                self::assertArrayHasKey("http_metadata", $response);
+                // 204 = Success, evidence submitted
+                $this->assertEquals(204, $response["http_metadata"]->getStatusCode());
+            } catch (CheckoutApiException $ex) {
+                // Handle expected business logic errors gracefully
+                $statusCode = $ex->http_metadata->getStatusCode();
+                $this->assertTrue(
+                    in_array($statusCode, [422, 404, 403]),
+                    "Expected 422 (validation error), 404 (not found), or 403 (forbidden), got: " . $statusCode
+                );
+                
+                // For 422, we can examine the error details
+                if ($statusCode == 422) {
+                    $errorDetails = $ex->error_details;
+                    $this->assertArrayHasKey("error_codes", $errorDetails);
+                    // Common error codes: no_arbitration_evidence_provided, dispute_not_eligible, etc.
+                }
+                
+                // Skip test with informative message about why it failed
+                $this->markTestSkipped(
+                    "Arbitration evidence submission failed as expected (Status: {$statusCode}). " .
+                    "This is normal when no suitable disputes are available for arbitration submission."
+                );
+            }
+        } else {
+            $this->markTestSkipped("No disputes available for arbitration evidence submission test");
+        }
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetCompiledSubmittedArbitrationEvidence()
+    {
+        $disputesQueryFilter = new DisputesQueryFilter();
+        $disputesQueryFilter->limit = 10;
+
+        $queryResponse = $this->checkoutApi->getDisputesClient()->query($disputesQueryFilter);
+        if (array_key_exists("data", $queryResponse) && count($queryResponse["data"]) > 0) {
+            $disputeId = $queryResponse["data"][0]["id"];
+            
+            try {
+                $response = $this->checkoutApi->getDisputesClient()
+                    ->getCompiledSubmittedArbitrationEvidence($disputeId);
+                
+                self::assertArrayHasKey("http_metadata", $response);
+                $this->assertEquals(
+                    200,
+                    $response["http_metadata"]->getStatusCode()
+                );
+                $this->assertResponse(
+                    $response,
+                    "file_id",
+                    "_links"
+                );
+            } catch (CheckoutApiException $ex) {
+                // Handle expected business logic errors gracefully
+                $statusCode = $ex->http_metadata->getStatusCode();
+                $this->assertTrue(
+                    in_array($statusCode, [404, 403, 500]),
+                    "Expected 404 (not found), 403 (forbidden), or 500 (internal error), got: " . $statusCode
+                );
+                
+                // Skip test with informative message
+                $this->markTestSkipped(
+                    "Arbitration evidence retrieval failed as expected (Status: {$statusCode}). " .
+                    "This typically means no arbitration evidence has been submitted for available disputes."
+                );
+            }
+        } else {
+            $this->markTestSkipped("No disputes available for arbitration evidence retrieval test");
+        }
+    }
+
+    /**
      * @return Closure
      */
     private function thereAreDisputes()

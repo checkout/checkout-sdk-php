@@ -24,7 +24,7 @@ class ForexClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function requestQuote(QuoteRequest $quoteRequest)
+    public function requestQuote(QuoteRequest $quoteRequest): array
     {
         return $this->apiClient->post(
             $this->buildPath(self::FOREX_PATH, self::QUOTES_PATH),
@@ -38,7 +38,7 @@ class ForexClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getRates(RatesQueryFilter $ratesQueryFilter)
+    public function getRates(RatesQueryFilter $ratesQueryFilter): array
     {
         return $this->apiClient->query(
             $this->buildPath(self::FOREX_PATH, self::RATES_PATH),

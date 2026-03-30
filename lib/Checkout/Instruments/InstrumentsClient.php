@@ -36,7 +36,7 @@ class InstrumentsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function get($instrumentId)
+    public function get($instrumentId): array
     {
         return $this->apiClient->get($this->buildPath(
             self::INSTRUMENTS_PATH,

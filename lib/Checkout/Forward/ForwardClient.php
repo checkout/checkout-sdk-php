@@ -30,7 +30,7 @@ class ForwardClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function forwardAnApiRequest(ForwardRequest $forwardRequest)
+    public function forwardAnApiRequest(ForwardRequest $forwardRequest): array
     {
         return $this->apiClient->post(
             $this->buildPath(self::FORWARD_PATH),
@@ -48,7 +48,7 @@ class ForwardClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getForwardRequest($forwardId)
+    public function getForwardRequest($forwardId): array
     {
         return $this->apiClient->get(
             $this->buildPath(self::FORWARD_PATH, $forwardId),

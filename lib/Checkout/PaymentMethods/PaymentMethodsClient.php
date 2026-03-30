@@ -28,7 +28,7 @@ class PaymentMethodsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getAvailablePaymentMethods(PaymentMethodsQuery $query)
+    public function getAvailablePaymentMethods(PaymentMethodsQuery $query): array
     {
         return $this->apiClient->query(
             self::PAYMENT_METHODS_PATH,

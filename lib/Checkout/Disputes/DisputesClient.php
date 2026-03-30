@@ -19,7 +19,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function query(DisputesQueryFilter $filter)
+    public function query(DisputesQueryFilter $filter): array
     {
         return $this->apiClient->query(
             self::DISPUTES_PATH,
@@ -33,7 +33,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function getDisputeDetails($disputeId)
+    public function getDisputeDetails($disputeId): array
     {
         return $this->apiClient->get(
             $this->buildPath(self::DISPUTES_PATH, $disputeId),
@@ -46,7 +46,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function accept($disputeId)
+    public function accept($disputeId): array
     {
         return $this->apiClient->post(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::ACCEPT_PATH),
@@ -61,7 +61,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function putEvidence($disputeId, DisputeEvidenceRequest $disputeEvidenceRequest)
+    public function putEvidence($disputeId, DisputeEvidenceRequest $disputeEvidenceRequest): array
     {
         return $this->apiClient->put(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH),
@@ -75,7 +75,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function getEvidence($disputeId)
+    public function getEvidence($disputeId): array
     {
         return $this->apiClient->get(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH),
@@ -88,7 +88,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function submitEvidence($disputeId)
+    public function submitEvidence($disputeId): array
     {
         return $this->apiClient->post(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH),
@@ -102,7 +102,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCompiledSubmittedEvidence($disputeId)
+    public function getCompiledSubmittedEvidence($disputeId): array
     {
         return $this->apiClient->get(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::SUBMITTED_PATH),
@@ -115,7 +115,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function getDisputeSchemeFiles($disputeId)
+    public function getDisputeSchemeFiles($disputeId): array
     {
         return $this->apiClient->get(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::SCHEME_FILES_PATH),
@@ -128,7 +128,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function submitArbitrationEvidence($disputeId)
+    public function submitArbitrationEvidence($disputeId): array
     {
         return $this->apiClient->post(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::ARBITRATION_PATH),
@@ -142,7 +142,7 @@ class DisputesClient extends FilesClient
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCompiledSubmittedArbitrationEvidence($disputeId)
+    public function getCompiledSubmittedArbitrationEvidence($disputeId): array
     {
         return $this->apiClient->get(
             $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::ARBITRATION_PATH, self::SUBMITTED_PATH),

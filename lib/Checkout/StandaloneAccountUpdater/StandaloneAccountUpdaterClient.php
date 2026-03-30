@@ -24,7 +24,7 @@ class StandaloneAccountUpdaterClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getUpdatedCardCredentials(GetUpdatedCardCredentialsRequest $getUpdatedCardCredentialsRequest)
+    public function getUpdatedCardCredentials(GetUpdatedCardCredentialsRequest $getUpdatedCardCredentialsRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ACCOUNT_UPDATER_PATH, self::CARDS_PATH),

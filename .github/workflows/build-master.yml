@@ -20,6 +20,7 @@ jobs:
             - uses: actions/checkout@v2
 
             - name: Install PHP from official repositories
+              shell: bash
               run: |
                   if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
                     sudo apt-get update
@@ -40,6 +41,7 @@ jobs:
               run: composer validate
 
             - name: Composer install (conditional)
+              shell: bash
               run: |
                   if [[ "${{ matrix.php-version }}" == "7.1" ]]; then
                     composer install;

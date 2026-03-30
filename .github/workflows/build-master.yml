@@ -20,22 +20,11 @@ jobs:
             - uses: actions/checkout@v2
 
             - name: Setup PHP
-              shell: bash
-              run: |
-                  if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-                    sudo apt-get update
-                    if [[ "${{ matrix.php-version }}" == "7.1" || "${{ matrix.php-version }}" == "7.4" ]]; then
-                      sudo apt-get install -y php${{ matrix.php-version }} php${{ matrix.php-version }}-cli php${{ matrix.php-version }}-curl php${{ matrix.php-version }}-json php${{ matrix.php-version }}-mbstring php${{ matrix.php-version }}-xml php${{ matrix.php-version }}-zip
-                    else
-                      sudo apt-get install -y php${{ matrix.php-version }} php${{ matrix.php-version }}-cli php${{ matrix.php-version }}-curl php${{ matrix.php-version }}-mbstring php${{ matrix.php-version }}-xml php${{ matrix.php-version }}-zip
-                    fi
-                    sudo update-alternatives --set php /usr/bin/php${{ matrix.php-version }}
-                  else
-                    # Use Scoop instead of Chocolatey for Windows
-                    iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
-                    scoop bucket add versions
-                    scoop install php${{ matrix.php-version }}
-                  fi
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  extensions: curl, json, mbstring, xml, zip, fileinfo
+                  coverage: none
 
             - name: Installed version
               run: php -v

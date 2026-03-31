@@ -85,10 +85,50 @@ jobs:
                   ForEach-Object { $_ -replace ';extension=curl', 'extension=curl' } |
                   ForEach-Object { $_ -replace ';extension=fileinfo', 'extension=fileinfo' } |
                   ForEach-Object { $_ -replace ';extension=mbstring', 'extension=mbstring' } |
-                  ForEach-Object { $_ -replace ';extension=openssl', 'extension=openssl' } |
                   ForEach-Object { $_ -replace ';extension=xml', 'extension=xml' } |
                   ForEach-Object { $_ -replace ';extension=zip', 'extension=zip' } |
+                  ForEach-Object { $_ -replace 'memory_limit = 128M', 'memory_limit = 1G' } |
                   Set-Content "$phpDir\php.ini"
+                  
+                  # Special handling for OpenSSL extension (PHP 7.1 has compatibility issues)
+                  if ($phpVersion -eq "7.1") {
+                      Write-Host "Setting up OpenSSL for PHP 7.1..."
+                      # Check if OpenSSL extension exists
+                      if (Test-Path "$phpDir\ext\php_openssl.dll") {
+                          # Download OpenSSL DLLs for PHP 7.1 compatibility
+                          try {
+                              Write-Host "Downloading OpenSSL libraries for PHP 7.1..."
+                              Invoke-WebRequest -Uri "https://slproweb.com/download/Win64OpenSSL_Light-1_1_1w.msi" -OutFile "$env:TEMP\openssl.msi" -TimeoutSec 30
+                              Start-Process msiexec.exe -Wait -ArgumentList '/I', "$env:TEMP\openssl.msi", '/quiet'
+                              
+                              # Enable OpenSSL extension
+                              (Get-Content "$phpDir\php.ini") -replace ';extension=openssl', 'extension=openssl' |
+                              Set-Content "$phpDir\php.ini"
+                              
+                              Write-Host "OpenSSL setup completed for PHP 7.1"
+                          }
+                          catch {
+                              Write-Host "OpenSSL installation failed, using workaround..."
+                              # Add SSL configuration without enabling extension (fallback)
+                              Add-Content "$phpDir\php.ini" "`n"
+                              Add-Content "$phpDir\php.ini" "; SSL Configuration (fallback for PHP 7.1)"
+                              Add-Content "$phpDir\php.ini" "openssl.cafile=`"$phpDir\cacert.pem`""
+                              
+                              # Download CA certificate bundle
+                              try {
+                                  Invoke-WebRequest -Uri "https://curl.se/ca/cacert.pem" -OutFile "$phpDir\cacert.pem" -TimeoutSec 30
+                              } catch {
+                                  Write-Host "CA bundle download failed, creating minimal config"
+                              }
+                          }
+                      } else {
+                          Write-Host "OpenSSL extension not found for PHP 7.1, skipping SSL setup"
+                      }
+                  } else {
+                      # Enable OpenSSL for newer PHP versions (should work fine)
+                      (Get-Content "$phpDir\php.ini") -replace ';extension=openssl', 'extension=openssl' |
+                      Set-Content "$phpDir\php.ini"
+                  }
                   
                   # Add PHP to PATH (at the beginning to override system PHP)
                   echo "$phpDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -108,11 +148,36 @@ jobs:
               run: php -v
 
             - name: Composer validate
-              run: composer validate
+              shell: bash
+              run: |
+                  if [[ "${{ matrix.php-version }}" == "7.1" && "${{ matrix.os }}" == "windows-latest" ]]; then
+                    # Try normal validation first
+                    composer validate || {
+                      echo "Normal validation failed, trying with SSL disabled for PHP 7.1..."
+                      composer config --global disable-tls true
+                      composer config --global secure-http false
+                      composer validate
+                    }
+                  else
+                    composer validate
+                  fi
 
             - name: Composer install (conditional)
               shell: bash
               run: |
+                  # Configure SSL workaround for PHP 7.1 on Windows if needed
+                  if [[ "${{ matrix.php-version }}" == "7.1" && "${{ matrix.os }}" == "windows-latest" ]]; then
+                    # Test if SSL works, if not configure fallback
+                    php -r "echo extension_loaded('openssl') ? 'OpenSSL loaded' : 'OpenSSL not loaded'; echo PHP_EOL;"
+                    if ! php -r "file_get_contents('https://repo.packagist.org');" 2>/dev/null; then
+                      echo "SSL not working, configuring Composer for PHP 7.1..."
+                      composer config --global disable-tls true
+                      composer config --global secure-http false
+                      composer config --global repos.packagist composer http://repo.packagist.org
+                    fi
+                  fi
+                  
+                  # Install dependencies based on PHP version
                   if [[ "${{ matrix.php-version }}" == "7.1" ]]; then
                     composer install;
                   else

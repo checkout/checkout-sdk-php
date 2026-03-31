@@ -73,4 +73,9 @@ class AccountHolder
      * @var string
      */
     public $middle_name;
+
+    /**
+     * @var bool
+     */
+    public $account_name_inquiry;
 }

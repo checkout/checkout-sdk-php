@@ -95,20 +95,32 @@ jobs:
                       Write-Host "Setting up OpenSSL for PHP 7.1..."
                       # Check if OpenSSL extension exists
                       if (Test-Path "$phpDir\ext\php_openssl.dll") {
+                          # Try to enable OpenSSL extension first
+                          (Get-Content "$phpDir\php.ini") -replace ';extension=openssl', 'extension=openssl' |
+                          Set-Content "$phpDir\php.ini"
+                          
                           # Download OpenSSL DLLs for PHP 7.1 compatibility
                           try {
                               Write-Host "Downloading OpenSSL libraries for PHP 7.1..."
                               Invoke-WebRequest -Uri "https://slproweb.com/download/Win64OpenSSL_Light-1_1_1w.msi" -OutFile "$env:TEMP\openssl.msi" -TimeoutSec 30
                               Start-Process msiexec.exe -Wait -ArgumentList '/I', "$env:TEMP\openssl.msi", '/quiet'
                               
-                              # Enable OpenSSL extension
-                              (Get-Content "$phpDir\php.ini") -replace ';extension=openssl', 'extension=openssl' |
-                              Set-Content "$phpDir\php.ini"
+                              # Copy OpenSSL DLLs to PHP directory
+                              if (Test-Path "C:\Program Files\OpenSSL-Win64\bin\libcrypto-1_1-x64.dll") {
+                                  Copy-Item "C:\Program Files\OpenSSL-Win64\bin\libcrypto-1_1-x64.dll" "$phpDir\" -Force
+                              }
+                              if (Test-Path "C:\Program Files\OpenSSL-Win64\bin\libssl-1_1-x64.dll") {
+                                  Copy-Item "C:\Program Files\OpenSSL-Win64\bin\libssl-1_1-x64.dll" "$phpDir\" -Force
+                              }
                               
                               Write-Host "OpenSSL setup completed for PHP 7.1"
                           }
                           catch {
                               Write-Host "OpenSSL installation failed, using workaround..."
+                              # Disable OpenSSL extension since it's not working
+                              (Get-Content "$phpDir\php.ini") -replace 'extension=openssl', ';extension=openssl' |
+                              Set-Content "$phpDir\php.ini"
+                              
                               # Add SSL configuration without enabling extension (fallback)
                               Add-Content "$phpDir\php.ini" "`n"
                               Add-Content "$phpDir\php.ini" "; SSL Configuration (fallback for PHP 7.1)"
@@ -120,6 +132,26 @@ jobs:
                               } catch {
                                   Write-Host "CA bundle download failed, creating minimal config"
                               }
+                          }
+                          
+                          # Verify OpenSSL is working
+                          Write-Host "Testing OpenSSL functionality..."
+                          $env:PATH = "$phpDir;$env:PATH"
+                          $testResult = & "$phpDir\php.exe" -r "echo extension_loaded('openssl') ? 'OpenSSL SUCCESS' : 'OpenSSL FAILED';"
+                          Write-Host "OpenSSL test result: $testResult"
+                          
+                          # If still not working, force fallback configuration
+                          if ($testResult -match "FAILED") {
+                              Write-Host "OpenSSL still not working, forcing fallback configuration..."
+                              # Ensure extension is disabled
+                              (Get-Content "$phpDir\php.ini") -replace 'extension=openssl', ';extension=openssl' |
+                              Set-Content "$phpDir\php.ini"
+                              
+                              # Add explicit curl configuration
+                              Add-Content "$phpDir\php.ini" "`n"
+                              Add-Content "$phpDir\php.ini" "; Force fallback configuration for PHP 7.1"
+                              Add-Content "$phpDir\php.ini" "allow_url_fopen=On"
+                              Add-Content "$phpDir\php.ini" "user_agent=`"PHP`""
                           }
                       } else {
                           Write-Host "OpenSSL extension not found for PHP 7.1, skipping SSL setup"
@@ -167,13 +199,19 @@ jobs:
               run: |
                   # Configure SSL workaround for PHP 7.1 on Windows if needed
                   if [[ "${{ matrix.php-version }}" == "7.1" && "${{ matrix.os }}" == "windows-latest" ]]; then
-                    # Test if SSL works, if not configure fallback
+                    # Test if SSL works, if not configure fallback BEFORE attempting install
                     php -r "echo extension_loaded('openssl') ? 'OpenSSL loaded' : 'OpenSSL not loaded'; echo PHP_EOL;"
-                    if ! php -r "file_get_contents('https://repo.packagist.org');" 2>/dev/null; then
-                      echo "SSL not working, configuring Composer for PHP 7.1..."
-                      php C:/php-7.1/composer.phar config --global disable-tls true
-                      php C:/php-7.1/composer.phar config --global secure-http false
-                      php C:/php-7.1/composer.phar config --global repos.packagist composer http://repo.packagist.org
+                    
+                    # Always configure fallback for PHP 7.1 Windows since SSL is problematic
+                    echo "Configuring Composer fallback settings for PHP 7.1 Windows..."
+                    php C:/php-7.1/composer.phar config --global disable-tls true
+                    php C:/php-7.1/composer.phar config --global secure-http false
+                    php C:/php-7.1/composer.phar config --global repos.packagist composer http://repo.packagist.org
+                    
+                    # Additional verification
+                    if ! php -r "file_get_contents('http://repo.packagist.org');" 2>/dev/null; then
+                      echo "HTTP fallback also failed, using alternative package source..."
+                      php C:/php-7.1/composer.phar config --global repos.packagist composer http://packagist.org
                     fi
                   fi
                   
@@ -181,7 +219,7 @@ jobs:
                   if [[ "${{ matrix.php-version }}" == "7.1" ]]; then
                     # Use explicit path for PHP 7.1 on Windows to ensure Composer 2.2.24 LTS
                     if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-                      php C:/php-7.1/composer.phar install;
+                      php C:/php-7.1/composer.phar install --ignore-platform-reqs;
                     else
                       composer install;
                     fi

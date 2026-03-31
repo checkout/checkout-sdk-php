@@ -151,12 +151,12 @@ jobs:
               shell: bash
               run: |
                   if [[ "${{ matrix.php-version }}" == "7.1" && "${{ matrix.os }}" == "windows-latest" ]]; then
-                    # Try normal validation first
-                    composer validate || {
+                    # Use explicit path to ensure we use the correct Composer version (2.2.24) for PHP 7.1
+                    php C:/php-7.1/composer.phar validate || {
                       echo "Normal validation failed, trying with SSL disabled for PHP 7.1..."
-                      composer config --global disable-tls true
-                      composer config --global secure-http false
-                      composer validate
+                      php C:/php-7.1/composer.phar config --global disable-tls true
+                      php C:/php-7.1/composer.phar config --global secure-http false
+                      php C:/php-7.1/composer.phar validate
                     }
                   else
                     composer validate
@@ -171,15 +171,20 @@ jobs:
                     php -r "echo extension_loaded('openssl') ? 'OpenSSL loaded' : 'OpenSSL not loaded'; echo PHP_EOL;"
                     if ! php -r "file_get_contents('https://repo.packagist.org');" 2>/dev/null; then
                       echo "SSL not working, configuring Composer for PHP 7.1..."
-                      composer config --global disable-tls true
-                      composer config --global secure-http false
-                      composer config --global repos.packagist composer http://repo.packagist.org
+                      php C:/php-7.1/composer.phar config --global disable-tls true
+                      php C:/php-7.1/composer.phar config --global secure-http false
+                      php C:/php-7.1/composer.phar config --global repos.packagist composer http://repo.packagist.org
                     fi
                   fi
                   
                   # Install dependencies based on PHP version
                   if [[ "${{ matrix.php-version }}" == "7.1" ]]; then
-                    composer install;
+                    # Use explicit path for PHP 7.1 on Windows to ensure Composer 2.2.24 LTS
+                    if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+                      php C:/php-7.1/composer.phar install;
+                    else
+                      composer install;
+                    fi
                   else
                     composer require guzzlehttp/guzzle:"^7.4" guzzlehttp/promises:"^2.0" phpunit/phpunit:"^9.5" --dev --with-all-dependencies;
                   fi

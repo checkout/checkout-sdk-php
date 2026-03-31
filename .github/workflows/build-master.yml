@@ -19,12 +19,84 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ matrix.php-version }}
-                  extensions: curl, json, mbstring, xml, zip, fileinfo
-                  coverage: none
+            - name: Setup PHP (Ubuntu)
+              if: matrix.os == 'ubuntu-latest'
+              shell: bash
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y software-properties-common
+                  sudo add-apt-repository ppa:ondrej/php -y
+                  sudo apt-get update
+                  
+                  # Install PHP and required extensions
+                  if [[ "${{ matrix.php-version }}" == "7.1" || "${{ matrix.php-version }}" == "7.4" ]]; then
+                    # PHP 7.x installations
+                    sudo apt-get install -y php${{ matrix.php-version }} php${{ matrix.php-version }}-cli php${{ matrix.php-version }}-common
+                    sudo apt-get install -y php${{ matrix.php-version }}-curl php${{ matrix.php-version }}-json php${{ matrix.php-version }}-mbstring 
+                    sudo apt-get install -y php${{ matrix.php-version }}-xml php${{ matrix.php-version }}-zip php${{ matrix.php-version }}-xdebug
+                    # Try to install fileinfo if package exists, ignore if not (often built-in)
+                    sudo apt-get install -y php${{ matrix.php-version }}-fileinfo 2>/dev/null || true
+                  else
+                    # PHP 8.x installations (json is built-in, no separate package)
+                    sudo apt-get install -y php${{ matrix.php-version }} php${{ matrix.php-version }}-cli php${{ matrix.php-version }}-common
+                    sudo apt-get install -y php${{ matrix.php-version }}-curl php${{ matrix.php-version }}-mbstring 
+                    sudo apt-get install -y php${{ matrix.php-version }}-xml php${{ matrix.php-version }}-zip
+                    # Try to install fileinfo if package exists, ignore if not (often built-in)
+                    sudo apt-get install -y php${{ matrix.php-version }}-fileinfo 2>/dev/null || true
+                  fi
+                  
+                  # Set PHP as default
+                  sudo update-alternatives --set php /usr/bin/php${{ matrix.php-version }}
+                  
+                  # Install Composer
+                  curl -sS https://getcomposer.org/installer | php
+                  sudo mv composer.phar /usr/local/bin/composer
+                  sudo chmod +x /usr/local/bin/composer
+
+            - name: Setup PHP (Windows)
+              if: matrix.os == 'windows-latest'
+              shell: powershell
+              run: |
+                  # Download and setup specific PHP version for Windows
+                  $phpVersion = "${{ matrix.php-version }}"
+                  $phpDir = "C:\php-$phpVersion"
+                  
+                  # Create PHP directory
+                  New-Item -ItemType Directory -Force -Path $phpDir
+                  
+                  # Download PHP based on version
+                  switch ($phpVersion) {
+                      "7.1" { $downloadUrl = "https://windows.php.net/downloads/releases/archives/php-7.1.33-Win32-VC14-x64.zip" }
+                      "7.4" { $downloadUrl = "https://windows.php.net/downloads/releases/archives/php-7.4.33-Win32-vc15-x64.zip" }
+                      "8.1" { $downloadUrl = "https://windows.php.net/downloads/releases/archives/php-8.1.29-Win32-vs16-x64.zip" }
+                      "8.4" { $downloadUrl = "https://windows.php.net/downloads/releases/php-8.4.0-Win32-vs16-x64.zip" }
+                      default { throw "Unsupported PHP version: $phpVersion" }
+                  }
+                  
+                  # Download and extract PHP
+                  $zipFile = "$phpDir\php.zip"
+                  Invoke-WebRequest -Uri $downloadUrl -OutFile $zipFile
+                  Expand-Archive -Path $zipFile -DestinationPath $phpDir -Force
+                  Remove-Item $zipFile
+                  
+                  # Copy php.ini-development to php.ini and enable extensions
+                  Copy-Item "$phpDir\php.ini-development" "$phpDir\php.ini"
+                  (Get-Content "$phpDir\php.ini") -replace ';extension=curl', 'extension=curl' |
+                  ForEach-Object { $_ -replace ';extension=fileinfo', 'extension=fileinfo' } |
+                  ForEach-Object { $_ -replace ';extension=mbstring', 'extension=mbstring' } |
+                  ForEach-Object { $_ -replace ';extension=openssl', 'extension=openssl' } |
+                  ForEach-Object { $_ -replace ';extension=xml', 'extension=xml' } |
+                  ForEach-Object { $_ -replace ';extension=zip', 'extension=zip' } |
+                  Set-Content "$phpDir\php.ini"
+                  
+                  # Add PHP to PATH (at the beginning to override system PHP)
+                  echo "$phpDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+                  $env:PATH = "$phpDir;$env:PATH"
+                  
+                  # Download and setup Composer
+                  Invoke-WebRequest -Uri "https://getcomposer.org/composer-stable.phar" -OutFile "$phpDir\composer.phar"
+                  echo "@echo off" | Out-File -FilePath "$phpDir\composer.bat" -Encoding ascii
+                  echo "php `"%~dp0composer.phar`" %*" | Out-File -FilePath "$phpDir\composer.bat" -Encoding ascii -Append
 
             - name: Installed version
               run: php -v

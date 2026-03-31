@@ -486,7 +486,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getControlProfiles(ControlProfileQuery $query = null)
+    public function getControlProfiles(?ControlProfileQuery $query = null)
     {
         return $this->apiClient->query(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH),
@@ -694,7 +694,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getListTransactions(TransactionsQuery $query = null)
+    public function getListTransactions(?TransactionsQuery $query = null)
     {
         return $this->apiClient->query(
             $this->buildPath(self::ISSUING_PATH, self::TRANSACTIONS_PATH),

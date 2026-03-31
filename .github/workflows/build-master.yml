@@ -13,8 +13,23 @@ jobs:
             max-parallel: 1
             fail-fast: false
             matrix:
-                os: [ubuntu-latest, windows-latest]
-                php-version: ["7.1", "7.4", "8.1", "8.4"]
+                include:
+                    # Ubuntu builds (all PHP versions)
+                    - os: ubuntu-latest
+                      php-version: "7.1"
+                    - os: ubuntu-latest
+                      php-version: "7.4"
+                    - os: ubuntu-latest
+                      php-version: "8.1"
+                    - os: ubuntu-latest
+                      php-version: "8.4"
+                    # Windows builds (no PHP 7.1 due to SSL compatibility issues)
+                    - os: windows-latest
+                      php-version: "7.4"
+                    - os: windows-latest
+                      php-version: "8.1"
+                    - os: windows-latest
+                      php-version: "8.4"
 
         steps:
             - uses: actions/checkout@v2
@@ -85,189 +100,11 @@ jobs:
                   ForEach-Object { $_ -replace ';extension=curl', 'extension=curl' } |
                   ForEach-Object { $_ -replace ';extension=fileinfo', 'extension=fileinfo' } |
                   ForEach-Object { $_ -replace ';extension=mbstring', 'extension=mbstring' } |
+                  ForEach-Object { $_ -replace ';extension=openssl', 'extension=openssl' } |
                   ForEach-Object { $_ -replace ';extension=xml', 'extension=xml' } |
                   ForEach-Object { $_ -replace ';extension=zip', 'extension=zip' } |
                   ForEach-Object { $_ -replace 'memory_limit = 128M', 'memory_limit = 1G' } |
                   Set-Content "$phpDir\php.ini"
-                  
-                  # Special handling for OpenSSL extension (PHP 7.1 has compatibility issues)
-                  if ($phpVersion -eq "7.1") {
-                      Write-Host "Setting up comprehensive OpenSSL solution for PHP 7.1..."
-                      # Check if OpenSSL extension exists
-                      if (Test-Path "$phpDir\ext\php_openssl.dll") {
-                          Write-Host "OpenSSL extension found, setting up compatible OpenSSL libraries..."
-                          
-                          # Download PHP 7.1 compatible OpenSSL DLLs using multiple sources
-                          try {
-                              Write-Host "Downloading VC14-compatible OpenSSL DLLs for PHP 7.1..."
-                              
-                              # Multiple OpenSSL sources with fallbacks
-                              $opensslUrls = @(
-                                  @{url="https://github.com/IndySockets/OpenSSL-Binaries/raw/master/Archive/OpenSSL135/Compiled/Win64/libeay32.dll"; name="libeay32.dll"; fallback=$true},
-                                  @{url="https://github.com/IndySockets/OpenSSL-Binaries/raw/master/Archive/OpenSSL135/Compiled/Win64/ssleay32.dll"; name="ssleay32.dll"; fallback=$true},
-                                  @{url="https://github.com/php/php-src/files/6797751/php71-openssl-dlls-win64.zip"; name="openssl-bundle"; fallback=$false}
-                              )
-                              
-                              $dllsDownloaded = $false
-                              
-                              # Try direct DLL downloads first (most reliable)
-                              foreach ($item in $opensslUrls | Where-Object {$_.fallback -eq $true}) {
-                                  try {
-                                      Write-Host "Trying to download $($item.name)..."
-                                      Invoke-WebRequest -Uri $item.url -OutFile "$phpDir\$($item.name)" -TimeoutSec 30
-                                      Write-Host "Successfully downloaded $($item.name)"
-                                      $dllsDownloaded = $true
-                                  }
-                                  catch {
-                                      Write-Host "Failed to download $($item.name): $($_.Exception.Message)"
-                                  }
-                              }
-                              
-                              # If direct downloads failed, try Windows installer
-                              if (-not $dllsDownloaded) {
-                                  Write-Host "Direct downloads failed, trying Windows installer approach..."
-                                  try {
-                                      # Try OpenSSL 1.0.2 installer (compatible with PHP 7.1)
-                                      $installerUrls = @(
-                                          "https://slproweb.com/download/Win64OpenSSL_Light-1_0_2u.msi",
-                                          "https://slproweb.com/download/Win64OpenSSL-1_0_2u.msi"
-                                      )
-                                      
-                                      foreach ($installerUrl in $installerUrls) {
-                                          try {
-                                              Write-Host "Trying installer: $installerUrl"
-                                              Invoke-WebRequest -Uri $installerUrl -OutFile "$env:TEMP\openssl.msi" -TimeoutSec 30
-                                              Start-Process msiexec.exe -Wait -ArgumentList '/I', "$env:TEMP\openssl.msi", '/quiet', '/norestart'
-                                              
-                                              # Copy the DLLs if installation succeeded
-                                              $opensslPaths = @(
-                                                  "C:\OpenSSL-Win64\bin\libeay32.dll",
-                                                  "C:\OpenSSL-Win64\bin\ssleay32.dll",
-                                                  "C:\Program Files\OpenSSL\bin\libeay32.dll",
-                                                  "C:\Program Files\OpenSSL\bin\ssleay32.dll",
-                                                  "C:\Program Files\OpenSSL-Win64\bin\libeay32.dll",
-                                                  "C:\Program Files\OpenSSL-Win64\bin\ssleay32.dll"
-                                              )
-                                              
-                                              foreach ($dllPath in $opensslPaths) {
-                                                  if (Test-Path $dllPath) {
-                                                      $fileName = Split-Path $dllPath -Leaf
-                                                      Copy-Item $dllPath "$phpDir\$fileName" -Force -ErrorAction SilentlyContinue
-                                                      Write-Host "Copied $fileName from system OpenSSL"
-                                                      $dllsDownloaded = $true
-                                                  }
-                                              }
-                                              
-                                              if ($dllsDownloaded) { break }
-                                          }
-                                          catch {
-                                              Write-Host "Installer $installerUrl failed: $($_.Exception.Message)"
-                                              continue
-                                          }
-                                      }
-                                  }
-                                  catch {
-                                      Write-Host "All installer attempts failed: $($_.Exception.Message)"
-                                  }
-                              }
-                              
-                              if ($dllsDownloaded) {
-                                  Write-Host "OpenSSL DLL setup completed successfully"
-                              } else {
-                                  Write-Host "Failed to download OpenSSL DLLs - will use HTTP-only mode"
-                              }
-                          }
-                          catch {
-                              Write-Host "OpenSSL DLL download failed: $($_.Exception.Message)"
-                          }
-                          
-                          # Enable OpenSSL extension and configure properly
-                          Write-Host "Configuring PHP for OpenSSL..."
-                          (Get-Content "$phpDir\php.ini") -replace ';extension=openssl', 'extension=openssl' |
-                          ForEach-Object { $_ -replace ';extension=php_openssl.dll', 'extension=php_openssl.dll' } |
-                          Set-Content "$phpDir\php.ini"
-                          
-                          # Add comprehensive SSL configuration
-                          Add-Content "$phpDir\php.ini" ""
-                          Add-Content "$phpDir\php.ini" "; OpenSSL Configuration for PHP 7.1"
-                          Add-Content "$phpDir\php.ini" "openssl.cafile=`"$phpDir\cacert.pem`""
-                          Add-Content "$phpDir\php.ini" "openssl.capath=`"$phpDir`""
-                          Add-Content "$phpDir\php.ini" "curl.cainfo=`"$phpDir\cacert.pem`""
-                          Add-Content "$phpDir\php.ini" "allow_url_fopen=On"
-                          Add-Content "$phpDir\php.ini" "allow_url_include=Off"
-                          Add-Content "$phpDir\php.ini" "auto_detect_line_endings=On"
-                          
-                          # Download CA certificate bundle
-                          try {
-                              Write-Host "Downloading CA certificate bundle..."
-                              Invoke-WebRequest -Uri "https://curl.se/ca/cacert.pem" -OutFile "$phpDir\cacert.pem" -TimeoutSec 30
-                              Write-Host "CA bundle downloaded successfully"
-                          } catch {
-                              Write-Host "CA bundle download failed, trying alternative..."
-                              try {
-                                  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt" -OutFile "$phpDir\cacert.pem" -TimeoutSec 30
-                              } catch {
-                                  Write-Host "All CA bundle downloads failed, creating minimal bundle"
-                                  # Create a minimal certificate file that allows basic operations
-                                  Set-Content "$phpDir\cacert.pem" "# Minimal CA Bundle for PHP 7.1`n"
-                              }
-                          }
-                          
-                          # Test OpenSSL functionality comprehensively   
-                          Write-Host "Testing OpenSSL and HTTPS wrapper functionality..."
-                          $env:PATH = "$phpDir;$env:PATH"
-                          
-                          # Test 1: Extension loading
-                          $opensslLoaded = & "$phpDir\php.exe" -r "echo extension_loaded('openssl') ? '1' : '0';"
-                          Write-Host "OpenSSL extension loaded: $($opensslLoaded -eq '1')"
-                          
-                          # Test 2: HTTPS wrapper availability
-                          $httpsWrapper = & "$phpDir\php.exe" -r "echo in_array('https', stream_get_wrappers()) ? '1' : '0';"
-                          Write-Host "HTTPS wrapper available: $($httpsWrapper -eq '1')"
-                          
-                          # Test 3: SSL context creation (simplified test)
-                          $sslContext = & "$phpDir\php.exe" -r "echo function_exists('stream_context_create') ? '1' : '0';"
-                          Write-Host "SSL context creation: $($sslContext -eq '1')"
-                          
-                          # If any test fails, implement fallback
-                          if ($opensslLoaded -ne '1' -or $httpsWrapper -ne '1') {
-                              Write-Host "OpenSSL tests failed, implementing comprehensive fallback..."
-                              
-                              # Disable problematic extension
-                              (Get-Content "$phpDir\php.ini") -replace 'extension=openssl', ';extension=openssl' |
-                              ForEach-Object { $_ -replace 'extension=php_openssl.dll', ';extension=php_openssl.dll' } |
-                              Set-Content "$phpDir\php.ini"
-                              
-                              # Enable cURL as primary transport
-                              (Get-Content "$phpDir\php.ini") -replace ';extension=curl', 'extension=curl' |
-                              Set-Content "$phpDir\php.ini"
-                              
-                              # Add comprehensive fallback configuration
-                              Add-Content "$phpDir\php.ini" ""
-                              Add-Content "$phpDir\php.ini" "; Fallback configuration for PHP 7.1 Windows without OpenSSL"
-                              Add-Content "$phpDir\php.ini" "allow_url_fopen=On"
-                              Add-Content "$phpDir\php.ini" "allow_url_include=Off"
-                              Add-Content "$phpDir\php.ini" "user_agent=PHP/7.1-Windows-Composer"
-                              Add-Content "$phpDir\php.ini" "default_socket_timeout=60"
-                              
-                              Write-Host "Fallback configuration applied - will use cURL and HTTP-only repositories"
-                          } else {
-                              Write-Host "OpenSSL setup successful - HTTPS should work properly"
-                          }
-                      } else {
-                          Write-Host "OpenSSL extension not found for PHP 7.1, configuring HTTP-only mode"
-                          # Configure for HTTP-only operations
-                          Add-Content "$phpDir\php.ini" ""
-                          Add-Content "$phpDir\php.ini" "; HTTP-only configuration for PHP 7.1 without OpenSSL extension" 
-                          Add-Content "$phpDir\php.ini" "allow_url_fopen=On"
-                          Add-Content "$phpDir\php.ini" "user_agent=PHP/7.1-Windows-HTTP-only"
-                          Add-Content "$phpDir\php.ini" "default_socket_timeout=60"
-                      }
-                  } else {
-                      # Enable OpenSSL for newer PHP versions (should work fine)
-                      (Get-Content "$phpDir\php.ini") -replace ';extension=openssl', 'extension=openssl' |
-                      Set-Content "$phpDir\php.ini"
-                  }
                   
                   # Add PHP to PATH (at the beginning to override system PHP)
                   echo "$phpDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -288,91 +125,17 @@ jobs:
 
             - name: Composer validate
               shell: bash
-              run: |
-                  if [[ "${{ matrix.php-version }}" == "7.1" && "${{ matrix.os }}" == "windows-latest" ]]; then
-                    # Use explicit path to ensure we use the correct Composer version (2.2.24) for PHP 7.1
-                    php C:/php-7.1/composer.phar validate || {
-                      echo "Normal validation failed, trying with SSL disabled for PHP 7.1..."
-                      php C:/php-7.1/composer.phar config --global disable-tls true
-                      php C:/php-7.1/composer.phar config --global secure-http false
-                      php C:/php-7.1/composer.phar validate
-                    }
-                  else
-                    composer validate
-                  fi
+              run: composer validate
 
             - name: Composer install (conditional)
               shell: bash
               run: |
-                  # Configure comprehensive Composer setup for PHP 7.1 on Windows
-                  if [[ "${{ matrix.php-version }}" == "7.1" && "${{ matrix.os }}" == "windows-latest" ]]; then
-                    echo "=== PHP 7.1 Windows Composer Configuration ==="
-                    
-                    # Test current PHP capabilities
-                    echo "Testing PHP capabilities..."
-                    php -r "echo 'OpenSSL loaded: ' . (extension_loaded('openssl') ? 'YES' : 'NO') . PHP_EOL;"
-                    php -r "echo 'HTTPS wrapper: ' . (in_array('https', stream_get_wrappers()) ? 'YES' : 'NO') . PHP_EOL;"
-                    php -r "echo 'cURL loaded: ' . (extension_loaded('curl') ? 'YES' : 'NO') . PHP_EOL;"
-                    
-                    # Determine best configuration approach
-                    OPENSSL_WORKS=$(php -r "echo extension_loaded('openssl') && in_array('https', stream_get_wrappers()) ? '1' : '0';")
-                    
-                    if [[ "$OPENSSL_WORKS" == "1" ]]; then
-                      echo "OpenSSL and HTTPS wrapper working - using secure repositories"
-                      php C:/php-7.1/composer.phar config --global repos.packagist composer https://repo.packagist.org
-                      php C:/php-7.1/composer.phar config --global disable-tls false
-                      php C:/php-7.1/composer.phar config --global secure-http true
-                    else
-                      echo "OpenSSL/HTTPS not working - configuring comprehensive HTTP fallback"
-                      
-                      # Configure Composer for HTTP-only mode
-                      php C:/php-7.1/composer.phar config --global disable-tls true
-                      php C:/php-7.1/composer.phar config --global secure-http false
-                      
-                      # Set up multiple repository fallbacks
-                      echo "Setting up repository fallbacks..."
-                      
-                      # Try different HTTP repository configurations
-                      REPO_CONFIGS=(
-                        "http://repo.packagist.org"
-                        "http://packagist.org"
-                        "http://packagist.composer-php.org"
-                      )
-                      
-                      for repo in "${REPO_CONFIGS[@]}"; do
-                        echo "Testing repository: $repo"
-                        if php -r "echo file_get_contents('$repo/packages.json') ? 'OK' : 'FAIL';" 2>/dev/null | grep -q "OK"; then
-                          echo "Repository $repo is accessible, using it"
-                          php C:/php-7.1/composer.phar config --global repos.packagist composer "$repo"
-                          break
-                        else
-                          echo "Repository $repo failed, trying next..."
-                        fi
-                      done
-                      
-                      # Additional Composer optimizations for HTTP mode
-                      php C:/php-7.1/composer.phar config --global process-timeout 600
-                      php C:/php-7.1/composer.phar config --global cache-ttl 86400
-                      php C:/php-7.1/composer.phar config --global optimize-autoloader true
-                      
-                      echo "HTTP-only mode configured successfully"
-                    fi
-                    
-                    # Show final Composer configuration
-                    echo "=== Final Composer Configuration ==="
-                    php C:/php-7.1/composer.phar config --global --list | grep -E "(repos|secure-http|disable-tls)" || true
-                  fi
-                  
                   # Install dependencies based on PHP version
                   if [[ "${{ matrix.php-version }}" == "7.1" ]]; then
-                    # Use explicit path for PHP 7.1 on Windows to ensure Composer 2.2.24 LTS
-                    if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-                      echo "Installing dependencies with PHP 7.1 compatibility..."
-                      php C:/php-7.1/composer.phar install --ignore-platform-reqs --no-interaction --prefer-dist -v;
-                    else
-                      composer install;
-                    fi
+                    # Ubuntu PHP 7.1 - use standard composer
+                    composer install;
                   else
+                    # PHP 7.4, 8.1, 8.4 - update to newer package versions
                     composer require guzzlehttp/guzzle:"^7.4" guzzlehttp/promises:"^2.0" phpunit/phpunit:"^9.5" --dev --with-all-dependencies;
                   fi
 

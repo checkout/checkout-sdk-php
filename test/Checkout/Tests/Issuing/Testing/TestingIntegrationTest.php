@@ -13,6 +13,7 @@ use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
 use Checkout\Issuing\Testing\SimulateRefundRequest;
 use Checkout\Issuing\Testing\SimulateOobAuthenticationRequest;
+use Checkout\Issuing\Testing\OobSimulateTransactionDetails;
 use Checkout\Issuing\Testing\CardSimulation;
 use Checkout\Issuing\Testing\TransactionSimulation;
 use Checkout\Issuing\Testing\TransactionType;
@@ -217,9 +218,15 @@ class TestingIntegrationTest extends AbstractIssuingIntegrationTest
      */
     private function buildSimulateOobAuthenticationRequest()
     {
+        $transactionDetails = new OobSimulateTransactionDetails();
+        $transactionDetails->merchant_name = "Integration Test Merchant";
+        $transactionDetails->purchase_amount = 150.00;
+        $transactionDetails->purchase_currency = "USD";
+        $transactionDetails->last_four = "1234";
+
         $request = new SimulateOobAuthenticationRequest();
-        $request->transaction_id = "txi_integration_test_12345"; // Replace with actual transaction ID
-        $request->outcome = "authentication_successful";
+        $request->card_id = "crd_integration_test_12345678";
+        $request->transaction_details = $transactionDetails;
         return $request;
     }
 
@@ -228,23 +235,29 @@ class TestingIntegrationTest extends AbstractIssuingIntegrationTest
      */
     private function buildSimulateOobAuthenticationFailedRequest()
     {
+        $transactionDetails = new OobSimulateTransactionDetails();
+        $transactionDetails->merchant_name = "Failed Test Merchant";
+        $transactionDetails->purchase_amount = 50.00;
+        $transactionDetails->purchase_currency = "EUR";
+        $transactionDetails->last_four = "9999";
+
         $request = new SimulateOobAuthenticationRequest();
-        $request->transaction_id = "txi_integration_test_failed"; // Replace with actual transaction ID
-        $request->outcome = "authentication_failed";
+        $request->card_id = "crd_integration_test_failed567890";
+        $request->transaction_details = $transactionDetails;
         return $request;
     }
 
     private function validateSimulateOobAuthenticationResponse(array $response): void
     {
-        $this->assertResponse($response, "transaction_id", "outcome", "status");
+        $this->assertResponse($response, "status", "authentication_result", "card_id");
         
-        $this->assertEquals("txi_integration_test_12345", $response["transaction_id"]);
-        $this->assertEquals("authentication_successful", $response["outcome"]);
+        $this->assertEquals("crd_integration_test_12345678", $response["card_id"]);
         $this->assertTrue(in_array($response["status"], ["completed", "pending", "processing"]));
+        $this->assertTrue(in_array($response["authentication_result"], ["success", "failed", "pending"]));
         
         // Validate optional fields if present
-        if (isset($response["authentication_details"])) {
-            $this->assertTrue(is_array($response["authentication_details"]));
+        if (isset($response["transaction_details"])) {
+            $this->assertTrue(is_array($response["transaction_details"]));
         }
         
         if (isset($response["created_time"])) {
@@ -254,19 +267,19 @@ class TestingIntegrationTest extends AbstractIssuingIntegrationTest
 
     private function validateSimulateOobAuthenticationFailedResponse(array $response): void
     {
-        $this->assertResponse($response, "transaction_id", "outcome", "status");
+        $this->assertResponse($response, "status", "authentication_result", "card_id");
         
-        $this->assertEquals("txi_integration_test_failed", $response["transaction_id"]);
-        $this->assertEquals("authentication_failed", $response["outcome"]);
+        $this->assertEquals("crd_integration_test_failed567890", $response["card_id"]);
         $this->assertTrue(in_array($response["status"], ["completed", "failed", "processing"]));
+        $this->assertTrue(in_array($response["authentication_result"], ["failed", "timeout", "error"]));
         
         // Validate optional failure details if present
         if (isset($response["failure_reason"])) {
             $this->assertNotEmpty($response["failure_reason"]);
         }
         
-        if (isset($response["authentication_details"])) {
-            $this->assertTrue(is_array($response["authentication_details"]));
+        if (isset($response["transaction_details"])) {
+            $this->assertTrue(is_array($response["transaction_details"]));
         }
     }
 

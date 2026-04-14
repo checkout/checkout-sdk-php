@@ -31,7 +31,7 @@ class GooglePayClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function createEnrollment(GooglePayEnrollmentRequest $request): array
+    public function createEnrollment(GooglePayEnrollmentRequest $request) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::GOOGLEPAY_PATH, self::ENROLLMENTS_PATH),
@@ -48,7 +48,7 @@ class GooglePayClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function registerDomain(string $entityId, GooglePayRegisterDomainRequest $request): array
+    public function registerDomain(string $entityId, GooglePayRegisterDomainRequest $request) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::GOOGLEPAY_PATH, self::ENROLLMENTS_PATH, $entityId, self::DOMAIN_PATH),
@@ -64,7 +64,7 @@ class GooglePayClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getRegisteredDomains(string $entityId): array
+    public function getRegisteredDomains(string $entityId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::GOOGLEPAY_PATH, self::ENROLLMENTS_PATH, $entityId, self::DOMAINS_PATH),
@@ -79,7 +79,7 @@ class GooglePayClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getEnrollmentState(string $entityId): array
+    public function getEnrollmentState(string $entityId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::GOOGLEPAY_PATH, self::ENROLLMENTS_PATH, $entityId, self::STATE_PATH),

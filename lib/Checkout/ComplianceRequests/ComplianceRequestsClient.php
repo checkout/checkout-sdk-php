@@ -25,7 +25,7 @@ class ComplianceRequestsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getComplianceRequest(string $paymentId): array
+    public function getComplianceRequest(string $paymentId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::COMPLIANCE_REQUESTS_PATH, $paymentId),
@@ -41,8 +41,10 @@ class ComplianceRequestsClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function respondToComplianceRequest(string $paymentId, ComplianceRequestRespondRequest $response): array
-    {
+    public function respondToComplianceRequest(
+        string $paymentId,
+        ComplianceRequestRespondRequest $response
+    ) : array {
         return $this->apiClient->post(
             $this->buildPath(self::COMPLIANCE_REQUESTS_PATH, $paymentId),
             $response,

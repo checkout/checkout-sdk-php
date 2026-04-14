@@ -201,10 +201,10 @@ class AgenticCommerceClientTest extends UnitTestFixture
         
         // Add billing address
         $billingAddress = new DelegatedPaymentBillingAddress();
-        $billingAddress->address_line1 = "123 Main St";
+        $billingAddress->line_one = "123 Main St";
         $billingAddress->city = "New York";
         $billingAddress->country = "US";
-        $billingAddress->zip = "10001";
+        $billingAddress->postal_code = "10001";
         $request->billing_address = $billingAddress;
 
         // Multiple risk signals

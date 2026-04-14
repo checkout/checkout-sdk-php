@@ -34,4 +34,16 @@ class DelegatedPaymentHeaders
      * @var string|null
      */
     public $api_version;
+
+    /**
+     * Get custom header name mappings for properties that don't follow standard conversion rules.
+     *
+     * @return array Property name to HTTP header name mappings
+     */
+    public function getHeaderMappings(): array
+    {
+        return [
+            'api_version' => 'API-Version'
+        ];
+    }
 }

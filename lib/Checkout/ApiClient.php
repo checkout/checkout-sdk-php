@@ -290,12 +290,24 @@ class ApiClient
         // Add custom headers using reflection
         if ($customHeaders !== null) {
             $reflection = new \ReflectionClass($customHeaders);
+            
+            // Check if the class defines custom header mappings
+            $customMappings = [];
+            if ($reflection->hasMethod('getHeaderMappings')) {
+                $customMappings = $customHeaders->getHeaderMappings();
+            }
+            
             foreach ($reflection->getProperties() as $property) {
                 $property->setAccessible(true);
                 $value = $property->getValue($customHeaders);
                 if ($value !== null && $value !== '') {
-                    // Convert property name to HTTP header format
-                    $headerName = $this->convertPropertyToHeader($property->getName());
+                    $propertyName = $property->getName();
+                    
+                    // Use custom mapping if available, otherwise convert using default logic
+                    $headerName = isset($customMappings[$propertyName])
+                        ? $customMappings[$propertyName]
+                        : $this->convertPropertyToHeader($propertyName);
+                    
                     $headers[$headerName] = (string)$value;
                 }
             }

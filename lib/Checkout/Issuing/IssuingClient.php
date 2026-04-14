@@ -842,7 +842,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function simulateOobAuthentication(SimulateOobAuthenticationRequest $request)
+    public function simulateOobAuthentication(SimulateOobAuthenticationRequest $request) : array
     {
         return $this->apiClient->post(
             $this->buildPath(

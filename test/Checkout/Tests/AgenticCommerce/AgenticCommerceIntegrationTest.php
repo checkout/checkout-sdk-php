@@ -128,10 +128,10 @@ class AgenticCommerceIntegrationTest extends SandboxTestFixture
         $request = $this->buildValidDelegatedPaymentRequest();
         
         $billingAddress = new DelegatedPaymentBillingAddress();
-        $billingAddress->address_line1 = "123 Test Street";
+        $billingAddress->line_one = "123 Test Street";
         $billingAddress->city = "London";
         $billingAddress->country = "GB";
-        $billingAddress->zip = "SW1A 1AA";
+        $billingAddress->postal_code = "SW1A 1AA";
         
         $request->billing_address = $billingAddress;
         

@@ -8,6 +8,8 @@ class OAuthScope
     public static $Balances = "balances";
     public static $BalancesView = "balances:view";
     public static $CardManagement = "card-management";
+    public static $ComplianceRequestsRead = "compliance-requests:read";
+    public static $ComplianceRequestsRespond = "compliance-requests:respond";
     public static $Disputes = "disputes";
     public static $DisputesAccept = "disputes:accept";
     public static $DisputesProvideEvidence = "disputes:provide-evidence";
@@ -64,6 +66,7 @@ class OAuthScope
     public static $VaultApmeEnrollment = "vault:apme-enrollment";
     public static $VaultCardMetadata = "vault:card-metadata";
     public static $VaultCustomers = "vault:customers";
+    public static $VaultGpaymeEnrollment = "vault:gpayme-enrollment";
     public static $VaultInstruments = "vault:instruments";
     public static $VaultNetworkTokens = "vault:network-tokens";
     public static $VaultRealTimeAccountUpdater = "vault:real-time-account-updater";

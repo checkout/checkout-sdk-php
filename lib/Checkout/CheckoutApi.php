@@ -3,7 +3,9 @@
 namespace Checkout;
 
 use Checkout\Accounts\AccountsClient;
+use Checkout\AgenticCommerce\AgenticCommerceClient;
 use Checkout\Balances\BalancesClient;
+use Checkout\ComplianceRequests\ComplianceRequestsClient;
 use Checkout\Customers\CustomersClient;
 use Checkout\Disputes\DisputesClient;
 use Checkout\Financial\FinancialClient;
@@ -19,6 +21,7 @@ use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
 use Checkout\NetworkTokens\NetworkTokensClient;
 use Checkout\Payments\ApplePay\ApplePayClient;
+use Checkout\Payments\GooglePay\GooglePayClient;
 use Checkout\Payments\Contexts\PaymentContextsClient;
 use Checkout\Payments\Hosted\HostedPaymentsClient;
 use Checkout\Payments\Links\PaymentLinksClient;
@@ -79,6 +82,12 @@ final class CheckoutApi extends CheckoutApmApi
 
     private $applePayClient;
 
+    private $agenticCommerceClient;
+
+    private $complianceRequestsClient;
+
+    private $googlePayClient;
+
     public function __construct(CheckoutConfiguration $configuration)
     {
         $baseApiClient = $this->getBaseApiClient($configuration);
@@ -132,6 +141,9 @@ final class CheckoutApi extends CheckoutApmApi
         $this->paymentMethodsClient = new PaymentMethodsClient($baseApiClient, $configuration);
         $this->standaloneAccountUpdaterClient = new StandaloneAccountUpdaterClient($baseApiClient, $configuration);
         $this->applePayClient = new ApplePayClient($baseApiClient, $configuration);
+        $this->agenticCommerceClient = new AgenticCommerceClient($baseApiClient, $configuration);
+        $this->complianceRequestsClient = new ComplianceRequestsClient($baseApiClient, $configuration);
+        $this->googlePayClient = new GooglePayClient($baseApiClient, $configuration);
     }
 
     /**
@@ -380,6 +392,36 @@ final class CheckoutApi extends CheckoutApmApi
     public function getApplePayClient()
     {
         return $this->applePayClient;
+    }
+
+    /**
+     * Client for Agentic Commerce Protocol endpoints (for example delegated payment token creation).
+     *
+     * @return AgenticCommerceClient
+     */
+    public function getAgenticCommerceClient()
+    {
+        return $this->agenticCommerceClient;
+    }
+
+    /**
+     * Client for compliance request retrieval and response submission.
+     *
+     * @return ComplianceRequestsClient
+     */
+    public function getComplianceRequestsClient()
+    {
+        return $this->complianceRequestsClient;
+    }
+
+    /**
+     * Client for Google Pay merchant enrollment, domain registration, and enrollment state.
+     *
+     * @return GooglePayClient
+     */
+    public function getGooglePayClient()
+    {
+        return $this->googlePayClient;
     }
 
     /**

@@ -12,6 +12,7 @@ use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
 use Checkout\Issuing\Testing\SimulateRefundRequest;
+use Checkout\Issuing\Testing\SimulateOobAuthenticationRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -135,6 +136,54 @@ class TestingClientTest extends UnitTestFixture
     }
 
     /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateOobAuthentication()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn($this->buildSimulateOobAuthenticationResponse());
+
+        $request = $this->buildSimulateOobAuthenticationRequest();
+        $response = $this->client->simulateOobAuthentication($request);
+
+        $this->validateSimulateOobAuthenticationResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateOobAuthenticationWithMinimalData()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn($this->buildMinimalSimulateOobAuthenticationResponse());
+
+        $request = $this->buildMinimalSimulateOobAuthenticationRequest();
+        $response = $this->client->simulateOobAuthentication($request);
+
+        $this->validateMinimalSimulateOobAuthenticationResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateOobAuthenticationWithCompleteDetails()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn($this->buildCompleteSimulateOobAuthenticationResponse());
+
+        $request = $this->buildCompleteSimulateOobAuthenticationRequest();
+        $response = $this->client->simulateOobAuthentication($request);
+
+        $this->validateCompleteSimulateOobAuthenticationResponse($response);
+    }
+
+    /**
      * @return SimulateRefundRequest
      */
     private function buildSimulateRefundRequest()
@@ -143,5 +192,113 @@ class TestingClientTest extends UnitTestFixture
         $request->amount = 1000;
 
         return $request;
+    }
+
+    /**
+     * @return SimulateOobAuthenticationRequest
+     */
+    private function buildSimulateOobAuthenticationRequest()
+    {
+        $request = new SimulateOobAuthenticationRequest();
+        $request->transaction_id = "txi_12345";
+        $request->outcome = "authentication_successful";
+
+        return $request;
+    }
+
+    /**
+     * @return SimulateOobAuthenticationRequest
+     */
+    private function buildMinimalSimulateOobAuthenticationRequest()
+    {
+        $request = new SimulateOobAuthenticationRequest();
+        $request->transaction_id = "txi_minimal";
+        $request->outcome = "authentication_failed";
+
+        return $request;
+    }
+
+    /**
+     * @return SimulateOobAuthenticationRequest
+     */
+    private function buildCompleteSimulateOobAuthenticationRequest()
+    {
+        $request = new SimulateOobAuthenticationRequest();
+        $request->transaction_id = "txi_complete";
+        $request->outcome = "authentication_successful";
+
+        return $request;
+    }
+
+    private function buildSimulateOobAuthenticationResponse(): array
+    {
+        return [
+            "transaction_id" => "txi_12345",
+            "outcome" => "authentication_successful",
+            "status" => "completed"
+        ];
+    }
+
+    private function buildMinimalSimulateOobAuthenticationResponse(): array
+    {
+        return [
+            "transaction_id" => "txi_minimal",
+            "outcome" => "authentication_failed",
+            "status" => "completed"
+        ];
+    }
+
+    private function buildCompleteSimulateOobAuthenticationResponse(): array
+    {
+        return [
+            "transaction_id" => "txi_complete",
+            "outcome" => "authentication_successful",
+            "status" => "completed",
+            "authentication_details" => [
+                "method" => "sms",
+                "timestamp" => "2023-12-01T10:00:00Z"
+            ]
+        ];
+    }
+
+    private function validateSimulateOobAuthenticationResponse(array $response): void
+    {
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("transaction_id", $response);
+        $this->assertArrayHasKey("outcome", $response);
+        $this->assertArrayHasKey("status", $response);
+        $this->assertEquals("txi_12345", $response["transaction_id"]);
+        $this->assertEquals("authentication_successful", $response["outcome"]);
+        $this->assertEquals("completed", $response["status"]);
+    }
+
+    private function validateMinimalSimulateOobAuthenticationResponse(array $response): void
+    {
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("transaction_id", $response);
+        $this->assertArrayHasKey("outcome", $response);
+        $this->assertArrayHasKey("status", $response);
+        $this->assertEquals("txi_minimal", $response["transaction_id"]);
+        $this->assertEquals("authentication_failed", $response["outcome"]);
+        $this->assertEquals("completed", $response["status"]);
+    }
+
+    private function validateCompleteSimulateOobAuthenticationResponse(array $response): void
+    {
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("transaction_id", $response);
+        $this->assertArrayHasKey("outcome", $response);
+        $this->assertArrayHasKey("status", $response);
+        $this->assertArrayHasKey("authentication_details", $response);
+        
+        $this->assertEquals("txi_complete", $response["transaction_id"]);
+        $this->assertEquals("authentication_successful", $response["outcome"]);
+        $this->assertEquals("completed", $response["status"]);
+        
+        $this->assertTrue(is_array($response["authentication_details"]));
+        $this->assertArrayHasKey("method", $response["authentication_details"]);
+        $this->assertArrayHasKey("timestamp", $response["authentication_details"]);
+        $this->assertEquals("sms", $response["authentication_details"]["method"]);
+        $this->assertEquals("2023-12-01T10:00:00Z", $response["authentication_details"]["timestamp"]);
     }
 }

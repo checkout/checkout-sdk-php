@@ -24,6 +24,7 @@ use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
+use Checkout\Issuing\Testing\SimulateOobAuthenticationRequest;
 use Checkout\Issuing\Testing\SimulateRefundRequest;
 use Checkout\Issuing\CardholderAccessTokens\CardholderAccessTokenRequest;
 use Checkout\Issuing\Cardholders\UpdateCardholderRequest;
@@ -67,6 +68,9 @@ class IssuingClient extends Client
     const ACCESS_PATH = "access";
     const CONNECT_PATH = "connect";
     const TOKEN_PATH = "token";
+    const DIGITAL_CARDS_PATH = "digital-cards";
+    const OOB_PATH = "oob";
+    const AUTHENTICATION_PATH = "authentication";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -811,6 +815,43 @@ class IssuingClient extends Client
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::SIMULATE_PATH, self::AUTHORIZATIONS_PATH, $authorizationId, self::REFUNDS_PATH),
             $simulateRefundRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Retrieves the details for a digital card (GET /issuing/digital-cards/{digitalCardId}).
+     *
+     * @param string $digitalCardId The digital card's unique identifier. [Required]
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getDigitalCard($digitalCardId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ISSUING_PATH, self::DIGITAL_CARDS_PATH, $digitalCardId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Simulate a request to your back-end from an out-of-band (OOB) authentication provider
+     * (POST /issuing/simulate/oob/authentication).
+     *
+     * @param SimulateOobAuthenticationRequest $request [Required]
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function simulateOobAuthentication(SimulateOobAuthenticationRequest $request)
+    {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::ISSUING_PATH,
+                self::SIMULATE_PATH,
+                self::OOB_PATH,
+                self::AUTHENTICATION_PATH
+            ),
+            $request,
             $this->sdkAuthorization()
         );
     }

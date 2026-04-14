@@ -41,9 +41,10 @@ class ApiClient
 
     /**
      * @param string $path
-     * @param mixed $body
+     * @param mixed $requestBody
      * @param SdkAuthorization $authorization
      * @param string|null $idempotencyKey
+     * @param mixed|null $headers
      * @return array
      * @throws CheckoutApiException
      */
@@ -51,9 +52,10 @@ class ApiClient
         string $path,
         $requestBody,
         SdkAuthorization $authorization,
-        ?string $idempotencyKey = null
+        ?string $idempotencyKey = null,
+        $headers = null
     ): array {
-        return $this->invoke("POST", $path, $requestBody, $authorization, $idempotencyKey);
+        return $this->invoke("POST", $path, $requestBody, $authorization, $idempotencyKey, $headers);
     }
 
     /**
@@ -284,7 +286,7 @@ class ApiClient
         if (!empty($idempotencyKey)) {
             $headers["Cko-Idempotency-Key"] = $idempotencyKey;
         }
-        
+
         // Add custom headers using reflection
         if ($customHeaders !== null) {
             $reflection = new \ReflectionClass($customHeaders);
@@ -298,7 +300,7 @@ class ApiClient
                 }
             }
         }
-        
+
         return $headers;
     }
 

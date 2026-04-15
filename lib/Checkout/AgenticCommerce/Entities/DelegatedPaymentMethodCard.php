@@ -139,7 +139,7 @@ class DelegatedPaymentMethodCard
      * A set of key-value pairs containing additional payment method metadata (string values only).
      * [Required]
      *
-     * @var array<string, string>|null
+     * @var array<string, string>
      */
     public $metadata;
 }

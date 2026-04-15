@@ -46,6 +46,9 @@ class ReportsClient extends Client
      */
     public function getReportFile($reportId, $fileId): array
     {
-        return $this->apiClient->get($this->buildPath(self::REPORTS_PATH, $reportId, self::FILES_PATH, $fileId), $this->sdkAuthorization());
+        return $this->apiClient->get(
+            $this->buildPath(self::REPORTS_PATH, $reportId, self::FILES_PATH, $fileId),
+            $this->sdkAuthorization()
+        );
     }
 }

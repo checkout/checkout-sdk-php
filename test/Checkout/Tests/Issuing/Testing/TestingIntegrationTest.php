@@ -12,6 +12,8 @@ use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
 use Checkout\Issuing\Testing\SimulateRefundRequest;
+use Checkout\Issuing\Testing\SimulateOobAuthenticationRequest;
+use Checkout\Issuing\Testing\OobSimulateTransactionDetails;
 use Checkout\Issuing\Testing\CardSimulation;
 use Checkout\Issuing\Testing\TransactionSimulation;
 use Checkout\Issuing\Testing\TransactionType;
@@ -147,9 +149,57 @@ class TestingIntegrationTest extends AbstractIssuingIntegrationTest
         
         // Now simulate refund
         $refundRequest = $this->buildSimulateRefundRequest();
-        $refundResponse = $this->issuingApi->getIssuingClient()->simulateRefund($simulationResponse["id"], $refundRequest);
+        $refundResponse = $this->issuingApi->getIssuingClient()->simulateRefund(
+            $simulationResponse["id"],
+            $refundRequest
+        );
         
         $this->assertNotNull($refundResponse);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateOobAuthentication()
+    {
+        $this->markTestSkipped("requires a valid transaction ID for OOB authentication simulation");
+
+        $request = $this->buildSimulateOobAuthenticationRequest();
+        $response = $this->issuingApi->getIssuingClient()->simulateOobAuthentication($request);
+
+        $this->validateSimulateOobAuthenticationResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSimulateOobAuthenticationWithFailedOutcome()
+    {
+        $this->markTestSkipped("requires a valid transaction ID for OOB authentication simulation");
+
+        $request = $this->buildSimulateOobAuthenticationFailedRequest();
+        $response = $this->issuingApi->getIssuingClient()->simulateOobAuthentication($request);
+
+        $this->validateSimulateOobAuthenticationFailedResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCompleteOobAuthenticationWorkflow()
+    {
+        $this->markTestSkipped("requires complete OOB authentication workflow setup");
+
+        // Note: This would be a complete workflow test that:
+        // 1. Creates a transaction requiring OOB authentication
+        // 2. Simulates the OOB authentication process
+        // 3. Verifies the authentication outcome
+        // 4. Validates the transaction state after authentication
+
+        // For now, this serves as documentation of the expected flow
     }
 
 
@@ -161,6 +211,76 @@ class TestingIntegrationTest extends AbstractIssuingIntegrationTest
         $request = new SimulateRefundRequest();
         $request->amount = 50;
         return $request;
+    }
+
+    /**
+     * @return SimulateOobAuthenticationRequest
+     */
+    private function buildSimulateOobAuthenticationRequest()
+    {
+        $transactionDetails = new OobSimulateTransactionDetails();
+        $transactionDetails->merchant_name = "Integration Test Merchant";
+        $transactionDetails->purchase_amount = 150.00;
+        $transactionDetails->purchase_currency = "USD";
+        $transactionDetails->last_four = "1234";
+
+        $request = new SimulateOobAuthenticationRequest();
+        $request->card_id = "crd_integration_test_12345678";
+        $request->transaction_details = $transactionDetails;
+        return $request;
+    }
+
+    /**
+     * @return SimulateOobAuthenticationRequest
+     */
+    private function buildSimulateOobAuthenticationFailedRequest()
+    {
+        $transactionDetails = new OobSimulateTransactionDetails();
+        $transactionDetails->merchant_name = "Failed Test Merchant";
+        $transactionDetails->purchase_amount = 50.00;
+        $transactionDetails->purchase_currency = "EUR";
+        $transactionDetails->last_four = "9999";
+
+        $request = new SimulateOobAuthenticationRequest();
+        $request->card_id = "crd_integration_test_failed567890";
+        $request->transaction_details = $transactionDetails;
+        return $request;
+    }
+
+    private function validateSimulateOobAuthenticationResponse(array $response): void
+    {
+        $this->assertResponse($response, "status", "authentication_result", "card_id");
+        
+        $this->assertEquals("crd_integration_test_12345678", $response["card_id"]);
+        $this->assertTrue(in_array($response["status"], ["completed", "pending", "processing"]));
+        $this->assertTrue(in_array($response["authentication_result"], ["success", "failed", "pending"]));
+        
+        // Validate optional fields if present
+        if (isset($response["transaction_details"])) {
+            $this->assertTrue(is_array($response["transaction_details"]));
+        }
+        
+        if (isset($response["created_time"])) {
+            $this->assertNotEmpty($response["created_time"]);
+        }
+    }
+
+    private function validateSimulateOobAuthenticationFailedResponse(array $response): void
+    {
+        $this->assertResponse($response, "status", "authentication_result", "card_id");
+        
+        $this->assertEquals("crd_integration_test_failed567890", $response["card_id"]);
+        $this->assertTrue(in_array($response["status"], ["completed", "failed", "processing"]));
+        $this->assertTrue(in_array($response["authentication_result"], ["failed", "timeout", "error"]));
+        
+        // Validate optional failure details if present
+        if (isset($response["failure_reason"])) {
+            $this->assertNotEmpty($response["failure_reason"]);
+        }
+        
+        if (isset($response["transaction_details"])) {
+            $this->assertTrue(is_array($response["transaction_details"]));
+        }
     }
 
     /**

@@ -24,6 +24,7 @@ use Checkout\Issuing\Testing\CardClearingAuthorizationRequest;
 use Checkout\Issuing\Testing\CardIncrementAuthorizationRequest;
 use Checkout\Issuing\Testing\CardAuthorizationRequest;
 use Checkout\Issuing\Testing\CardReversalAuthorizationRequest;
+use Checkout\Issuing\Testing\SimulateOobAuthenticationRequest;
 use Checkout\Issuing\Testing\SimulateRefundRequest;
 use Checkout\Issuing\CardholderAccessTokens\CardholderAccessTokenRequest;
 use Checkout\Issuing\Cardholders\UpdateCardholderRequest;
@@ -67,6 +68,9 @@ class IssuingClient extends Client
     const ACCESS_PATH = "access";
     const CONNECT_PATH = "connect";
     const TOKEN_PATH = "token";
+    const DIGITAL_CARDS_PATH = "digital-cards";
+    const OOB_PATH = "oob";
+    const AUTHENTICATION_PATH = "authentication";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -78,7 +82,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function createCardholder(CardholderRequest $cardholderRequest)
+    public function createCardholder(CardholderRequest $cardholderRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDHOLDERS_PATH),
@@ -88,11 +92,11 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $cardholderId
+     * @param string $cardholderId
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCardholder($cardholderId)
+    public function getCardholder(string $cardholderId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::CARDHOLDERS_PATH, $cardholderId),
@@ -101,11 +105,11 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $cardholderId
+     * @param string $cardholderId
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCardholderCards($cardholderId)
+    public function getCardholderCards(string $cardholderId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::CARDHOLDERS_PATH, $cardholderId, self::CARDS_PATH),
@@ -118,7 +122,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function createCard(CardRequest $cardRequest)
+    public function createCard(CardRequest $cardRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH),
@@ -128,11 +132,11 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $cardId
+     * @param string $cardId
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCardDetails($cardId)
+    public function getCardDetails(string $cardId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId),
@@ -146,7 +150,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function enrollThreeDS($cardId, ThreeDSEnrollmentRequest $threeDSEnrollmentRequest)
+    public function enrollThreeDS(string $cardId, ThreeDSEnrollmentRequest $threeDSEnrollmentRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::THREE_DS_PATH),
@@ -161,7 +165,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function updateThreeDSEnrollment($cardId, UpdateThreeDSEnrollmentRequest $threeDSEnrollmentRequest)
+    public function updateThreeDSEnrollment(string $cardId, UpdateThreeDSEnrollmentRequest $threeDSEnrollmentRequest) : array
     {
         return $this->apiClient->patch(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::THREE_DS_PATH),
@@ -171,11 +175,11 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $cardId
+     * @param string $cardId
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCardThreeDSDetails($cardId)
+    public function getCardThreeDSDetails(string $cardId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::THREE_DS_PATH),
@@ -188,7 +192,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function activateCard($cardId)
+    public function activateCard(string $cardId) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::ACTIVATE_PATH),
@@ -203,7 +207,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCardCredentials($cardId, CardCredentialsQuery $query)
+    public function getCardCredentials(string $cardId, CardCredentialsQuery $query) : array
     {
         return $this->apiClient->query(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::CREDENTIALS_PATH),
@@ -218,7 +222,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function revokeCard($cardId, RevokeCardRequest $revokeCardRequest)
+    public function revokeCard(string $cardId, RevokeCardRequest $revokeCardRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::REVOKE_PATH),
@@ -233,7 +237,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function suspendCard($cardId, SuspendCardRequest $suspendCardRequest)
+    public function suspendCard(string $cardId, SuspendCardRequest $suspendCardRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SUSPEND_PATH),
@@ -247,7 +251,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function createControl(CardControlRequest $cardControlRequest)
+    public function createControl(CardControlRequest $cardControlRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH),
@@ -261,7 +265,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCardControls(CardControlsQuery $query)
+    public function getCardControls(CardControlsQuery $query) : array
     {
         return $this->apiClient->query(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH),
@@ -271,11 +275,11 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $controlId
+     * @param string $controlId
      * @return array
      * @throws CheckoutApiException
      */
-    public function getCardControlDetails($controlId)
+    public function getCardControlDetails(string $controlId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, $controlId),
@@ -289,7 +293,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function updateCardControl($controlId, UpdateCardControlRequest $updateCardControlRequest)
+    public function updateCardControl(string $controlId, UpdateCardControlRequest $updateCardControlRequest) : array
     {
         return $this->apiClient->put(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, $controlId),
@@ -299,11 +303,11 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $controlId
+     * @param string $controlId
      * @return array
      * @throws CheckoutApiException
      */
-    public function removeCardControl($controlId)
+    public function removeCardControl(string $controlId) : array
     {
         return $this->apiClient->delete(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, $controlId),
@@ -316,7 +320,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function simulateAuthorization(CardAuthorizationRequest $authorizationRequest)
+    public function simulateAuthorization(CardAuthorizationRequest $authorizationRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::SIMULATE_PATH, self::AUTHORIZATIONS_PATH),
@@ -326,15 +330,15 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $authorizationId
+     * @param string $authorizationId
      * @param CardIncrementAuthorizationRequest $cardIncrementAuthorizationRequest
      * @return array
      * @throws CheckoutApiException
      */
     public function simulateIncrementingAuthorization(
-        $authorizationId,
+        string $authorizationId,
         CardIncrementAuthorizationRequest $cardIncrementAuthorizationRequest
-    ) {
+    ) : array {
         return $this->apiClient->post(
             $this->buildPath(
                 self::ISSUING_PATH,
@@ -349,15 +353,15 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $authorizationId
+     * @param string $authorizationId
      * @param CardClearingAuthorizationRequest $cardClearingAuthorizationRequest
      * @return array
      * @throws CheckoutApiException
      */
     public function simulateClearing(
-        $authorizationId,
+        string $authorizationId,
         CardClearingAuthorizationRequest $cardClearingAuthorizationRequest
-    ) {
+    ) : array {
         return $this->apiClient->post(
             $this->buildPath(
                 self::ISSUING_PATH,
@@ -372,15 +376,15 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param $authorizationId
+     * @param string $authorizationId
      * @param CardReversalAuthorizationRequest $cardReversalAuthorizationRequest
      * @return array
      * @throws CheckoutApiException
      */
     public function simulateReversal(
-        $authorizationId,
+        string $authorizationId,
         CardReversalAuthorizationRequest $cardReversalAuthorizationRequest
-    ) {
+    ) : array {
         return $this->apiClient->post(
             $this->buildPath(
                 self::ISSUING_PATH,
@@ -402,7 +406,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function createControlGroup(CreateControlGroupRequest $createControlGroupRequest)
+    public function createControlGroup(CreateControlGroupRequest $createControlGroupRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_GROUPS_PATH),
@@ -419,7 +423,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getControlGroups(ControlGroupQuery $query)
+    public function getControlGroups(ControlGroupQuery $query) : array
     {
         return $this->apiClient->query(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_GROUPS_PATH),
@@ -432,11 +436,11 @@ class IssuingClient extends Client
      * Get control group details
      *
      * Retrieves the details of a control group you created previously.
-     * @param $controlGroupId
+     * @param string $controlGroupId
      * @return array
      * @throws CheckoutApiException
      */
-    public function getControlGroupDetails($controlGroupId)
+    public function getControlGroupDetails(string $controlGroupId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_GROUPS_PATH, $controlGroupId),
@@ -449,11 +453,11 @@ class IssuingClient extends Client
      *
      * Removes the control group and all the controls it contains.
      * If you want to reapply an equivalent control group to the card, you'll need to create a new control group.
-     * @param $controlGroupId
+     * @param string $controlGroupId
      * @return array
      * @throws CheckoutApiException
      */
-    public function removeControlGroup($controlGroupId)
+    public function removeControlGroup(string $controlGroupId) : array
     {
         return $this->apiClient->delete(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_GROUPS_PATH, $controlGroupId),
@@ -469,7 +473,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function createControlProfile(CreateControlProfileRequest $createControlProfileRequest)
+    public function createControlProfile(CreateControlProfileRequest $createControlProfileRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH),
@@ -486,7 +490,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getControlProfiles(?ControlProfileQuery $query = null)
+    public function getControlProfiles(?ControlProfileQuery $query = null) : array
     {
         return $this->apiClient->query(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH),
@@ -499,11 +503,11 @@ class IssuingClient extends Client
      * Get control profile details
      *
      * Retrieves the details of an existing control profile.
-     * @param $controlProfileId
+     * @param string $controlProfileId
      * @return array
      * @throws CheckoutApiException
      */
-    public function getControlProfileDetails($controlProfileId)
+    public function getControlProfileDetails(string $controlProfileId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId),
@@ -520,7 +524,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function updateControlProfile($controlProfileId, UpdateControlProfileRequest $updateControlProfileRequest)
+    public function updateControlProfile(string $controlProfileId, UpdateControlProfileRequest $updateControlProfileRequest) : array
     {
         return $this->apiClient->patch(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId),
@@ -537,7 +541,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function removeControlProfile($controlProfileId)
+    public function removeControlProfile(string $controlProfileId) : array
     {
         return $this->apiClient->delete(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId),
@@ -554,7 +558,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function addTargetToControlProfile($controlProfileId, $targetId)
+    public function addTargetToControlProfile(string $controlProfileId, string $targetId) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId, self::ADD_PATH, $targetId),
@@ -572,7 +576,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function removeTargetFromControlProfile($controlProfileId, $targetId)
+    public function removeTargetFromControlProfile(string $controlProfileId, string $targetId) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CONTROLS_PATH, self::CONTROL_PROFILES_PATH, $controlProfileId, self::REMOVE_PATH, $targetId),
@@ -594,7 +598,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function createDispute($idempotencyKey, CreateDisputeRequest $createDisputeRequest)
+    public function createDispute(string $idempotencyKey, CreateDisputeRequest $createDisputeRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH),
@@ -613,7 +617,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getDispute($disputeId)
+    public function getDispute(string $disputeId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId),
@@ -634,7 +638,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function cancelDispute($disputeId)
+    public function cancelDispute(string $disputeId) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::CANCEL_PATH),
@@ -654,7 +658,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function escalateDispute($disputeId, $idempotencyKey, EscalateDisputeRequest $escalateDisputeRequest)
+    public function escalateDispute(string $disputeId, string $idempotencyKey, EscalateDisputeRequest $escalateDisputeRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::ESCALATE_PATH),
@@ -675,7 +679,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function submitDispute($disputeId, $idempotencyKey, SubmitDisputeRequest $submitDisputeRequest)
+    public function submitDispute(string $disputeId, string $idempotencyKey, SubmitDisputeRequest $submitDisputeRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::SUBMIT_PATH),
@@ -694,7 +698,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getListTransactions(?TransactionsQuery $query = null)
+    public function getListTransactions(?TransactionsQuery $query = null) : array
     {
         return $this->apiClient->query(
             $this->buildPath(self::ISSUING_PATH, self::TRANSACTIONS_PATH),
@@ -712,7 +716,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function getSingleTransaction($transactionId)
+    public function getSingleTransaction(string $transactionId) : array
     {
         return $this->apiClient->get(
             $this->buildPath(self::ISSUING_PATH, self::TRANSACTIONS_PATH, $transactionId),
@@ -731,7 +735,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function updateCardDetails($cardId, UpdateCardRequest $updateCardRequest)
+    public function updateCardDetails(string $cardId, UpdateCardRequest $updateCardRequest) : array
     {
         return $this->apiClient->patch(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId),
@@ -751,7 +755,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function renewCard($cardId, RenewCardRequest $renewCardRequest)
+    public function renewCard(string $cardId, RenewCardRequest $renewCardRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::RENEW_PATH),
@@ -770,7 +774,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function scheduleCardRevocation($cardId, ScheduleRevocationRequest $scheduleRevocationRequest)
+    public function scheduleCardRevocation(string $cardId, ScheduleRevocationRequest $scheduleRevocationRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SCHEDULE_REVOCATION_PATH),
@@ -788,7 +792,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function deleteScheduledCardRevocation($cardId)
+    public function deleteScheduledCardRevocation(string $cardId) : array
     {
         return $this->apiClient->delete(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SCHEDULE_REVOCATION_PATH),
@@ -806,11 +810,48 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function simulateRefund($authorizationId, SimulateRefundRequest $simulateRefundRequest)
+    public function simulateRefund(string $authorizationId, SimulateRefundRequest $simulateRefundRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::SIMULATE_PATH, self::AUTHORIZATIONS_PATH, $authorizationId, self::REFUNDS_PATH),
             $simulateRefundRequest,
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Retrieves the details for a digital card (GET /issuing/digital-cards/{digitalCardId}).
+     *
+     * @param string $digitalCardId The digital card's unique identifier. [Required]
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getDigitalCard(string $digitalCardId) : array
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ISSUING_PATH, self::DIGITAL_CARDS_PATH, $digitalCardId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Simulate a request to your back-end from an out-of-band (OOB) authentication provider
+     * (POST /issuing/simulate/oob/authentication).
+     *
+     * @param SimulateOobAuthenticationRequest $request [Required]
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function simulateOobAuthentication(SimulateOobAuthenticationRequest $request) : array
+    {
+        return $this->apiClient->post(
+            $this->buildPath(
+                self::ISSUING_PATH,
+                self::SIMULATE_PATH,
+                self::OOB_PATH,
+                self::AUTHENTICATION_PATH
+            ),
+            $request,
             $this->sdkAuthorization()
         );
     }
@@ -824,7 +865,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function requestCardholderAccessToken(CardholderAccessTokenRequest $cardholderAccessTokenRequest)
+    public function requestCardholderAccessToken(CardholderAccessTokenRequest $cardholderAccessTokenRequest) : array
     {
         $formData = $this->createFormUrlEncodedContent($cardholderAccessTokenRequest);
         
@@ -845,7 +886,7 @@ class IssuingClient extends Client
      * @return array
      * @throws CheckoutApiException
      */
-    public function updateCardholder($cardholderId, UpdateCardholderRequest $updateCardholderRequest)
+    public function updateCardholder(string $cardholderId, UpdateCardholderRequest $updateCardholderRequest) : array
     {
         return $this->apiClient->patch(
             $this->buildPath(self::ISSUING_PATH, self::CARDHOLDERS_PATH, $cardholderId),

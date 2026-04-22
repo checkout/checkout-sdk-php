@@ -109,7 +109,7 @@ class GooglePayIntegrationTest extends SandboxTestFixture
 
         // Verify the domain we registered is in the list
         $registeredDomains = array_column($domainsResponse["domains"], "web_domain");
-        $this->assertTrue(in_array($domainRequest->webDomain, $registeredDomains));
+        $this->assertTrue(in_array($domainRequest->web_domain, $registeredDomains));
     }
 
     /**
@@ -125,7 +125,7 @@ class GooglePayIntegrationTest extends SandboxTestFixture
 
         foreach ($domains as $domain) {
             $request = new GooglePayRegisterDomainRequest();
-            $request->webDomain = $domain;
+            $request->web_domain = $domain;
             
             $response = $this->checkoutApi->getGooglePayClient()->registerDomain($entityId, $request);
             $this->validateRegisterDomainResponse($response, $request);
@@ -145,23 +145,23 @@ class GooglePayIntegrationTest extends SandboxTestFixture
     private function buildValidEnrollmentRequest(): GooglePayEnrollmentRequest
     {
         $request = new GooglePayEnrollmentRequest();
-        $request->entityId = "ent_uzm3uxtssvmuxnyrfdffcyjxeu"; // Use valid entity ID
-        $request->emailAddress = "test@example.com";
-        $request->acceptTermsOfService = true;
+        $request->entity_id = "ent_uzm3uxtssvmuxnyrfdffcyjxeu"; // Use valid entity ID
+        $request->email_address = "test@example.com";
+        $request->accept_terms_of_service = true;
         return $request;
     }
 
     private function buildValidRegisterDomainRequest(): GooglePayRegisterDomainRequest
     {
         $request = new GooglePayRegisterDomainRequest();
-        $request->webDomain = "example.com"; // Must be owned and verified domain
+        $request->web_domain = "example.com"; // Must be owned and verified domain
         return $request;
     }
 
     private function buildRegisterDomainRequestForSubdomain(string $subdomain): GooglePayRegisterDomainRequest
     {
         $request = new GooglePayRegisterDomainRequest();
-        $request->webDomain = $subdomain . ".example.com";
+        $request->web_domain = $subdomain . ".example.com";
         return $request;
     }
 
@@ -182,7 +182,7 @@ class GooglePayIntegrationTest extends SandboxTestFixture
     {
         $this->assertResponse($response, "web_domain", "status");
         
-        $this->assertEquals($originalRequest->webDomain, $response["web_domain"]);
+        $this->assertEquals($originalRequest->web_domain, $response["web_domain"]);
         $this->assertTrue(in_array($response["status"], ["registered", "pending", "verified"]));
         
         if (isset($response["registered_on"])) {

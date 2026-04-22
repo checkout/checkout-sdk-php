@@ -14,7 +14,7 @@ class GooglePayEnrollmentRequest
      *
      * @var string
      */
-    public $entityId;
+    public $entity_id;
 
     /**
      * The email address of the user accepting the Google terms of service for this feature.
@@ -22,7 +22,7 @@ class GooglePayEnrollmentRequest
      *
      * @var string
      */
-    public $emailAddress;
+    public $email_address;
 
     /**
      * Indicates acceptance of the Google terms of service. Must be true to proceed with enrollment.
@@ -30,5 +30,5 @@ class GooglePayEnrollmentRequest
      *
      * @var bool
      */
-    public $acceptTermsOfService;
+    public $accept_terms_of_service;
 }

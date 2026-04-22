@@ -14,5 +14,5 @@ class GooglePayRegisterDomainRequest
      *
      * @var string
      */
-    public $webDomain;
+    public $web_domain;
 }

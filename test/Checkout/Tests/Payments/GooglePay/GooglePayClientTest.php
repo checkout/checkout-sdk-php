@@ -161,32 +161,32 @@ class GooglePayClientTest extends UnitTestFixture
     private function buildValidEnrollmentRequest(): GooglePayEnrollmentRequest
     {
         $request = new GooglePayEnrollmentRequest();
-        $request->entityId = "ent_test123456789";
-        $request->emailAddress = "test@example.com";
-        $request->acceptTermsOfService = true;
+        $request->entity_id = "ent_test123456789";
+        $request->email_address = "test@example.com";
+        $request->accept_terms_of_service = true;
         return $request;
     }
 
     private function buildMinimalEnrollmentRequest(): GooglePayEnrollmentRequest
     {
         $request = new GooglePayEnrollmentRequest();
-        $request->entityId = "ent_minimal123";
-        $request->emailAddress = "minimal@test.com";
-        $request->acceptTermsOfService = true;
+        $request->entity_id = "ent_minimal123";
+        $request->email_address = "minimal@test.com";
+        $request->accept_terms_of_service = true;
         return $request;
     }
 
     private function buildValidRegisterDomainRequest(): GooglePayRegisterDomainRequest
     {
         $request = new GooglePayRegisterDomainRequest();
-        $request->webDomain = "example.com";
+        $request->web_domain = "example.com";
         return $request;
     }
 
     private function buildRegisterDomainRequestWithSubdomain(): GooglePayRegisterDomainRequest
     {
         $request = new GooglePayRegisterDomainRequest();
-        $request->webDomain = "shop.example.com";
+        $request->web_domain = "shop.example.com";
         return $request;
     }
 

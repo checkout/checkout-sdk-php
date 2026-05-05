@@ -83,6 +83,8 @@ class CheckoutConfigurationTests extends MockeryTestCase
             ["abc", "https://abc.api.sandbox.checkout.com/", "https://abc.access.sandbox.checkout.com/connect/token"],
             ["abc1", "https://abc1.api.sandbox.checkout.com/", "https://abc1.access.sandbox.checkout.com/connect/token"],
             ["12345domain", "https://12345domain.api.sandbox.checkout.com/", "https://12345domain.access.sandbox.checkout.com/connect/token"],
+            ["test-123", "https://test-123.api.sandbox.checkout.com/", "https://test-123.access.sandbox.checkout.com/connect/token"],
+            ["pl-abc123", "https://pl-abc123.api.sandbox.checkout.com/", "https://pl-abc123.access.sandbox.checkout.com/connect/token"],
         ];
     }
 
@@ -95,6 +97,9 @@ class CheckoutConfigurationTests extends MockeryTestCase
             [" - ", "https://api.sandbox.checkout.com/", "https://access.sandbox.checkout.com/connect/token"],
             ["a b", "https://api.sandbox.checkout.com/", "https://access.sandbox.checkout.com/connect/token"],
             ["ab c1.", "https://api.sandbox.checkout.com/", "https://access.sandbox.checkout.com/connect/token"],
+            ["foo-", "https://api.sandbox.checkout.com/", "https://access.sandbox.checkout.com/connect/token"],
+            ["-foo", "https://api.sandbox.checkout.com/", "https://access.sandbox.checkout.com/connect/token"],
+            ["ABC", "https://api.sandbox.checkout.com/", "https://access.sandbox.checkout.com/connect/token"],
         ];
     }
 
@@ -126,4 +131,19 @@ class CheckoutConfigurationTests extends MockeryTestCase
         $this->assertEquals("https://1234prod.api.checkout.com/", $configuration->getEnvironmentSubdomain()->getBaseUri());
         $this->assertEquals("https://1234prod.access.checkout.com/connect/token", $configuration->getEnvironmentSubdomain()->getAuthorizationUri());
     }
+
+    public function testEnvironmentSandboxHasCorrectForwardAndIdentityUrls()
+    {
+        $env = Environment::sandbox();
+        $this->assertEquals("https://forward.sandbox.checkout.com/", $env->getForwardUri());
+        $this->assertEquals("https://identity-verification.sandbox.checkout.com/", $env->getIdentityUri());
+    }
+
+    public function testEnvironmentProductionHasCorrectForwardAndIdentityUrls()
+    {
+        $env = Environment::production();
+        $this->assertEquals("https://forward.checkout.com/", $env->getForwardUri());
+        $this->assertEquals("https://identity-verification.checkout.com/", $env->getIdentityUri());
+    }
+
 }

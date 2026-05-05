@@ -11,3 +11,6 @@ vendor/*
 .cursor
 .vscode
 composer
+
+.claude/
+CLAUDE.md

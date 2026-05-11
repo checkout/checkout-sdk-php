@@ -123,26 +123,12 @@ final class CheckoutApi extends CheckoutApmApi
             $this->getForwardApiClient($configuration),
             $configuration
         );
-        $this->faceAuthenticationClient = new FaceAuthenticationClient(
-            $this->getIdentityApiClient($configuration),
-            $configuration
-        );
-        $this->idDocumentVerificationClient = new IdDocumentVerificationClient(
-            $this->getIdentityApiClient($configuration),
-            $configuration
-        );
-        $this->identityVerificationClient = new IdentityVerificationClient(
-            $this->getIdentityApiClient($configuration),
-            $configuration
-        );
-        $this->amlScreeningClient = new AmlScreeningClient(
-            $this->getIdentityApiClient($configuration),
-            $configuration
-        );
-        $this->applicantsClient = new ApplicantsClient(
-            $this->getIdentityApiClient($configuration),
-            $configuration
-        );
+        $identityApiClient = $this->getIdentityApiClient($configuration);
+        $this->faceAuthenticationClient = new FaceAuthenticationClient($identityApiClient, $configuration);
+        $this->idDocumentVerificationClient = new IdDocumentVerificationClient($identityApiClient, $configuration);
+        $this->identityVerificationClient = new IdentityVerificationClient($identityApiClient, $configuration);
+        $this->amlScreeningClient = new AmlScreeningClient($identityApiClient, $configuration);
+        $this->applicantsClient = new ApplicantsClient($identityApiClient, $configuration);
         $this->balancesClient = new BalancesClient(
             $this->getBalancesApiClient($configuration),
             $configuration

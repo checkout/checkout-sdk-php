@@ -30,7 +30,7 @@ final class EnvironmentSubdomain
     {
         $newEnvironment = $originalUrl;
 
-        $regex = '/^[a-z0-9]+(-[a-z0-9]+)*$/';
+        $regex = '/^(?:pl-)?[a-z0-9]+$/';
         if (preg_match($regex, $subdomain)) {
             $urlParts = parse_url($originalUrl);
             $newHost = $subdomain . '.' . $urlParts['host'];

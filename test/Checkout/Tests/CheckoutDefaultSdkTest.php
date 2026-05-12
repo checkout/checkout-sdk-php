@@ -97,7 +97,7 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
     public function shouldInstantiateClientWithCustomHttpClient()
     {
         $httpBuilder = $this->createMock(HttpClientBuilderInterface::class);
-        $httpBuilder->expects($this->exactly(4))->method("getClient");
+        $httpBuilder->expects($this->exactly(6))->method("getClient");
 
         $this->assertNotNull(CheckoutSdk::builder()
             ->staticKeys()

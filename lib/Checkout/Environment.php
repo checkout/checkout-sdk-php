@@ -9,6 +9,8 @@ final class Environment
     private $filesBaseUri;
     private $transfersUri;
     private $balancesUri;
+    private $forwardUri;
+    private $identityUri;
     private $isSandbox;
 
     /**
@@ -17,6 +19,8 @@ final class Environment
      * @param string $filesBaseUrl
      * @param string $transfersUri
      * @param string $balancesUri
+     * @param string $forwardUri
+     * @param string $identityUri
      * @param bool $isSandbox
      */
     private function __construct(
@@ -25,6 +29,8 @@ final class Environment
         $filesBaseUrl,
         $transfersUri,
         $balancesUri,
+        $forwardUri,
+        $identityUri,
         $isSandbox
     ) {
         $this->baseUri = $baseUri;
@@ -32,6 +38,8 @@ final class Environment
         $this->filesBaseUri = $filesBaseUrl;
         $this->transfersUri = $transfersUri;
         $this->balancesUri = $balancesUri;
+        $this->forwardUri = $forwardUri;
+        $this->identityUri = $identityUri;
         $this->isSandbox = $isSandbox;
     }
 
@@ -46,6 +54,8 @@ final class Environment
             "https://files.sandbox.checkout.com/",
             "https://transfers.sandbox.checkout.com/",
             "https://balances.sandbox.checkout.com/",
+            "https://forward.sandbox.checkout.com/",
+            "https://identity-verification.sandbox.checkout.com/",
             true
         );
     }
@@ -62,6 +72,8 @@ final class Environment
             "https://files.checkout.com/",
             "https://transfers.checkout.com/",
             "https://balances.checkout.com/",
+            "https://forward.checkout.com/",
+            "https://identity-verification.checkout.com/",
             false
         );
     }
@@ -112,5 +124,21 @@ final class Environment
     public function getBalancesUri()
     {
         return $this->balancesUri;
+    }
+
+    /**
+     * @return string
+     */
+    public function getForwardUri()
+    {
+        return $this->forwardUri;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentityUri()
+    {
+        return $this->identityUri;
     }
 }

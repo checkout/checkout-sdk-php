@@ -36,6 +36,7 @@ class OAuthScope
     public static $GatewayPaymentDetails = "gateway:payment-details";
     public static $GatewayPaymentRefunds = "gateway:payment-refunds";
     public static $GatewayPaymentVoids = "gateway:payment-voids";
+    public static $IdentityVerification = "identity-verification";
     public static $IssuingCardManagementRead = "issuing:card-management-read";
     public static $IssuingCardManagementWrite = "issuing:card-management-write";
     public static $IssuingCardMgmt = "issuing:card-mgmt";

@@ -52,4 +52,15 @@ class PaymentSourceType
     public static $trustly = "trustly";
     public static $cvconnect = "cvconnect";
     public static $sepa = "sepa";
+    public static $bizum = "bizum";
+    public static $ach = "ach";
+    public static $blik = "blik";
+    public static $mobilepay = "mobilepay";
+    public static $octopus = "octopus";
+    public static $paynow = "paynow";
+    public static $plaid = "plaid";
+    public static $sequra = "sequra";
+    public static $swish = "swish";
+    public static $twint = "twint";
+    public static $vipps = "vipps";
 }

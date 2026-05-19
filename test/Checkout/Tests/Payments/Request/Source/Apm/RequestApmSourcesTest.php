@@ -3,6 +3,9 @@
 namespace Checkout\Tests\Payments\Request\Source\Apm;
 
 use Checkout\Common\AccountHolder;
+use Checkout\Common\AccountHolderAch;
+use Checkout\Common\AccountHolderIdentification;
+use Checkout\Common\AccountHolderType;
 use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
 use Checkout\JsonSerializer;
@@ -31,7 +34,7 @@ use Checkout\Payments\Request\Source\Apm\RequestKnetSource;
 use Checkout\Payments\Request\Source\Apm\RequestMbwaySource;
 use Checkout\Payments\Request\Source\Apm\RequestMobilePaySource;
 use Checkout\Payments\Request\Source\Apm\RequestMultiBancoSource;
-use Checkout\Payments\Request\Source\Apm\RequestOctopusPaySource;
+use Checkout\Payments\Request\Source\Apm\RequestOctopusSource;
 use Checkout\Payments\Request\Source\Apm\RequestP24Source;
 use Checkout\Payments\Request\Source\Apm\RequestPayNowSource;
 use Checkout\Payments\Request\Source\Apm\RequestPayPalSource;
@@ -57,9 +60,6 @@ class RequestApmSourcesTest extends TestCase
     /**
      * Every APM source whose constructor takes no arguments.
      * Format: 'caseName' => [fqcn, expected discriminator type, isNew]
-     *
-     * `RequestAlipayPlusSource` is excluded here because it uses static factory
-     * methods rather than a parameterless constructor; it is covered separately.
      *
      * @return array
      */
@@ -90,6 +90,7 @@ class RequestApmSourcesTest extends TestCase
             'tamara'      => [RequestTamaraSource::class,      PaymentSourceType::$tamara,      false],
             'trustly'     => [RequestTrustlySource::class,     PaymentSourceType::$trustly,     false],
             'wechatpay'   => [RequestWeChatPaySource::class,   PaymentSourceType::$wechatpay,   false],
+            'alipay_plus' => [RequestAlipayPlusSource::class,  PaymentSourceType::$alipay_plus, false],
             'ach'         => [RequestAchSource::class,         PaymentSourceType::$ach,         true],
             'alipay_cn'   => [RequestAlipayCnSource::class,    PaymentSourceType::$alipay_cn,   true],
             'alipay_hk'   => [RequestAlipayHkSource::class,    PaymentSourceType::$alipay_hk,   true],
@@ -99,7 +100,7 @@ class RequestApmSourcesTest extends TestCase
             'gcash'       => [RequestGcashSource::class,       PaymentSourceType::$gcash,       true],
             'kakaopay'    => [RequestKakaopaySource::class,    PaymentSourceType::$kakaopay,    true],
             'mobilepay'   => [RequestMobilePaySource::class,   PaymentSourceType::$mobilepay,   true],
-            'octopus'     => [RequestOctopusPaySource::class,  PaymentSourceType::$octopus,     true],
+            'octopus'     => [RequestOctopusSource::class,  PaymentSourceType::$octopus,     true],
             'paynow'      => [RequestPayNowSource::class,      PaymentSourceType::$paynow,      true],
             'plaid'       => [RequestPlaidSource::class,       PaymentSourceType::$plaid,       true],
             'sequra'      => [RequestSequraSource::class,      PaymentSourceType::$sequra,      true],
@@ -141,9 +142,14 @@ class RequestApmSourcesTest extends TestCase
     }
 
     /**
+     * Static factories on RequestAlipayPlusSource are kept for backwards compatibility
+     * but are deprecated in favour of the dedicated source classes (or, for `alipay_plus`,
+     * the parameterless constructor). This provider keeps regression coverage so we
+     * notice if a future change silently breaks the deprecated path before removal.
+     *
      * @return array<string, array{0: string, 1: string}>
      */
-    public function alipayPlusFactoryProvider()
+    public function deprecatedAlipayPlusFactoryProvider()
     {
         return [
             'alipay_plus' => ['requestAlipayPlusSource',          PaymentSourceType::$alipay_plus],
@@ -158,9 +164,9 @@ class RequestApmSourcesTest extends TestCase
     }
 
     /**
-     * @dataProvider alipayPlusFactoryProvider
+     * @dataProvider deprecatedAlipayPlusFactoryProvider
      */
-    public function testAlipayPlusFactoriesProduceCorrectDiscriminator($factoryMethod, $expectedType)
+    public function testDeprecatedAlipayPlusFactoriesStillProduceCorrectDiscriminator($factoryMethod, $expectedType)
     {
         $source = RequestAlipayPlusSource::{$factoryMethod}();
 
@@ -177,7 +183,8 @@ class RequestApmSourcesTest extends TestCase
 
     public function testAchSourceSerializesAllFields()
     {
-        $accountHolder = new AccountHolder();
+        $accountHolder = new AccountHolderAch();
+        $accountHolder->type = AccountHolderType::$individual;
         $accountHolder->first_name = 'John';
         $accountHolder->last_name = 'Smith';
 
@@ -195,7 +202,58 @@ class RequestApmSourcesTest extends TestCase
         $this->assertSame('US', $decoded['country']);
         $this->assertSame('136549956', $decoded['account_number']);
         $this->assertSame('021000021', $decoded['bank_code']);
-        $this->assertSame(['first_name' => 'John', 'last_name' => 'Smith'], $decoded['account_holder']);
+        $this->assertSame(
+            ['type' => 'individual', 'first_name' => 'John', 'last_name' => 'Smith'],
+            $decoded['account_holder']
+        );
+    }
+
+    public function testAchSourceSerializesFullAccountHolderAchSchema()
+    {
+        $billingAddress = new Address();
+        $billingAddress->address_line1 = '90 Tottenham Court Road';
+        $billingAddress->city = 'London';
+        $billingAddress->country = 'GB';
+
+        $identification = new AccountHolderIdentification();
+        $identification->type = 'SSN';
+        $identification->number = '123-45-6789';
+        $identification->issuing_country = 'US';
+
+        $accountHolder = new AccountHolderAch();
+        $accountHolder->type = AccountHolderType::$corporate;
+        $accountHolder->first_name = 'Jane';
+        $accountHolder->last_name = 'Doe';
+        $accountHolder->company_name = 'Acme Co.';
+        $accountHolder->billing_address = $billingAddress;
+        $accountHolder->date_of_birth = '1985-04-12';
+        $accountHolder->identification = $identification;
+
+        $source = new RequestAchSource();
+        $source->account_holder = $accountHolder;
+
+        $decoded = json_decode((new JsonSerializer())->serialize($source), true);
+
+        $expected = [
+            'type' => 'corporate',
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+            'company_name' => 'Acme Co.',
+            'billing_address' => [
+                'address_line1' => '90 Tottenham Court Road',
+                'city' => 'London',
+                'country' => 'GB',
+            ],
+            'date_of_birth' => '1985-04-12',
+            'identification' => [
+                'type' => 'SSN',
+                'number' => '123-45-6789',
+                'issuing_country' => 'US',
+            ],
+        ];
+
+        $this->assertSame('ach', $decoded['type']);
+        $this->assertSame($expected, $decoded['account_holder']);
     }
 
     public function testBlikSourceSerializesPartnerAgreementId()

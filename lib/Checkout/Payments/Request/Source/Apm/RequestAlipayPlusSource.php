@@ -7,44 +7,94 @@ use Checkout\Payments\Request\Source\AbstractRequestSource;
 
 class RequestAlipayPlusSource extends AbstractRequestSource
 {
+    public function __construct()
+    {
+        parent::__construct(PaymentSourceType::$alipay_plus);
+    }
+
+    /**
+     * @deprecated Use {@see RequestAlipayPlusSource} constructor directly: `new RequestAlipayPlusSource()`.
+     *             Will be removed in the next major version.
+     */
     public static function requestAlipayPlusSource()
     {
-        return new RequestAlipayPlusSource(PaymentSourceType::$alipay_plus);
+        return new RequestAlipayPlusSource();
     }
 
+    /**
+     * @deprecated Use {@see RequestAlipayCnSource} instead.
+     *             Will be removed in the next major version.
+     */
     public static function requestAlipayPlusCNSource()
     {
-        return new RequestAlipayPlusSource(PaymentSourceType::$alipay_cn);
+        $source = new RequestAlipayPlusSource();
+        $source->type = PaymentSourceType::$alipay_cn;
+        return $source;
     }
 
+    /**
+     * @deprecated Use {@see RequestGcashSource} instead.
+     *             Will be removed in the next major version.
+     */
     public static function requestAlipayPlusGCashSource()
     {
-        return new RequestAlipayPlusSource(PaymentSourceType::$gcash);
+        $source = new RequestAlipayPlusSource();
+        $source->type = PaymentSourceType::$gcash;
+        return $source;
     }
 
+    /**
+     * @deprecated Use {@see RequestAlipayHkSource} instead.
+     *             Will be removed in the next major version.
+     */
     public static function requestAlipayPlusHKSource()
     {
-        return new RequestAlipayPlusSource(PaymentSourceType::$alipay_hk);
+        $source = new RequestAlipayPlusSource();
+        $source->type = PaymentSourceType::$alipay_hk;
+        return $source;
     }
 
+    /**
+     * @deprecated Use {@see RequestDanaSource} instead.
+     *             Will be removed in the next major version.
+     */
     public static function requestAlipayPlusDanaSource()
     {
-        return new RequestAlipayPlusSource(PaymentSourceType::$dana);
+        $source = new RequestAlipayPlusSource();
+        $source->type = PaymentSourceType::$dana;
+        return $source;
     }
 
+    /**
+     * @deprecated Use {@see RequestKakaopaySource} instead.
+     *             Will be removed in the next major version.
+     */
     public static function requestAlipayPlusKakaoPaySource()
     {
-        return new RequestAlipayPlusSource(PaymentSourceType::$kakaopay);
+        $source = new RequestAlipayPlusSource();
+        $source->type = PaymentSourceType::$kakaopay;
+        return $source;
     }
 
+    /**
+     * @deprecated Use {@see RequestTruemoneySource} instead.
+     *             Will be removed in the next major version.
+     */
     public static function requestAlipayPlusTrueMoneySource()
     {
-        return new RequestAlipayPlusSource(PaymentSourceType::$truemoney);
+        $source = new RequestAlipayPlusSource();
+        $source->type = PaymentSourceType::$truemoney;
+        return $source;
     }
 
+    /**
+     * @deprecated Use {@see RequestTngSource} instead.
+     *             Will be removed in the next major version.
+     */
     public static function requestAlipayPlusTNGSource()
     {
-        return new RequestAlipayPlusSource(PaymentSourceType::$tng);
+        $source = new RequestAlipayPlusSource();
+        $source->type = PaymentSourceType::$tng;
+        return $source;
     }
-
 }

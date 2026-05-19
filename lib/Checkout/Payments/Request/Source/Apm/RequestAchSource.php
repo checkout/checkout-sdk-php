@@ -2,7 +2,7 @@
 
 namespace Checkout\Payments\Request\Source\Apm;
 
-use Checkout\Common\AccountHolder;
+use Checkout\Common\AccountHolderAch;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 
@@ -34,7 +34,7 @@ class RequestAchSource extends AbstractRequestSource
     public $bank_code;
 
     /**
-     * @var AccountHolder
+     * @var AccountHolderAch
      */
     public $account_holder;
 }

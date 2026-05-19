@@ -40,7 +40,7 @@ use Checkout\Payments\Request\Source\Apm\RequestTrustlySource;
 use Checkout\Payments\Request\Source\Apm\RequestAfterPaySource;
 use Checkout\Payments\Request\Source\Apm\RequestIllicadoSource;
 use Checkout\Payments\Request\Source\Apm\RequestCvConnectSource;
-use Checkout\Payments\Request\Source\Apm\RequestAlipayPlusSource;
+use Checkout\Payments\Request\Source\Apm\RequestAlipayCnSource;
 use Checkout\Payments\Request\Source\Apm\RequestBancontactSource;
 use Checkout\Payments\Request\Source\Apm\RequestMultiBancoSource;
 use Checkout\Payments\Request\Source\Apm\RequestPostFinanceSource;
@@ -53,7 +53,7 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldMakeAliPayPayment()
     {
-        $requestSource = RequestAlipayPlusSource::requestAlipayPlusCNSource();
+        $requestSource = new RequestAlipayCnSource();
 
         $paymentRequest = new PaymentRequest();
         $paymentRequest->reference = $this->randomEmail();

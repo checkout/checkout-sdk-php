@@ -70,7 +70,7 @@ class OnboardingSimulatorClient extends Client
      */
     public function setEntityStatus($entityId, SimulatorSetStatusRequest $request)
     {
-        return $this->apiClient->put(
+        return $this->apiClient->post(
             $this->buildPath(self::SIMULATE_PATH, self::ENTITIES_PATH, $entityId, self::STATUS_PATH),
             $request,
             $this->sdkAuthorization()

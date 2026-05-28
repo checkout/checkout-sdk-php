@@ -72,6 +72,22 @@ class InstrumentsClient extends Client
     }
 
     /**
+     * Revoke an instrument, preventing it from being used for future transactions.
+     *
+     * @param $instrumentId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function revoke($instrumentId): array
+    {
+        return $this->apiClient->patch($this->buildPath(
+            self::INSTRUMENTS_PATH,
+            $instrumentId,
+            "revoke"
+        ), null, $this->sdkAuthorization());
+    }
+
+    /**
      * @param $country_code
      * @param $currency
      * @param BankAccountFieldQuery $query

@@ -353,4 +353,59 @@ class AccountsClient extends Client
             $this->sdkAuthorization()
         );
     }
+
+    /**
+     * Get entity requirements
+     *
+     * Retrieve the list of pending requirements for a sub-entity.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getEntityRequirements($entityId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, "requirements"),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get entity requirement details
+     *
+     * Retrieve detailed information about a specific requirement.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @param string $requirementId The requirement ID (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getEntityRequirementDetails($entityId, $requirementId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, "requirements", $requirementId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Resolve entity requirement
+     *
+     * Submit a response to resolve a pending requirement.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @param string $requirementId The requirement ID (Required)
+     * @param EntityRequirementUpdateRequest $request The requirement resolution request (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function resolveEntityRequirement($entityId, $requirementId, EntityRequirementUpdateRequest $request)
+    {
+        return $this->apiClient->put(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, "requirements", $requirementId),
+            $request,
+            $this->sdkAuthorization()
+        );
+    }
 }

@@ -15,6 +15,7 @@ class InstrumentsClient extends Client
 {
     const INSTRUMENTS_PATH = "instruments";
     const VALIDATION_PATH = "validation/bank-accounts";
+    const REVOKE_PATH = "revoke";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -83,7 +84,7 @@ class InstrumentsClient extends Client
         return $this->apiClient->patch($this->buildPath(
             self::INSTRUMENTS_PATH,
             $instrumentId,
-            "revoke"
+            self::REVOKE_PATH
         ), null, $this->sdkAuthorization());
     }
 

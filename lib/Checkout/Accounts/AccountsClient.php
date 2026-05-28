@@ -23,6 +23,7 @@ class AccountsClient extends Client
     const PAYMENT_INSTRUMENTS_PATH = "payment-instruments";
     const MEMBERS_PATH = "members";
     const RESERVE_RULES_PATH = "reserve-rules";
+    const REQUIREMENTS_PATH = "requirements";
 
     private $filesApiClient;
 
@@ -366,7 +367,7 @@ class AccountsClient extends Client
     public function getEntityRequirements($entityId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, "requirements"),
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH),
             $this->sdkAuthorization()
         );
     }
@@ -384,7 +385,7 @@ class AccountsClient extends Client
     public function getEntityRequirementDetails($entityId, $requirementId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, "requirements", $requirementId),
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH, $requirementId),
             $this->sdkAuthorization()
         );
     }
@@ -403,7 +404,7 @@ class AccountsClient extends Client
     public function resolveEntityRequirement($entityId, $requirementId, EntityRequirementUpdateRequest $request)
     {
         return $this->apiClient->put(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, "requirements", $requirementId),
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH, $requirementId),
             $request,
             $this->sdkAuthorization()
         );

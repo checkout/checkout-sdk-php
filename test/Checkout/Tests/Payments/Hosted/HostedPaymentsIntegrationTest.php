@@ -18,6 +18,7 @@ use Checkout\Payments\Hosted\HostedPaymentsSessionRequest;
 use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\PaymentType;
 use Checkout\Payments\ProcessingSettings;
+use Checkout\Payments\Request\DunningRetryRequest;
 use Checkout\Payments\Request\PaymentInstruction;
 use Checkout\Payments\Request\PaymentRetryRequest;
 use Checkout\Payments\RiskRequest;
@@ -129,8 +130,13 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $billingDescriptor->city = "London";
         $billingDescriptor->name = "Awesome name";
 
+        $dunning = new DunningRetryRequest();
+        $dunning->enabled = true;
+        $dunning->max_attempts = 2;
+
         $customerRetry = new PaymentRetryRequest();
-        $customerRetry->max_attempts = 2;
+        $customerRetry->enabled = true;
+        $customerRetry->dunning = $dunning;
 
         $instruction = new PaymentInstruction();
         $instruction->purpose = "fund";

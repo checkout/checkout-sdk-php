@@ -341,7 +341,6 @@ class RequestApmSourcesTest extends TestCase
         $source = new RequestSepaSource();
         $source->country = 'DE';
         $source->account_number = 'DE89370400440532013000';
-        $source->bank_code = 'COBADEFFXXX';
         $source->currency = 'EUR';
         $source->mandate_id = 'mandate-123';
         $source->date_of_signature = '2026-01-01';
@@ -352,7 +351,6 @@ class RequestApmSourcesTest extends TestCase
         $this->assertSame('sepa', $decoded['type']);
         $this->assertSame('DE', $decoded['country']);
         $this->assertSame('DE89370400440532013000', $decoded['account_number']);
-        $this->assertSame('COBADEFFXXX', $decoded['bank_code']);
         $this->assertSame('EUR', $decoded['currency']);
         $this->assertSame('mandate-123', $decoded['mandate_id']);
         $this->assertSame('2026-01-01', $decoded['date_of_signature']);

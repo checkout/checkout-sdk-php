@@ -12,23 +12,5 @@ class SimulatorSetRequirementsDueRequest
      * [Required]
      * The requirement fields to mark as due.
      */
-    private $fields;
-
-    // Getters and setters
-
-    /**
-     * @return string[]
-     */
-    public function getFields(): ?array
-    {
-        return $this->fields;
-    }
-
-    /**
-     * @param string[] $fields
-     */
-    public function setFields(?array $fields): void
-    {
-        $this->fields = $fields;
-    }
+    public $fields;
 }

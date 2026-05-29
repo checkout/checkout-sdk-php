@@ -41,7 +41,7 @@ class OnboardingSimulatorClientTest extends UnitTestFixture
             ]);
 
         $request = new SimulatorSetRequirementsDueRequest();
-        $request->setFields(["individual.identification.document"]);
+        $request->fields = ["individual.identification.document"];
         
         $response = $this->client->setRequirementsDue("entity_id", $request);
         $this->assertNotNull($response);
@@ -75,7 +75,7 @@ class OnboardingSimulatorClientTest extends UnitTestFixture
     public function shouldSetEntityStatus()
     {
         $this->apiClient
-            ->method("put")
+            ->method("post")
             ->willReturn([
                 "entity_id" => "ent_123",
                 "previous_status" => "Pending",
@@ -83,7 +83,7 @@ class OnboardingSimulatorClientTest extends UnitTestFixture
             ]);
 
         $request = new SimulatorSetStatusRequest();
-        $request->setStatus("active");
+        $request->status = "active";
         
         $response = $this->client->setEntityStatus("entity_id", $request);
         $this->assertNotNull($response);
@@ -155,10 +155,10 @@ class OnboardingSimulatorClientTest extends UnitTestFixture
             ]);
 
         $request = new SimulatorSetRequirementsDueRequest();
-        $request->setFields([
+        $request->fields = [
             "individual.identification.document",
             "company.registration.document"
-        ]);
+        ];
         
         $response = $this->client->setRequirementsDue("entity_id", $request);
         $this->assertNotNull($response);

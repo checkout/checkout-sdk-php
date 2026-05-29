@@ -85,7 +85,7 @@ class AccountsClientEntityRequirementsTest extends UnitTestFixture
             ]);
 
         $request = new EntityRequirementUpdateRequest();
-        $request->setValue(["file_id" => "file_test123"]);
+        $request->value = ["file_id" => "file_test123"];
         
         $response = $this->client->resolveEntityRequirement("entity_id", "requirement_id", $request);
         $this->assertNotNull($response);
@@ -106,7 +106,7 @@ class AccountsClientEntityRequirementsTest extends UnitTestFixture
             ]);
 
         $request = new EntityRequirementUpdateRequest();
-        $request->setValue("test_response_value");
+        $request->value = "test_response_value";
         
         $response = $this->client->resolveEntityRequirement("entity_id", "requirement_id", $request);
         $this->assertNotNull($response);

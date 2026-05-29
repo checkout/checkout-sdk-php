@@ -4,7 +4,7 @@ namespace Checkout\Payments\Request\Source\Apm;
 
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\PaymentMethodDetails;
-use Checkout\Payments\Previous\Source\AbstractRequestSource;
+use Checkout\Payments\Request\Source\AbstractRequestSource;
 use Checkout\Tokens\ApplePayTokenData;
 
 class RequestKnetSource extends AbstractRequestSource

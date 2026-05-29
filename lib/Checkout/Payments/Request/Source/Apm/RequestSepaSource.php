@@ -24,11 +24,6 @@ class RequestSepaSource extends AbstractRequestSource
     public $account_number;
 
     /**
-     * @var string
-     */
-    public $bank_code;
-
-    /**
      * @var string value of Currency
      */
     public $currency;
@@ -47,4 +42,12 @@ class RequestSepaSource extends AbstractRequestSource
      * @var AccountHolder
      */
     public $account_holder;
+
+    /**
+     * The type of mandate.
+     * [Optional]
+     * Enum: "Core" "B2B"
+     * @var string|null $mandate_type
+     */
+    public $mandate_type;
 }

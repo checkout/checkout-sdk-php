@@ -60,21 +60,4 @@ class PaymentPlan
      * @var int|null $amount
      */
     public $amount;
-
-    /**
-     * Specifies whether the amount is fixed or variable for each recurrence.
-     * Used when payment_type is recurring.
-     * [Optional]
-     * Enum: "Fixed" "Variable"
-     * @var string|null $amount_variability value of AmountVariabilityType
-     */
-    public $amount_variability;
-
-    /**
-     * Whether the installment plan has financing.
-     * Used when payment_type is installment.
-     * [Optional]
-     * @var bool|null $financing
-     */
-    public $financing;
 }

@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Sessions;
 
+use Checkout\Payments\Request\PaymentInstruction;
 use Checkout\Payments\Request\PaymentRetryRequest;
 use Checkout\Payments\RiskRequest;
 use Checkout\Payments\Sender\PaymentSender;
@@ -112,9 +113,18 @@ class PaymentSessionsRequest
     public $risk;
 
     /**
-     * @var PaymentRetryRequest
+     * Configuration for retrying failed payments.
+     * [Optional]
+     * @var PaymentRetryRequest|null $customer_retry
      */
-    public $retry;
+    public $customer_retry;
+
+    /**
+     * Details about the payment instruction.
+     * [Optional]
+     * @var PaymentInstruction|null $instruction
+     */
+    public $instruction;
 
     /**
      * @var string
@@ -165,9 +175,4 @@ class PaymentSessionsRequest
      * @var string
      */
     public $ip_address;
-
-    /**
-     * @var int
-     */
-    public $tax_amount;
 }

@@ -2,7 +2,10 @@
 
 namespace Checkout\Payments\Request\Source;
 
+use Checkout\Common\AccountHolder;
+use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
+use Checkout\Common\Phone;
 
 class RequestIdSource extends AbstractRequestSource
 {
@@ -28,12 +31,31 @@ class RequestIdSource extends AbstractRequestSource
     public $payment_method;
 
     /**
-     * @var bool
+     * The cardholder's billing address.
+     * [Optional]
+     * @var Address|null $billing_address
      */
-    public $stored;
+    public $billing_address;
 
     /**
-     * @var bool
+     * The cardholder's phone number.
+     * [Optional]
+     * @var Phone|null $phone
      */
-    public $store_for_future_use;
+    public $phone;
+
+    /**
+     * Information about the account holder of the payment instrument.
+     * [Optional]
+     * @var AccountHolder|null $account_holder
+     */
+    public $account_holder;
+
+    /**
+     * Specifies whether to use the Real-Time Account Updater to update the card information.
+     * [Optional]
+     * default true
+     * @var bool|null $allow_update
+     */
+    public $allow_update;
 }

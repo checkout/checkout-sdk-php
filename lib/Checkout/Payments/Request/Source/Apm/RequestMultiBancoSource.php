@@ -3,7 +3,7 @@
 namespace Checkout\Payments\Request\Source\Apm;
 
 use Checkout\Common\PaymentSourceType;
-use Checkout\Payments\Previous\Source\AbstractRequestSource;
+use Checkout\Payments\Request\Source\AbstractRequestSource;
 
 class RequestMultiBancoSource extends AbstractRequestSource
 {

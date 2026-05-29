@@ -36,9 +36,4 @@ final class SessionCardSource extends SessionSource
      * @var bool
      */
     public $stored = false;
-
-    /**
-     * @var bool
-     */
-    public $store_for_future_use;
 }

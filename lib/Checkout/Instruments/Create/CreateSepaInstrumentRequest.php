@@ -23,4 +23,9 @@ class CreateSepaInstrumentRequest extends CreateInstrumentRequest
      */
     public $account_holder;
 
+    /**
+     * @var \Checkout\Instruments\Create\UpdateCustomerRequest
+     */
+    public $customer;
+
 }

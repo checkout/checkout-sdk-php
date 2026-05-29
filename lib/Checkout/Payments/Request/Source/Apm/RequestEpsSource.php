@@ -16,4 +16,9 @@ class RequestEpsSource extends AbstractRequestSource
      * @var string
      */
     public $purpose;
+
+    /**
+     * @var \Checkout\Common\AccountHolder
+     */
+    public $account_holder;
 }

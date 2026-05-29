@@ -71,7 +71,7 @@ class UpdateBankInstrumentRequest extends UpdateInstrumentRequest
     /**
      * @var BankDetails
      */
-    public $bank_details;
+    public $bank;
 
     /**
      * @var UpdateCustomerRequest

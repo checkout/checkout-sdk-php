@@ -8,7 +8,11 @@ use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
 use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\ProcessingSettings;
+use Checkout\Payments\Request\PaymentInstruction;
+use Checkout\Payments\Request\PaymentRetryRequest;
 use Checkout\Payments\RiskRequest;
+use Checkout\Payments\Sender\PaymentSender;
+use Checkout\Payments\Sessions\PaymentMethodConfiguration;
 use Checkout\Payments\ShippingDetails;
 use Checkout\Payments\ThreeDsRequest;
 use DateTime;
@@ -124,6 +128,48 @@ class PaymentLinkRequest
      * @var array of PaymentSourceType
      */
     public $allow_payment_methods;
+
+    /**
+     * The payment methods to hide from the payment link.
+     * [Optional]
+     * @var string[]|null $disabled_payment_methods values of PaymentSourceType
+     */
+    public $disabled_payment_methods;
+
+    /**
+     * The name of the merchant or seller to show on the payment link page.
+     * [Optional]
+     * @var string|null $display_name
+     */
+    public $display_name;
+
+    /**
+     * Configuration for retrying failed payments.
+     * [Optional]
+     * @var PaymentRetryRequest|null $customer_retry
+     */
+    public $customer_retry;
+
+    /**
+     * The sender of the payment.
+     * [Optional]
+     * @var PaymentSender|null $sender
+     */
+    public $sender;
+
+    /**
+     * Details about the instruction for payouts to bank accounts.
+     * [Optional]
+     * @var PaymentInstruction|null $instruction
+     */
+    public $instruction;
+
+    /**
+     * Configuration for the payment methods shown on the payment link.
+     * [Optional]
+     * @var PaymentMethodConfiguration|null $payment_method_configuration
+     */
+    public $payment_method_configuration;
 
     //Not available on previous
 

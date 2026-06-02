@@ -23,6 +23,7 @@ class AccountsClient extends Client
     const PAYMENT_INSTRUMENTS_PATH = "payment-instruments";
     const MEMBERS_PATH = "members";
     const RESERVE_RULES_PATH = "reserve-rules";
+    const REQUIREMENTS_PATH = "requirements";
 
     private $filesApiClient;
 
@@ -350,6 +351,61 @@ class AccountsClient extends Client
     {
         return $this->filesApiClient->get(
             $this->buildPath(self::ENTITIES_PATH, $entityId, self::FILES_PATH, $fileId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get entity requirements
+     *
+     * Retrieve the list of pending requirements for a sub-entity.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getEntityRequirements($entityId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get entity requirement details
+     *
+     * Retrieve detailed information about a specific requirement.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @param string $requirementId The requirement ID (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getEntityRequirementDetails($entityId, $requirementId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH, $requirementId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Resolve entity requirement
+     *
+     * Submit a response to resolve a pending requirement.
+     *
+     * @param string $entityId The sub-entity's ID (Required)
+     * @param string $requirementId The requirement ID (Required)
+     * @param EntityRequirementUpdateRequest $request The requirement resolution request (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function resolveEntityRequirement($entityId, $requirementId, EntityRequirementUpdateRequest $request)
+    {
+        return $this->apiClient->put(
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH, $requirementId),
+            $request,
             $this->sdkAuthorization()
         );
     }

@@ -2,6 +2,16 @@
 
 namespace Checkout\Payments\Sessions;
 
+use Checkout\Payments\BillingDescriptor;
+use Checkout\Payments\BillingInformation;
+use Checkout\Payments\PaymentCustomerRequest;
+use Checkout\Payments\PaymentInstruction;
+use Checkout\Payments\PaymentRecipient;
+use Checkout\Payments\ProcessingSettings;
+use Checkout\Payments\Sender\PaymentSender;
+use Checkout\Payments\ShippingDetails;
+use DateTime;
+
 class PaymentSessionSubmitRequest
 {
     /**
@@ -46,4 +56,100 @@ class PaymentSessionSubmitRequest
      * @var string value of PaymentType
      */
     public $payment_type;
+
+    /**
+     * The three-letter ISO currency code.
+     * @var string value of Currency
+     */
+    public $currency;
+
+    /**
+     * The billing information for the payment.
+     * @var BillingInformation
+     */
+    public $billing;
+
+    /**
+     * The billing descriptor for the payment.
+     * @var BillingDescriptor
+     */
+    public $billing_descriptor;
+
+    /**
+     * Specifies whether to capture the payment, if applicable.
+     * @var bool
+     */
+    public $capture;
+
+    /**
+     * A timestamp specifying when to capture the payment, as an ISO 8601 code.
+     * @var DateTime
+     */
+    public $capture_on;
+
+    /**
+     * The customer details for the payment.
+     * @var PaymentCustomerRequest
+     */
+    public $customer;
+
+    /**
+     * For redirect payment methods, this overrides the default failure redirect URL.
+     * @var string
+     */
+    public $failure_url;
+
+    /**
+     * Contains the purpose of payment for account funding transactions.
+     * @var PaymentInstruction
+     */
+    public $instruction;
+
+    /**
+     * A set of key-value pairs that you can attach to a payment.
+     * @var array
+     */
+    public $metadata;
+
+    /**
+     * Configurations for payment method-specific settings.
+     * @var PaymentMethodConfiguration
+     */
+    public $payment_method_configuration;
+
+    /**
+     * Use the processing object to influence or override the data sent during card processing.
+     * @var ProcessingSettings
+     */
+    public $processing;
+
+    /**
+     * The processing channel to use for the payment.
+     * @var string
+     */
+    public $processing_channel_id;
+
+    /**
+     * Information about the recipient of the payment's funds.
+     * @var PaymentRecipient
+     */
+    public $recipient;
+
+    /**
+     * Information about the sender of the payment's funds.
+     * @var PaymentSender
+     */
+    public $sender;
+
+    /**
+     * The shipping details for the payment.
+     * @var ShippingDetails
+     */
+    public $shipping;
+
+    /**
+     * For redirect payment methods, this overrides the default success redirect URL.
+     * @var string
+     */
+    public $success_url;
 }

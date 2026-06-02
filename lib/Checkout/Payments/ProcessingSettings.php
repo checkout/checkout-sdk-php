@@ -250,4 +250,46 @@ class ProcessingSettings
      */
     public $affiliate_url;
 
+    /**
+     * The transaction identifier to track a payment request.
+     * [Optional]
+     * @var string|null $reconciliation_id
+     */
+    public $reconciliation_id;
+
+    /**
+     * The foreign retailer amount applied to the transaction, in the minor currency unit.
+     * [Optional]
+     * min 0
+     * @var int|null $foreign_retailer_amount
+     */
+    public $foreign_retailer_amount;
+
+    /**
+     * Specifies which ACH service to use for the payment when source.type is "ach".
+     * [Optional]
+     * Enum: "same_day" "standard"
+     * @var string|null $service_type value of AchServiceType
+     */
+    public $service_type;
+
+    /**
+     * The customer's 6-digit Blik code. Required when source.type is blik and merchant_initiated is false.
+     * [Optional]
+     * Pattern: ^\d{6}$
+     * min 6 characters
+     * max 6 characters
+     * @var string|null $partner_code
+     */
+    public $partner_code;
+
+    /**
+     * Specifies whether to process the payment as a credit or debit transaction.
+     * Required for domestic payments in Brazil performed using a Brazilian card.
+     * [Optional]
+     * Enum: "credit" "debit"
+     * @var string|null $card_type value of CardType
+     */
+    public $card_type;
+
 }

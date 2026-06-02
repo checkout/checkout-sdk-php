@@ -29,11 +29,6 @@ class PaymentContextsRequest
     public $payment_type;
 
     /**
-     * @var string
-     */
-    public $authorizationType;
-
-    /**
      * @var bool
      */
     public $capture;
@@ -82,4 +77,11 @@ class PaymentContextsRequest
      * @var array of Checkout\Payments\Contexts\PaymentContextsItems
      */
     public $items;
+
+    /**
+     * Key-value pairs for custom metadata.
+     * [Optional]
+     * @var array|null $metadata
+     */
+    public $metadata;
 }

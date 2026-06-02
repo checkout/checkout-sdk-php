@@ -5,18 +5,23 @@ namespace Checkout\Payments\Request;
 class PaymentRetryRequest
 {
     /**
-     * @var bool
+     * Indicates whether asynchronous retries are enabled for the payment.
+     * [Required]
+     * @var bool $enabled
      */
     public $enabled;
 
     /**
-     * @var int
+     * Configuration of asynchronous Dunning retries.
+     * [Optional]
+     * @var DunningRetryRequest|null $dunning
      */
-    public $max_attempts;
+    public $dunning;
 
     /**
-     * @var int
+     * Configuration of asynchronous Downtime retries.
+     * [Optional]
+     * @var DowntimeRetryRequest|null $downtime
      */
-    public $end_after_days;
-
+    public $downtime;
 }

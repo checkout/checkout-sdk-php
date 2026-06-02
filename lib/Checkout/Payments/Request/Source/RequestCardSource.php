@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Request\Source;
 
+use Checkout\Common\AccountHolder;
 use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Common\Phone;
@@ -58,4 +59,19 @@ class RequestCardSource extends AbstractRequestSource
      * @var Phone
      */
     public $phone;
+
+    /**
+     * Information about the account holder of the card.
+     * [Optional]
+     * @var AccountHolder|null $account_holder
+     */
+    public $account_holder;
+
+    /**
+     * Specifies whether to use the Real-Time Account Updater to update the card information.
+     * [Optional]
+     * default true
+     * @var bool|null $allow_update
+     */
+    public $allow_update;
 }

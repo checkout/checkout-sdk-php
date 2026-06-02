@@ -15,6 +15,7 @@ class InstrumentsClient extends Client
 {
     const INSTRUMENTS_PATH = "instruments";
     const VALIDATION_PATH = "validation/bank-accounts";
+    const REVOKE_PATH = "revoke";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -69,6 +70,22 @@ class InstrumentsClient extends Client
             self::INSTRUMENTS_PATH,
             $instrumentId
         ), $this->sdkAuthorization());
+    }
+
+    /**
+     * Revoke an instrument, preventing it from being used for future transactions.
+     *
+     * @param $instrumentId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function revoke($instrumentId): array
+    {
+        return $this->apiClient->patch($this->buildPath(
+            self::INSTRUMENTS_PATH,
+            $instrumentId,
+            self::REVOKE_PATH
+        ), null, $this->sdkAuthorization());
     }
 
     /**

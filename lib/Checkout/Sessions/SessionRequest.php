@@ -8,6 +8,8 @@ use Checkout\Sessions\Channel\ChannelData;
 use Checkout\Sessions\Source\SessionSource;
 use Checkout\Sessions\Completion\CompletionInfo;
 use Checkout\Sessions\Source\SessionCardSource;
+use Checkout\Sessions\DeviceInformation;
+use Checkout\Sessions\GoogleSpa;
 
 final class SessionRequest
 {
@@ -72,11 +74,6 @@ final class SessionRequest
     public $merchant_risk_info;
 
     /**
-     * @var string
-     */
-    public $prior_transaction_reference;
-
-    /**
      * @var string value of TransactionType
      */
     public $transaction_type;
@@ -120,6 +117,28 @@ final class SessionRequest
      * @var InitialTransaction
      */
     public $initial_transaction;
+
+    /**
+     * Indicates the chosen experience(s) for this session.
+     * Available experiences include: 3ds, google_spa
+     * [Optional]
+     * @var string[]|null $preferred_experiences values of Experience
+     */
+    public $preferred_experiences;
+
+    /**
+     * Google SPA properties (non-hosted only).
+     * [Optional]
+     * @var GoogleSpa|null $google_spa
+     */
+    public $google_spa;
+
+    /**
+     * Details of the device from which the authentication originated.
+     * [Optional]
+     * @var DeviceInformation|null $device_information
+     */
+    public $device_information;
 
     public function __construct()
     {

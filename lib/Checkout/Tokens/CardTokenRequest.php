@@ -46,4 +46,13 @@ class CardTokenRequest
      * @var Phone
      */
     public $phone;
+
+    /**
+     * The first 2 digits of the card PIN.
+     * [Optional]
+     * min 2 characters
+     * max 2 characters
+     * @var string|null $pin
+     */
+    public $pin;
 }

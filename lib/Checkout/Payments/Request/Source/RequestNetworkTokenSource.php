@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Request\Source;
 
+use Checkout\Common\AccountHolder;
 use Checkout\Common\Address;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Common\Phone;
@@ -73,4 +74,11 @@ class RequestNetworkTokenSource extends AbstractRequestSource
      * @var Phone
      */
     public $phone;
+
+    /**
+     * Information about the account holder of the card.
+     * [Optional]
+     * @var AccountHolder|null $account_holder
+     */
+    public $account_holder;
 }

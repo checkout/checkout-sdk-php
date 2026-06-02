@@ -15,4 +15,19 @@ class VirtualCardRequest extends CardRequest
      * @var boolean
      */
     public $is_single_use;
+
+    /**
+     * @var array
+     */
+    public $return_credentials;
+
+    /**
+     * @var array
+     */
+    public $controls;
+
+    /**
+     * @var array
+     */
+    public $control_profiles;
 }

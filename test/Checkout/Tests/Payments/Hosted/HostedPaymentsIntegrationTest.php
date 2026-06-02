@@ -19,7 +19,6 @@ use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\PaymentType;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentInstruction;
-use Checkout\Payments\Request\PaymentRetryRequest;
 use Checkout\Payments\RiskRequest;
 use Checkout\Payments\Sender\PaymentInstrumentSender;
 use Checkout\Payments\ShippingDetails;
@@ -129,9 +128,6 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $billingDescriptor->city = "London";
         $billingDescriptor->name = "Awesome name";
 
-        $customerRetry = new PaymentRetryRequest();
-        $customerRetry->max_attempts = 2;
-
         $instruction = new PaymentInstruction();
         $instruction->purpose = "fund";
 
@@ -157,7 +153,6 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
         $hostedPaymentRequest->payment_type = PaymentType::$regular;
         $hostedPaymentRequest->billing_descriptor = $billingDescriptor;
         $hostedPaymentRequest->allow_payment_methods = array(PaymentSourceType::$card, PaymentSourceType::$ideal);
-        $hostedPaymentRequest->customer_retry = $customerRetry;
         $hostedPaymentRequest->sender = new PaymentInstrumentSender();
         $hostedPaymentRequest->instruction = $instruction;
 

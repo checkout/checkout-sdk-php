@@ -20,6 +20,7 @@ use Checkout\Instruments\InstrumentsClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
 use Checkout\NetworkTokens\NetworkTokensClient;
+use Checkout\OnboardingSimulator\OnboardingSimulatorClient;
 use Checkout\Payments\ApplePay\ApplePayClient;
 use Checkout\Payments\GooglePay\GooglePayClient;
 use Checkout\Payments\Contexts\PaymentContextsClient;
@@ -88,6 +89,8 @@ final class CheckoutApi extends CheckoutApmApi
 
     private $googlePayClient;
 
+    private $onboardingSimulatorClient;
+
     public function __construct(CheckoutConfiguration $configuration)
     {
         $baseApiClient = $this->getBaseApiClient($configuration);
@@ -146,6 +149,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->standaloneAccountUpdaterClient = new StandaloneAccountUpdaterClient($baseApiClient, $configuration);
         $this->applePayClient = new ApplePayClient($baseApiClient, $configuration);
         $this->agenticCommerceClient = new AgenticCommerceClient($baseApiClient, $configuration);
+        $this->onboardingSimulatorClient = new OnboardingSimulatorClient($baseApiClient, $configuration);
         $this->complianceRequestsClient = new ComplianceRequestsClient($baseApiClient, $configuration);
         $this->googlePayClient = new GooglePayClient($baseApiClient, $configuration);
     }
@@ -428,7 +432,17 @@ final class CheckoutApi extends CheckoutApmApi
         return $this->googlePayClient;
     }
 
+    /**Client for account onboarding simulator endpoints (sandbox testing).
+     *
+     * @return OnboardingSimulatorClient
+     */
+    public function getOnboardingSimulatorClient()
+    {
+        return $this->onboardingSimulatorClient;
+    }
+
     /**
+        *
      * @param CheckoutConfiguration $configuration
      * @return ApiClient
      */

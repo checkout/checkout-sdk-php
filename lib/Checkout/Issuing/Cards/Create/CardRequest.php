@@ -43,4 +43,14 @@ abstract class CardRequest
      * @var bool
      */
     public $activate_card;
+
+    /**
+     * @var array
+     */
+    public $metadata;
+
+    /**
+     * @var string
+     */
+    public $revocation_date;
 }

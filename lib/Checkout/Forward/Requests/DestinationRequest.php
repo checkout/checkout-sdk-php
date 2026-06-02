@@ -45,4 +45,18 @@ class DestinationRequest
      */
     public $signature;
 
+    /**
+     * The query parameters to include in the forward request. (Optional)
+     *
+     * @var array
+     */
+    public $query;
+
+    /**
+     * Placeholder variables to substitute in the body. (Optional)
+     *
+     * @var array
+     */
+    public $variables;
+
 }

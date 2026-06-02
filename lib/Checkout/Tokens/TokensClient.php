@@ -37,4 +37,19 @@ class TokensClient extends Client
         return $this->apiClient->post(self::TOKENS_PATH, $walletTokenRequest, $this->sdkAuthorization());
     }
 
+    /**
+     * Get metadata for a specific token.
+     *
+     * @param string $tokenId
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getTokenMetadata($tokenId)
+    {
+        return $this->apiClient->get(
+            $this->buildPath(self::TOKENS_PATH, $tokenId, "metadata"),
+            $this->sdkSpecificAuthorization(AuthorizationType::$secretKeyOrOAuth)
+        );
+    }
+
 }

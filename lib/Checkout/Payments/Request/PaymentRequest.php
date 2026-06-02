@@ -5,6 +5,11 @@ namespace Checkout\Payments\Request;
 use Checkout\Common\CustomerRequest;
 use Checkout\Common\MarketplaceData;
 use Checkout\Payments\BillingDescriptor;
+use Checkout\Payments\InstructionRemittance;
+use Checkout\Payments\PaymentInstruction;
+use Checkout\Payments\PaymentPlan;
+use Checkout\Payments\Request\PaymentRouting;
+use Checkout\Payments\Request\PaymentSubscription;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 use Checkout\Payments\Sender\PaymentSender;
 use Checkout\Payments\PaymentRecipient;
@@ -27,6 +32,13 @@ class PaymentRequest
     public $source;
 
     /**
+     * The fallback source to use if the primary source is unavailable.
+     * [Optional]
+     * @var AbstractRequestSource|null $fallback_source
+     */
+    public $fallback_source;
+
+    /**
      * @var int
      */
     public $amount;
@@ -40,6 +52,13 @@ class PaymentRequest
      * @var string value of PaymentType
      */
     public $payment_type;
+
+    /**
+     * The details of a recurring subscription or installment payment plan.
+     * [Optional]
+     * @var PaymentPlan|null $payment_plan
+     */
+    public $payment_plan;
 
     /**
      * @var bool
@@ -80,6 +99,14 @@ class PaymentRequest
      * @var DateTime
      */
     public $capture_on;
+
+    /**
+     * The date and time when the Multibanco payment expires in UTC.
+     * [Optional]
+     * Format: ISO 8601
+     * @var DateTime|null $expire_on
+     */
+    public $expire_on;
 
     /**
      * @var CustomerRequest
@@ -133,6 +160,7 @@ class PaymentRequest
 
     /**
      * @var string
+     * Obsolete - Use risk.device.network.ipv4 or risk.device.network.ipv6 instead
      */
     public $payment_ip;
 
@@ -181,4 +209,18 @@ class PaymentRequest
      * @var PaymentInstruction
      */
     public $instruction;
+
+    /**
+     * The details linking a series of recurring payments together.
+     * [Optional]
+     * @var PaymentSubscription|null $subscription
+     */
+    public $subscription;
+
+    /**
+     * Controls processor attempts at the payment level.
+     * [Optional]
+     * @var PaymentRouting|null $routing
+     */
+    public $routing;
 }

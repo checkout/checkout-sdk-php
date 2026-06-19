@@ -175,4 +175,19 @@ class PaymentSessionsRequest
      * @var string
      */
     public $ip_address;
+
+    /**
+     * The authorization type.
+     * [Optional]
+     * Allowed values: "Final", "Estimated". Defaults to "Final".
+     * @var string|null $authorization_type
+     */
+    public $authorization_type;
+
+    /**
+     * The payment plan details. To be used when the payment_type is Recurring.
+     * [Optional]
+     * @var \Checkout\Payments\PaymentPlan|null $payment_plan
+     */
+    public $payment_plan;
 }

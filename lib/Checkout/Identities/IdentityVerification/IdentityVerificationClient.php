@@ -7,6 +7,7 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationRequest;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationAndOpenRequest;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationAttemptRequest;
@@ -18,6 +19,7 @@ class IdentityVerificationClient extends Client
     const ANONYMIZE_PATH = "anonymize";
     const ATTEMPTS_PATH = "attempts";
     const PDF_REPORT_PATH = "pdf-report";
+    const ASSETS_PATH = "assets";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -146,6 +148,30 @@ class IdentityVerificationClient extends Client
     {
         return $this->apiClient->get(
             $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::PDF_REPORT_PATH),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Retrieves the assets (face images, videos, and document images) captured during an identity verification attempt.
+     *
+     * identityVerificationId is the identity verification's unique identifier. (Required)
+     * attemptId is the attempt's unique identifier. (Required)
+     *
+     * @param string $identityVerificationId
+     * @param string $attemptId
+     * @param AttemptAssetsQueryFilter|null $query the pagination query parameters (skip and limit)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getIdentityVerificationAttemptAssets(
+        string $identityVerificationId,
+        string $attemptId,
+        AttemptAssetsQueryFilter $query = null
+    ): array {
+        return $this->apiClient->query(
+            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ATTEMPTS_PATH, $attemptId, self::ASSETS_PATH),
+            $query ?? new AttemptAssetsQueryFilter(),
             $this->sdkAuthorization()
         );
     }

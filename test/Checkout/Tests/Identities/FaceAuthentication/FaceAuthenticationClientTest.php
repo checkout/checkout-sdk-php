@@ -6,6 +6,7 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
 use Checkout\Identities\Entities\ClientInformation;
 use Checkout\Identities\FaceAuthentication\FaceAuthenticationClient;
 use Checkout\Identities\FaceAuthentication\Requests\FaceAuthenticationRequest;
@@ -140,6 +141,48 @@ class FaceAuthenticationClientTest extends UnitTestFixture
 
         $this->assertNotNull($response);
         $this->validateFaceAuthenticationAttemptResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetFaceAuthenticationAttemptAssets()
+    {
+        $expectedResponse = $this->buildExpectedFaceAuthenticationAttemptAssetsResponse();
+
+        $this->apiClient
+            ->method("query")
+            ->willReturn($expectedResponse);
+
+        $query = new AttemptAssetsQueryFilter();
+        $query->skip = 0;
+        $query->limit = 10;
+        $response = $this->client->getFaceAuthenticationAttemptAssets("face_auth_12345", "attempt_67890", $query);
+
+        $this->assertNotNull($response);
+        $this->validateFaceAuthenticationAttemptAssetsResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCallCorrectApiEndpointForGetFaceAuthenticationAttemptAssets()
+    {
+        $faceAuthId = "face_auth_12345";
+        $attemptId = "attempt_67890";
+        $expectedResponse = $this->buildExpectedFaceAuthenticationAttemptAssetsResponse();
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("query")
+            ->with("face-authentications/" . $faceAuthId . "/attempts/" . $attemptId . "/assets")
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->getFaceAuthenticationAttemptAssets($faceAuthId, $attemptId);
+
+        $this->assertNotNull($response);
     }
 
     /**
@@ -376,10 +419,41 @@ class FaceAuthenticationClientTest extends UnitTestFixture
     {
         $this->assertArrayHasKey("attempts", $response);
         $this->assertArrayHasKey("total_count", $response);
-        
+
         $this->assertNotNull($response["attempts"]);
         $this->assertTrue(is_array($response["attempts"]));
         $this->assertNotNull($response["total_count"]);
         $this->assertTrue(is_numeric($response["total_count"]));
+    }
+
+    private function buildExpectedFaceAuthenticationAttemptAssetsResponse(): array
+    {
+        return [
+            "total_count" => 1,
+            "skip" => 0,
+            "limit" => 10,
+            "data" => [
+                [
+                    "type" => "face_image",
+                    "_links" => [
+                        "asset_url" => [
+                            "href" => "https://example.com/face-image.jpg"
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    private function validateFaceAuthenticationAttemptAssetsResponse(array $response): void
+    {
+        $this->assertArrayHasKey("total_count", $response);
+        $this->assertArrayHasKey("skip", $response);
+        $this->assertArrayHasKey("limit", $response);
+        $this->assertArrayHasKey("data", $response);
+
+        $this->assertTrue(is_array($response["data"]));
+        $this->assertNotNull($response["data"][0]["type"]);
+        $this->assertNotNull($response["data"][0]["_links"]["asset_url"]["href"]);
     }
 }

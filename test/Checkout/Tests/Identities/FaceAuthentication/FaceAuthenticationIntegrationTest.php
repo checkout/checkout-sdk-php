@@ -156,6 +156,35 @@ class FaceAuthenticationIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldGetFaceAuthenticationAttemptAssets()
+    {
+        $this->markTestSkipped("This test requires valid test environment setup");
+
+        // Create face authentication first
+        $faceAuthRequest = $this->buildFaceAuthenticationRequest();
+        $createdFaceAuthentication = $this->checkoutApi->getFaceAuthenticationClient()
+            ->createFaceAuthentication($faceAuthRequest);
+
+        // Create attempt first
+        $attemptRequest = $this->buildFaceAuthenticationAttemptRequest();
+        $createdAttempt = $this->checkoutApi->getFaceAuthenticationClient()
+            ->createFaceAuthenticationAttempt($createdFaceAuthentication["id"], $attemptRequest);
+
+        // Get attempt assets
+        $query = new \Checkout\Identities\Entities\AttemptAssetsQueryFilter();
+        $query->skip = 0;
+        $query->limit = 10;
+        $response = $this->checkoutApi->getFaceAuthenticationClient()
+            ->getFaceAuthenticationAttemptAssets($createdFaceAuthentication["id"], $createdAttempt["id"], $query);
+
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("data", $response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldPerformFaceAuthenticationWorkflow()
     {
         $this->markTestSkipped("This test requires valid test environment setup");

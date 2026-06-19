@@ -12,6 +12,7 @@ use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\PaymentCustomerRequest;
+use Checkout\Payments\PaymentPlan;
 use Checkout\Payments\ThreeDsRequest;
 use DateTime;
 
@@ -175,4 +176,20 @@ class PaymentSessionsRequest
      * @var string
      */
     public $ip_address;
+
+    /**
+     * The authorization type.
+     * [Optional]
+     * Enum: "Final" "Estimated"
+     * Default: "Final"
+     * @var string|null $authorization_type value of AuthorizationType
+     */
+    public $authorization_type;
+
+    /**
+     * The information to process a recurring payment request. To be used when the payment_type is Recurring.
+     * [Optional]
+     * @var PaymentPlan|null $payment_plan
+     */
+    public $payment_plan;
 }

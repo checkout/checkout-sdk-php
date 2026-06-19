@@ -292,4 +292,11 @@ class ProcessingSettings
      */
     public $card_type;
 
+    /**
+     * The scheme transaction link identifier.
+     * [Optional]
+     * @var string|null $scheme_transaction_link_id
+     */
+    public $scheme_transaction_link_id;
+
 }

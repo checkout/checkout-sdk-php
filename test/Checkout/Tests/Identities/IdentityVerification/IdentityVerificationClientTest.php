@@ -6,6 +6,7 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
 use Checkout\Identities\Entities\DeclaredData;
 use Checkout\Identities\Entities\ClientInformation;
 use Checkout\Identities\IdentityVerification\IdentityVerificationClient;
@@ -343,6 +344,48 @@ class IdentityVerificationClientTest extends UnitTestFixture
         $this->assertNotNull($response);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetIdentityVerificationAttemptAssets()
+    {
+        $expectedResponse = $this->buildExpectedIdentityVerificationAttemptAssetsResponse();
+
+        $this->apiClient
+            ->method("query")
+            ->willReturn($expectedResponse);
+
+        $query = new AttemptAssetsQueryFilter();
+        $query->skip = 0;
+        $query->limit = 10;
+        $response = $this->client->getIdentityVerificationAttemptAssets("idv_test123", "att_test456", $query);
+
+        $this->assertNotNull($response);
+        $this->validateIdentityVerificationAttemptAssetsResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCallCorrectApiEndpointForGetIdentityVerificationAttemptAssets()
+    {
+        $identityVerificationId = "idv_test123";
+        $attemptId = "att_test456";
+        $expectedResponse = $this->buildExpectedIdentityVerificationAttemptAssetsResponse();
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("query")
+            ->with("identity-verifications/" . $identityVerificationId . "/attempts/" . $attemptId . "/assets")
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->getIdentityVerificationAttemptAssets($identityVerificationId, $attemptId);
+
+        $this->assertNotNull($response);
+    }
+
     // Request builders
     private function buildIdentityVerificationAndOpenRequest()
     {
@@ -529,5 +572,36 @@ class IdentityVerificationClientTest extends UnitTestFixture
         if (isset($response["report_url"])) {
             $this->assertNotNull($response["report_url"]);
         }
+    }
+
+    private function buildExpectedIdentityVerificationAttemptAssetsResponse(): array
+    {
+        return [
+            "total_count" => 1,
+            "skip" => 0,
+            "limit" => 10,
+            "data" => [
+                [
+                    "type" => "document_front_image",
+                    "_links" => [
+                        "asset_url" => [
+                            "href" => "https://example.com/document-front.jpg"
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    private function validateIdentityVerificationAttemptAssetsResponse($response)
+    {
+        $this->assertArrayHasKey("total_count", $response);
+        $this->assertArrayHasKey("skip", $response);
+        $this->assertArrayHasKey("limit", $response);
+        $this->assertArrayHasKey("data", $response);
+
+        $this->assertTrue(is_array($response["data"]));
+        $this->assertNotNull($response["data"][0]["type"]);
+        $this->assertNotNull($response["data"][0]["_links"]["asset_url"]["href"]);
     }
 }

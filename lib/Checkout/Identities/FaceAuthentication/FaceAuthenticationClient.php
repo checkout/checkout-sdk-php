@@ -134,11 +134,11 @@ class FaceAuthenticationClient extends Client
     public function getFaceAuthenticationAttemptAssets(
         string $faceAuthenticationId,
         string $attemptId,
-        AttemptAssetsQueryFilter $query = null
+        ?AttemptAssetsQueryFilter $query = null
     ): array {
         return $this->apiClient->query(
             $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ATTEMPTS_PATH, $attemptId, self::ASSETS_PATH),
-            $query ?? new AttemptAssetsQueryFilter(),
+            $query,
             $this->sdkAuthorization()
         );
     }

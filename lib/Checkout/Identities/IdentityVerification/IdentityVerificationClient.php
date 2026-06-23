@@ -167,11 +167,11 @@ class IdentityVerificationClient extends Client
     public function getIdentityVerificationAttemptAssets(
         string $identityVerificationId,
         string $attemptId,
-        AttemptAssetsQueryFilter $query = null
+        ?AttemptAssetsQueryFilter $query = null
     ): array {
         return $this->apiClient->query(
             $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ATTEMPTS_PATH, $attemptId, self::ASSETS_PATH),
-            $query ?? new AttemptAssetsQueryFilter(),
+            $query,
             $this->sdkAuthorization()
         );
     }

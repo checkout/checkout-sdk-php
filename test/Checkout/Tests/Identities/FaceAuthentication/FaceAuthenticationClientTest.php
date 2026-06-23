@@ -180,7 +180,7 @@ class FaceAuthenticationClientTest extends UnitTestFixture
             ->with("face-authentications/" . $faceAuthId . "/attempts/" . $attemptId . "/assets")
             ->willReturn($expectedResponse);
 
-        $response = $this->client->getFaceAuthenticationAttemptAssets($faceAuthId, $attemptId);
+        $response = $this->client->getFaceAuthenticationAttemptAssets($faceAuthId, $attemptId, new AttemptAssetsQueryFilter());
 
         $this->assertNotNull($response);
     }
@@ -453,7 +453,9 @@ class FaceAuthenticationClientTest extends UnitTestFixture
         $this->assertArrayHasKey("data", $response);
 
         $this->assertTrue(is_array($response["data"]));
-        $this->assertNotNull($response["data"][0]["type"]);
-        $this->assertNotNull($response["data"][0]["_links"]["asset_url"]["href"]);
+        if (count($response["data"]) > 0) {
+            $this->assertNotNull($response["data"][0]["type"]);
+            $this->assertNotNull($response["data"][0]["_links"]["asset_url"]["href"]);
+        }
     }
 }

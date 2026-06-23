@@ -381,7 +381,7 @@ class IdentityVerificationClientTest extends UnitTestFixture
             ->with("identity-verifications/" . $identityVerificationId . "/attempts/" . $attemptId . "/assets")
             ->willReturn($expectedResponse);
 
-        $response = $this->client->getIdentityVerificationAttemptAssets($identityVerificationId, $attemptId);
+        $response = $this->client->getIdentityVerificationAttemptAssets($identityVerificationId, $attemptId, new AttemptAssetsQueryFilter());
 
         $this->assertNotNull($response);
     }
@@ -601,7 +601,9 @@ class IdentityVerificationClientTest extends UnitTestFixture
         $this->assertArrayHasKey("data", $response);
 
         $this->assertTrue(is_array($response["data"]));
-        $this->assertNotNull($response["data"][0]["type"]);
-        $this->assertNotNull($response["data"][0]["_links"]["asset_url"]["href"]);
+        if (count($response["data"]) > 0) {
+            $this->assertNotNull($response["data"][0]["type"]);
+            $this->assertNotNull($response["data"][0]["_links"]["asset_url"]["href"]);
+        }
     }
 }

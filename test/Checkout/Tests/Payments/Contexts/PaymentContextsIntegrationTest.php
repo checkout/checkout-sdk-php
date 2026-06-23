@@ -40,7 +40,15 @@ class PaymentContextsIntegrationTest extends SandboxTestFixture
     {
         $request = $this->createPaymentContextsRequest();
 
-        $response = $this->checkoutApi->getPaymentContextsClient()->createPaymentContexts($request);
+        try {
+            $response = $this->checkoutApi->getPaymentContextsClient()->createPaymentContexts($request);
+        } catch (CheckoutApiException $ex) {
+            $errorCodes = $ex->error_details["error_codes"] ?? [];
+            if (in_array("apm_service_unavailable", $errorCodes)) {
+                $this->markTestSkipped("PayPal APM service unavailable in sandbox.");
+            }
+            throw $ex;
+        }
 
         $this->assertResponse(
             $response,

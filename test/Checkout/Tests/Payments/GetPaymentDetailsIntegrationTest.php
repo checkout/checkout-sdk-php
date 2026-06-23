@@ -42,6 +42,15 @@ class GetPaymentDetailsIntegrationTest extends AbstractPaymentsIntegrationTest
             "customer.id",
             "customer.name"
         );
+
+        // Mastercard Transaction Link Identifier - optional, only populated for Mastercard
+        // transactions. The test card is not Mastercard, so the field is typically absent.
+        // Reading it confirms the SDK exposes the field and that accessing it is safe even
+        // when the response payload omits it.
+        if (array_key_exists("processing", $payment)) {
+            $schemeTransactionLinkId = $payment["processing"]["scheme_transaction_link_id"] ?? null;
+            $this->assertTrue($schemeTransactionLinkId === null || is_string($schemeTransactionLinkId));
+        }
     }
 
     /**

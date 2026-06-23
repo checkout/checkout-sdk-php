@@ -7,6 +7,7 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
 use Checkout\Identities\FaceAuthentication\Requests\FaceAuthenticationRequest;
 use Checkout\Identities\FaceAuthentication\Requests\FaceAuthenticationAttemptRequest;
 
@@ -15,6 +16,7 @@ class FaceAuthenticationClient extends Client
     const FACE_AUTHENTICATIONS_PATH = "face-authentications";
     const ANONYMIZE_PATH = "anonymize";
     const ATTEMPTS_PATH = "attempts";
+    const ASSETS_PATH = "assets";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -113,6 +115,30 @@ class FaceAuthenticationClient extends Client
     {
         return $this->apiClient->get(
             $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ATTEMPTS_PATH, $attemptId),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Retrieves the assets (face images and videos) captured during a face authentication attempt.
+     *
+     * faceAuthenticationId is the face authentication's unique identifier. (Required)
+     * attemptId is the attempt's unique identifier. (Required)
+     *
+     * @param string $faceAuthenticationId
+     * @param string $attemptId
+     * @param AttemptAssetsQueryFilter|null $query the pagination query parameters (skip and limit)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getFaceAuthenticationAttemptAssets(
+        string $faceAuthenticationId,
+        string $attemptId,
+        ?AttemptAssetsQueryFilter $query = null
+    ): array {
+        return $this->apiClient->query(
+            $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ATTEMPTS_PATH, $attemptId, self::ASSETS_PATH),
+            $query,
             $this->sdkAuthorization()
         );
     }

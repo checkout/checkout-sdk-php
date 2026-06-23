@@ -105,6 +105,38 @@ class PaymentsClientTest extends UnitTestFixture
     /**
      * @test
      * @throws CheckoutApiException
+     *
+     * Mastercard Transaction Link Identifier. The PHP SDK deserializes responses into
+     * associative arrays, so the optional processing.scheme_transaction_link_id field is
+     * surfaced directly under the "processing" key when returned by the API. This test
+     * confirms the field is exposed end-to-end through the client.
+     */
+    public function shouldGetPaymentDetailsWithSchemeTransactionLinkId()
+    {
+        $this->apiClient
+            ->method("get")
+            ->willReturn([
+                "id" => "pay_123",
+                "status" => "Captured",
+                "processing" => [
+                    "retrieval_reference_number" => "RRN001",
+                    "acquirer_transaction_id" => "ACQ001",
+                    "scheme" => "Mastercard",
+                    "scheme_transaction_link_id" => "MTL-XYZ-789",
+                ],
+            ]);
+
+        $response = $this->client->getPaymentDetails("payment_id");
+
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("processing", $response);
+        $this->assertArrayHasKey("scheme_transaction_link_id", $response["processing"]);
+        $this->assertEquals("MTL-XYZ-789", $response["processing"]["scheme_transaction_link_id"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
      */
     public function shouldGetPaymentActions()
     {

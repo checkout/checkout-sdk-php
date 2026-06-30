@@ -33,36 +33,20 @@
 * [API Reference (Default)](https://api-reference.checkout.com/)
 * [API Reference (Previous)](https://api-reference.checkout.com/previous)
 
-### ⚠️ PHP 8.1+ Compatibility
+### ⚠️ PHP version support
 
-If you’re using PHP 8.1 or newer, you may encounter warnings such as:
+As of **v5.0.0**, this SDK requires **PHP 8.1 or newer**. Support for PHP 7.1 and 7.4 has been dropped.
 
-```
-Deprecated: implicitly marking parameter as nullable is deprecated
-```
+This change is required because the SDK now depends on `guzzlehttp/guzzle:^7.4` (and `guzzlehttp/promises:^2.0`), which require PHP 8.0+. Older Guzzle and PHPUnit releases that supported PHP 7.x are affected by security advisories that make them unsuitable for a payment SDK.
 
-This is caused by older dependencies (e.g. guzzlehttp/promises:^1.x or phpunit/phpunit:^5.7) that are no longer compatible with PHP 8.1+.
-
-✅ To fix this, update your dev dependencies:
-
-```bash
-composer require phpunit/phpunit:^9.5 --dev --with-all-dependencies
-```
-
-And if you’re using PHP 8+ and no longer need to support PHP 7.1, you may also upgrade Guzzle:
-
-```bash
-composer require guzzlehttp/guzzle:^7.4 guzzlehttp/promises:^2.0 --with-all-dependencies
-```
-
-These updates ensure compatibility with modern PHP versions but drop support for PHP 7.1.
+If you are still on PHP 7.x, remain on the latest `4.x` release until you can upgrade your runtime to PHP 8.1+.
 
 #### Composer
 
 ```json
 {
   "require": {
-    "php": ">=7.1",
+    "php": ">=8.1",
     "checkout/checkout-sdk-php": "version"
   }
 }

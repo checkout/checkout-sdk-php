@@ -14,7 +14,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Install PHP 7.1 from official repositories
+            - name: Install PHP from official repositories
               run: |
                   sudo apt-get update
                   sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo
@@ -25,11 +25,8 @@ jobs:
             - name: Composer validate
               run: composer validate
 
-            - name: Composer update with promises:^1.5
-              run: |
-                  composer remove guzzlehttp/promises --no-update
-                  composer require guzzlehttp/promises:^1.5 --no-update
-                  composer update --prefer-dist --no-interaction
+            - name: Composer update
+              run: composer update --prefer-dist --no-interaction
 
             - name: Run PHPUnit
               env:

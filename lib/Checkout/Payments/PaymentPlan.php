@@ -5,6 +5,14 @@ namespace Checkout\Payments;
 class PaymentPlan
 {
     /**
+     * Specifies whether the amount is fixed or variable for each recurrence.
+     * [Optional]
+     * Allowed values: "Fixed", "Variable".
+     * @var string|null $amount_variability
+     */
+    public $amount_variability;
+
+    /**
      * Indicates the minimum number of days between payments.
      * [Optional]
      * @var int|null $days_between_payments

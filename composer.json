@@ -26,14 +26,14 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
-        "guzzlehttp/guzzle": "^6.5 || ^7.4",
-        "monolog/monolog": "^1.27 || ^2.4 || ^3.0.0" ,
+        "php": ">=8.1.0",
+        "guzzlehttp/guzzle": "^7.4",
+        "monolog/monolog": "^2.4 || ^3.0.0" ,
         "ext-json": "*",
         "ext-fileinfo": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7 || ^9.0",
+        "phpunit/phpunit": "^9.0",
         "symfony/phpunit-bridge": "^5.2 || ^6.0",
         "mockery/mockery": "^1.3 || ^1.4",
         "phpstan/phpstan": "^1.2",

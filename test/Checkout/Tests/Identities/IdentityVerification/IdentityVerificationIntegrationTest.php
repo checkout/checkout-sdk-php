@@ -148,6 +148,29 @@ class IdentityVerificationIntegrationTest extends SandboxTestFixture
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldGetIdentityVerificationAttemptAssets()
+    {
+        $this->markTestSkipped("This test requires valid test environment setup");
+
+        $createRequest = $this->buildIdentityVerificationRequest();
+        $createdResponse = $this->checkoutApi->getIdentityVerificationClient()->createIdentityVerification($createRequest);
+
+        $attemptRequest = $this->buildIdentityVerificationAttemptRequest();
+        $createdAttempt = $this->checkoutApi->getIdentityVerificationClient()->createIdentityVerificationAttempt($createdResponse["id"], $attemptRequest);
+
+        $query = new \Checkout\Identities\Entities\AttemptAssetsQueryFilter();
+        $query->skip = 0;
+        $query->limit = 10;
+        $response = $this->checkoutApi->getIdentityVerificationClient()->getIdentityVerificationAttemptAssets($createdResponse["id"], $createdAttempt["id"], $query);
+
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("data", $response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldGetIdentityVerificationPdfReport()
     {
         $this->markTestSkipped("This test requires valid test environment setup");

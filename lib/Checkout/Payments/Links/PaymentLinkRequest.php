@@ -6,6 +6,7 @@ use Checkout\Common\CustomerRequest;
 use Checkout\Common\MarketplaceData;
 use Checkout\Payments\BillingDescriptor;
 use Checkout\Payments\BillingInformation;
+use Checkout\Payments\PaymentPlan;
 use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentInstruction;
@@ -184,17 +185,18 @@ class PaymentLinkRequest
     public $amount_allocations;
 
     /**
-     * The authorization type.
+     * The information to process a recurring payment request. To be used when the payment_type is Recurring.
      * [Optional]
-     * Allowed values: "Final", "Estimated". Defaults to "Final".
-     * @var string|null $authorization_type
-     */
-    public $authorization_type;
-
-    /**
-     * The payment plan details. To be used when the payment_type is Recurring.
-     * [Optional]
-     * @var \Checkout\Payments\PaymentPlan|null $payment_plan
+     * @var PaymentPlan|null $payment_plan
      */
     public $payment_plan;
+
+    /**
+     * The authorization type.
+     * [Optional]
+     * Enum: "Final" "Estimated"
+     * Default: "Final"
+     * @var string|null $authorization_type value of AuthorizationType
+     */
+    public $authorization_type;
 }

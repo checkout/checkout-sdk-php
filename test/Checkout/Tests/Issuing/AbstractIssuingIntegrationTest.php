@@ -8,10 +8,8 @@ use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\CheckoutSdk;
-use Checkout\Common\DocumentType;
 use Checkout\DefaultHttpClientBuilder;
 use Checkout\Environment;
-use Checkout\Issuing\Cardholders\CardholderDocument;
 use Checkout\Issuing\Cardholders\CardholderRequest;
 use Checkout\Issuing\Cardholders\CardholderType;
 use Checkout\Issuing\Cards\Create\CardLifetime;
@@ -80,11 +78,6 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
     {
         $address = $this->getAddress();
 
-        $document = new CardholderDocument();
-        $document->type = DocumentType::$national_identity_card;
-        $document->front_document_id = "file_6lbss42ezvoufcb2beo76rvwly";
-        $document->back_document_id = "file_aaz5pemp6326zbuvevp6qroqu4";
-
         $cardholderRequest = new CardholderRequest();
         $cardholderRequest->type = CardholderType::$individual;
         $cardholderRequest->reference = "X-123456-N11";
@@ -97,7 +90,6 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
         $cardholderRequest->date_of_birth = "1985-05-15";
         $cardholderRequest->billing_address = $address;
         $cardholderRequest->residency_address = $address;
-        $cardholderRequest->document = $document;
 
         $cardholderResponse = $this->issuingApi->getIssuingClient()->createCardholder($cardholderRequest);
 

@@ -16,7 +16,6 @@ use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
 use Checkout\Issuing\Cards\Update\UpdateCardRequest;
 use Checkout\Issuing\Cards\Renew\RenewCardRequest;
-use Checkout\Issuing\Cards\ScheduleRevocation\ScheduleRevocationRequest;
 use Checkout\Issuing\Controls\Create\CardControlRequest;
 use Checkout\Issuing\Controls\Query\CardControlsQuery;
 use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
@@ -36,6 +35,7 @@ use Checkout\Issuing\ControlProfiles\Requests\ControlProfileQuery;
 use Checkout\Issuing\Disputes\Requests\CreateDisputeRequest;
 use Checkout\Issuing\Disputes\Requests\EscalateDisputeRequest;
 use Checkout\Issuing\Disputes\Requests\SubmitDisputeRequest;
+use Checkout\Issuing\Disputes\Requests\AmendDisputeRequest;
 use Checkout\Issuing\Transactions\Requests\TransactionsQuery;
 
 class IssuingClient extends Client
@@ -61,9 +61,9 @@ class IssuingClient extends Client
     const CANCEL_PATH = "cancel";
     const ESCALATE_PATH = "escalate";
     const SUBMIT_PATH = "submit";
+    const AMEND_PATH = "amend";
     const TRANSACTIONS_PATH = "transactions";
     const RENEW_PATH = "renew";
-    const SCHEDULE_REVOCATION_PATH = "schedule-revocation";
     const REFUNDS_PATH = "refunds";
     const ACCESS_PATH = "access";
     const CONNECT_PATH = "connect";
@@ -678,12 +678,36 @@ class IssuingClient extends Client
      * @param SubmitDisputeRequest $submitDisputeRequest (Required)
      * @return array
      * @throws CheckoutApiException
+     * @deprecated This endpoint is deprecated. Use createDispute to create and submit a dispute in a single
+     * step, or amendDispute if the dispute status is action_required.
      */
     public function submitDispute(string $disputeId, string $idempotencyKey, SubmitDisputeRequest $submitDisputeRequest) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::SUBMIT_PATH),
             $submitDisputeRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
+    }
+
+    /**
+     * Amend an Issuing dispute
+     *
+     * Submit an amendment to a dispute that is currently blocked from proceeding. Handles both
+     * chargeback-stage and escalation-stage amendments.
+     *
+     * @param string $disputeId (Required)
+     * @param string $idempotencyKey (Required)
+     * @param AmendDisputeRequest $amendDisputeRequest (Required)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function amendDispute(string $disputeId, string $idempotencyKey, AmendDisputeRequest $amendDisputeRequest) : array
+    {
+        return $this->apiClient->post(
+            $this->buildPath(self::ISSUING_PATH, self::DISPUTES_PATH, $disputeId, self::AMEND_PATH),
+            $amendDisputeRequest,
             $this->sdkAuthorization(),
             $idempotencyKey
         );
@@ -764,41 +788,6 @@ class IssuingClient extends Client
         );
     }
 
-    /**
-     * Schedule card revocation
-     *
-     * Schedules a card to be revoked at 00:00(UTC) on a specified date.
-     *
-     * @param string $cardId - The card's unique identifier.(Required)
-     * @param ScheduleRevocationRequest $scheduleRevocationRequest (Required)
-     * @return array
-     * @throws CheckoutApiException
-     */
-    public function scheduleCardRevocation(string $cardId, ScheduleRevocationRequest $scheduleRevocationRequest) : array
-    {
-        return $this->apiClient->post(
-            $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SCHEDULE_REVOCATION_PATH),
-            $scheduleRevocationRequest,
-            $this->sdkAuthorization()
-        );
-    }
-
-    /**
-     * Delete scheduled revocation
-     *
-     * Delete a card's scheduled revocation.
-     *
-     * @param string $cardId - The card's unique identifier. (Required)
-     * @return array
-     * @throws CheckoutApiException
-     */
-    public function deleteScheduledCardRevocation(string $cardId) : array
-    {
-        return $this->apiClient->delete(
-            $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SCHEDULE_REVOCATION_PATH),
-            $this->sdkAuthorization()
-        );
-    }
 
     /**
      * Simulate refund

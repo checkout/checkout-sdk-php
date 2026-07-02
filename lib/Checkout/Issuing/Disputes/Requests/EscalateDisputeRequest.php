@@ -4,6 +4,7 @@ namespace Checkout\Issuing\Disputes\Requests;
 
 use Checkout\Issuing\Disputes\Entities\Evidence;
 use Checkout\Issuing\Disputes\Entities\ReasonChange;
+use Checkout\Issuing\Disputes\Entities\IssuingDisputeFraudDetails;
 
 class EscalateDisputeRequest
 {
@@ -35,4 +36,12 @@ class EscalateDisputeRequest
      * @var ReasonChange
      */
     public $reason_change;
+
+    /**
+     * Provides fraud-related details. This field is required if the dispute has a fraud-related reason code
+     * at the escalation stage, or after a requested reason code change to a fraud code.
+     * [Optional]
+     * @var IssuingDisputeFraudDetails
+     */
+    public $fraud_details;
 }

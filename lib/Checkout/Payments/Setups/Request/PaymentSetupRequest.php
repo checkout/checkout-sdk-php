@@ -7,6 +7,9 @@ use Checkout\Payments\Setups\Common\Customer\Customer;
 use Checkout\Payments\Setups\Common\Order\Order;
 use Checkout\Payments\Setups\Common\Industry\Industry;
 use Checkout\Payments\Setups\Common\PaymentMethods\PaymentMethods;
+use Checkout\Payments\Setups\Common\BillingDescriptor\PaymentSetupBillingDescriptor;
+use Checkout\Payments\Setups\Common\PresentmentDetails\PaymentSetupPresentmentDetails;
+use Checkout\Payments\Setups\Common\Terminal\PaymentSetupTerminal;
 
 class PaymentSetupRequest
 {
@@ -64,4 +67,26 @@ class PaymentSetupRequest
      * @var Industry
      */
     public $industry;
+
+    /**
+     * The billing descriptor for the payment.
+     * [Optional]
+     * @var PaymentSetupBillingDescriptor
+     */
+    public $billing_descriptor;
+
+    /**
+     * The amount and currency to present to the customer, when the settlement currency differs from the
+     * customer-facing currency.
+     * [Optional]
+     * @var PaymentSetupPresentmentDetails
+     */
+    public $presentment_details;
+
+    /**
+     * Terminal details.
+     * [Optional]
+     * @var PaymentSetupTerminal
+     */
+    public $terminal;
 }

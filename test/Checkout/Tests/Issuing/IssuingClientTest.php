@@ -15,7 +15,6 @@ use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
 use Checkout\Issuing\Cards\Update\UpdateCardRequest;
 use Checkout\Issuing\Cards\Renew\RenewCardRequest;
-use Checkout\Issuing\Cards\ScheduleRevocation\ScheduleRevocationRequest;
 use Checkout\Issuing\Controls\Create\VelocityCardControlRequest;
 use Checkout\Issuing\Controls\Query\CardControlsQuery;
 use Checkout\Issuing\Controls\Update\UpdateCardControlRequest;
@@ -28,6 +27,7 @@ use Checkout\Issuing\Testing\SimulateRefundRequest;
 use Checkout\Issuing\CardholderAccessTokens\CardholderAccessTokenRequest;
 use Checkout\Issuing\Cardholders\UpdateCardholderRequest;
 use Checkout\Issuing\Transactions\Requests\TransactionsQuery;
+use Checkout\Issuing\Disputes\Requests\AmendDisputeRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -449,27 +449,13 @@ class IssuingClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
-    public function shouldScheduleCardRevocation()
+    public function shouldAmendDispute()
     {
         $this->apiClient
             ->method("post")
             ->willReturn(["foo"]);
 
-        $response = $this->client->scheduleCardRevocation("card_id", new ScheduleRevocationRequest());
-        $this->assertNotNull($response);
-    }
-
-    /**
-     * @test
-     * @throws CheckoutApiException
-     */
-    public function shouldDeleteScheduledCardRevocation()
-    {
-        $this->apiClient
-            ->method("delete")
-            ->willReturn(["foo"]);
-
-        $response = $this->client->deleteScheduledCardRevocation("card_id");
+        $response = $this->client->amendDispute("dispute_id", "idempotency_key", new AmendDisputeRequest());
         $this->assertNotNull($response);
     }
 

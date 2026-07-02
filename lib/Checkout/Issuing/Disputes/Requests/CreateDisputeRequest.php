@@ -3,6 +3,7 @@
 namespace Checkout\Issuing\Disputes\Requests;
 
 use Checkout\Issuing\Disputes\Entities\Evidence;
+use Checkout\Issuing\Disputes\Entities\IssuingDisputeFraudDetails;
 
 class CreateDisputeRequest
 {
@@ -61,4 +62,12 @@ class CreateDisputeRequest
      * @var string
      */
     public $justification;
+
+    /**
+     * Contains all fraud-related information to be sent with the chargeback.
+     * This field is required if the dispute has a fraud-related reason code.
+     * [Optional]
+     * @var IssuingDisputeFraudDetails
+     */
+    public $fraud_details;
 }

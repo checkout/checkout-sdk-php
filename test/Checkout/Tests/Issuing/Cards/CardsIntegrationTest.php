@@ -16,7 +16,6 @@ use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendReason;
 use Checkout\Issuing\Cards\Update\UpdateCardRequest;
 use Checkout\Issuing\Cards\Renew\RenewCardRequest;
-use Checkout\Issuing\Cards\ScheduleRevocation\ScheduleRevocationRequest;
 use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
 
 class CardsIntegrationTest extends AbstractIssuingIntegrationTest
@@ -265,42 +264,4 @@ class CardsIntegrationTest extends AbstractIssuingIntegrationTest
         );
     }
 
-    /**
-     * @test
-     * @throws CheckoutApiException
-     */
-    public function shouldScheduleCardRevocation()
-    {
-        $card = $this->createCard($this->cardholder["id"]);
-
-        $scheduleRequest = new ScheduleRevocationRequest();
-        $scheduleRequest->revocation_date = date('Y-m-d', strtotime('+7 days'));
-        
-        $scheduleResponse = $this->issuingApi->getIssuingClient()->scheduleCardRevocation($card["id"], $scheduleRequest);
-
-        $this->assertEquals(200, $scheduleResponse["http_metadata"]->getStatusCode());
-        
-        $this->assertResponse($scheduleResponse, "_links");
-    }
-
-    /**
-     * @test
-     * @throws CheckoutApiException
-     */
-    public function shouldDeleteScheduledCardRevocation()
-    {
-        $card = $this->createCard($this->cardholder["id"]);
-        
-        // First schedule a revocation
-        $scheduleRequest = new ScheduleRevocationRequest();
-        $scheduleRequest->revocation_date = date('Y-m-d', strtotime('+7 days'));
-        $this->issuingApi->getIssuingClient()->scheduleCardRevocation($card["id"], $scheduleRequest);
-        
-        // Then delete the scheduled revocation
-        $deleteResponse = $this->issuingApi->getIssuingClient()->deleteScheduledCardRevocation($card["id"]);
-
-        $this->assertEquals(200, $deleteResponse["http_metadata"]->getStatusCode());
-        
-        $this->assertResponse($deleteResponse, "_links");
-    }
 }

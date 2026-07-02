@@ -61,9 +61,4 @@ class CardholderRequest
      * @var Address
      */
     public $residency_address;
-
-    /**
-     * @var CardholderDocument
-     */
-    public $document;
 }

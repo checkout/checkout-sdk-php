@@ -4,7 +4,6 @@ namespace Checkout\Issuing\Cardholders;
 
 use Checkout\Common\Address;
 use Checkout\Common\Phone;
-use Checkout\Issuing\Cardholders\CardholderDocument;
 
 class UpdateCardholderRequest
 {
@@ -64,11 +63,4 @@ class UpdateCardholderRequest
      * @var Address
      */
     public $residency_address;
-
-    /**
-     * A legal document used to verify the cardholder's identity.
-     *
-     * @var CardholderDocument
-     */
-    public $document;
 }

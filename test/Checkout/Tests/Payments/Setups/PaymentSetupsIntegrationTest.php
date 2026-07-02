@@ -6,8 +6,6 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
-use Checkout\Common\Address;
-use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\Phone;
 use Checkout\Payments\Setups\Request\PaymentSetupRequest;
@@ -186,12 +184,7 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $klarna->initialization = "disabled";
 
         $accountHolder = new KlarnaAccountHolder();
-        $billingAddress = new Address();
-        $billingAddress->address_line1 = "123 High Street";
-        $billingAddress->city = "London";
-        $billingAddress->zip = "SW1A 1AA";
-        $billingAddress->country = Country::$GB;
-        $accountHolder->billing_address = $billingAddress;
+        $accountHolder->name = "John Smith";
         $klarna->account_holder = $accountHolder;
 
         $paymentMethods->klarna = $klarna;

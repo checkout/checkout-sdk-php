@@ -8,8 +8,10 @@ use Checkout\Issuing\Disputes\Entities\IssuingDisputeFraudDetails;
 class CreateDisputeRequest
 {
     /**
-     * The transaction's unique identifier. (Required)
-     *
+     * The transaction's unique identifier.
+     * [Required]
+     * ^trx_[a-z0-9]{26}$
+     * min 30 characters, max 30 characters
      * @var string
      */
     public $transaction_id;
@@ -17,15 +19,15 @@ class CreateDisputeRequest
     /**
      * The four-digit scheme-specific reason code for the chargeback.
      * Only provide this if Checkout.com is your issuing processor.
-     * Checkout.com does not validate this value. (Required)
-     *
+     * Checkout.com does not validate this value.
+     * [Required]
      * @var string
      */
     public $reason;
 
     /**
      * Your evidence for raising the chargeback, in line with the card scheme's requirements.
-     *
+     * [Optional]
      * @var array of Evidence
      */
     public $evidence;
@@ -33,7 +35,7 @@ class CreateDisputeRequest
     /**
      * The chargeback amount, in the minor unit of the transaction currency.
      * If not provided, Checkout.com uses the full amount of the presentment.
-     *
+     * [Optional]
      * @var int
      */
     public $amount;
@@ -41,7 +43,7 @@ class CreateDisputeRequest
     /**
      * The unique identifier for the disputed presentment message, if the transaction has multiple presentments.
      * If the transaction has only one presentment, Checkout.com uses this automatically.
-     *
+     * [Optional]
      * @var string
      */
     public $presentment_message_id;
@@ -51,14 +53,16 @@ class CreateDisputeRequest
      * • Immediately – Set to true.
      * • Later – Set to false.
      * Default: false
-     *
+     * [Optional]
+     * @deprecated No longer part of the API schema.
      * @var bool
      */
     public $is_ready_for_submission;
 
     /**
-     * Your justification for the chargeback.
-     *
+     * Short justification for raising this dispute, to be sent to the scheme.
+     * [Optional]
+     * <= 100 characters
      * @var string
      */
     public $justification;

@@ -7,21 +7,30 @@ use Checkout\Payments\ShippingDetails;
 class Order
 {
     /**
+     * A list of items in the order.
+     * [Optional]
      * @var array of Product
      */
     public $items;
 
     /**
+     * The shipping information for the order.
+     * [Optional]
      * @var ShippingDetails
      */
     public $shipping;
 
     /**
+     * Information about sub-merchants involved in the order.
+     * [Optional]
      * @var array of OrderSubMerchant
      */
     public $sub_merchants;
 
     /**
+     * The discount amount applied to the order.
+     * [Optional]
+     * >= 0
      * @var int
      */
     public $discount_amount;

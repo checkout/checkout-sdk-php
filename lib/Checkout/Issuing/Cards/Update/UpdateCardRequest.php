@@ -8,24 +8,32 @@ class UpdateCardRequest
 {
     /**
      * Your reference.
+     * [Optional]
+     * <= 256 characters
      * @var string
      */
     public $reference;
 
     /**
      * User's metadata.
+     * [Optional]
      * @var CardMetadata
      */
     public $metadata;
 
     /**
      * The card's expiration month.
+     * [Optional]
+     * >= 1
+     * <= 12
      * @var int
      */
     public $expiry_month;
 
     /**
      * The card's expiration year.
+     * [Optional]
+     * min 4 characters, max 4 characters
      * @var int
      */
     public $expiry_year;

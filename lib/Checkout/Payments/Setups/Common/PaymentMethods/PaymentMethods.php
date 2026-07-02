@@ -14,41 +14,57 @@ use Checkout\Payments\Setups\Common\PaymentMethods\Stablecoin\Stablecoin;
 class PaymentMethods
 {
     /**
+     * The Klarna payment method's details and configuration.
+     * [Optional]
      * @var Klarna
      */
     public $klarna;
 
     /**
+     * The stc pay payment method's details and configuration.
+     * [Optional]
      * @var Stcpay
      */
     public $stcpay;
 
     /**
+     * The Tabby payment method's details and configuration.
+     * [Optional]
      * @var Tabby
      */
     public $tabby;
 
     /**
+     * The Bizum payment method's details and configuration.
+     * [Optional]
      * @var Bizum
      */
     public $bizum;
 
     /**
+     * The Bacs payment method's details and configuration.
+     * [Optional]
      * @var Bacs
      */
     public $bacs;
 
     /**
+     * The Card Present payment method's details and configuration.
+     * [Optional]
      * @var CardPresent
      */
     public $card_present;
 
     /**
+     * The Pay by Bank (Open Banking) payment method's details and configuration.
+     * [Optional]
      * @var PayByBank
      */
     public $pay_by_bank;
 
     /**
+     * The Stablecoin payment method's details and configuration.
+     * [Optional]
      * @var Stablecoin
      */
     public $stablecoin;

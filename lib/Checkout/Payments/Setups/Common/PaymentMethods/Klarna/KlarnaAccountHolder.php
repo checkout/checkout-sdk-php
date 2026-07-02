@@ -2,12 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Klarna;
 
-use Checkout\Common\Address;
-
 class KlarnaAccountHolder
 {
     /**
-     * @var Address
+     * The full name of the account holder.
+     * [Optional] readOnly
+     * @var string
      */
-    public $billing_address;
+    public $name;
 }

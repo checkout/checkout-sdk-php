@@ -45,7 +45,7 @@ class PaymentSetupRequest
     /**
      * A reference you can use to identify the payment. For example, an order number.
      * [Optional]
-     * <= 80 characters
+     * max 80 characters
      * @var string
      */
     public $reference;
@@ -53,7 +53,7 @@ class PaymentSetupRequest
     /**
      * A description of the payment.
      * [Optional]
-     * <= 100 characters
+     * max 100 characters
      * @var string
      */
     public $description;

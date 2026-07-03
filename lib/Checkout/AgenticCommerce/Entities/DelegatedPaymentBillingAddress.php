@@ -10,7 +10,7 @@ class DelegatedPaymentBillingAddress
     /**
      * The full name of the customer.
      * [Required]
-     * Length: <= 256 characters
+     * Length: max 256 characters
      *
      * @var string
      */
@@ -19,7 +19,7 @@ class DelegatedPaymentBillingAddress
     /**
      * The first line of the street address.
      * [Required]
-     * Length: <= 60 characters
+     * Length: max 60 characters
      *
      * @var string
      */
@@ -28,7 +28,7 @@ class DelegatedPaymentBillingAddress
     /**
      * The second line of the street address.
      * [Optional]
-     * Length: <= 60 characters
+     * Length: max 60 characters
      *
      * @var string|null
      */
@@ -37,7 +37,7 @@ class DelegatedPaymentBillingAddress
     /**
      * The city of the billing address.
      * [Required]
-     * Length: <= 60 characters
+     * Length: max 60 characters
      *
      * @var string
      */
@@ -54,7 +54,7 @@ class DelegatedPaymentBillingAddress
     /**
      * The postal code or ZIP code of the billing address.
      * [Required]
-     * Length: <= 20 characters
+     * Length: max 20 characters
      *
      * @var string
      */

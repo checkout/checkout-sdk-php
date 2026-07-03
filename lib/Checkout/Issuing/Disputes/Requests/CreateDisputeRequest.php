@@ -62,7 +62,7 @@ class CreateDisputeRequest
     /**
      * Short justification for raising this dispute, to be sent to the scheme.
      * [Optional]
-     * <= 100 characters
+     * max 100 characters
      * @var string
      */
     public $justification;

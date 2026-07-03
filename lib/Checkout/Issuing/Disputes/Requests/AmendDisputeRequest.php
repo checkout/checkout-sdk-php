@@ -44,7 +44,7 @@ class AmendDisputeRequest
      * team and may be submitted to the card scheme.
      * This field is required if you change the reason at the escalation stage.
      * [Optional]
-     * <= 13000 characters
+     * max 13000 characters
      * @var string
      */
     public $reason_change_justification;
@@ -53,7 +53,7 @@ class AmendDisputeRequest
      * Free-form text that you can use to explain your choices, provide additional context, or ask questions
      * about the requested changes.
      * [Optional]
-     * <= 1000 characters
+     * max 1000 characters
      * @var string
      */
     public $action_response;

@@ -11,7 +11,7 @@ class EscalateDisputeRequest
     /**
      * Justification for escalating the dispute.
      * [Required]
-     * <= 13000 characters
+     * max 13000 characters
      * @var string
      */
     public $justification;

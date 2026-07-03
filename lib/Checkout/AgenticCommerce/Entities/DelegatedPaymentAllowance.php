@@ -36,7 +36,7 @@ class DelegatedPaymentAllowance
     /**
      * The unique identifier of the merchant that will process the payment.
      * [Required]
-     * Length: <= 256 characters
+     * Length: max 256 characters
      *
      * @var string
      */

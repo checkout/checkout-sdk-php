@@ -7,7 +7,7 @@ class AmountAllocationCommission
     /**
      * Optional fixed amount of commission to collect, in the minor currency unit.
      * [Optional]
-     * >= 0
+     * min 0
      * @var int
      */
     public $amount;
@@ -15,8 +15,8 @@ class AmountAllocationCommission
     /**
      * Optional percentage of commission to collect.
      * [Optional]
-     * >= 0
-     * <= 100
+     * min 0
+     * max 100
      * @var float
      */
     public $percentage;

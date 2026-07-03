@@ -35,7 +35,7 @@ abstract class CardRequest
     /**
      * Your reference.
      * [Optional]
-     * <= 256 characters
+     * max 256 characters
      * @var string
      */
     public $reference;

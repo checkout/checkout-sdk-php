@@ -7,7 +7,7 @@ class PaymentSetupBillingDescriptor
     /**
      * A dynamic description of the payment.
      * [Optional]
-     * <= 25 characters
+     * max 25 characters
      * @var string
      */
     public $name;
@@ -15,7 +15,7 @@ class PaymentSetupBillingDescriptor
     /**
      * The city from which the payment was made.
      * [Optional]
-     * <= 13 characters
+     * max 13 characters
      * @var string
      */
     public $city;
@@ -23,7 +23,7 @@ class PaymentSetupBillingDescriptor
     /**
      * The reference shown on the statement.
      * [Optional]
-     * <= 50 characters
+     * max 50 characters
      * @var string
      */
     public $reference;

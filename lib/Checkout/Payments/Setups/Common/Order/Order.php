@@ -30,7 +30,7 @@ class Order
     /**
      * The discount amount applied to the order.
      * [Optional]
-     * >= 0
+     * min 0
      * @var int
      */
     public $discount_amount;
@@ -45,7 +45,7 @@ class Order
     /**
      * The total shipping amount for the order.
      * [Optional]
-     * >= 0
+     * min 0
      * @var int
      */
     public $shipping_amount;
@@ -53,7 +53,7 @@ class Order
     /**
      * The total surcharge amount for the order.
      * [Optional]
-     * >= 0
+     * min 0
      * @var int
      */
     public $surcharge_amount;
@@ -61,7 +61,7 @@ class Order
     /**
      * The total tax amount for the order.
      * [Optional]
-     * >= 0
+     * min 0
      * @var int
      */
     public $tax_amount;
@@ -69,7 +69,7 @@ class Order
     /**
      * The total tipping amount for the order.
      * [Optional]
-     * >= 0
+     * min 0
      * @var int
      */
     public $tipping_amount;

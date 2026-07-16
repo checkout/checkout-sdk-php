@@ -137,7 +137,7 @@ class ForwardClientTest extends UnitTestFixture
         $this->apiClient
             ->expects($this->once())
             ->method("post")
-            ->with("forward/secrets")
+            ->with("secrets")
             ->willReturn($expectedResponse);
 
         $request = $this->buildCreateSecretRequest();
@@ -157,7 +157,7 @@ class ForwardClientTest extends UnitTestFixture
         $this->apiClient
             ->expects($this->once())
             ->method("get")
-            ->with("forward/secrets")
+            ->with("secrets")
             ->willReturn($expectedResponse);
 
         $response = $this->client->listSecrets();

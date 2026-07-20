@@ -2,25 +2,44 @@
 
 namespace Checkout\Accounts;
 
+/**
+ * ACH payment processing details (Accounts API v3.0).
+ */
 class ProcessingDetailsAch
 {
     /**
-     * @var int the estimated annual ACH processing volume in minor units without decimals
+     * The estimated annual ACH processing volume, in the minor currency unit.
+     * [Required]
+     * Minimum: 0
+     *
+     * @var int
      */
     public $annual_ach_volume;
 
     /**
-     * @var int the estimated average ACH transaction size in minor units without decimals
+     * The estimated average ACH transaction size, in the minor currency unit.
+     * [Required]
+     * Minimum: 0
+     *
+     * @var int
      */
     public $average_ach_transaction_size;
 
     /**
-     * @var int the estimated monthly credit volume in minor units without decimals
+     * The estimated monthly credit volume, in the minor currency unit.
+     * [Required]
+     * Minimum: 0
+     *
+     * @var int
      */
     public $estimated_monthly_credit_volume;
 
     /**
-     * @var int the estimated average credit amount in minor units without decimals
+     * The estimated average credit amount, in the minor currency unit.
+     * [Required]
+     * Minimum: 0
+     *
+     * @var int
      */
     public $average_credit_amount;
 }

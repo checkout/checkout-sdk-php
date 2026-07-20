@@ -31,12 +31,13 @@ class ApiClient
     /**
      * @param string $path
      * @param SdkAuthorization $authorization
+     * @param mixed $headers
      * @return array
      * @throws CheckoutApiException
      */
-    public function get(string $path, SdkAuthorization $authorization): array
+    public function get(string $path, SdkAuthorization $authorization, $headers = null): array
     {
-        return $this->invoke("GET", $path, null, $authorization);
+        return $this->invoke("GET", $path, null, $authorization, null, $headers);
     }
 
     /**
@@ -75,12 +76,13 @@ class ApiClient
      * @param string $path
      * @param mixed $requestBody
      * @param SdkAuthorization $authorization
+     * @param mixed $headers
      * @return array
      * @throws CheckoutApiException
      */
-    public function patch(string $path, $requestBody, SdkAuthorization $authorization): array
+    public function patch(string $path, $requestBody, SdkAuthorization $authorization, $headers = null): array
     {
-        return $this->invoke("PATCH", $path, $requestBody, $authorization);
+        return $this->invoke("PATCH", $path, $requestBody, $authorization, null, $headers);
     }
 
     /**
@@ -98,20 +100,22 @@ class ApiClient
      * @param string $path
      * @param AbstractQueryFilter $requestBody
      * @param SdkAuthorization $authorization
+     * @param mixed $headers
      * @return array
      * @throws CheckoutApiException
      */
     public function query(
         string $path,
         AbstractQueryFilter $requestBody,
-        SdkAuthorization $authorization
+        SdkAuthorization $authorization,
+        $headers = null
     ): array {
         $this->logger->info("GET " . $path);
         $queryParameters = $requestBody->getEncodedQueryParameters();
         if (!empty($queryParameters)) {
             $path .= "?" . $queryParameters;
         }
-        return $this->invoke("GET", $path, null, $authorization);
+        return $this->invoke("GET", $path, null, $authorization, null, $headers);
     }
 
     /**

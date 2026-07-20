@@ -3,16 +3,22 @@
 namespace Checkout\Tests\Accounts;
 
 use Checkout\Accounts\AccountsFileRequest;
+use Checkout\Accounts\BusinessType;
 use Checkout\Accounts\Company;
 use Checkout\Accounts\ContactDetails;
 use Checkout\Accounts\DateOfBirth;
+use Checkout\Accounts\DateOfIncorporation;
+use Checkout\Accounts\Document;
 use Checkout\Accounts\EntityEmailAddresses;
 use Checkout\Accounts\EntityRoles;
 use Checkout\Accounts\Identification;
-use Checkout\Accounts\Individual;
 use Checkout\Accounts\InstrumentDetailsFasterPayments;
 use Checkout\Accounts\InstrumentDocument;
 use Checkout\Accounts\OnboardEntityRequest;
+use Checkout\Accounts\OnboardSubEntityDocuments;
+use Checkout\Accounts\ProcessingDetails;
+use Checkout\Accounts\ProcessingDetailsAch;
+use Checkout\Accounts\ProcessingDetailsPayments;
 use Checkout\Accounts\PaymentInstrumentRequest;
 use Checkout\Accounts\PaymentInstrumentsQuery;
 use Checkout\Accounts\Profile;
@@ -51,24 +57,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateGetAndUpdateOnboardEntity()
     {
-        $onboardEntityRequest = new OnboardEntityRequest();
-        $onboardEntityRequest->reference = uniqid();
-        $emailAddresses = new EntityEmailAddresses();
-        $emailAddresses->primary = $this->randomEmail();
-        $onboardEntityRequest->contact_details = new ContactDetails();
-        $onboardEntityRequest->contact_details->phone = $this->getPhone();
-        $onboardEntityRequest->contact_details->email_addresses = $emailAddresses;
-        $onboardEntityRequest->profile = new Profile();
-        $onboardEntityRequest->profile->urls = array("https://www.superheroexample.com");
-        $onboardEntityRequest->profile->mccs = array("0742");
-        $onboardEntityRequest->individual = new Individual();
-        $onboardEntityRequest->individual->first_name = "Bruce";
-        $onboardEntityRequest->individual->last_name = "Wayne";
-        $onboardEntityRequest->individual->trading_name = "Batman's Super Hero Masks";
-        $onboardEntityRequest->individual->registered_address = $this->getAddress();
-        $onboardEntityRequest->individual->national_tax_id = "TAX123456";
-        $onboardEntityRequest->individual->date_of_birth = $this->getDateOfBirth();
-        $onboardEntityRequest->individual->identification = $this->getTestIdentification();
+        $onboardEntityRequest = $this->buildOnboardCompanyRequest();
 
         $response = $this->checkoutApi->getAccountsClient()->createEntity($onboardEntityRequest);
 
@@ -84,14 +73,13 @@ class AccountsIntegrationTest extends SandboxTestFixture
             "contact_details.phone",
             "contact_details.phone.number",
             "contact_details.email_addresses.primary",
-            "individual",
-            "individual.first_name",
-            "individual.last_name",
-            "individual.trading_name",
-            "individual.national_tax_id"
+            "company",
+            "company.legal_name",
+            "company.trading_name",
+            "company.business_registration_number"
         );
 
-        $onboardEntityRequest->individual->first_name = "John";
+        $onboardEntityRequest->company->trading_name = "Updated Trading Name";
 
         $updateResponse = $this->checkoutApi->getAccountsClient()->updateEntity($response["id"], $onboardEntityRequest);
 
@@ -110,29 +98,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
     {
         $api = $this->getAccountsCheckoutApi();
 
-        $representative = new Representative();
-        $representative->first_name = "John";
-        $representative->last_name = "Montana";
-        $representative->address = $this->getAddress();
-        $representative->identification = new Identification();
-        $representative->identification->national_id_number = "AB123456C";
-
-        $onboardEntityRequest = new OnboardEntityRequest();
-        $onboardEntityRequest->reference = uniqid();
-        $onboardEntityRequest->contact_details = new ContactDetails();
-        $onboardEntityRequest->contact_details->phone = $this->getPhone();
-        $onboardEntityRequest->contact_details->email_addresses = new EntityEmailAddresses();
-        $onboardEntityRequest->contact_details->email_addresses->primary = $this->randomEmail();
-        $onboardEntityRequest->profile = new Profile();
-        $onboardEntityRequest->profile->urls = array("https://www.superheroexample.com");
-        $onboardEntityRequest->profile->mccs = array("0742");
-        $onboardEntityRequest->company = new Company();
-        $onboardEntityRequest->company->business_registration_number = "01234567";
-        $onboardEntityRequest->company->legal_name = "Super Hero Masks Inc.";
-        $onboardEntityRequest->company->trading_name = "Super Hero Masks";
-        $onboardEntityRequest->company->principal_address = $this->getAddress();
-        $onboardEntityRequest->company->registered_address = $this->getAddress();
-        $onboardEntityRequest->company->representatives = array($representative);
+        $onboardEntityRequest = $this->buildOnboardCompanyRequest();
 
         $entity = $api->getAccountsClient()->createEntity($onboardEntityRequest);
 
@@ -190,14 +156,6 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $dateOfBirth->year = 1996;
 
         return $dateOfBirth;
-    }
-
-    private function getTestIdentification()
-    {
-        $identification = new Identification();
-        $identification->national_id_number = "AB123456C";
-
-        return $identification;
     }
 
     /**
@@ -359,22 +317,37 @@ class AccountsIntegrationTest extends SandboxTestFixture
      */
     private function createTestEntity()
     {
+        $onboardEntityRequest = $this->buildOnboardCompanyRequest();
+        $response = $this->checkoutApi->getAccountsClient()->createEntity($onboardEntityRequest);
+        return $response["id"];
+    }
+
+    /**
+     * Builds a company OnboardEntityRequest that conforms to the Accounts API v3.0 schema.
+     * v3.0 dropped the top-level "individual" field and added the required
+     * "processing_details" object (and "date_of_incorporation"/"business_type" on the company);
+     * "documents" is required for the full onboarding variant.
+     *
+     * @return OnboardEntityRequest
+     * @throws CheckoutApiException
+     */
+    private function buildOnboardCompanyRequest()
+    {
         $onboardEntityRequest = new OnboardEntityRequest();
         $onboardEntityRequest->reference = uniqid("test_entity_");
-        
-        // Add required contact details
+
         $emailAddresses = new EntityEmailAddresses();
         $emailAddresses->primary = $this->randomEmail();
         $onboardEntityRequest->contact_details = new ContactDetails();
         $onboardEntityRequest->contact_details->phone = $this->getPhone();
         $onboardEntityRequest->contact_details->email_addresses = $emailAddresses;
 
-        // Add required profile information
         $onboardEntityRequest->profile = new Profile();
         $onboardEntityRequest->profile->urls = array("https://www.example-test-entity.com");
         $onboardEntityRequest->profile->mccs = array("0742");
-        
-        // Create a Company entity with Representatives (generates sub-entity members)
+        $onboardEntityRequest->profile->default_holding_currency = Currency::$GBP;
+        $onboardEntityRequest->profile->holding_currencies = array(Currency::$GBP);
+
         $representative = new Representative();
         $representative->first_name = "John";
         $representative->last_name = "Representative";
@@ -383,18 +356,79 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $representative->identification->national_id_number = "AB123456C";
         $representative->date_of_birth = $this->getDateOfBirth();
         $representative->phone = $this->getPhone();
-        
-        // Set up the company details
+
+        $dateOfIncorporation = new DateOfIncorporation();
+        $dateOfIncorporation->day = 1;
+        $dateOfIncorporation->month = 6;
+        $dateOfIncorporation->year = 2010;
+
         $onboardEntityRequest->company = new Company();
         $onboardEntityRequest->company->business_registration_number = "01234567";
+        $onboardEntityRequest->company->business_type = BusinessType::$limited_company;
         $onboardEntityRequest->company->legal_name = "Test Sub-Entity Company Inc.";
         $onboardEntityRequest->company->trading_name = "Test Sub-Entity Trading";
+        $onboardEntityRequest->company->date_of_incorporation = $dateOfIncorporation;
         $onboardEntityRequest->company->principal_address = $this->getAddress();
         $onboardEntityRequest->company->registered_address = $this->getAddress();
         $onboardEntityRequest->company->representatives = array($representative);
 
-        $response = $this->checkoutApi->getAccountsClient()->createEntity($onboardEntityRequest);
-        return $response["id"];
+        $onboardEntityRequest->processing_details = $this->buildProcessingDetails();
+        $onboardEntityRequest->documents = $this->buildOnboardDocuments();
+
+        return $onboardEntityRequest;
+    }
+
+    /**
+     * Builds the processing_details object required by the Accounts API v3.0 schema.
+     *
+     * @return ProcessingDetails
+     */
+    private function buildProcessingDetails()
+    {
+        $ach = new ProcessingDetailsAch();
+        $ach->annual_ach_volume = 1000000;
+        $ach->average_ach_transaction_size = 5000;
+        $ach->estimated_monthly_credit_volume = 100000;
+        $ach->average_credit_amount = 5000;
+
+        $payments = new ProcessingDetailsPayments();
+        $payments->ach = $ach;
+
+        $processingDetails = new ProcessingDetails();
+        $processingDetails->annual_processing_volume = 1000000;
+        $processingDetails->average_transaction_value = 5000;
+        $processingDetails->average_order_fulfillment_time = 3;
+        $processingDetails->currency = Currency::$GBP;
+        $processingDetails->target_countries = array(Country::$GB);
+        $processingDetails->payments = $payments;
+
+        return $processingDetails;
+    }
+
+    /**
+     * Builds the documents object required by the Accounts API v3.0 full onboarding variant.
+     * Each document references a real file uploaded through the Accounts Files API.
+     *
+     * @return OnboardSubEntityDocuments
+     * @throws CheckoutApiException
+     */
+    private function buildOnboardDocuments()
+    {
+        $fileId = $this->uploadFile()["id"];
+
+        $articlesOfAssociation = new Document();
+        $articlesOfAssociation->type = "articles_of_association";
+        $articlesOfAssociation->front = $fileId;
+
+        $shareholderStructure = new Document();
+        $shareholderStructure->type = "shareholder_structure";
+        $shareholderStructure->front = $fileId;
+
+        $documents = new OnboardSubEntityDocuments();
+        $documents->articles_of_association = $articlesOfAssociation;
+        $documents->shareholder_structure = $shareholderStructure;
+
+        return $documents;
     }
 
     /**

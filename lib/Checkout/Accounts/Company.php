@@ -27,6 +27,21 @@ class Company
     public $trading_name;
 
     /**
+     * @var array of string additional names the company trades under (v3.0)
+     */
+    public $additional_trading_names;
+
+    /**
+     * @var bool whether the entity is a registered company (v3.0)
+     */
+    public $is_registered_company;
+
+    /**
+     * @var DateOfIncorporation the date the company was incorporated (v3.0)
+     */
+    public $date_of_incorporation;
+
+    /**
      * @var Address
      */
     public $principal_address;

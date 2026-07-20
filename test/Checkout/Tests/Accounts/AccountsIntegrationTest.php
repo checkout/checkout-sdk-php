@@ -8,14 +8,12 @@ use Checkout\Accounts\Company;
 use Checkout\Accounts\ContactDetails;
 use Checkout\Accounts\DateOfBirth;
 use Checkout\Accounts\DateOfIncorporation;
-use Checkout\Accounts\Document;
 use Checkout\Accounts\EntityEmailAddresses;
 use Checkout\Accounts\EntityRoles;
-use Checkout\Accounts\Identification;
 use Checkout\Accounts\InstrumentDetailsFasterPayments;
 use Checkout\Accounts\InstrumentDocument;
 use Checkout\Accounts\OnboardEntityRequest;
-use Checkout\Accounts\OnboardSubEntityDocuments;
+use Checkout\Accounts\PlaceOfBirth;
 use Checkout\Accounts\ProcessingDetails;
 use Checkout\Accounts\ProcessingDetailsAch;
 use Checkout\Accounts\ProcessingDetailsPayments;
@@ -23,6 +21,7 @@ use Checkout\Accounts\PaymentInstrumentRequest;
 use Checkout\Accounts\PaymentInstrumentsQuery;
 use Checkout\Accounts\Profile;
 use Checkout\Accounts\Representative;
+use Checkout\Accounts\RepresentativeIndividual;
 use Checkout\Accounts\ReserveRules\Requests\CreateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Requests\UpdateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Entities\Rolling;
@@ -36,12 +35,18 @@ use Checkout\CheckoutSdk;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\InstrumentType;
+use Checkout\Common\Phone;
 use Checkout\OAuthScope;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 
 class AccountsIntegrationTest extends SandboxTestFixture
 {
+    /**
+     * @var CheckoutApi
+     */
+    private $accountsApi;
+
     /**
      * @before
      * @throws
@@ -59,11 +64,11 @@ class AccountsIntegrationTest extends SandboxTestFixture
     {
         $onboardEntityRequest = $this->buildOnboardCompanyRequest();
 
-        $response = $this->checkoutApi->getAccountsClient()->createEntity($onboardEntityRequest);
+        $response = $this->accountsApi()->getAccountsClient()->createEntity($onboardEntityRequest);
 
         $this->assertResponse($response, "id", "reference");
 
-        $response = $this->checkoutApi->getAccountsClient()->getEntity($response["id"]);
+        $response = $this->accountsApi()->getAccountsClient()->getEntity($response["id"]);
 
         $this->assertResponse(
             $response,
@@ -81,7 +86,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
 
         $onboardEntityRequest->company->trading_name = "Updated Trading Name";
 
-        $updateResponse = $this->checkoutApi->getAccountsClient()->updateEntity($response["id"], $onboardEntityRequest);
+        $updateResponse = $this->accountsApi()->getAccountsClient()->updateEntity($response["id"], $onboardEntityRequest);
 
         $this->assertResponse($updateResponse, "id");
 
@@ -96,7 +101,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
      */
     public function shouldCreateAndRetrievePaymentInstrument()
     {
-        $api = $this->getAccountsCheckoutApi();
+        $api = $this->accountsApi();
 
         $onboardEntityRequest = $this->buildOnboardCompanyRequest();
 
@@ -167,7 +172,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
     {
         $entityId = $this->createTestEntity();
 
-        $response = $this->checkoutApi->getAccountsClient()->getSubEntityMembers($entityId);
+        $response = $this->accountsApi()->getAccountsClient()->getSubEntityMembers($entityId);
 
         // Verify the response structure without requiring data to be non-empty
         $this->assertArrayHasKey("data", $response);
@@ -184,7 +189,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $entityId = $this->createTestEntity();
         
         // First get the actual sub-entity members
-        $membersResponse = $this->checkoutApi->getAccountsClient()->getSubEntityMembers($entityId);
+        $membersResponse = $this->accountsApi()->getAccountsClient()->getSubEntityMembers($entityId);
         $this->assertArrayHasKey("data", $membersResponse);
         $this->assertTrue(is_array($membersResponse["data"]));
         
@@ -200,7 +205,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $userId = $firstMember["user_id"];
 
         // Now reinvite the actual user
-        $response = $this->checkoutApi->getAccountsClient()->reinviteSubEntityMember($entityId, $userId);
+        $response = $this->accountsApi()->getAccountsClient()->reinviteSubEntityMember($entityId, $userId);
 
         $this->assertArrayHasKey("id", $response);
         $this->assertEquals($userId, $response["id"]);
@@ -216,7 +221,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $entityId = $this->createTestEntity();
         $request = $this->buildValidReserveRuleRequest();
 
-        $response = $this->checkoutApi->getAccountsClient()->createReserveRule($entityId, $request);
+        $response = $this->accountsApi()->getAccountsClient()->createReserveRule($entityId, $request);
 
         $this->validateReserveRuleIdResponse($response);
     }
@@ -232,9 +237,9 @@ class AccountsIntegrationTest extends SandboxTestFixture
         
         // First create a reserve rule
         $createRequest = $this->buildValidReserveRuleRequest();
-        $this->checkoutApi->getAccountsClient()->createReserveRule($entityId, $createRequest);
+        $this->accountsApi()->getAccountsClient()->createReserveRule($entityId, $createRequest);
 
-        $response = $this->checkoutApi->getAccountsClient()->getReserveRules($entityId);
+        $response = $this->accountsApi()->getAccountsClient()->getReserveRules($entityId);
 
         $this->validateReserveRulesResponse($response);
     }
@@ -250,10 +255,10 @@ class AccountsIntegrationTest extends SandboxTestFixture
         
         // First create a reserve rule
         $createRequest = $this->buildValidReserveRuleRequest();
-        $createResponse = $this->checkoutApi->getAccountsClient()->createReserveRule($entityId, $createRequest);
+        $createResponse = $this->accountsApi()->getAccountsClient()->createReserveRule($entityId, $createRequest);
         $reserveRuleId = $createResponse["id"];
 
-        $response = $this->checkoutApi->getAccountsClient()->getReserveRuleDetails($entityId, $reserveRuleId);
+        $response = $this->accountsApi()->getAccountsClient()->getReserveRuleDetails($entityId, $reserveRuleId);
 
         $this->validateReserveRuleResponse($response, $createRequest);
     }
@@ -269,7 +274,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         
         // First create a reserve rule
         $createRequest = $this->buildValidReserveRuleRequest();
-        $createResponse = $this->checkoutApi->getAccountsClient()->createReserveRule($entityId, $createRequest);
+        $createResponse = $this->accountsApi()->getAccountsClient()->createReserveRule($entityId, $createRequest);
         
         $reserveRuleId = $createResponse["id"];
         
@@ -283,7 +288,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         }
         
         $updateRequest = $this->buildUpdateReserveRuleRequest();
-        $response = $this->checkoutApi->getAccountsClient()->updateReserveRule($entityId, $reserveRuleId, $etag, $updateRequest);
+        $response = $this->accountsApi()->getAccountsClient()->updateReserveRule($entityId, $reserveRuleId, $etag, $updateRequest);
 
         $this->validateReserveRuleIdResponse($response);
     }
@@ -299,13 +304,13 @@ class AccountsIntegrationTest extends SandboxTestFixture
 
         // Test upload file
         $uploadRequest = $this->buildFileUploadRequest();
-        $uploadResponse = $this->checkoutApi->getAccountsClient()->uploadFile($entityId, $uploadRequest);
+        $uploadResponse = $this->accountsApi()->getAccountsClient()->uploadFile($entityId, $uploadRequest);
 
         $this->validateFileUploadResponse($uploadResponse);
 
         // Test retrieve file id
         $fileId = $uploadResponse["id"];
-        $retrieveResponse = $this->checkoutApi->getAccountsClient()->retrieveFile($entityId, $fileId);
+        $retrieveResponse = $this->accountsApi()->getAccountsClient()->retrieveFile($entityId, $fileId);
         $this->validateFileRetrieveResponse($retrieveResponse);
     }
 
@@ -318,7 +323,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
     private function createTestEntity()
     {
         $onboardEntityRequest = $this->buildOnboardCompanyRequest();
-        $response = $this->checkoutApi->getAccountsClient()->createEntity($onboardEntityRequest);
+        $response = $this->accountsApi()->getAccountsClient()->createEntity($onboardEntityRequest);
         return $response["id"];
     }
 
@@ -336,26 +341,23 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $onboardEntityRequest = new OnboardEntityRequest();
         $onboardEntityRequest->reference = uniqid("test_entity_");
 
+        $phone = new Phone();
+        $phone->country_code = "GB";
+        $phone->number = "2072343000";
+
         $emailAddresses = new EntityEmailAddresses();
         $emailAddresses->primary = $this->randomEmail();
         $onboardEntityRequest->contact_details = new ContactDetails();
-        $onboardEntityRequest->contact_details->phone = $this->getPhone();
+        $onboardEntityRequest->contact_details->phone = $phone;
         $onboardEntityRequest->contact_details->email_addresses = $emailAddresses;
 
+        // The holding currency scope is configured on the platform (USD here), while the
+        // processing_details currency reflects the sub-entity region (GBP); they are independent.
         $onboardEntityRequest->profile = new Profile();
         $onboardEntityRequest->profile->urls = array("https://www.example-test-entity.com");
         $onboardEntityRequest->profile->mccs = array("0742");
-        $onboardEntityRequest->profile->default_holding_currency = Currency::$GBP;
-        $onboardEntityRequest->profile->holding_currencies = array(Currency::$GBP);
-
-        $representative = new Representative();
-        $representative->first_name = "John";
-        $representative->last_name = "Representative";
-        $representative->address = $this->getAddress();
-        $representative->identification = new Identification();
-        $representative->identification->national_id_number = "AB123456C";
-        $representative->date_of_birth = $this->getDateOfBirth();
-        $representative->phone = $this->getPhone();
+        $onboardEntityRequest->profile->default_holding_currency = Currency::$USD;
+        $onboardEntityRequest->profile->holding_currencies = array(Currency::$USD);
 
         $dateOfIncorporation = new DateOfIncorporation();
         $dateOfIncorporation->day = 1;
@@ -370,12 +372,40 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $onboardEntityRequest->company->date_of_incorporation = $dateOfIncorporation;
         $onboardEntityRequest->company->principal_address = $this->getAddress();
         $onboardEntityRequest->company->registered_address = $this->getAddress();
-        $onboardEntityRequest->company->representatives = array($representative);
+        $onboardEntityRequest->company->representatives = array($this->buildRepresentative());
 
         $onboardEntityRequest->processing_details = $this->buildProcessingDetails();
-        $onboardEntityRequest->documents = $this->buildOnboardDocuments();
 
         return $onboardEntityRequest;
+    }
+
+    /**
+     * Builds a v3.0 "person of interest" representative (nested individual details + roles).
+     *
+     * @return Representative
+     */
+    private function buildRepresentative()
+    {
+        $placeOfBirth = new PlaceOfBirth();
+        $placeOfBirth->country = Country::$GB;
+
+        $individual = new RepresentativeIndividual();
+        $individual->first_name = "John";
+        $individual->last_name = "Representative";
+        $individual->date_of_birth = $this->getDateOfBirth();
+        $individual->place_of_birth = $placeOfBirth;
+        $individual->address = $this->getAddress();
+
+        $representative = new Representative();
+        $representative->individual = $individual;
+        $representative->roles = array(
+            EntityRoles::$ubo,
+            EntityRoles::$authorised_signatory,
+            EntityRoles::$director,
+            EntityRoles::$control_person
+        );
+
+        return $representative;
     }
 
     /**
@@ -403,32 +433,6 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $processingDetails->payments = $payments;
 
         return $processingDetails;
-    }
-
-    /**
-     * Builds the documents object required by the Accounts API v3.0 full onboarding variant.
-     * Each document references a real file uploaded through the Accounts Files API.
-     *
-     * @return OnboardSubEntityDocuments
-     * @throws CheckoutApiException
-     */
-    private function buildOnboardDocuments()
-    {
-        $fileId = $this->uploadFile()["id"];
-
-        $articlesOfAssociation = new Document();
-        $articlesOfAssociation->type = "articles_of_association";
-        $articlesOfAssociation->front = $fileId;
-
-        $shareholderStructure = new Document();
-        $shareholderStructure->type = "shareholder_structure";
-        $shareholderStructure->front = $fileId;
-
-        $documents = new OnboardSubEntityDocuments();
-        $documents->articles_of_association = $articlesOfAssociation;
-        $documents->shareholder_structure = $shareholderStructure;
-
-        return $documents;
     }
 
     /**
@@ -568,6 +572,22 @@ class AccountsIntegrationTest extends SandboxTestFixture
     }
 
     /**
+     * The Accounts API v3.0 onboarding is only available on the accounts-scoped OAuth client,
+     * so every sub-entity operation in this suite goes through it (memoized).
+     *
+     * @return CheckoutApi
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
+     */
+    private function accountsApi()
+    {
+        if ($this->accountsApi === null) {
+            $this->accountsApi = $this->getAccountsCheckoutApi();
+        }
+        return $this->accountsApi;
+    }
+
+    /**
      * @return CheckoutApi
      * @throws CheckoutArgumentException
      * @throws CheckoutException
@@ -579,7 +599,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
                 getenv("CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID"),
                 getenv("CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET")
             )
-            ->scopes([OAuthScope::$Accounts])
+            ->scopes([OAuthScope::$Accounts, OAuthScope::$Files])
             ->build();
     }
 
@@ -594,7 +614,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $fileRequest->content_type = "image/jpeg";
         $fileRequest->purpose = "bank_verification";
 
-        $response = $this->checkoutApi->getAccountsClient()->submitFile($fileRequest);
+        $response = $this->accountsApi()->getAccountsClient()->submitFile($fileRequest);
 
         $this->assertResponse($response, "id");
 

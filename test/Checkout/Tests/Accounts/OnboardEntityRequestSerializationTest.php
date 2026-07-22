@@ -3,9 +3,11 @@
 namespace Checkout\Tests\Accounts;
 
 use Checkout\Accounts\AgreedTerms;
+use Checkout\Accounts\CompanyVerification;
 use Checkout\Accounts\Document;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\OnboardSubEntityDocuments;
+use Checkout\Accounts\TaxVerification;
 use Checkout\JsonSerializer;
 use PHPUnit\Framework\TestCase;
 
@@ -36,43 +38,76 @@ class OnboardEntityRequestSerializationTest extends TestCase
         $this->assertSame("2026-07-20T10:00:00Z", $decoded['agreed_terms']['date']);
     }
 
-    public function testDocumentsRoundTripIncludingFinancialStatements()
+    public function testDocumentsRoundTripCoversEveryField()
     {
         $decoded = json_decode((new JsonSerializer())->serialize($this->buildDocuments()), true);
 
-        $this->assertSame("articles_of_association", $decoded['articles_of_association']['type']);
-        $this->assertSame("file_1", $decoded['articles_of_association']['front']);
-        $this->assertSame("certified_shareholder_structure", $decoded['shareholder_structure']['type']);
-        $this->assertSame("financial_statements", $decoded['financial_statements']['type']);
-        $this->assertSame("file_2", $decoded['financial_statements']['front']);
-        $this->assertSame("financial_verification", $decoded['financial_verification']['type']);
-        $this->assertSame("file_3", $decoded['financial_verification']['front']);
+        // Every property of OnboardSubEntityDocuments must serialize with its type + front.
+        $expectedTypes = array(
+            "identity_verification" => "identity_card",
+            "company_verification" => "certificate_of_incorporation",
+            "tax_verification" => "tax_document",
+            "articles_of_association" => "articles_of_association",
+            "shareholder_structure" => "certified_shareholder_structure",
+            "bank_verification" => "bank_statement",
+            "financial_statements" => "financial_statements",
+            "financial_verification" => "financial_verification",
+            "proof_of_principal_address" => "utility_bill",
+            "proof_of_legality" => "proof_of_legality",
+            "additional_document1" => "additional_document",
+            "additional_document2" => "additional_document",
+            "additional_document3" => "additional_document",
+        );
+
+        foreach ($expectedTypes as $field => $type) {
+            $this->assertArrayHasKey($field, $decoded, "documents.$field must serialize");
+            $this->assertSame($type, $decoded[$field]['type'], "documents.$field.type");
+            $this->assertSame("file_$field", $decoded[$field]['front'], "documents.$field.front");
+        }
+
+        // identity_verification is a Document (supports back); the others carry type + front only.
+        $this->assertSame("back_id", $decoded['identity_verification']['back']);
     }
 
     private function buildDocuments()
     {
-        $articles = new Document();
-        $articles->type = "articles_of_association";
-        $articles->front = "file_1";
-
-        $shareholder = new Document();
-        $shareholder->type = "certified_shareholder_structure";
-        $shareholder->front = "file_1";
-
-        $financialStatements = new Document();
-        $financialStatements->type = "financial_statements";
-        $financialStatements->front = "file_2";
-
-        $financialVerification = new Document();
-        $financialVerification->type = "financial_verification";
-        $financialVerification->front = "file_3";
-
         $documents = new OnboardSubEntityDocuments();
-        $documents->articles_of_association = $articles;
-        $documents->shareholder_structure = $shareholder;
-        $documents->financial_statements = $financialStatements;
-        $documents->financial_verification = $financialVerification;
+
+        $identity = new Document();
+        $identity->type = "identity_card";
+        $identity->front = "file_identity_verification";
+        $identity->back = "back_id";
+        $documents->identity_verification = $identity;
+
+        $companyVerification = new CompanyVerification();
+        $companyVerification->type = "certificate_of_incorporation";
+        $companyVerification->front = "file_company_verification";
+        $documents->company_verification = $companyVerification;
+
+        $taxVerification = new TaxVerification();
+        $taxVerification->type = "tax_document";
+        $taxVerification->front = "file_tax_verification";
+        $documents->tax_verification = $taxVerification;
+
+        $documents->articles_of_association = $this->document("articles_of_association", "articles_of_association");
+        $documents->shareholder_structure = $this->document("shareholder_structure", "certified_shareholder_structure");
+        $documents->bank_verification = $this->document("bank_verification", "bank_statement");
+        $documents->financial_statements = $this->document("financial_statements", "financial_statements");
+        $documents->financial_verification = $this->document("financial_verification", "financial_verification");
+        $documents->proof_of_principal_address = $this->document("proof_of_principal_address", "utility_bill");
+        $documents->proof_of_legality = $this->document("proof_of_legality", "proof_of_legality");
+        $documents->additional_document1 = $this->document("additional_document1", "additional_document");
+        $documents->additional_document2 = $this->document("additional_document2", "additional_document");
+        $documents->additional_document3 = $this->document("additional_document3", "additional_document");
 
         return $documents;
+    }
+
+    private function document($field, $type)
+    {
+        $document = new Document();
+        $document->type = $type;
+        $document->front = "file_$field";
+        return $document;
     }
 }

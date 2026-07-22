@@ -52,7 +52,7 @@ class Representative
     /**
      * The percentage ownership of the UBO or controlling company.
      * [Optional]
-     * Range: 25 to 100
+     * Range: 0 to 100 (a minimum of 25 applies to the company full onboarding variants)
      *
      * @var int
      */

@@ -25,6 +25,11 @@ class AccountsClient extends Client
     const RESERVE_RULES_PATH = "reserve-rules";
     const REQUIREMENTS_PATH = "requirements";
 
+    /**
+     * The latest Accounts API schema version, negotiated through the Accept header.
+     */
+    const DEFAULT_SCHEMA_VERSION = "3.0";
+
     private $filesApiClient;
 
     public function __construct(
@@ -37,16 +42,32 @@ class AccountsClient extends Client
     }
 
     /**
+     * Build the Accept header used to negotiate the Accounts API schema version.
+     *
+     * @param string $schemaVersion
+     * @return Headers
+     */
+    private function buildSchemaVersionHeaders($schemaVersion)
+    {
+        $headers = new Headers();
+        $headers->accept = "application/json;schema_version=" . $schemaVersion;
+        return $headers;
+    }
+
+    /**
      * @param OnboardEntityRequest $entityRequest
+     * @param string $schemaVersion The Accounts API schema version to request (default: latest, 3.0)
      * @return array
      * @throws CheckoutApiException
      */
-    public function createEntity(OnboardEntityRequest $entityRequest)
+    public function createEntity(OnboardEntityRequest $entityRequest, $schemaVersion = self::DEFAULT_SCHEMA_VERSION)
     {
         return $this->apiClient->post(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH),
             $entityRequest,
-            $this->sdkAuthorization()
+            $this->sdkAuthorization(),
+            null,
+            $this->buildSchemaVersionHeaders($schemaVersion)
         );
     }
 
@@ -66,29 +87,36 @@ class AccountsClient extends Client
 
     /**
      * @param $entityId
+     * @param string $schemaVersion The Accounts API schema version to request (default: latest, 3.0)
      * @return array
      * @throws CheckoutApiException
      */
-    public function getEntity($entityId)
+    public function getEntity($entityId, $schemaVersion = self::DEFAULT_SCHEMA_VERSION)
     {
         return $this->apiClient->get(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId),
-            $this->sdkAuthorization()
+            $this->sdkAuthorization(),
+            $this->buildSchemaVersionHeaders($schemaVersion)
         );
     }
 
     /**
      * @param $entityId
      * @param OnboardEntityRequest $entityRequest
+     * @param string $schemaVersion The Accounts API schema version to request (default: latest, 3.0)
      * @return array
      * @throws CheckoutApiException
      */
-    public function updateEntity($entityId, OnboardEntityRequest $entityRequest)
-    {
+    public function updateEntity(
+        $entityId,
+        OnboardEntityRequest $entityRequest,
+        $schemaVersion = self::DEFAULT_SCHEMA_VERSION
+    ) {
         return $this->apiClient->put(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId),
             $entityRequest,
-            $this->sdkAuthorization()
+            $this->sdkAuthorization(),
+            $this->buildSchemaVersionHeaders($schemaVersion)
         );
     }
 
@@ -361,14 +389,16 @@ class AccountsClient extends Client
      * Retrieve the list of pending requirements for a sub-entity.
      *
      * @param string $entityId The sub-entity's ID (Required)
+     * @param string $schemaVersion The Accounts API schema version to request (default: latest, 3.0)
      * @return array
      * @throws CheckoutApiException
      */
-    public function getEntityRequirements($entityId)
+    public function getEntityRequirements($entityId, $schemaVersion = self::DEFAULT_SCHEMA_VERSION)
     {
         return $this->apiClient->get(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH),
-            $this->sdkAuthorization()
+            $this->sdkAuthorization(),
+            $this->buildSchemaVersionHeaders($schemaVersion)
         );
     }
 

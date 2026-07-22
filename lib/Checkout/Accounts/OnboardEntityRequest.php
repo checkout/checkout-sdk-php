@@ -82,4 +82,12 @@ class OnboardEntityRequest
      * @var string
      */
     public $seller_category;
+
+    /**
+     * Specifies whether the sub-entity details are in draft.
+     * [Optional]
+     *
+     * @var bool
+     */
+    public $is_draft;
 }

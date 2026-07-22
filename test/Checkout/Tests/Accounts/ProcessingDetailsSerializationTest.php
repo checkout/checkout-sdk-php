@@ -27,7 +27,9 @@ class ProcessingDetailsSerializationTest extends TestCase
         $processingDetails->annual_processing_volume = 2000000;
         $processingDetails->average_transaction_value = 5000;
         $processingDetails->average_order_fulfillment_time = 3;
+        $processingDetails->highest_transaction_value = 25000;
         $processingDetails->currency = Currency::$GBP;
+        $processingDetails->settlement_country = Country::$GB;
         $processingDetails->target_countries = array(Country::$GB);
         $processingDetails->payments = $payments;
 
@@ -36,7 +38,9 @@ class ProcessingDetailsSerializationTest extends TestCase
         $this->assertSame(2000000, $decoded['annual_processing_volume']);
         $this->assertSame(5000, $decoded['average_transaction_value']);
         $this->assertSame(3, $decoded['average_order_fulfillment_time']);
+        $this->assertSame(25000, $decoded['highest_transaction_value']);
         $this->assertSame("GBP", $decoded['currency']);
+        $this->assertSame("GB", $decoded['settlement_country']);
         $this->assertSame(array("GB"), $decoded['target_countries']);
 
         $this->assertSame(1000000, $decoded['payments']['ach']['annual_ach_volume']);

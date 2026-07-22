@@ -65,6 +65,14 @@ class OnboardSubEntityDocuments
     public $financial_statements;
 
     /**
+     * Financial verification document.
+     * [Optional]
+     *
+     * @var Document
+     */
+    public $financial_verification;
+
+    /**
      * Proof of principal address document.
      * [Optional]
      *

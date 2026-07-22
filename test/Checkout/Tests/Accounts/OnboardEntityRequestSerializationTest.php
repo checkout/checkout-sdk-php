@@ -23,6 +23,7 @@ class OnboardEntityRequestSerializationTest extends TestCase
         $request = new OnboardEntityRequest();
         $request->reference = "ref_123";
         $request->seller_category = "cat_electronics";
+        $request->is_draft = true;
         $request->agreed_terms = $agreedTerms;
         $request->documents = $this->buildDocuments();
 
@@ -30,6 +31,7 @@ class OnboardEntityRequestSerializationTest extends TestCase
 
         $this->assertSame("ref_123", $decoded['reference']);
         $this->assertSame("cat_electronics", $decoded['seller_category']);
+        $this->assertTrue($decoded['is_draft']);
         $this->assertSame("john@example.com", $decoded['agreed_terms']['email']);
         $this->assertSame("2026-07-20T10:00:00Z", $decoded['agreed_terms']['date']);
     }
@@ -43,6 +45,8 @@ class OnboardEntityRequestSerializationTest extends TestCase
         $this->assertSame("certified_shareholder_structure", $decoded['shareholder_structure']['type']);
         $this->assertSame("financial_statements", $decoded['financial_statements']['type']);
         $this->assertSame("file_2", $decoded['financial_statements']['front']);
+        $this->assertSame("financial_verification", $decoded['financial_verification']['type']);
+        $this->assertSame("file_3", $decoded['financial_verification']['front']);
     }
 
     private function buildDocuments()
@@ -59,10 +63,15 @@ class OnboardEntityRequestSerializationTest extends TestCase
         $financialStatements->type = "financial_statements";
         $financialStatements->front = "file_2";
 
+        $financialVerification = new Document();
+        $financialVerification->type = "financial_verification";
+        $financialVerification->front = "file_3";
+
         $documents = new OnboardSubEntityDocuments();
         $documents->articles_of_association = $articles;
         $documents->shareholder_structure = $shareholder;
         $documents->financial_statements = $financialStatements;
+        $documents->financial_verification = $financialVerification;
 
         return $documents;
     }

@@ -67,6 +67,15 @@ class Company
     public $is_registered_company;
 
     /**
+     * The regulatory licence number of the company.
+     * [Optional]
+     * Length: max 32 characters
+     *
+     * @var string
+     */
+    public $regulatory_licence_number;
+
+    /**
      * The date the company was incorporated.
      * [Required] for the full onboarding variants (Accounts API v3.0)
      *

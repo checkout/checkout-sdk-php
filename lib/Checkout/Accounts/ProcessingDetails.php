@@ -35,6 +35,15 @@ class ProcessingDetails
     public $average_order_fulfillment_time;
 
     /**
+     * The expected highest transaction value, in the minor currency unit.
+     * [Required] for the company and sole trader full onboarding variants
+     * Minimum: 0
+     *
+     * @var int
+     */
+    public $highest_transaction_value;
+
+    /**
      * The currency used for the processing details provided.
      * [Required]
      * Format: ISO 4217 (three-letter currency code)
@@ -42,6 +51,15 @@ class ProcessingDetails
      * @var string value of Currency
      */
     public $currency;
+
+    /**
+     * The country where the settlement bank account is located.
+     * [Required] for the company and sole trader full onboarding variants
+     * Format: ISO 3166-1 alpha-2 (two-letter country code)
+     *
+     * @var string value of Country
+     */
+    public $settlement_country;
 
     /**
      * The countries the sub-entity intends to sell to.

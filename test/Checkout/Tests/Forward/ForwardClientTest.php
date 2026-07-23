@@ -177,7 +177,7 @@ class ForwardClientTest extends UnitTestFixture
         $this->apiClient
             ->expects($this->once())
             ->method("patch")
-            ->with("forward/secrets/" . $secretName)
+            ->with("secrets/" . $secretName)
             ->willReturn($expectedResponse);
 
         $request = $this->buildUpdateSecretRequest();
@@ -198,7 +198,7 @@ class ForwardClientTest extends UnitTestFixture
         $this->apiClient
             ->expects($this->once())
             ->method("delete")
-            ->with("forward/secrets/" . $secretName)
+            ->with("secrets/" . $secretName)
             ->willReturn($expectedResponse);
 
         $response = $this->client->deleteSecret($secretName);

@@ -100,7 +100,7 @@ class ForwardClient extends Client
     public function updateSecret(string $name, UpdateSecretRequest $updateSecretRequest): array
     {
         return $this->apiClient->patch(
-            $this->buildPath(self::FORWARD_PATH, self::SECRETS_PATH, $name),
+            $this->buildPath(self::SECRETS_PATH, $name),
             $updateSecretRequest,
             $this->sdkAuthorization()
         );
@@ -117,7 +117,7 @@ class ForwardClient extends Client
     public function deleteSecret(string $name): array
     {
         return $this->apiClient->delete(
-            $this->buildPath(self::FORWARD_PATH, self::SECRETS_PATH, $name),
+            $this->buildPath(self::SECRETS_PATH, $name),
             $this->sdkAuthorization()
         );
     }

@@ -67,7 +67,7 @@ class ForwardClient extends Client
     public function createSecret(CreateSecretRequest $createSecretRequest): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::FORWARD_PATH, self::SECRETS_PATH),
+            $this->buildPath(self::SECRETS_PATH),
             $createSecretRequest,
             $this->sdkAuthorization()
         );
@@ -83,7 +83,7 @@ class ForwardClient extends Client
     public function listSecrets(): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::FORWARD_PATH, self::SECRETS_PATH),
+            $this->buildPath(self::SECRETS_PATH),
             $this->sdkAuthorization()
         );
     }
@@ -100,7 +100,7 @@ class ForwardClient extends Client
     public function updateSecret(string $name, UpdateSecretRequest $updateSecretRequest): array
     {
         return $this->apiClient->patch(
-            $this->buildPath(self::FORWARD_PATH, self::SECRETS_PATH, $name),
+            $this->buildPath(self::SECRETS_PATH, $name),
             $updateSecretRequest,
             $this->sdkAuthorization()
         );
@@ -117,7 +117,7 @@ class ForwardClient extends Client
     public function deleteSecret(string $name): array
     {
         return $this->apiClient->delete(
-            $this->buildPath(self::FORWARD_PATH, self::SECRETS_PATH, $name),
+            $this->buildPath(self::SECRETS_PATH, $name),
             $this->sdkAuthorization()
         );
     }

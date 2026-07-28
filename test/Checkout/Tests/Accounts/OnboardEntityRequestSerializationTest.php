@@ -5,6 +5,8 @@ namespace Checkout\Tests\Accounts;
 use Checkout\Accounts\AgreedTerms;
 use Checkout\Accounts\CompanyVerification;
 use Checkout\Accounts\Document;
+use Checkout\Accounts\FinancialStatements;
+use Checkout\Accounts\FinancialStatementsType;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\OnboardSubEntityDocuments;
 use Checkout\Accounts\TaxVerification;
@@ -92,7 +94,12 @@ class OnboardEntityRequestSerializationTest extends TestCase
         $documents->articles_of_association = $this->document("articles_of_association", "articles_of_association");
         $documents->shareholder_structure = $this->document("shareholder_structure", "certified_shareholder_structure");
         $documents->bank_verification = $this->document("bank_verification", "bank_statement");
-        $documents->financial_statements = $this->document("financial_statements", "financial_statements");
+
+        $financialStatements = new FinancialStatements();
+        $financialStatements->type = FinancialStatementsType::$financial_statements;
+        $financialStatements->front = "file_financial_statements";
+        $documents->financial_statements = $financialStatements;
+
         $documents->financial_verification = $this->document("financial_verification", "financial_verification");
         $documents->proof_of_principal_address = $this->document("proof_of_principal_address", "utility_bill");
         $documents->proof_of_legality = $this->document("proof_of_legality", "proof_of_legality");

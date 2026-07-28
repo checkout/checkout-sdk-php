@@ -55,6 +55,23 @@ class RepresentativeIndividual
     public $place_of_birth;
 
     /**
+     * The list of citizenships or legal statuses for the representative.
+     * [Required] (Accounts API v3.0)
+     *
+     * @var array values of Citizenship
+     */
+    public $citizenships;
+
+    /**
+     * The classification of the national identification number provided.
+     * [Required] (Accounts API v3.0)
+     * Enum: "ssn", "itin", "passport", "driving_license", "national_id_card", "residence_permit", "other"
+     *
+     * @var string value of NationalIdType
+     */
+    public $national_id_type;
+
+    /**
      * The representative's national identification number.
      * [Optional]
      * Format: region-specific (validated by the API against the sub-entity's country)

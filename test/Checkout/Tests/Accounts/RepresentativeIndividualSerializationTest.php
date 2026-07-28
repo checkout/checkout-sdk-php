@@ -2,7 +2,9 @@
 
 namespace Checkout\Tests\Accounts;
 
+use Checkout\Accounts\Citizenship;
 use Checkout\Accounts\DateOfBirth;
+use Checkout\Accounts\NationalIdType;
 use Checkout\Accounts\PlaceOfBirth;
 use Checkout\Accounts\RepresentativeIndividual;
 use Checkout\Common\Address;
@@ -33,12 +35,18 @@ class RepresentativeIndividualSerializationTest extends TestCase
         $phone->country_code = "GB";
         $phone->number = "2072343000";
 
+        $citizenship = new Citizenship();
+        $citizenship->type = "citizenship";
+        $citizenship->country = Country::$GB;
+
         $individual = new RepresentativeIndividual();
         $individual->first_name = "John";
         $individual->middle_name = "Robert";
         $individual->last_name = "Representative";
         $individual->date_of_birth = $dateOfBirth;
         $individual->place_of_birth = $placeOfBirth;
+        $individual->citizenships = array($citizenship);
+        $individual->national_id_type = NationalIdType::$ssn;
         $individual->national_id_number = "123456789";
         $individual->email_address = "john@example.com";
         $individual->phone = $phone;
@@ -49,6 +57,9 @@ class RepresentativeIndividualSerializationTest extends TestCase
         $this->assertSame("John", $decoded['first_name']);
         $this->assertSame("Robert", $decoded['middle_name']);
         $this->assertSame("Representative", $decoded['last_name']);
+        $this->assertSame("citizenship", $decoded['citizenships'][0]['type']);
+        $this->assertSame("GB", $decoded['citizenships'][0]['country']);
+        $this->assertSame("ssn", $decoded['national_id_type']);
         $this->assertSame("123456789", $decoded['national_id_number']);
         $this->assertSame("john@example.com", $decoded['email_address']);
         $this->assertSame(1996, $decoded['date_of_birth']['year']);

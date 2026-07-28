@@ -60,7 +60,7 @@ class OnboardSubEntityDocuments
      * Financial statements document.
      * [Optional]
      *
-     * @var Document
+     * @var FinancialStatements
      */
     public $financial_statements;
 

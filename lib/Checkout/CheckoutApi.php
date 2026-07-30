@@ -12,6 +12,7 @@ use Checkout\Financial\FinancialClient;
 use Checkout\Forex\ForexClient;
 use Checkout\Forward\ForwardClient;
 use Checkout\Identities\FaceAuthentication\FaceAuthenticationClient;
+use Checkout\Identities\AddressDocumentVerification\AddressDocumentVerificationClient;
 use Checkout\Identities\IdDocumentVerification\IdDocumentVerificationClient;
 use Checkout\Identities\IdentityVerification\IdentityVerificationClient;
 use Checkout\Identities\AmlScreening\AmlScreeningClient;
@@ -71,6 +72,8 @@ final class CheckoutApi extends CheckoutApmApi
 
     private $idDocumentVerificationClient;
 
+    private $addressDocumentVerificationClient;
+
     private $identityVerificationClient;
 
     private $amlScreeningClient;
@@ -129,6 +132,7 @@ final class CheckoutApi extends CheckoutApmApi
         $identityApiClient = $this->getIdentityApiClient($configuration);
         $this->faceAuthenticationClient = new FaceAuthenticationClient($identityApiClient, $configuration);
         $this->idDocumentVerificationClient = new IdDocumentVerificationClient($identityApiClient, $configuration);
+        $this->addressDocumentVerificationClient = new AddressDocumentVerificationClient($identityApiClient, $configuration);
         $this->identityVerificationClient = new IdentityVerificationClient($identityApiClient, $configuration);
         $this->amlScreeningClient = new AmlScreeningClient($identityApiClient, $configuration);
         $this->applicantsClient = new ApplicantsClient($identityApiClient, $configuration);
@@ -352,6 +356,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getIdDocumentVerificationClient()
     {
         return $this->idDocumentVerificationClient;
+    }
+
+    /**
+     * @return AddressDocumentVerificationClient
+     */
+    public function getAddressDocumentVerificationClient()
+    {
+        return $this->addressDocumentVerificationClient;
     }
 
     /**

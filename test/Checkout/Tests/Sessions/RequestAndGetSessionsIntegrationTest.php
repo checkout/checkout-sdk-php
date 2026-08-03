@@ -4,7 +4,7 @@ namespace Checkout\Tests\Sessions;
 
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutAuthorizationException;
-use Checkout\Common\ChallengeIndicatorType;
+use Checkout\Sessions\SessionChallengeIndicatorType;
 use Checkout\Sessions\Category;
 use Checkout\Sessions\TransactionType;
 
@@ -22,7 +22,7 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
         $responseBrowserSession = $this->createNonHostedSession(
             $browserSession,
             Category::$payment,
-            ChallengeIndicatorType::$no_preference,
+            SessionChallengeIndicatorType::$no_preference,
             TransactionType::$goods_service
         );
 
@@ -51,7 +51,7 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
         $responseNonHostedSession = $this->createNonHostedSession(
             $appSession,
             Category::$payment,
-            ChallengeIndicatorType::$no_preference,
+            SessionChallengeIndicatorType::$no_preference,
             TransactionType::$goods_service
         );
 
@@ -79,7 +79,7 @@ class RequestAndGetSessionsIntegrationTest extends AbstractSessionsIntegrationTe
         $responseMerchantInitiatedSession = $this->createNonHostedSession(
             $merchantInitiatedSession,
             Category::$payment,
-            ChallengeIndicatorType::$no_preference,
+            SessionChallengeIndicatorType::$no_preference,
             TransactionType::$goods_service
         );
 

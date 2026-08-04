@@ -46,7 +46,7 @@ class SessionsValueClassesTest extends TestCase
 
     /**
      * Spec: TransactionType enum is the five values below. Note the correct spelling is
-     * "quasi_card_transaction", not "quasi_card_transaction".
+     * "quasi_card_transaction", not "quashi_card_transaction".
      */
     public function testTransactionTypeMatchesSpec()
     {

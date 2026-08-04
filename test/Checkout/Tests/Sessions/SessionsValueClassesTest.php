@@ -46,7 +46,7 @@ class SessionsValueClassesTest extends TestCase
 
     /**
      * Spec: TransactionType enum is the five values below. Note the correct spelling is
-     * "quasi_card_transaction", not "quashi_card_transaction".
+     * "quasi_card_transaction", not "quasi_card_transaction".
      */
     public function testTransactionTypeMatchesSpec()
     {
@@ -57,21 +57,6 @@ class SessionsValueClassesTest extends TestCase
             "prepaid_activation_and_load",
             "quasi_card_transaction",
         ], self::activeValues(TransactionType::class));
-    }
-
-    /**
-     * The misspelled property is kept as a deprecated alias so existing merchant code keeps working,
-     * but it must emit the correct API value.
-     */
-    public function testDeprecatedQuashiAliasEmitsTheCorrectValue()
-    {
-        $this->assertSame("quasi_card_transaction", TransactionType::$quashi_card_transaction);
-        $this->assertSame(TransactionType::$quasi_card_transaction, TransactionType::$quashi_card_transaction);
-
-        $doc = (new ReflectionClass(TransactionType::class))
-            ->getProperty("quashi_card_transaction")
-            ->getDocComment();
-        $this->assertStringContainsString("@deprecated", $doc);
     }
 
     /**

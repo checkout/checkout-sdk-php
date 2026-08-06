@@ -6,7 +6,7 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
-use Checkout\Common\ChallengeIndicatorType;
+use Checkout\Sessions\SessionChallengeIndicatorType;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
 use Checkout\Common\Phone;
@@ -159,7 +159,7 @@ abstract class AbstractSessionsIntegrationTest extends SandboxTestFixture
         $sessionRequest->processing_channel_id = "pc_5jp2az55l3cuths25t5p3xhwru";
         $sessionRequest->authentication_type = AuthenticationType::$regular;
         $sessionRequest->authentication_category = Category::$payment;
-        $sessionRequest->challenge_indicator = ChallengeIndicatorType::$no_preference;
+        $sessionRequest->challenge_indicator = SessionChallengeIndicatorType::$no_preference;
         $sessionRequest->reference = "ORD-5023-4E89";
         $sessionRequest->transaction_type = TransactionType::$goods_service;
         $sessionRequest->shipping_address = $shippingAddress;

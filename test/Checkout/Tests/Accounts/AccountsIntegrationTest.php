@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Accounts;
 
+use Checkout\Tests\TestDomainConfiguration;
 use Checkout\Accounts\AccountsFileRequest;
 use Checkout\Accounts\BusinessType;
 use Checkout\Accounts\Company;
@@ -594,12 +595,12 @@ class AccountsIntegrationTest extends SandboxTestFixture
      */
     private function getAccountsCheckoutApi()
     {
-        return CheckoutSdk::builder()->oAuth()
+        return TestDomainConfiguration::configureDomain(CheckoutSdk::builder()->oAuth()
             ->clientCredentials(
                 getenv("CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID"),
                 getenv("CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET")
             )
-            ->scopes([OAuthScope::$Accounts, OAuthScope::$Files])
+            ->scopes([OAuthScope::$Accounts, OAuthScope::$Files]))
             ->build();
     }
 

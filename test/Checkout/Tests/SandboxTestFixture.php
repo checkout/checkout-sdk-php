@@ -68,17 +68,17 @@ abstract class SandboxTestFixture extends TestCase
                     ->build();
                 return;
             case PlatformType::$default:
-                $this->checkoutApi = CheckoutSdk::builder()
+                $builder = CheckoutSdk::builder()
                     ->staticKeys()
                     ->publicKey(getenv("CHECKOUT_DEFAULT_PUBLIC_KEY"))
                     ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY"))
                     ->environment(Environment::sandbox())
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
-                    ->logger($this->logger)
-                    ->build();
+                    ->logger($this->logger);
+                $this->checkoutApi = TestDomainConfiguration::configureDomain($builder)->build();
                 return;
             case PlatformType::$default_oauth:
-                $this->checkoutApi = CheckoutSdk::builder()
+                $builder = CheckoutSdk::builder()
                     ->oAuth()
                     ->clientCredentials(
                         getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID"),
@@ -115,8 +115,8 @@ abstract class SandboxTestFixture extends TestCase
                     ])
                     ->environment(Environment::sandbox())
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
-                    ->logger($this->logger)
-                    ->build();
+                    ->logger($this->logger);
+                $this->checkoutApi = TestDomainConfiguration::configureDomain($builder)->build();
                 return;
             default:
                 $this->logger->error("Invalid platform type");

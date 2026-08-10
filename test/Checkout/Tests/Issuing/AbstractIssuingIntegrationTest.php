@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Issuing;
 
+use Checkout\Tests\TestDomainConfiguration;
 use Checkout\CheckoutApi;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
@@ -54,7 +55,7 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
             "timeout" => 60
         ];
 
-        return CheckoutSdk::builder()
+        return TestDomainConfiguration::configureDomain(CheckoutSdk::builder()
             ->oAuth()
             ->clientCredentials(
                 getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID"),
@@ -66,7 +67,7 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
                 OAuthScope::$IssuingControlsRead,
                 OAuthScope::$IssuingControlsWrite])
             ->environment(Environment::sandbox())
-            ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
+            ->httpClientBuilder(new DefaultHttpClientBuilder($configClient)))
             ->build();
     }
 

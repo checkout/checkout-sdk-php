@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Payments;
 
+use Checkout\Tests\TestDomainConfiguration;
 use Checkout\Payments\PaymentMethodDetails;
 use Closure;
 use Exception;
@@ -178,10 +179,10 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldMakeTamaraPayment()
     {
         $this->markTestSkipped("preview");
-        $previewApi = CheckoutSdk::builder()
+        $previewApi = TestDomainConfiguration::configureDomain(CheckoutSdk::builder()
             ->oAuth()
             ->clientCredentials(getenv("CHECKOUT_DEFAULT_PREVIEW_OAUTH_CLIENT_ID"), getenv("CHECKOUT_DEFAULT_PREVIEW_OAUTH_CLIENT_SECRET"))
-            ->environment(Environment::sandbox())
+            ->environment(Environment::sandbox()))
             ->build();
 
         $address = new Address();

@@ -22,6 +22,7 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
             ->publicKey(parent::$validDefaultPk)
             ->secretKey(parent::$validDefaultSk)
             ->environment(Environment::sandbox())
+            ->environmentSubdomain("123dmain")
             ->build();
         $this->assertNotNull($checkoutApi1);
 
@@ -29,6 +30,7 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
             ->staticKeys()
             ->secretKey(parent::$validDefaultSk)
             ->environment(Environment::sandbox())
+            ->environmentSubdomain("123dmain")
             ->build();
         $this->assertNotNull($checkoutApi2);
     }
@@ -94,6 +96,82 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
      * @test
      * @throws CheckoutArgumentException
      */
+    public function shouldCreateCheckoutSdkWithLegacyDomain()
+    {
+        $checkoutApi = CheckoutSdk::builder()
+            ->staticKeys()
+            ->publicKey(parent::$validDefaultPk)
+            ->secretKey(parent::$validDefaultSk)
+            ->environment(Environment::sandbox())
+            ->useLegacyDomain()
+            ->build();
+        $this->assertNotNull($checkoutApi);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailCreatingCheckoutSdkWithoutSubdomainOrLegacyDomain()
+    {
+        try {
+            CheckoutSdk::builder()
+                ->staticKeys()
+                ->publicKey(parent::$validDefaultPk)
+                ->secretKey(parent::$validDefaultSk)
+                ->environment(Environment::sandbox())
+                ->build();
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof CheckoutArgumentException);
+            $this->assertStringContainsString("environmentSubdomain is required", $e->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailCreatingCheckoutSdkWithBothSubdomainAndLegacyDomain()
+    {
+        try {
+            CheckoutSdk::builder()
+                ->staticKeys()
+                ->publicKey(parent::$validDefaultPk)
+                ->secretKey(parent::$validDefaultSk)
+                ->environment(Environment::sandbox())
+                ->environmentSubdomain("123dmain")
+                ->useLegacyDomain()
+                ->build();
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof CheckoutArgumentException);
+            $this->assertStringContainsString("cannot both be set", $e->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailCreatingCheckoutSdkWithInvalidSubdomain()
+    {
+        try {
+            CheckoutSdk::builder()
+                ->staticKeys()
+                ->publicKey(parent::$validDefaultPk)
+                ->secretKey(parent::$validDefaultSk)
+                ->environment(Environment::sandbox())
+                ->environmentSubdomain("not a subdomain")
+                ->build();
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof CheckoutArgumentException);
+            $this->assertStringContainsString("invalid environment subdomain", $e->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     * @throws CheckoutArgumentException
+     */
     public function shouldInstantiateClientWithCustomHttpClient()
     {
         $httpBuilder = $this->createMock(HttpClientBuilderInterface::class);
@@ -104,6 +182,7 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
             ->publicKey(parent::$validDefaultPk)
             ->secretKey(parent::$validDefaultSk)
             ->environment(Environment::sandbox())
+            ->environmentSubdomain("123dmain")
             ->httpClientBuilder($httpBuilder)
             ->build());
     }

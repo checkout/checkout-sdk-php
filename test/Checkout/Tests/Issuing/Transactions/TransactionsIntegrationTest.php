@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Issuing\Transactions;
 
+use Checkout\Tests\TestDomainConfiguration;
 use Checkout\CheckoutApi;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
@@ -38,7 +39,7 @@ class TransactionsIntegrationTest extends AbstractIssuingIntegrationTest
             "timeout" => 60
         ];
 
-        return CheckoutSdk::builder()
+        return TestDomainConfiguration::configureDomain(CheckoutSdk::builder()
             ->oAuth()
             ->clientCredentials(
                 getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID"),
@@ -50,7 +51,7 @@ class TransactionsIntegrationTest extends AbstractIssuingIntegrationTest
                 OAuthScope::$IssuingTransactionsRead
             ])
             ->environment(Environment::sandbox())
-            ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
+            ->httpClientBuilder(new DefaultHttpClientBuilder($configClient)))
             ->build();
     }
 

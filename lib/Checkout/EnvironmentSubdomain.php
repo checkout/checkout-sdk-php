@@ -10,6 +10,7 @@ final class EnvironmentSubdomain
     /**
      * @param Environment $environment
      * @param $subdomain
+     * @throws CheckoutArgumentException
      */
     public function __construct(Environment $environment, $subdomain)
     {
@@ -18,35 +19,35 @@ final class EnvironmentSubdomain
     }
 
     /**
-     * Applies subdomain transformation to any given URL.
-     * If the subdomain is valid (alphanumeric pattern), prepends it to the host.
-     * Otherwise, returns the original URL unchanged.
+     * Applies subdomain transformation to any given URL, prepending the subdomain to the host.
      *
      * @param string $originalUrl the original URL to transform
      * @param string $subdomain the subdomain to prepend
-     * @return string the transformed URL with subdomain, or original URL if subdomain is invalid
+     * @return string the transformed URL with subdomain
+     * @throws CheckoutArgumentException if the subdomain is not a valid merchant-specific subdomain
      */
     private function createUrlWithSubdomain($originalUrl, $subdomain)
     {
-        $newEnvironment = $originalUrl;
-
         $regex = '/^(?:pl-)?[a-z0-9]+$/';
-        if (preg_match($regex, $subdomain)) {
-            $urlParts = parse_url($originalUrl);
-            $newHost = $subdomain . '.' . $urlParts['host'];
-
-            $newUrl = $urlParts['scheme'] . '://' . $newHost;
-            if (isset($urlParts['port'])) {
-                $newUrl .= ':' . $urlParts['port'];
-            }
-            if (isset($urlParts['path'])) {
-                $newUrl .= $urlParts['path'];
-            }
-
-            $newEnvironment = $newUrl;
+        if ($subdomain === null || !preg_match($regex, $subdomain)) {
+            throw new CheckoutArgumentException(
+                "invalid environment subdomain - provide your merchant-specific subdomain, the first 8 " .
+                "characters of your client ID (see https://api-reference.checkout.com/#section/Base-URLs)"
+            );
         }
 
-        return $newEnvironment;
+        $urlParts = parse_url($originalUrl);
+        $newHost = $subdomain . '.' . $urlParts['host'];
+
+        $newUrl = $urlParts['scheme'] . '://' . $newHost;
+        if (isset($urlParts['port'])) {
+            $newUrl .= ':' . $urlParts['port'];
+        }
+        if (isset($urlParts['path'])) {
+            $newUrl .= $urlParts['path'];
+        }
+
+        return $newUrl;
     }
 
     /**

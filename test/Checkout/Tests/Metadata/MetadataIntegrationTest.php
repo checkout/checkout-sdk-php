@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Metadata;
 
+use Checkout\Tests\TestDomainConfiguration;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
@@ -87,9 +88,9 @@ class MetadataIntegrationTest extends SandboxTestFixture
      */
     private function createValidTokenRequest()
     {
-        $api = CheckoutSdk::builder()->staticKeys()
+        $api = TestDomainConfiguration::configureDomain(CheckoutSdk::builder()->staticKeys()
             ->publicKey(getenv("CHECKOUT_DEFAULT_PUBLIC_KEY"))
-            ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY"))
+            ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY")))
             ->build();
 
         $cardTokenRequest = new CardTokenRequest();

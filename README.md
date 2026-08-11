@@ -168,6 +168,18 @@ $checkoutApi = CheckoutSdk::builder()->staticKeys()
 
 This routes requests to `api.checkout.com` (or `api.sandbox.checkout.com`) and `access.checkout.com` (or `access.sandbox.checkout.com`). The method is marked `@deprecated`. Exactly one of `environmentSubdomain(...)` or `useLegacyDomain()` must be set: the SDK throws a `CheckoutArgumentException` if both, or neither, are set. The Previous (ABC) platform predates merchant-specific subdomains and is exempt from this requirement.
 
+## Running the tests against your subdomain
+
+The test suite builds every client through `test/Checkout/Tests/TestDomainConfiguration.php`, which has two modes. By default it uses the shared hosts, because the sandbox OAuth clients are not provisioned for merchant-specific subdomains and the token request would come back `invalid_client`. To run against a subdomain instead:
+
+```bash
+export CHECKOUT_MERCHANT_SUBDOMAIN="your_subdomain"
+export CHECKOUT_TEST_USE_SUBDOMAIN=true
+./vendor/bin/phpunit
+```
+
+The switch is separate from `CHECKOUT_MERCHANT_SUBDOMAIN` on purpose: CI already exports that secret, so provisioning is what should flip the behaviour, not the presence of a value. Once sandbox is provisioned like production, set `CHECKOUT_TEST_USE_SUBDOMAIN: 'true'` in the workflows and CI exercises the subdomain path end to end.
+
 ## Code of Conduct
 
 Please refer to [Code of Conduct](CODE_OF_CONDUCT.md)

@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Accounts;
 
-use Checkout\Tests\TestDomainConfiguration;
 use Checkout\Accounts\DaySchedule;
 use Checkout\Accounts\ScheduleFrequencyDailyRequest;
 use Checkout\Accounts\ScheduleFrequencyMonthlyRequest;
@@ -154,12 +153,15 @@ class AccountsPayoutSchedulesIntegrationTest extends SandboxTestFixture
      */
     private static function getPayoutSchedulesCheckoutApi()
     {
-        return TestDomainConfiguration::configureDomain(CheckoutSdk::builder()->oAuth()
+        return CheckoutSdk::builder()->oAuth()
             ->clientCredentials(
                 getenv("CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID"),
                 getenv("CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET")
             )
-            ->scopes([OAuthScope::$Accounts]))
+            ->scopes([OAuthScope::$Accounts])
+            // The sandbox OAuth clients are not provisioned for the merchant-specific subdomain, so
+            // the token request would come back invalid_client. Opting out explicitly until they are.
+            ->useLegacyDomain()
             ->build();
     }
 }

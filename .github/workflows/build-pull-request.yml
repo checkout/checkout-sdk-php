@@ -50,8 +50,4 @@ jobs:
                   CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
                   CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
                   CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
-                  # Flip to 'true' once the sandbox OAuth clients are provisioned for the
-                  # merchant-specific subdomain, and the suite will run against it instead of
-                  # the shared hosts. See TestDomainConfiguration.
-                  CHECKOUT_TEST_USE_SUBDOMAIN: 'false'
               run: vendor/bin/phpunit --verbose

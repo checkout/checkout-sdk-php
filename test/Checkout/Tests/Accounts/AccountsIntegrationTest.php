@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Accounts;
 
-use Checkout\Tests\TestDomainConfiguration;
 use Checkout\Accounts\AccountsFileRequest;
 use Checkout\Accounts\BusinessType;
 use Checkout\Accounts\Company;
@@ -595,12 +594,15 @@ class AccountsIntegrationTest extends SandboxTestFixture
      */
     private function getAccountsCheckoutApi()
     {
-        return TestDomainConfiguration::configureDomain(CheckoutSdk::builder()->oAuth()
+        return CheckoutSdk::builder()->oAuth()
             ->clientCredentials(
                 getenv("CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID"),
                 getenv("CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET")
             )
-            ->scopes([OAuthScope::$Accounts, OAuthScope::$Files]))
+            ->scopes([OAuthScope::$Accounts, OAuthScope::$Files])
+            // The sandbox OAuth clients are not provisioned for the merchant-specific subdomain, so
+            // the token request would come back invalid_client. Opting out explicitly until they are.
+            ->useLegacyDomain()
             ->build();
     }
 

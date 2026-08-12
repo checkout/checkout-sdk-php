@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Payments;
 
-use Checkout\Tests\TestDomainConfiguration;
 use Checkout\Payments\PaymentMethodDetails;
 use Closure;
 use Exception;
@@ -179,10 +178,13 @@ class RequestApmPaymentsIntegrationTest extends AbstractPaymentsIntegrationTest
     public function shouldMakeTamaraPayment()
     {
         $this->markTestSkipped("preview");
-        $previewApi = TestDomainConfiguration::configureDomain(CheckoutSdk::builder()
+        $previewApi = CheckoutSdk::builder()
             ->oAuth()
             ->clientCredentials(getenv("CHECKOUT_DEFAULT_PREVIEW_OAUTH_CLIENT_ID"), getenv("CHECKOUT_DEFAULT_PREVIEW_OAUTH_CLIENT_SECRET"))
-            ->environment(Environment::sandbox()))
+            ->environment(Environment::sandbox())
+            // The sandbox OAuth clients are not provisioned for the merchant-specific subdomain, so
+            // the token request would come back invalid_client. Opting out explicitly until they are.
+            ->useLegacyDomain()
             ->build();
 
         $address = new Address();

@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Issuing\Transactions;
 
-use Checkout\Tests\TestDomainConfiguration;
 use Checkout\CheckoutApi;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
@@ -39,7 +38,7 @@ class TransactionsIntegrationTest extends AbstractIssuingIntegrationTest
             "timeout" => 60
         ];
 
-        return TestDomainConfiguration::configureDomain(CheckoutSdk::builder()
+        return CheckoutSdk::builder()
             ->oAuth()
             ->clientCredentials(
                 getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID"),
@@ -51,7 +50,10 @@ class TransactionsIntegrationTest extends AbstractIssuingIntegrationTest
                 OAuthScope::$IssuingTransactionsRead
             ])
             ->environment(Environment::sandbox())
-            ->httpClientBuilder(new DefaultHttpClientBuilder($configClient)))
+            ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
+            // The sandbox OAuth clients are not provisioned for the merchant-specific subdomain, so
+            // the token request would come back invalid_client. Opting out explicitly until they are.
+            ->useLegacyDomain()
             ->build();
     }
 

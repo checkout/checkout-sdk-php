@@ -2,7 +2,6 @@
 
 namespace Checkout\Tests\Metadata;
 
-use Checkout\Tests\TestDomainConfiguration;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
@@ -88,9 +87,12 @@ class MetadataIntegrationTest extends SandboxTestFixture
      */
     private function createValidTokenRequest()
     {
-        $api = TestDomainConfiguration::configureDomain(CheckoutSdk::builder()->staticKeys()
+        $api = CheckoutSdk::builder()->staticKeys()
             ->publicKey(getenv("CHECKOUT_DEFAULT_PUBLIC_KEY"))
-            ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY")))
+            ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY"))
+            // The sandbox OAuth clients are not provisioned for the merchant-specific subdomain, so
+            // the token request would come back invalid_client. Opting out explicitly until they are.
+            ->useLegacyDomain()
             ->build();
 
         $cardTokenRequest = new CardTokenRequest();

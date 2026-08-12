@@ -73,6 +73,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
                 ->oAuth()
                 ->clientCredentials("fake", "fake")
                 ->environment(Environment::sandbox())
+                ->useLegacyDomain()
                 ->build();
             $this->fail("shouldn't get here");
         } catch (Exception $e) {
@@ -91,6 +92,7 @@ class OAuthIntegrationTest extends SandboxTestFixture
                 ->clientCredentials("fake", "fake")
                 ->authorizationUri("https://test.checkout.com")
                 ->environment(Environment::sandbox())
+                ->useLegacyDomain()
                 ->build();
             $this->fail("shouldn't get here");
         } catch (Exception $e) {

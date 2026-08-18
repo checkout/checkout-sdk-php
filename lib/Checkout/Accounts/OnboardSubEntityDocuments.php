@@ -33,10 +33,10 @@ class OnboardSubEntityDocuments
     public $tax_verification;
 
     /**
-     * Articles of association document.
+     * Memorandum or articles of association document.
      * [Optional] (required for the company full onboarding variants)
      *
-     * @var Document
+     * @var ArticlesOfAssociation
      */
     public $articles_of_association;
 
@@ -44,15 +44,16 @@ class OnboardSubEntityDocuments
      * Shareholder structure document.
      * [Optional] (required for the company full onboarding variants)
      *
-     * @var Document
+     * @var ShareholderStructure
      */
     public $shareholder_structure;
 
     /**
-     * Bank verification document.
-     * [Optional] (required for the EEA company and sole trader full onboarding variants)
+     * Bank verification document: a document showing transactions from the last 3 months.
+     * [Optional] (required for the EEA, GB and US company and sole trader full onboarding
+     * variants)
      *
-     * @var Document
+     * @var BankVerification
      */
     public $bank_verification;
 

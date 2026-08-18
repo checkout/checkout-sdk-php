@@ -3,12 +3,18 @@
 namespace Checkout\Tests\Accounts;
 
 use Checkout\Accounts\AgreedTerms;
+use Checkout\Accounts\ArticlesOfAssociation;
+use Checkout\Accounts\ArticlesOfAssociationType;
+use Checkout\Accounts\BankVerification;
+use Checkout\Accounts\BankVerificationType;
 use Checkout\Accounts\CompanyVerification;
 use Checkout\Accounts\Document;
 use Checkout\Accounts\FinancialStatements;
 use Checkout\Accounts\FinancialStatementsType;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\OnboardSubEntityDocuments;
+use Checkout\Accounts\ShareholderStructure;
+use Checkout\Accounts\ShareholderStructureType;
 use Checkout\Accounts\TaxVerification;
 use Checkout\JsonSerializer;
 use PHPUnit\Framework\TestCase;
@@ -68,6 +74,9 @@ class OnboardEntityRequestSerializationTest extends TestCase
         }
 
         // identity_verification is a Document (supports back); the others carry type + front only.
+        // articles_of_association, shareholder_structure and bank_verification are their own
+        // classes rather than the generic Document, so this also proves the retyped fields
+        // still serialize to the same JSON.
         $this->assertSame("back_id", $decoded['identity_verification']['back']);
     }
 
@@ -91,9 +100,20 @@ class OnboardEntityRequestSerializationTest extends TestCase
         $taxVerification->front = "file_tax_verification";
         $documents->tax_verification = $taxVerification;
 
-        $documents->articles_of_association = $this->document("articles_of_association", "articles_of_association");
-        $documents->shareholder_structure = $this->document("shareholder_structure", "certified_shareholder_structure");
-        $documents->bank_verification = $this->document("bank_verification", "bank_statement");
+        $articlesOfAssociation = new ArticlesOfAssociation();
+        $articlesOfAssociation->type = ArticlesOfAssociationType::$articles_of_association;
+        $articlesOfAssociation->front = "file_articles_of_association";
+        $documents->articles_of_association = $articlesOfAssociation;
+
+        $shareholderStructure = new ShareholderStructure();
+        $shareholderStructure->type = ShareholderStructureType::$certified_shareholder_structure;
+        $shareholderStructure->front = "file_shareholder_structure";
+        $documents->shareholder_structure = $shareholderStructure;
+
+        $bankVerification = new BankVerification();
+        $bankVerification->type = BankVerificationType::$bank_statement;
+        $bankVerification->front = "file_bank_verification";
+        $documents->bank_verification = $bankVerification;
 
         $financialStatements = new FinancialStatements();
         $financialStatements->type = FinancialStatementsType::$financial_statements;

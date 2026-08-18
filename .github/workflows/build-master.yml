@@ -4,10 +4,17 @@ on:
     push:
         branches:
             - master
+    # Called by build-pull-request.yml so pull requests run this exact matrix and these exact
+    # steps. Defining it once is the point: the two used to be separate files, the PR one ran
+    # ubuntu only, and a Windows-only break sat undiscovered until master was already red.
+    workflow_call:
 
 jobs:
     build:
-        if: "!contains(github.event.commits[0].message, 'Release')"
+        # The Release-commit guard applies to pushes only. On a pull request there are no
+        # github.event.commits, and without this the expression would be evaluated against
+        # nothing and silently decide the outcome.
+        if: "github.event_name != 'push' || !contains(github.event.commits[0].message, 'Release')"
         runs-on: ${{ matrix.os }}
         strategy:
             max-parallel: 1
@@ -47,8 +54,21 @@ jobs:
                   # Set PHP as default
                   sudo update-alternatives --set php /usr/bin/php${{ matrix.php-version }}
                   
-                  # Install Composer
-                  curl -sS https://getcomposer.org/installer | php
+                  # Install Composer.
+                  # The installer is verified against the signature Composer publishes at
+                  # composer.github.io/installer.sig before it is executed, which is the check
+                  # Composer's own documentation prescribes. Piping curl straight into php runs
+                  # whatever the network returned, and this job runs with repository secrets.
+                  curl -sS https://getcomposer.org/installer -o composer-setup.php
+                  EXPECTED_SIG="$(curl -sS https://composer.github.io/installer.sig)"
+                  ACTUAL_SIG="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+                  if [ "$EXPECTED_SIG" != "$ACTUAL_SIG" ]; then
+                      echo "Composer installer signature mismatch. Expected $EXPECTED_SIG, got $ACTUAL_SIG. Refusing to run it."
+                      rm -f composer-setup.php
+                      exit 1
+                  fi
+                  php composer-setup.php --quiet
+                  rm -f composer-setup.php
                   sudo mv composer.phar /usr/local/bin/composer
                   sudo chmod +x /usr/local/bin/composer
 
@@ -69,15 +89,32 @@ jobs:
                   # 8.4.23 URL started returning 404 and this job failed on setup, before running
                   # a single test. The archive keeps every patch, so these URLs do not rot.
                   # Bumping the patch here is a deliberate manual step.
+                  # Each build is pinned with its SHA-256 so a substituted or corrupted archive
+                  # fails the job instead of being unzipped and executed. php.net publishes no
+                  # checksum file next to these archives, so the hashes were computed from the
+                  # official download and pinned here: that gives integrity (the artefact cannot
+                  # change under us) rather than independent provenance. Update both together
+                  # when bumping a patch.
                   switch ($phpVersion) {
-                      "8.1" { $downloadUrl = "https://windows.php.net/downloads/releases/archives/php-8.1.34-Win32-vs16-x64.zip" }
-                      "8.4" { $downloadUrl = "https://windows.php.net/downloads/releases/archives/php-8.4.23-Win32-vs17-x64.zip" }
+                      "8.1" {
+                          $downloadUrl  = "https://windows.php.net/downloads/releases/archives/php-8.1.34-Win32-vs16-x64.zip"
+                          $expectedHash = "8e17e0804fe48d3a032c9bef16f0f922996e0b1b237061b7ce94485394db5d1b"
+                      }
+                      "8.4" {
+                          $downloadUrl  = "https://windows.php.net/downloads/releases/archives/php-8.4.23-Win32-vs17-x64.zip"
+                          $expectedHash = "6cb93c23c5e87237881f2b3d8b93fdd70ff04a4a32bc16c9cf846aeb17f518dc"
+                      }
                       default { throw "Unsupported PHP version: $phpVersion" }
                   }
                   
-                  # Download and extract PHP
+                  # Download, verify, then extract PHP
                   $zipFile = "$phpDir\php.zip"
                   Invoke-WebRequest -Uri $downloadUrl -OutFile $zipFile
+                  $actualHash = (Get-FileHash -Path $zipFile -Algorithm SHA256).Hash.ToLower()
+                  if ($actualHash -ne $expectedHash) {
+                      throw "PHP $phpVersion checksum mismatch. Expected $expectedHash, got $actualHash. Refusing to extract."
+                  }
+                  Write-Host "PHP $phpVersion archive verified (SHA-256 $actualHash)"
                   Expand-Archive -Path $zipFile -DestinationPath $phpDir -Force
                   Remove-Item $zipFile
                   
@@ -97,9 +134,19 @@ jobs:
                   echo "$phpDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
                   $env:PATH = "$phpDir;$env:PATH"
                   
-                  # Download and setup Composer
-                  $composerUrl = "https://getcomposer.org/composer-stable.phar"
+                  # Download and setup Composer.
+                  # Pinned to a version rather than composer-stable.phar, because a moving target
+                  # cannot be checksummed: the phar is executed on every job, so it is verified
+                  # against the SHA-256 that getcomposer.org publishes for this exact version.
+                  $composerVersion = "2.10.2"
+                  $composerHash    = "5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027"
+                  $composerUrl     = "https://getcomposer.org/download/$composerVersion/composer.phar"
                   Invoke-WebRequest -Uri $composerUrl -OutFile "$phpDir\composer.phar"
+                  $composerActual = (Get-FileHash -Path "$phpDir\composer.phar" -Algorithm SHA256).Hash.ToLower()
+                  if ($composerActual -ne $composerHash) {
+                      throw "Composer $composerVersion checksum mismatch. Expected $composerHash, got $composerActual. Refusing to run it."
+                  }
+                  Write-Host "Composer $composerVersion verified (SHA-256 $composerActual)"
                   echo "@echo off" | Out-File -FilePath "$phpDir\composer.bat" -Encoding ascii
                   echo "php `"%~dp0composer.phar`" %*" | Out-File -FilePath "$phpDir\composer.bat" -Encoding ascii -Append
 

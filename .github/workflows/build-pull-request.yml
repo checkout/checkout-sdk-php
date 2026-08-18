@@ -1,10 +1,12 @@
 name: build-pull-request
 
-# Kept deliberately identical to build-master.yml except for this trigger: same OS and PHP
-# matrix, same setup, same checks. They used to differ, and the PR workflow ran Ubuntu only,
-# so a Windows-only break could not be seen until master was already red. It happened: a
-# pinned PHP 8.4 download URL 404ed and master failed on every push for weeks while every PR
-# went green.
+# Thin caller: the matrix, the setup and the checks all live in build-master.yml, so the two
+# cannot drift. Previously this file duplicated them and ran ubuntu-latest only, which is why a
+# pinned PHP download URL could 404 and fail master on every push while every PR went green.
+#
+# Duplicating the setup block here also tripped Sonar: the PowerShell that downloads the PHP zip
+# and composer.phar counts as new code when copied into a new file, and it flags executing a
+# downloaded artifact without verification. Calling the workflow keeps that code in one place.
 on:
     pull_request:
         branches:
@@ -14,129 +16,5 @@ on:
 
 jobs:
     build:
-        runs-on: ${{ matrix.os }}
-        strategy:
-            max-parallel: 1
-            fail-fast: false
-            matrix:
-                include:
-                    # Ubuntu builds
-                    - os: ubuntu-latest
-                      php-version: "8.1"
-                    - os: ubuntu-latest
-                      php-version: "8.4"
-                    # Windows builds
-                    - os: windows-latest
-                      php-version: "8.1"
-                    - os: windows-latest
-                      php-version: "8.4"
-
-        steps:
-            - uses: actions/checkout@v2
-
-            - name: Setup PHP (Ubuntu)
-              if: matrix.os == 'ubuntu-latest'
-              shell: bash
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y software-properties-common
-                  sudo add-apt-repository ppa:ondrej/php -y
-                  sudo apt-get update
-
-                  # Install PHP and required extensions (PHP 8.x; json is built-in, no separate package)
-                  sudo apt-get install -y php${{ matrix.php-version }} php${{ matrix.php-version }}-cli php${{ matrix.php-version }}-common
-                  sudo apt-get install -y php${{ matrix.php-version }}-curl php${{ matrix.php-version }}-mbstring
-                  sudo apt-get install -y php${{ matrix.php-version }}-xml php${{ matrix.php-version }}-zip
-                  # Try to install fileinfo if package exists, ignore if not (often built-in)
-                  sudo apt-get install -y php${{ matrix.php-version }}-fileinfo 2>/dev/null || true
-
-                  # Set PHP as default
-                  sudo update-alternatives --set php /usr/bin/php${{ matrix.php-version }}
-                  
-                  # Install Composer
-                  curl -sS https://getcomposer.org/installer | php
-                  sudo mv composer.phar /usr/local/bin/composer
-                  sudo chmod +x /usr/local/bin/composer
-
-            - name: Setup PHP (Windows)
-              if: matrix.os == 'windows-latest'
-              shell: powershell
-              run: |
-                  # Download and setup specific PHP version for Windows
-                  $phpVersion = "${{ matrix.php-version }}"
-                  $phpDir = "C:\php-$phpVersion"
-                  
-                  # Create PHP directory
-                  New-Item -ItemType Directory -Force -Path $phpDir
-                  
-                  # Download PHP based on version.
-                  # These point at the permanent archive, NOT at /~windows/releases/, which only
-                  # keeps the current patch of each branch: when 8.4.24 shipped, the pinned
-                  # 8.4.23 URL started returning 404 and this job failed on setup, before running
-                  # a single test. The archive keeps every patch, so these URLs do not rot.
-                  # Bumping the patch here is a deliberate manual step.
-                  switch ($phpVersion) {
-                      "8.1" { $downloadUrl = "https://windows.php.net/downloads/releases/archives/php-8.1.34-Win32-vs16-x64.zip" }
-                      "8.4" { $downloadUrl = "https://windows.php.net/downloads/releases/archives/php-8.4.23-Win32-vs17-x64.zip" }
-                      default { throw "Unsupported PHP version: $phpVersion" }
-                  }
-                  
-                  # Download and extract PHP
-                  $zipFile = "$phpDir\php.zip"
-                  Invoke-WebRequest -Uri $downloadUrl -OutFile $zipFile
-                  Expand-Archive -Path $zipFile -DestinationPath $phpDir -Force
-                  Remove-Item $zipFile
-                  
-                  # Copy php.ini-development to php.ini and enable extensions
-                  Copy-Item "$phpDir\php.ini-development" "$phpDir\php.ini"
-                  (Get-Content "$phpDir\php.ini") -replace ';extension_dir = "ext"', "extension_dir = `"$phpDir\ext`"" |
-                  ForEach-Object { $_ -replace ';extension=curl', 'extension=curl' } |
-                  ForEach-Object { $_ -replace ';extension=fileinfo', 'extension=fileinfo' } |
-                  ForEach-Object { $_ -replace ';extension=mbstring', 'extension=mbstring' } |
-                  ForEach-Object { $_ -replace ';extension=openssl', 'extension=openssl' } |
-                  ForEach-Object { $_ -replace ';extension=xml', 'extension=xml' } |
-                  ForEach-Object { $_ -replace ';extension=zip', 'extension=zip' } |
-                  ForEach-Object { $_ -replace 'memory_limit = 128M', 'memory_limit = 1G' } |
-                  Set-Content "$phpDir\php.ini"
-                  
-                  # Add PHP to PATH (at the beginning to override system PHP)
-                  echo "$phpDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-                  $env:PATH = "$phpDir;$env:PATH"
-                  
-                  # Download and setup Composer
-                  $composerUrl = "https://getcomposer.org/composer-stable.phar"
-                  Invoke-WebRequest -Uri $composerUrl -OutFile "$phpDir\composer.phar"
-                  echo "@echo off" | Out-File -FilePath "$phpDir\composer.bat" -Encoding ascii
-                  echo "php `"%~dp0composer.phar`" %*" | Out-File -FilePath "$phpDir\composer.bat" -Encoding ascii -Append
-
-            - name: Installed version
-              run: php -v
-
-            - name: Composer validate
-              shell: bash
-              run: composer validate
-
-            - name: Composer update
-              shell: bash
-              run: composer update --prefer-dist --no-interaction
-
-            - name: Run PHPStan
-              run: vendor/bin/phpstan analyse --no-progress
-
-            - name: Run PHPUnit
-              env:
-                  CHECKOUT_PROCESSING_CHANNEL_ID: ${{ secrets.IT_CHECKOUT_PROCESSING_CHANNEL_ID }}
-                  CHECKOUT_PREVIOUS_SECRET_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_SECRET_KEY }}
-                  CHECKOUT_PREVIOUS_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_PUBLIC_KEY }}
-                  CHECKOUT_DEFAULT_SECRET_KEY: ${{ secrets.IT_CHECKOUT_DEFAULT_SECRET_KEY }}
-                  CHECKOUT_DEFAULT_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_DEFAULT_PUBLIC_KEY }}
-                  CHECKOUT_DEFAULT_OAUTH_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_CLIENT_ID }}
-                  CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET }}
-                  CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID }}
-                  CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET }}
-                  CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID }}
-                  CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET }}
-                  CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
-                  CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
-                  CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
-              run: vendor/bin/phpunit --verbose
+        uses: ./.github/workflows/build-master.yml
+        secrets: inherit

@@ -1,12 +1,5 @@
 name: build-pull-request
 
-# Thin caller: the matrix, the setup and the checks all live in build-master.yml, so the two
-# cannot drift. Previously this file duplicated them and ran ubuntu-latest only, which is why a
-# pinned PHP download URL could 404 and fail master on every push while every PR went green.
-#
-# Duplicating the setup block here also tripped Sonar: the PowerShell that downloads the PHP zip
-# and composer.phar counts as new code when copied into a new file, and it flags executing a
-# downloaded artifact without verification. Calling the workflow keeps that code in one place.
 on:
     pull_request:
         branches:
@@ -16,5 +9,45 @@ on:
 
 jobs:
     build:
-        uses: ./.github/workflows/build-master.yml
-        secrets: inherit
+        runs-on: ${{ matrix.os }}
+        strategy:
+            max-parallel: 1
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest]
+                php-version: ["8.1", "8.4"]
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Install PHP from official repositories
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo
+
+            - name: Composer validate
+              run: composer validate
+
+            - name: Composer update
+              run: composer update --prefer-dist --no-interaction
+
+            - name: Run PHPStan
+              run: vendor/bin/phpstan analyse --no-progress
+
+            - name: Run PHPUnit
+              env:
+                  CHECKOUT_PROCESSING_CHANNEL_ID: ${{ secrets.IT_CHECKOUT_PROCESSING_CHANNEL_ID }}
+                  CHECKOUT_PREVIOUS_SECRET_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_SECRET_KEY }}
+                  CHECKOUT_PREVIOUS_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_PUBLIC_KEY }}
+                  CHECKOUT_DEFAULT_SECRET_KEY: ${{ secrets.IT_CHECKOUT_DEFAULT_SECRET_KEY }}
+                  CHECKOUT_DEFAULT_PUBLIC_KEY: ${{ secrets.IT_CHECKOUT_DEFAULT_PUBLIC_KEY }}
+                  CHECKOUT_DEFAULT_OAUTH_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_CLIENT_ID }}
+                  CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET }}
+                  CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID }}
+                  CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET }}
+                  CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_ID }}
+                  CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ACCOUNTS_CLIENT_SECRET }}
+                  CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
+                  CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
+                  CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
+              run: vendor/bin/phpunit --verbose

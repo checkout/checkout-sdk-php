@@ -36,8 +36,8 @@ class AccessTokensIntegrationTest extends AbstractIssuingIntegrationTest
     {
         $request = new CardholderAccessTokenRequest();
         $request->grant_type = "client_credentials";
-        $request->client_id = getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID");
-        $request->client_secret = getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET");
+        $request->client_id = getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID");
+        $request->client_secret = getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET");
         $request->cardholder_id = $cardholderId;
         $request->single_use = true;
 

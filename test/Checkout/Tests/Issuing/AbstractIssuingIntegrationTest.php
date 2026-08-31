@@ -57,8 +57,8 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
         return CheckoutSdk::builder()
             ->oAuth()
             ->clientCredentials(
-                getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID"),
-                getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET")
+                getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID"),
+                getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET")
             )
             ->scopes([
                 OAuthScope::$IssuingClient,

@@ -155,8 +155,8 @@ class AccountsPayoutSchedulesIntegrationTest extends SandboxTestFixture
     {
         return CheckoutSdk::builder()->oAuth()
             ->clientCredentials(
-                getenv("CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_ID"),
-                getenv("CHECKOUT_DEFAULT_OAUTH_PAYOUT_SCHEDULE_CLIENT_SECRET")
+                getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_ID"),
+                getenv("CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET")
             )
             ->scopes([OAuthScope::$Accounts])
             // The sandbox OAuth clients are not provisioned for the merchant-specific subdomain, so

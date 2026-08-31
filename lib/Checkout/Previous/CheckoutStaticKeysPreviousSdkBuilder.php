@@ -15,6 +15,17 @@ class CheckoutStaticKeysPreviousSdkBuilder extends AbstractStaticKeysCheckoutSdk
     const SECRET_KEY_PATTERN = "/^sk_(test_)?(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})$/";
 
     /**
+     * The Previous (ABC) platform predates merchant-specific subdomains, so it is exempt from
+     * the mandatory environmentSubdomain/useLegacyDomain configuration.
+     *
+     * @return bool
+     */
+    protected function requiresEnvironmentSubdomain()
+    {
+        return false;
+    }
+
+    /**
      * @param string $publicKey
      * @return $this
      */
@@ -48,6 +59,7 @@ class CheckoutStaticKeysPreviousSdkBuilder extends AbstractStaticKeysCheckoutSdk
      */
     public function build()
     {
+        $this->validateEnvironmentSettings();
         $this->validatePublicKey($this->publicKey, self::PUBLIC_KEY_PATTERN);
         $this->validateSecretKey($this->secretKey, self::SECRET_KEY_PATTERN);
         $configuration = new CheckoutConfiguration(
@@ -56,8 +68,9 @@ class CheckoutStaticKeysPreviousSdkBuilder extends AbstractStaticKeysCheckoutSdk
             $this->httpClientBuilder,
             $this->logger
         );
-        if ($this->environmentSubdomain !== null) {
-            $configuration->setEnvironmentSubdomain($this->environmentSubdomain);
+        $environmentSubdomain = $this->getEnvironmentSubdomain();
+        if ($environmentSubdomain !== null) {
+            $configuration->setEnvironmentSubdomain($environmentSubdomain);
         }
         return new CheckoutApi($configuration);
     }

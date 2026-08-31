@@ -75,6 +75,7 @@ abstract class SandboxTestFixture extends TestCase
                     ->environment(Environment::sandbox())
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
+                    ->environmentSubdomain(getenv("CHECKOUT_MERCHANT_SUBDOMAIN"))
                     ->build();
                 return;
             case PlatformType::$default_oauth:
@@ -116,6 +117,10 @@ abstract class SandboxTestFixture extends TestCase
                     ->environment(Environment::sandbox())
                     ->httpClientBuilder(new DefaultHttpClientBuilder($configClient))
                     ->logger($this->logger)
+                    // The sandbox OAuth clients are not provisioned for the merchant-specific
+                    // subdomain, so the token request would come back invalid_client. Opting out
+                    // explicitly until they are.
+                    ->useLegacyDomain()
                     ->build();
                 return;
             default:

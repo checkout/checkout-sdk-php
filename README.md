@@ -67,6 +67,11 @@ Note: sandbox keys have a `sbox_` or `test_` identifier, for Default and Previou
 
 If you don't have your own API keys, you can sign up for a test account [here](https://www.checkout.com/get-test-account).
 
+### Subdomain value
+
+Requests must be made through your merchant-specific subdomain (MSSD): the first 8 characters of your client ID (excluding `cli_`). For example, if your client ID is `cli_vkuhvk4vjn2edkps7dfsq6emqm`, your subdomain is `vkuhvk4v`. When `environmentSubdomain` is set the SDK sends requests to `https://vkuhvk4v.api.checkout.com`. See [Base URLs](https://api-reference.checkout.com/#section/Base-URLs) and [API endpoints](https://www.checkout.com/docs/developer-resources/api/api-endpoints) for further details, and for where to find your unique client ID.
+
+Private Link merchants use their `pl-` prefixed subdomain (for example `pl-vkuhvk4v`), which the SDK also accepts.
 
 ### Default
 
@@ -77,7 +82,7 @@ $checkoutApi = CheckoutSdk::builder()->staticKeys()
                     ->publicKey("public_key") // optional, only required for operations related with tokens
                     ->secretKey("secret_key")
                     ->environment(Environment::sandbox()) // or production()
-                    ->environmentSubdomain("subdomain") // optional, Merchant-specific DNS name
+                    ->environmentSubdomain("subdomain") // required, Merchant-specific DNS name, the first 8 characters of your client ID
                     ->logger($logger) //optional, for a custom Logger
                     ->httpClientBuilder($client) // optional, for a custom HTTP client
                     ->build();
@@ -95,7 +100,7 @@ $checkoutApi = CheckoutSdk::builder()->oAuth()
                     ->clientCredentials("client_id", "client_secret")
                     ->scopes([OAuthScope::$Gateway, OAuthScope::$Vault]) // array of scopes
                     ->environment(Environment::sandbox()) // or production()
-                    ->environmentSubdomain("subdomain") // optional, Merchant-specific DNS name
+                    ->environmentSubdomain("subdomain") // required, Merchant-specific DNS name, the first 8 characters of your client ID
                     ->logger($logger) //optional, for a custom Logger
                     ->httpClientBuilder($client) // optional, for a custom HTTP client
                     ->build();
@@ -148,6 +153,22 @@ The execution of integration tests require the following environment variables s
 * For default account systems (NAS): `CHECKOUT_DEFAULT_PUBLIC_KEY` & `CHECKOUT_DEFAULT_SECRET_KEY`
 * For default account systems (OAuth): `CHECKOUT_DEFAULT_OAUTH_CLIENT_ID` & `CHECKOUT_DEFAULT_OAUTH_CLIENT_SECRET`
 * For Previous account systems (ABC): `CHECKOUT_PREVIOUS_PUBLIC_KEY` & `CHECKOUT_PREVIOUS_SECRET_KEY`
+
+## Legacy domain (emergency use only)
+
+> :warning: **Only use if merchant specific sub domains are causing issues.** Connecting through your merchant-specific subdomain (see [Subdomain value](#subdomain-value)) is the supported way of using the Checkout.com API, and non-subdomain usage will be deprecated.
+
+If, in exceptional circumstances, you cannot use your merchant-specific subdomain, you can explicitly opt out by calling `useLegacyDomain()` instead of `environmentSubdomain(...)`:
+
+```php
+$checkoutApi = CheckoutSdk::builder()->staticKeys()
+                    ->secretKey("secret_key")
+                    ->environment(Environment::sandbox())
+                    ->useLegacyDomain() // deprecated, emergency fallback only
+                    ->build();
+```
+
+This routes requests to `api.checkout.com` (or `api.sandbox.checkout.com`) and `access.checkout.com` (or `access.sandbox.checkout.com`). The method is marked `@deprecated`. Exactly one of `environmentSubdomain(...)` or `useLegacyDomain()` must be set: the SDK throws a `CheckoutArgumentException` if both, or neither, are set. The Previous (ABC) platform predates merchant-specific subdomains and is exempt from this requirement.
 
 ## Code of Conduct
 

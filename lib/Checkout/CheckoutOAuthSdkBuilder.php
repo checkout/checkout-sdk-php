@@ -62,8 +62,9 @@ class CheckoutOAuthSdkBuilder extends AbstractCheckoutSdkBuilder
                     "Invalid configuration. Please specify an Environment or a specific OAuth authorization URI."
                 );
             }
-            if ($this->environmentSubdomain !== null) {
-                $this->authorizationUri = $this->environmentSubdomain->getAuthorizationUri();
+            $environmentSubdomain = $this->getEnvironmentSubdomain();
+            if ($environmentSubdomain !== null) {
+                $this->authorizationUri = $environmentSubdomain->getAuthorizationUri();
             } else {
                 $this->authorizationUri = $this->environment->getAuthorizationUri();
             }
@@ -84,14 +85,23 @@ class CheckoutOAuthSdkBuilder extends AbstractCheckoutSdkBuilder
      */
     public function build()
     {
+        if ($this->authorizationUri !== null && $this->subdomain !== null) {
+            throw new CheckoutArgumentException(
+                "authorizationUri and environmentSubdomain cannot both be set - the token endpoint is derived " .
+                "from your subdomain; combine authorizationUri with useLegacyDomain() if you need a custom " .
+                "token host"
+            );
+        }
+        $this->validateEnvironmentSettings();
         $configuration = new CheckoutConfiguration(
             $this->getSdkCredentials(),
             $this->environment,
             $this->httpClientBuilder,
             $this->logger
         );
-        if ($this->environmentSubdomain !== null) {
-            $configuration->setEnvironmentSubdomain($this->environmentSubdomain);
+        $environmentSubdomain = $this->getEnvironmentSubdomain();
+        if ($environmentSubdomain !== null) {
+            $configuration->setEnvironmentSubdomain($environmentSubdomain);
         }
         return new CheckoutApi($configuration);
     }

@@ -90,6 +90,7 @@ class MetadataIntegrationTest extends SandboxTestFixture
         $api = CheckoutSdk::builder()->staticKeys()
             ->publicKey(getenv("CHECKOUT_DEFAULT_PUBLIC_KEY"))
             ->secretKey(getenv("CHECKOUT_DEFAULT_SECRET_KEY"))
+            ->environmentSubdomain(getenv("CHECKOUT_MERCHANT_SUBDOMAIN"))
             ->build();
 
         $cardTokenRequest = new CardTokenRequest();

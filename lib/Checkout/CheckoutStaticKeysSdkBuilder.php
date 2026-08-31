@@ -42,6 +42,7 @@ class CheckoutStaticKeysSdkBuilder extends AbstractStaticKeysCheckoutSdkBuilder
      */
     public function build()
     {
+        $this->validateEnvironmentSettings();
         $this->validatePublicKey($this->publicKey, self::PUBLIC_KEY_PATTERN);
         $this->validateSecretKey($this->secretKey, self::SECRET_KEY_PATTERN);
         $configuration = new CheckoutConfiguration(
@@ -50,8 +51,9 @@ class CheckoutStaticKeysSdkBuilder extends AbstractStaticKeysCheckoutSdkBuilder
             $this->httpClientBuilder,
             $this->logger
         );
-        if ($this->environmentSubdomain !== null) {
-            $configuration->setEnvironmentSubdomain($this->environmentSubdomain);
+        $environmentSubdomain = $this->getEnvironmentSubdomain();
+        if ($environmentSubdomain !== null) {
+            $configuration->setEnvironmentSubdomain($environmentSubdomain);
         }
         return new CheckoutApi($configuration);
     }

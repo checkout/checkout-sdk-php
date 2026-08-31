@@ -85,6 +85,13 @@ class CheckoutOAuthSdkBuilder extends AbstractCheckoutSdkBuilder
      */
     public function build()
     {
+        if ($this->authorizationUri !== null && $this->subdomain !== null) {
+            throw new CheckoutArgumentException(
+                "authorizationUri and environmentSubdomain cannot both be set - the token endpoint is derived " .
+                "from your subdomain; combine authorizationUri with useLegacyDomain() if you need a custom " .
+                "token host"
+            );
+        }
         $this->validateEnvironmentSettings();
         $configuration = new CheckoutConfiguration(
             $this->getSdkCredentials(),

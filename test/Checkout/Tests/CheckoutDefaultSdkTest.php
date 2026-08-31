@@ -71,6 +71,7 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
                 ->publicKey(parent::$invalidDefaultPk)
                 ->secretKey(parent::$validDefaultSk)
                 ->environment(Environment::sandbox())
+                ->environmentSubdomain("123dmain")
                 ->build();
             $this->fail();
         } catch (Exception $e) {
@@ -84,6 +85,7 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
                 ->publicKey(parent::$validDefaultPk)
                 ->secretKey(parent::$invalidDefaultSk)
                 ->environment(Environment::sandbox())
+                ->environmentSubdomain("123dmain")
                 ->build();
             $this->fail();
         } catch (Exception $e) {

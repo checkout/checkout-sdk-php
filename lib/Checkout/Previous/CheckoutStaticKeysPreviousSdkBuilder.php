@@ -59,9 +59,9 @@ class CheckoutStaticKeysPreviousSdkBuilder extends AbstractStaticKeysCheckoutSdk
      */
     public function build()
     {
+        $this->validateEnvironmentSettings();
         $this->validatePublicKey($this->publicKey, self::PUBLIC_KEY_PATTERN);
         $this->validateSecretKey($this->secretKey, self::SECRET_KEY_PATTERN);
-        $this->validateEnvironmentSettings();
         $configuration = new CheckoutConfiguration(
             $this->getSdkCredentials(),
             $this->environment,

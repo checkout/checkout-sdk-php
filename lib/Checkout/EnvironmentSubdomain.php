@@ -4,6 +4,13 @@ namespace Checkout;
 
 final class EnvironmentSubdomain
 {
+    /**
+     * The D modifier anchors $ to the very end of the subject, so a value with a trailing
+     * newline (for example one read from a file) is rejected instead of producing a
+     * malformed URL downstream.
+     */
+    const SUBDOMAIN_PATTERN = '/^(?:pl-)?[a-z0-9]+$/D';
+
     private $baseUri;
     private $authorizationUri;
 
@@ -28,11 +35,10 @@ final class EnvironmentSubdomain
      */
     private function createUrlWithSubdomain($originalUrl, $subdomain)
     {
-        $regex = '/^(?:pl-)?[a-z0-9]+$/';
-        if ($subdomain === null || !preg_match($regex, $subdomain)) {
+        if ($subdomain === null || !preg_match(self::SUBDOMAIN_PATTERN, $subdomain)) {
             throw new CheckoutArgumentException(
-                "invalid environment subdomain - provide your merchant-specific subdomain, the first 8 " .
-                "characters of your client ID (see https://api-reference.checkout.com/#section/Base-URLs)"
+                "invalid environment subdomain - provide your merchant-specific subdomain, typically your " .
+                "client ID excluding the cli_ prefix (see https://api-reference.checkout.com/#section/Base-URLs)"
             );
         }
 

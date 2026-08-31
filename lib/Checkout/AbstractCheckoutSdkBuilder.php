@@ -11,6 +11,7 @@ abstract class AbstractCheckoutSdkBuilder
 
     protected $environment;
     protected $subdomain = null;
+    private $environmentSubdomain = null;
     protected $useLegacyDomain = false;
     protected $httpClientBuilder;
     protected $logger;
@@ -29,6 +30,7 @@ abstract class AbstractCheckoutSdkBuilder
     public function environment(Environment $environment)
     {
         $this->environment = $environment;
+        $this->environmentSubdomain = null;
         return $this;
     }
 
@@ -39,6 +41,7 @@ abstract class AbstractCheckoutSdkBuilder
     public function environmentSubdomain($subdomain)
     {
         $this->subdomain = $subdomain;
+        $this->environmentSubdomain = null;
         return $this;
     }
 
@@ -63,7 +66,13 @@ abstract class AbstractCheckoutSdkBuilder
      */
     protected function getEnvironmentSubdomain()
     {
-        return $this->subdomain !== null ? new EnvironmentSubdomain($this->environment, $this->subdomain) : null;
+        if ($this->subdomain === null) {
+            return null;
+        }
+        if ($this->environmentSubdomain === null) {
+            $this->environmentSubdomain = new EnvironmentSubdomain($this->environment, $this->subdomain);
+        }
+        return $this->environmentSubdomain;
     }
 
     /**
@@ -91,8 +100,8 @@ abstract class AbstractCheckoutSdkBuilder
         }
         if ($this->subdomain === null && !$this->useLegacyDomain && $this->requiresEnvironmentSubdomain()) {
             throw new CheckoutArgumentException(
-                "environmentSubdomain is required - provide your merchant-specific subdomain (the first 8 " .
-                "characters of your client ID, see https://api-reference.checkout.com/#section/Base-URLs), " .
+                "environmentSubdomain is required - provide your merchant-specific subdomain (typically your " .
+                "client ID excluding the cli_ prefix, see https://api-reference.checkout.com/#section/Base-URLs), " .
                 "or call useLegacyDomain() to opt out only if merchant specific sub domains are causing issues"
             );
         }

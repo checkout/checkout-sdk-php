@@ -71,6 +71,8 @@ If you don't have your own API keys, you can sign up for a test account [here](h
 
 Requests must be made through your merchant-specific subdomain (MSSD): the first 8 characters of your client ID (excluding `cli_`). For example, if your client ID is `cli_vkuhvk4vjn2edkps7dfsq6emqm`, your subdomain is `vkuhvk4v`. When `environmentSubdomain` is set the SDK sends requests to `https://vkuhvk4v.api.checkout.com`. See [Base URLs](https://api-reference.checkout.com/#section/Base-URLs) and [API endpoints](https://www.checkout.com/docs/developer-resources/api/api-endpoints) for further details, and for where to find your unique client ID.
 
+Private Link merchants use their `pl-` prefixed subdomain (for example `pl-vkuhvk4v`), which the SDK also accepts.
+
 ### Default
 
 Default keys client instantiation can be done as follows:

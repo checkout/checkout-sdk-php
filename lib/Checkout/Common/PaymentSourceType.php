@@ -2,6 +2,19 @@
 
 namespace Checkout\Common;
 
+/**
+ * The payment source type.
+ *
+ * This class is the union of the source types accepted on payment requests and returned on payment
+ * responses, on both the current API (NAS) and the previous API (ABC). 42 of the values below are
+ * declared by the current API's PaymentRequestSourceType or PaymentDetailsResponseSourceType.
+ *
+ * <b>Previous API (ABC) only</b> - the current API does not declare these 18 and will reject them:
+ * afterpay, alipay, bank_account, benefit, benefitpay, boleto, cvconnect, dlocal, giropay,
+ * illicado, oxxo, pagofacil, poli, postfinance, provider_token, rapipago, sofort, trustly.
+ * They are interleaved with the current values below rather than grouped, which is historical; the
+ * ordering is not reworked here because these properties are referenced across the SDK.
+ */
 class PaymentSourceType
 {
     public static $card = "card";
@@ -51,6 +64,8 @@ class PaymentSourceType
     public static $alma = "alma";
     public static $trustly = "trustly";
     public static $cvconnect = "cvconnect";
+    public static $bacs = "bacs";
+
     public static $sepa = "sepa";
     public static $bizum = "bizum";
     public static $ach = "ach";

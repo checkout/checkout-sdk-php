@@ -2,6 +2,7 @@
 
 namespace Checkout;
 
+use Checkout\Apm\Bacs\BacsClient;
 use Checkout\Accounts\AccountsClient;
 use Checkout\AgenticCommerce\AgenticCommerceClient;
 use Checkout\Balances\BalancesClient;
@@ -45,6 +46,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $customersClient;
     private $paymentsClient;
     private $instrumentsClient;
+    private $bacsClient;
     private $forexClient;
     private $disputesClient;
     private $sessionsClient;
@@ -106,6 +108,7 @@ final class CheckoutApi extends CheckoutApmApi
         );
         $this->paymentsClient = new PaymentsClient($baseApiClient, $configuration);
         $this->instrumentsClient = new InstrumentsClient($baseApiClient, $configuration);
+        $this->bacsClient = new BacsClient($baseApiClient, $configuration);
         $this->forexClient = new ForexClient($baseApiClient, $configuration);
         $this->disputesClient = new DisputesClient(
             $baseApiClient,
@@ -188,6 +191,19 @@ final class CheckoutApi extends CheckoutApmApi
     public function getInstrumentsClient()
     {
         return $this->instrumentsClient;
+    }
+
+    /**
+     * Sends Bacs Direct Debit pre-notifications.
+     *
+     * Registered here rather than on CheckoutApmApi: that class is shared with the previous
+     * platform, and POST /apms/bacs/notifications is a current-platform, secret-key-only endpoint.
+     *
+     * @return BacsClient
+     */
+    public function getBacsClient()
+    {
+        return $this->bacsClient;
     }
 
     /**

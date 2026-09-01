@@ -5,26 +5,29 @@ namespace Checkout\Instruments\Create;
 use Checkout\Common\InstrumentType;
 
 /**
- * Stores SEPA account details as a payment instrument.
+ * Stores ACH bank account details as a payment instrument.
+ *
+ * The specification does not list type in the required array for this schema, unlike the Bacs Direct
+ * Debit store request. The base class always sets it, so the difference is immaterial here.
  */
-class CreateSepaInstrumentRequest extends CreateInstrumentRequest
+class CreateAchInstrumentRequest extends CreateInstrumentRequest
 {
     public function __construct()
     {
-        parent::__construct(InstrumentType::$sepa);
+        parent::__construct(InstrumentType::$ach);
     }
 
     /**
-     * The details of the SEPA account.
+     * The details of the bank account.
      * [Required]
-     * @var CreateSepaInstrumentData
+     * @var CreateAchInstrumentData
      */
     public $instrument_data;
 
     /**
      * The account holder details.
      * [Required]
-     * @var CreateSepaAccountHolder
+     * @var CreateAchAccountHolder
      */
     public $account_holder;
 

@@ -47,6 +47,12 @@ class RequestSepaSource extends AbstractRequestSource
      * The type of mandate.
      * [Optional]
      * Enum: "Core" "B2B"
+     *
+     * The same two values as Checkout\Instruments\SepaMandateType, which you can use for the
+     * constants. Kept as a string rather than bound to that class because this is a payments source,
+     * not an instrument: the two schemas are independent and may diverge, as the SEPA and Bacs
+     * payment_type fields already have.
+     *
      * @var string|null $mandate_type
      */
     public $mandate_type;

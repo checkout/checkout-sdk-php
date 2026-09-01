@@ -5,26 +5,33 @@ namespace Checkout\Instruments\Create;
 use Checkout\Common\InstrumentType;
 
 /**
- * Stores SEPA account details as a payment instrument.
+ * Stores Bacs Direct Debit account details as a payment instrument.
  */
-class CreateSepaInstrumentRequest extends CreateInstrumentRequest
+class CreateBacsInstrumentRequest extends CreateInstrumentRequest
 {
     public function __construct()
     {
-        parent::__construct(InstrumentType::$sepa);
+        parent::__construct(InstrumentType::$bacs);
     }
 
     /**
-     * The details of the SEPA account.
+     * The account configuration for the instrument.
      * [Required]
-     * @var CreateSepaInstrumentData
+     * @var CreateBacsInstrumentAccount
+     */
+    public $account;
+
+    /**
+     * The details of the Bacs Direct Debit account.
+     * [Required]
+     * @var CreateBacsInstrumentData
      */
     public $instrument_data;
 
     /**
      * The account holder details.
      * [Required]
-     * @var CreateSepaAccountHolder
+     * @var CreateBacsAccountHolder
      */
     public $account_holder;
 

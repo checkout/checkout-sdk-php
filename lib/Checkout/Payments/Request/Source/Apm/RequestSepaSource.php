@@ -2,7 +2,7 @@
 
 namespace Checkout\Payments\Request\Source\Apm;
 
-use Checkout\Common\AccountHolder;
+use Checkout\Common\AccountHolderSepa;
 use Checkout\Common\PaymentSourceType;
 use Checkout\Payments\Request\Source\AbstractRequestSource;
 
@@ -39,7 +39,7 @@ class RequestSepaSource extends AbstractRequestSource
     public $date_of_signature;
 
     /**
-     * @var AccountHolder
+     * @var AccountHolderSepa
      */
     public $account_holder;
 

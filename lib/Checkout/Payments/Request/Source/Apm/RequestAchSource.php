@@ -14,7 +14,13 @@ class RequestAchSource extends AbstractRequestSource
     }
 
     /**
-     * @var string value of AccountType (savings, checking, cash)
+     * The type of Direct Debit account.
+     * [Required]
+     *
+     * Do not use AccountType here: it declares `current` instead of `checking` and is
+     * rejected at this position.
+     *
+     * @var string value of AchSourceAccountType (savings, checking, cash)
      */
     public $account_type;
 

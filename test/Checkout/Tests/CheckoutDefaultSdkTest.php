@@ -2,6 +2,10 @@
 
 namespace Checkout\Tests;
 
+use Checkout\Apm\Bacs\BacsClient;
+use Checkout\Apm\CheckoutApmApi;
+use Checkout\CheckoutApi;
+use Checkout\Previous\CheckoutApi as PreviousCheckoutApi;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutSdk;
 use Checkout\Environment;
@@ -187,6 +191,39 @@ class CheckoutDefaultSdkTest extends UnitTestFixture
             ->environmentSubdomain("123dmain")
             ->httpClientBuilder($httpBuilder)
             ->build());
+    }
+
+    /**
+     * @test
+     * @throws CheckoutArgumentException
+     */
+    public function shouldExposeTheBacsClient()
+    {
+        // Nothing else asserts the client getters, so a missing constructor assignment would leave
+        // getBacsClient() returning null without any test failing.
+        $checkoutApi = CheckoutSdk::builder()
+            ->staticKeys()
+            ->publicKey(parent::$validDefaultPk)
+            ->secretKey(parent::$validDefaultSk)
+            ->environment(Environment::sandbox())
+            ->environmentSubdomain("123dmain")
+            ->build();
+
+        $this->assertNotNull($checkoutApi->getBacsClient());
+        $this->assertInstanceOf(BacsClient::class, $checkoutApi->getBacsClient());
+    }
+
+    /**
+     * @test
+     * @throws CheckoutArgumentException
+     */
+    public function shouldNotExposeTheBacsClientOnThePreviousApi()
+    {
+        // POST /apms/bacs/notifications is a current-platform, secret-key-only endpoint, so the
+        // client must not be reachable through the previous API surface.
+        $this->assertFalse(method_exists(PreviousCheckoutApi::class, "getBacsClient"));
+        $this->assertFalse(method_exists(CheckoutApmApi::class, "getBacsClient"));
+        $this->assertTrue(method_exists(CheckoutApi::class, "getBacsClient"));
     }
 
 }

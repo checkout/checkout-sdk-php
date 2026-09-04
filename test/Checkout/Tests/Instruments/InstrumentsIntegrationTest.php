@@ -13,11 +13,13 @@ use Checkout\Customers\CustomerRequest;
 use Checkout\Instruments\Create\CreateCustomerInstrumentRequest;
 use Checkout\Instruments\Create\CreateSepaInstrumentRequest;
 use Checkout\Instruments\Create\CreateTokenInstrumentRequest;
-use Checkout\Instruments\Create\InstrumentData;
+use Checkout\Instruments\Create\CreateSepaAccountHolder;
+use Checkout\Instruments\Create\CreateSepaBillingAddress;
+use Checkout\Instruments\Create\CreateSepaInstrumentData;
 use Checkout\Instruments\Update\UpdateCardInstrumentRequest;
 use Checkout\Instruments\Update\UpdateCustomerRequest;
 use Checkout\Instruments\Update\UpdateTokenInstrumentRequest;
-use Checkout\Payments\PaymentType;
+use Checkout\Instruments\SepaPaymentType;
 use Checkout\PlatformType;
 use Checkout\Tests\Payments\AbstractPaymentsIntegrationTest;
 
@@ -41,17 +43,23 @@ class InstrumentsIntegrationTest extends AbstractPaymentsIntegrationTest
      */
     public function shouldCreateSepaInstrument()
     {
-        $instrumentData = new InstrumentData();
+        $instrumentData = new CreateSepaInstrumentData();
         $instrumentData->account_number = "FR7630006000011234567890189";
         $instrumentData->country = Country::$FR;
         $instrumentData->currency = Currency::$EUR;
-        $instrumentData->payment_type = PaymentType::$recurring;
+        $instrumentData->payment_type = SepaPaymentType::$recurring;
 
-        $accountHolder = new AccountHolder();
+        $billingAddress = new CreateSepaBillingAddress();
+        $billingAddress->address_line1 = "Cloverfield St.";
+        $billingAddress->address_line2 = "23A";
+        $billingAddress->city = "London";
+        $billingAddress->zip = "SW1A 1AA";
+        $billingAddress->country = Country::$GB;
+
+        $accountHolder = new CreateSepaAccountHolder();
         $accountHolder->first_name = "John";
         $accountHolder->last_name = "Smith";
-        $accountHolder->phone = $this->getPhone();
-        $accountHolder->billing_address = $this->getAddress();
+        $accountHolder->billing_address = $billingAddress;
 
         $sepaInstrument = new CreateSepaInstrumentRequest();
         $sepaInstrument->instrument_data = $instrumentData;

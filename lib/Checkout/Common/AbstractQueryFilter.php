@@ -10,19 +10,36 @@ abstract class AbstractQueryFilter
 
     public function getEncodedQueryParameters()
     {
-        $url = "";
-        $vars = get_object_vars($this);
-        if (!empty($vars)) {
-            foreach ($vars as $key => $value) {
-                if (!empty($value)) {
-                    $url .= $key . "=";
-                    $url .= $value instanceof DateTime ? urlencode(CheckoutUtils::formatDate($value)) : $value;
-                    if ($key != array_keys($vars)[count($vars) - 1]) {
-                        $url .= "&";
-                    }
-                }
+        // Join only the parameters that are actually set. The previous implementation appended
+        // "&" whenever the current key was not the last *declared* property, which emitted a
+        // trailing "&" whenever the last declared property was unset.
+        $parts = array();
+        foreach (get_object_vars($this) as $key => $value) {
+            if (empty($value)) {
+                continue;
             }
+            $parts[] = $key . "=" . $this->encodeValue($value);
         }
-        return $url;
+        return implode("&", $parts);
+    }
+
+    /**
+     * Renders a single query-parameter value.
+     *
+     * Booleans must be emitted as "true"/"false": PHP string concatenation would render them as
+     * "1"/"0", which the API rejects with a 400 invalid_request.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    private function encodeValue($value)
+    {
+        if ($value instanceof DateTime) {
+            return urlencode(CheckoutUtils::formatDate($value));
+        }
+        if (is_bool($value)) {
+            return $value ? "true" : "false";
+        }
+        return $value;
     }
 }

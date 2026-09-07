@@ -39,6 +39,14 @@ class PaymentSessionSubmitRequest
     public $items;
 
     /**
+     * The sub-entities that the payment is being processed on behalf of.
+     * [Optional]
+     * min 1 max 50 items
+     * @var array values of AmountAllocations
+     */
+    public $amount_allocations;
+
+    /**
      * Information required for 3D Secure authentication payments.
      * @var ThreeDsRequest
      */

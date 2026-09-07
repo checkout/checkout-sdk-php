@@ -87,6 +87,7 @@ abstract class SandboxTestFixture extends TestCase
                     )
                     ->scopes([
                         OAuthScope::$Accounts,
+                        OAuthScope::$BalancesTopUpInstructions,
                         OAuthScope::$BalancesView,
                         OAuthScope::$Files,
                         OAuthScope::$FinancialActions,

@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments\Request;
 
+use Checkout\Common\DateOnly;
+
 class Order
 {
     /**
@@ -70,7 +72,9 @@ class Order
     public $type;
 
     /**
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $service_ends_on;
 }

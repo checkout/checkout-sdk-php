@@ -3,6 +3,7 @@
 namespace Checkout\Payments\Contexts;
 
 use Checkout\Common\Address;
+use Checkout\Common\DateOnly;
 
 class PaymentContextsPassenger
 {
@@ -17,8 +18,10 @@ class PaymentContextsPassenger
     public $last_name;
 
     /**
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $date_of_birth;
 
     /**

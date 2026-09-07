@@ -3,6 +3,7 @@
 namespace Checkout\Payments;
 
 use DateTime;
+use Checkout\Common\DateOnly;
 
 class AccommodationData
 {
@@ -20,14 +21,18 @@ class AccommodationData
 
     /**
      * The check-in date.
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $check_in_date;
 
     /**
      * The check-out date.
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $check_out_date;
 
     /**

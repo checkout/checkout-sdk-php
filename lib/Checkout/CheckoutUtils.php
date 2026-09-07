@@ -21,6 +21,20 @@ class CheckoutUtils
     }
 
     /**
+     * Formats a date-only value as yyyy-MM-dd.
+     *
+     * Used for swagger fields declared `format: date` rather than `format: date-time`. The API
+     * rejects a full date-time on those fields with 400 request_body_malformed.
+     *
+     * @param DateTime $date
+     * @return string
+     */
+    public static function formatDateOnly(DateTime $date): string
+    {
+        return $date->format("Y-m-d");
+    }
+
+    /**
      * @param Response|null $http_response
      * @return HttpMetadata
      */

@@ -66,16 +66,16 @@ class PaymentSetupsClient extends Client
 
     /**
      * @param string $paymentSetupId
-     * @param string $paymentMethodOptionId
+     * @param string $paymentMethodName
      * @return array
      * @throws CheckoutApiException
      */
     public function confirmPaymentSetup(
         string $paymentSetupId,
-        string $paymentMethodOptionId
+        string $paymentMethodName
     ): array {
         return $this->apiClient->post(
-            $this->buildPath(self::PAYMENT_SETUPS_PATH, $paymentSetupId, "confirm", $paymentMethodOptionId),
+            $this->buildPath(self::PAYMENT_SETUPS_PATH, $paymentSetupId, "confirm", $paymentMethodName),
             null,
             $this->sdkAuthorization()
         );

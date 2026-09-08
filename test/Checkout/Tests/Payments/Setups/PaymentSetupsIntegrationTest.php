@@ -114,18 +114,18 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
      */
     public function shouldConfirmPaymentSetup()
     {
-        $this->markTestSkipped("Integration test - requires valid payment method option");
+        $this->markTestSkipped("Integration test - requires valid payment method name");
 
         // Arrange
         $paymentSetupsRequest = $this->createPaymentSetupRequest();
         $createResponse = $this->checkoutApi->getPaymentSetupsClient()->createPaymentSetup($paymentSetupsRequest);
 
-        $paymentMethodOptionId = "opt_test_12345";
+        $paymentMethodName = "card";
 
         // Act
         $response = $this->checkoutApi->getPaymentSetupsClient()->confirmPaymentSetup(
             $createResponse["id"],
-            $paymentMethodOptionId
+            $paymentMethodName
         );
 
         // Assert

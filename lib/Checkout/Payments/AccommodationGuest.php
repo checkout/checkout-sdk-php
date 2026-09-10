@@ -3,6 +3,7 @@
 namespace Checkout\Payments;
 
 use DateTime;
+use Checkout\Common\DateOnly;
 
 class AccommodationGuest
 {
@@ -20,7 +21,9 @@ class AccommodationGuest
 
     /**
      * The guest's date of birth.
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $date_of_birth;
 }

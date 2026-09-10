@@ -3,6 +3,7 @@
 namespace Checkout\Payments;
 
 use DateTime;
+use Checkout\Common\DateOnly;
 
 class FlightLegDetails
 {
@@ -32,8 +33,10 @@ class FlightLegDetails
 
     /**
      * The departure date in YYYY-MM-DD format.
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $departure_date;
 
     /**

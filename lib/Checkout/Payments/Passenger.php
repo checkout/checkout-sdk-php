@@ -3,6 +3,7 @@
 namespace Checkout\Payments;
 
 use DateTime;
+use Checkout\Common\DateOnly;
 
 class Passenger
 {
@@ -20,8 +21,10 @@ class Passenger
 
     /**
      * The passenger's date of birth.
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $date_of_birth;
 
     /**

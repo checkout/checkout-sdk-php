@@ -7,6 +7,7 @@ class OAuthScope
     public static $Accounts = "accounts";
     public static $Balances = "balances";
     public static $BalancesView = "balances:view";
+    public static $BalancesTopUpInstructions = "balances:top-up-instructions";
     public static $CardManagement = "card-management";
     public static $ComplianceRequestsRead = "compliance-requests:read";
     public static $ComplianceRequestsRespond = "compliance-requests:respond";

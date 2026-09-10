@@ -5,6 +5,7 @@ namespace Checkout\Tests;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutSdk;
 use Checkout\Environment;
+use Checkout\OAuthScope;
 use Checkout\HttpClientBuilderInterface;
 use Exception;
 use GuzzleHttp\ClientInterface;
@@ -71,4 +72,21 @@ class CheckoutOAuthSdkTest extends UnitTestFixture
         $this->assertNotNull($checkoutApi);
     }
 
+    /**
+     * The static properties are the only place a scope's wire value is written down. A typo is
+     * invisible locally and surfaces at the token endpoint, which rejects the whole request when
+     * one requested scope is undefined -- so a caller would lose every scope it asked for
+     * alongside the bad one.
+     *
+     * Values come from components.securitySchemes.OAuth.flows.clientCredentials.scopes in
+     * shared/swagger-latest.json.
+     *
+     * @test
+     */
+    public function shouldExposeDocumentedBalancesScopeValues()
+    {
+        $this->assertSame("balances", OAuthScope::$Balances);
+        $this->assertSame("balances:view", OAuthScope::$BalancesView);
+        $this->assertSame("balances:top-up-instructions", OAuthScope::$BalancesTopUpInstructions);
+    }
 }

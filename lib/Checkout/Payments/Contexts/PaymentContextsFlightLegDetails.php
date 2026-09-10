@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments\Contexts;
 
+use Checkout\Common\DateOnly;
+
 class PaymentContextsFlightLegDetails
 {
     /**
@@ -25,8 +27,10 @@ class PaymentContextsFlightLegDetails
     public $departure_airport;
 
     /**
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $departure_date;
 
     /**

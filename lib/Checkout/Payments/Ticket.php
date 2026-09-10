@@ -3,6 +3,7 @@
 namespace Checkout\Payments;
 
 use DateTime;
+use Checkout\Common\DateOnly;
 
 class Ticket
 {
@@ -12,8 +13,10 @@ class Ticket
     public $number;
 
     /**
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $issue_date;
 
     /**

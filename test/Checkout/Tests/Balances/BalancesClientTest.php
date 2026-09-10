@@ -44,4 +44,27 @@ class BalancesClientTest extends UnitTestFixture
 
         $this->assertNotNull($response);
     }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRetrieveTopUpInstructions()
+    {
+        $this->apiClient
+            ->expects($this->once())
+            ->method("get")
+            ->with(
+                "entities/ent_w4jelhppmfiufdnatam37wrfc4/currency-accounts/ca_g5y7d6jo4e2urgforcbf2ey5jm/top-up-instructions",
+                $this->anything()
+            )
+            ->willReturn(["response"]);
+
+        $response = $this->client->retrieveTopUpInstructions(
+            "ent_w4jelhppmfiufdnatam37wrfc4",
+            "ca_g5y7d6jo4e2urgforcbf2ey5jm"
+        );
+
+        $this->assertNotNull($response);
+    }
 }

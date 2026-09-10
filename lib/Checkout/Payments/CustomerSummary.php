@@ -3,25 +3,32 @@
 namespace Checkout\Payments;
 
 use DateTime;
+use Checkout\Common\DateOnly;
 
 class CustomerSummary
 {
     /**
      * The date when the customer registered with the platform.
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $registration_date;
 
     /**
      * The date of the customer's first transaction.
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $first_transaction_date;
 
     /**
      * The date of the customer's last payment.
+     * Format: yyyy-MM-dd
      * @var DateTime
      */
+    #[DateOnly]
     public $last_payment_date;
 
     /**

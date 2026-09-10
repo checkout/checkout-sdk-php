@@ -99,19 +99,19 @@ class PaymentSetupsClientTest extends UnitTestFixture
     public function shouldConfirmPaymentSetup()
     {
         $paymentSetupId = "setup_123456";
-        $paymentMethodOptionId = "opt_123456";
+        $paymentMethodName = "card";
 
         $this->apiClient
             ->method("post")
             ->with(
-                $this->equalTo("payments/setups/" . $paymentSetupId . "/confirm/" . $paymentMethodOptionId),
+                $this->equalTo("payments/setups/" . $paymentSetupId . "/confirm/" . $paymentMethodName),
                 $this->isNull(),
                 $this->anything(),
                 $this->isNull()
             )
             ->willReturn(["response"]);
 
-        $response = $this->client->confirmPaymentSetup($paymentSetupId, $paymentMethodOptionId);
+        $response = $this->client->confirmPaymentSetup($paymentSetupId, $paymentMethodName);
         $this->assertNotNull($response);
     }
 

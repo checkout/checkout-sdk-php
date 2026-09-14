@@ -10,6 +10,13 @@ namespace Checkout;
  * never declared in that map: compliance-requests, compliance-requests:read,
  * compliance-requests:respond, vault:gpayme-enrollment and vault:tokens-metadata.
  *
+ * Five further properties -- issuing:card-mgmt, issuing:client, marketplace,
+ * middleware:gateway and middleware:payment-context -- appear nowhere in the specification at
+ * all, but the authorization server still grants them and callers still request them, so they are
+ * kept for backward compatibility. Each is marked inline. Do not assume a scope is dead because
+ * the specification omits it: the sandbox payouts client is provisioned for marketplace and
+ * answers a request for accounts with invalid_scope.
+ *
  * Properties are ordered alphabetically. Note that $PaymentContext and $GatewayPaymentContexts are
  * different scopes: the specification requires the former for GET /payment-contexts/{id} and the
  * latter for POST /payment-contexts. "Payment Context" is the only scope whose wire value contains a
@@ -56,6 +63,8 @@ class OAuthScope
     public static $IdentityVerification = "identity-verification";
     public static $IssuingCardManagementRead = "issuing:card-management-read";
     public static $IssuingCardManagementWrite = "issuing:card-management-write";
+    public static $IssuingCardMgmt = "issuing:card-mgmt"; // not in spec; kept for backward compat
+    public static $IssuingClient = "issuing:client"; // not in spec; kept for backward compat
     public static $IssuingControlsRead = "issuing:controls-read";
     public static $IssuingControlsWrite = "issuing:controls-write";
     public static $IssuingDisputes = "issuing-disputes";
@@ -63,9 +72,12 @@ class OAuthScope
     public static $IssuingDisputesWrite = "issuing:disputes-write";
     public static $IssuingTransactionsRead = "issuing:transactions-read";
     public static $IssuingTransactionsWrite = "issuing:transactions-write";
+    public static $Marketplace = "marketplace"; // not in spec; kept for backward compat
     public static $Middleware = "middleware";
+    public static $MiddlewareGateway = "middleware:gateway"; // not in spec; kept for backward compat
     public static $MiddlewareMerchantsPublic = "middleware:merchants-public";
     public static $MiddlewareMerchantsSecret = "middleware:merchants-secret";
+    public static $MiddlewarePaymentContext = "middleware:payment-context"; // not in spec; kept for backward compat
     public static $PaymentContext = "Payment Context";
     public static $PaymentSessions = "payment-sessions";
     public static $PaymentsSearch = "payments:search";

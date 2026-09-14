@@ -47,6 +47,24 @@ class OAuthScopeTest extends TestCase
     }
 
     /**
+     * These five scopes appear nowhere in the specification -- neither in the clientCredentials
+     * scope map nor in any operation's security requirement -- so a sweep driven by the spec alone
+     * would delete them. They are kept deliberately: the authorization server still grants them and
+     * callers still request them. marketplace is the proof: the sandbox payouts client is
+     * provisioned for it and answers a request for accounts with invalid_scope.
+     *
+     * @test
+     */
+    public static function shouldRetainTheLegacyScopesTheSpecificationOmits()
+    {
+        self::assertEquals("issuing:card-mgmt", OAuthScope::$IssuingCardMgmt);
+        self::assertEquals("issuing:client", OAuthScope::$IssuingClient);
+        self::assertEquals("marketplace", OAuthScope::$Marketplace);
+        self::assertEquals("middleware:gateway", OAuthScope::$MiddlewareGateway);
+        self::assertEquals("middleware:payment-context", OAuthScope::$MiddlewarePaymentContext);
+    }
+
+    /**
      * $PaymentContext and $GatewayPaymentContexts read alike but are unrelated scopes, so this pins
      * which is which: the spec requires the former for GET /payment-contexts/{id} and the latter
      * for POST /payment-contexts.

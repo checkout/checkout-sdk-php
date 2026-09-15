@@ -60,9 +60,12 @@ abstract class AbstractIssuingIntegrationTest extends SandboxTestFixture
                 getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID"),
                 getenv("CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET")
             )
+            // issuing:card-mgmt and issuing:client were retired: neither is declared in the spec's
+            // scope map nor requested by any operation. The card-management pair below replaces the
+            // former; the latter has no documented equivalent.
             ->scopes([
-                OAuthScope::$IssuingClient,
-                OAuthScope::$IssuingCardMgmt,
+                OAuthScope::$IssuingCardManagementRead,
+                OAuthScope::$IssuingCardManagementWrite,
                 OAuthScope::$IssuingControlsRead,
                 OAuthScope::$IssuingControlsWrite])
             ->environment(Environment::sandbox())

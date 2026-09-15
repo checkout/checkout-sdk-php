@@ -97,8 +97,11 @@ abstract class SandboxTestFixture extends TestCase
                         OAuthScope::$Fx,
                         OAuthScope::$Gateway,
                         OAuthScope::$GatewayPaymentCancellations,
-                        OAuthScope::$IssuingCardMgmt,
-                        OAuthScope::$IssuingClient,
+                        // issuing:card-mgmt and issuing:client were retired: neither is declared in
+                        // the spec's scope map nor requested by any operation. The card-management
+                        // pair replaces the former; the latter has no documented equivalent.
+                        OAuthScope::$IssuingCardManagementRead,
+                        OAuthScope::$IssuingCardManagementWrite,
                         OAuthScope::$IssuingControlsRead,
                         OAuthScope::$IssuingControlsWrite,
                         OAuthScope::$IssuingDisputesRead,

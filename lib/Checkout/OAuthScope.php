@@ -26,6 +26,7 @@ namespace Checkout;
 class OAuthScope
 {
     public static $Accounts = "accounts";
+    public static $AgenticInventory = "agentic:inventory";
     public static $Balances = "balances";
     public static $BalancesTopUpInstructions = "balances:top-up-instructions";
     public static $BalancesView = "balances:view";

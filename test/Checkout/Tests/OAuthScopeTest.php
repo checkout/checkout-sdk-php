@@ -36,10 +36,15 @@ class OAuthScopeTest extends TestCase
      * the security requirement of GET /tokens/{tokenId}/metadata. compliance-requests is in the
      * same position, alongside the :read and :respond variants this SDK already shipped.
      *
+     * agentic:inventory is different again: it is declared, and it reached the specification after
+     * the original sync. It is the OAuth requirement of the ten /inventory/* operations behind the
+     * beta agentic-commerce inventory and reservations endpoints.
+     *
      * @test
      */
     public static function shouldExposeDocumentedValuesForScopesAddedInSpecSync()
     {
+        self::assertEquals("agentic:inventory", OAuthScope::$AgenticInventory);
         self::assertEquals("compliance-requests", OAuthScope::$ComplianceRequests);
         self::assertEquals("flow:reflow", OAuthScope::$FlowReflow);
         self::assertEquals("issuing-disputes", OAuthScope::$IssuingDisputes);

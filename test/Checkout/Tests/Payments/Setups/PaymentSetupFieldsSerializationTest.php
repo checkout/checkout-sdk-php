@@ -4,9 +4,19 @@ namespace Checkout\Tests\Payments\Setups;
 
 use Checkout\JsonSerializer;
 use Checkout\Payments\Setups\Common\BillingDescriptor\PaymentSetupBillingDescriptor;
+use Checkout\Payments\Setups\Common\Industry\AccommodationData;
+use Checkout\Payments\Setups\Common\Industry\AccommodationHost;
+use Checkout\Payments\Setups\Common\Industry\AirlineData;
+use Checkout\Payments\Setups\Common\Industry\AirlineInsurance;
+use Checkout\Payments\Setups\Common\Industry\AirlineInsurancePrice;
+use Checkout\Payments\Setups\Common\Industry\Industry;
 use Checkout\Payments\Setups\Common\Order\AmountAllocationCommission;
 use Checkout\Payments\Setups\Common\Order\Order;
 use Checkout\Payments\Setups\Common\Order\PaymentSetupAmountAllocation;
+use Checkout\Payments\AccommodationAddress;
+use Checkout\Payments\AccommodationGuest;
+use Checkout\Payments\AccommodationRoom;
+use Checkout\Payments\Ticket;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\Bacs;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\BacsAccountHolder;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\BacsAccountHolderType;
@@ -134,6 +144,103 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $this->assertSame(10, $decoded['order']['surcharge_amount']);
         $this->assertSame(200, $decoded['order']['tax_amount']);
         $this->assertSame(100, $decoded['order']['tipping_amount']);
+    }
+
+    public function testSerializesAccommodationIndustryDataIncludingNewFields()
+    {
+        $address = new AccommodationAddress();
+        $address->address_line1 = "1 Main Street";
+        $address->zip = "SW1A 1AA";
+
+        $guest = new AccommodationGuest();
+        $guest->first_name = "Jane";
+        $guest->last_name = "Smith";
+
+        $room = new AccommodationRoom();
+        $room->rate = "150.00";
+        $room->number_of_nights_at_room_rate = "3";
+
+        $host = new AccommodationHost();
+        $host->total_reservation_count = 42;
+
+        $accommodation = new AccommodationData();
+        $accommodation->name = "Grand Hotel";
+        $accommodation->booking_reference = "book_123";
+        $accommodation->address = $address;
+        $accommodation->number_of_rooms = 2;
+        $accommodation->guests = [$guest];
+        $accommodation->room = [$room];
+        $accommodation->total_number_of_guests = 3;
+        $accommodation->refundable = true;
+        $accommodation->delivery_recipient = "jane.smith@example.com";
+        $accommodation->host = $host;
+
+        $industry = new Industry();
+        $industry->accommodation_data = $accommodation;
+
+        $request = new PaymentSetupRequest();
+        $request->industry = $industry;
+
+        $decoded = json_decode((new JsonSerializer())->serialize($request), true);
+        $decodedAccommodation = $decoded['industry']['accommodation_data'];
+
+        $this->assertSame("Grand Hotel", $decodedAccommodation['name']);
+        $this->assertSame("book_123", $decodedAccommodation['booking_reference']);
+        $this->assertSame("1 Main Street", $decodedAccommodation['address']['address_line1']);
+        $this->assertSame(2, $decodedAccommodation['number_of_rooms']);
+        $this->assertSame("Jane", $decodedAccommodation['guests'][0]['first_name']);
+        $this->assertSame("150.00", $decodedAccommodation['room'][0]['rate']);
+        $this->assertSame(3, $decodedAccommodation['total_number_of_guests']);
+        $this->assertTrue($decodedAccommodation['refundable']);
+        $this->assertSame("jane.smith@example.com", $decodedAccommodation['delivery_recipient']);
+        $this->assertSame(42, $decodedAccommodation['host']['total_reservation_count']);
+    }
+
+    public function testSerializesAirlineIndustryDataIncludingNewFields()
+    {
+        $ticket = new Ticket();
+        $ticket->number = "TCK123";
+        $ticket->issuing_carrier_code = "BA";
+
+        $price = new AirlineInsurancePrice();
+        $price->amount = 25.5;
+        $price->currency = "GBP";
+
+        $insurance = new AirlineInsurance();
+        $insurance->type = "travel";
+        $insurance->company = "Acme Insurance";
+        $insurance->price = $price;
+
+        $airline = new AirlineData();
+        $airline->ticket = $ticket;
+        $airline->total_number_of_passengers = 2;
+        $airline->travel_type = "international";
+        $airline->trip_type = "round_trip";
+        $airline->refundable = false;
+        $airline->delivery_recipient = "jane.smith@example.com";
+        $airline->ancillaries = "extra_baggage";
+        $airline->insurance = $insurance;
+
+        $industry = new Industry();
+        $industry->airline_data = $airline;
+
+        $request = new PaymentSetupRequest();
+        $request->industry = $industry;
+
+        $decoded = json_decode((new JsonSerializer())->serialize($request), true);
+        $decodedAirline = $decoded['industry']['airline_data'];
+
+        $this->assertSame("TCK123", $decodedAirline['ticket']['number']);
+        $this->assertSame(2, $decodedAirline['total_number_of_passengers']);
+        $this->assertSame("international", $decodedAirline['travel_type']);
+        $this->assertSame("round_trip", $decodedAirline['trip_type']);
+        $this->assertFalse($decodedAirline['refundable']);
+        $this->assertSame("jane.smith@example.com", $decodedAirline['delivery_recipient']);
+        $this->assertSame("extra_baggage", $decodedAirline['ancillaries']);
+        $this->assertSame("travel", $decodedAirline['insurance']['type']);
+        $this->assertSame("Acme Insurance", $decodedAirline['insurance']['company']);
+        $this->assertSame(25.5, $decodedAirline['insurance']['price']['amount']);
+        $this->assertSame("GBP", $decodedAirline['insurance']['price']['currency']);
     }
 
     public function testUnsetFieldsAreOmittedFromSerialization()

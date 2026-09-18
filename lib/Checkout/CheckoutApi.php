@@ -19,6 +19,7 @@ use Checkout\Identities\IdentityVerification\IdentityVerificationClient;
 use Checkout\Identities\AmlScreening\AmlScreeningClient;
 use Checkout\Identities\Applicants\ApplicantsClient;
 use Checkout\Instruments\InstrumentsClient;
+use Checkout\Inventory\InventoryClient;
 use Checkout\Issuing\IssuingClient;
 use Checkout\Metadata\MetadataClient;
 use Checkout\NetworkTokens\NetworkTokensClient;
@@ -60,6 +61,7 @@ final class CheckoutApi extends CheckoutApmApi
     private $reportsClient;
     private $metadataClient;
     private $networkTokensClient;
+    private $inventoryClient;
     private $financialClient;
     private $issuingClient;
     private $paymentContextClient;
@@ -123,6 +125,7 @@ final class CheckoutApi extends CheckoutApmApi
         $this->reportsClient = new ReportsClient($baseApiClient, $configuration);
         $this->metadataClient = new MetadataClient($baseApiClient, $configuration);
         $this->networkTokensClient = new NetworkTokensClient($baseApiClient, $configuration);
+        $this->inventoryClient = new InventoryClient($baseApiClient, $configuration);
         $this->financialClient = new FinancialClient($baseApiClient, $configuration);
         $this->issuingClient = new IssuingClient($baseApiClient, $configuration);
         $this->paymentContextClient = new PaymentContextsClient($baseApiClient, $configuration);
@@ -308,6 +311,14 @@ final class CheckoutApi extends CheckoutApmApi
     public function getNetworkTokensClient()
     {
         return $this->networkTokensClient;
+    }
+
+    /**
+     * @return InventoryClient
+     */
+    public function getInventoryClient()
+    {
+        return $this->inventoryClient;
     }
 
     /**

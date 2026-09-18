@@ -99,6 +99,10 @@ class AddressDocumentVerificationClient extends Client
     }
 
     /**
+     * Get the details of all attempts for a specific address document verification.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
+     *
      * addressDocumentVerificationId is the address document verification's unique identifier. (Required)
      *
      * @param string $addressDocumentVerificationId
@@ -165,10 +169,11 @@ class AddressDocumentVerificationClient extends Client
     }
 
     /**
-     * Retrieve the assets (the document image) uploaded for an address document verification attempt.
+     * Get the assets (the document image) uploaded for an address document verification attempt.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
      * Beta.
      *
-     * $addressDocumentVerificationId is the address document verification's unique identifier. (Required)
+     * addressDocumentVerificationId is the address document verification's unique identifier. (Required)
      * attemptId is the attempt's unique identifier. (Required)
      *
      * @param string $addressDocumentVerificationId

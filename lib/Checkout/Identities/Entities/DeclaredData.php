@@ -14,10 +14,9 @@ class DeclaredData
     public $name;
 
     /**
-     * The applicant's birth date, as provided by the applicant. This is the declared value, not
-     * the value extracted from the verified document.
+     * The applicant's birth date.
      * [Optional]
-     * Format: date (YYYY-MM-DD)
+     * Format: YYYY-MM-DD
      * Example: 1994-10-15
      * @var string|null
      */

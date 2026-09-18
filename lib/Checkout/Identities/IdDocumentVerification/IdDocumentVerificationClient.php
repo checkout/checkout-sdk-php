@@ -90,6 +90,10 @@ class IdDocumentVerificationClient extends Client
     }
 
     /**
+     * Get the details of all attempts for a specific ID document verification.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
+     *
      * idDocumentVerificationId is the ID document verification's unique identifier. (Required)
      *
      * @param string $idDocumentVerificationId
@@ -141,10 +145,12 @@ class IdDocumentVerificationClient extends Client
     }
 
     /**
-     * Retrieve the assets (the front and back images of the document) uploaded for an ID document verification attempt.
+     * Get the assets (the front and back images of the document) uploaded for an ID document
+     * verification attempt.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
      * Beta.
      *
-     * $idDocumentVerificationId is the ID document verification's unique identifier. (Required)
+     * idDocumentVerificationId is the ID document verification's unique identifier. (Required)
      * attemptId is the attempt's unique identifier. (Required)
      *
      * @param string $idDocumentVerificationId

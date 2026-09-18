@@ -377,6 +377,67 @@ class AddressDocumentVerificationClientTest extends UnitTestFixture
         $this->assertNotNull($response);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldDeserializeTheAddressDocumentVerificationAttemptAssetsSwaggerExample()
+    {
+        $decoded = json_decode(self::ADV_ATTEMPT_ASSETS_SWAGGER_EXAMPLE, true);
+
+        $this->apiClient
+            ->method("query")
+            ->willReturn($decoded);
+
+        $response = $this->client->getAddressDocumentVerificationAttemptAssets(
+            "adv_tkoi5db4hryu5cei5vwoabr7we",
+            "adva_tkoi5db4hryu5cei5vwoabr7we"
+        );
+
+        $this->assertSame(1, $response["total_count"]);
+        $this->assertSame(0, $response["skip"]);
+        $this->assertSame(10, $response["limit"]);
+        $this->assertCount(1, $response["data"]);
+        $this->assertSame("document", $response["data"][0]["type"]);
+        $this->assertStringContainsString(
+            "address_document.png",
+            $response["data"][0]["_links"]["asset_url"]["href"]
+        );
+        $this->assertArrayHasKey("self", $response["_links"]);
+        $this->assertArrayHasKey("next", $response["_links"]);
+        $this->assertArrayHasKey("previous", $response["_links"]);
+    }
+
+    /**
+     * The data array declares minItems 0, so an attempt with no assets yet is a valid page.
+     *
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldHandleAnEmptyAddressDocumentVerificationAttemptAssetsPage()
+    {
+        $this->apiClient
+            ->method("query")
+            ->willReturn([
+                "total_count" => 0,
+                "skip" => 0,
+                "limit" => 10,
+                "data" => [],
+                "_links" => [
+                    "self" => [
+                        "href" => "https://api.checkout.com/address-document-verifications/"
+                            . "adv_id/attempts/adva_id/assets"
+                    ]
+                ]
+            ]);
+
+        $response = $this->client->getAddressDocumentVerificationAttemptAssets("adv_id", "adva_id");
+
+        $this->assertSame(0, $response["total_count"]);
+        $this->assertSame([], $response["data"]);
+        $this->assertArrayHasKey("_links", $response);
+    }
+
     private function buildAddressDocumentVerificationRequest(): AddressDocumentVerificationRequest
     {
         $declaredData = new DeclaredData();
@@ -439,30 +500,44 @@ class AddressDocumentVerificationClientTest extends UnitTestFixture
         ];
     }
 
+    /**
+     * The swagger example for this response, verbatim, from
+     * components.examples.adv_attempt_assets_response_body. Kept as raw JSON rather than a PHP
+     * array so that a key renamed in the spec shows up as a test failure instead of being silently
+     * carried over from a hand-written fixture.
+     */
+    private const ADV_ATTEMPT_ASSETS_SWAGGER_EXAMPLE = <<<'JSON'
+{
+  "total_count": 1,
+  "skip": 0,
+  "limit": 10,
+  "data": [
+    {
+      "type": "document",
+      "_links": {
+        "asset_url": {
+          "href": "https://storage-b.env.ubble.ai/ubble-ai/NDYOOVHGZPAQ/a54b3393-f02a-47c9-a9c5-2f6ee73560e1/bb603e2f-5de9-40f2-9631-8285a33c24c0/address_document.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=3600"
+        }
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://identity-verification.checkout.com/address-document-verifications/adv_tkoi5db4hryu5cei5vwoabr7we/attempts/adva_tkoi5db4hryu5cei5vwoabr7we/assets"
+    },
+    "next": {
+      "href": "https://identity-verification.checkout.com/address-document-verifications/adv_tkoi5db4hryu5cei5vwoabr7we/attempts/adva_tkoi5db4hryu5cei5vwoabr7we/assets?..."
+    },
+    "previous": {
+      "href": "https://identity-verification.checkout.com/address-document-verifications/adv_tkoi5db4hryu5cei5vwoabr7we/attempts/adva_tkoi5db4hryu5cei5vwoabr7we/assets?..."
+    }
+  }
+}
+JSON;
+
     private function buildExpectedAddressDocumentVerificationAttemptAssetsResponse(): array
     {
-        return [
-            "total_count" => 1,
-            "skip" => 0,
-            "limit" => 10,
-            "data" => [
-                [
-                    "type" => "document",
-                    "_links" => [
-                        "download" => [
-                            "href" => "https://api.checkout.com/address-document-verifications/"
-                                . "adv_id/attempts/adva_id/assets/document"
-                        ]
-                    ]
-                ]
-            ],
-            "_links" => [
-                "self" => [
-                    "href" => "https://api.checkout.com/address-document-verifications/"
-                        . "adv_id/attempts/adva_id/assets"
-                ]
-            ]
-        ];
+        return json_decode(self::ADV_ATTEMPT_ASSETS_SWAGGER_EXAMPLE, true);
     }
 
     private function validateAddressDocumentVerificationAttemptAssetsResponse(array $response): void
@@ -473,7 +548,10 @@ class AddressDocumentVerificationClientTest extends UnitTestFixture
         $this->assertArrayHasKey("data", $response);
         $this->assertArrayHasKey("_links", $response);
         $this->assertSame("document", $response["data"][0]["type"]);
-        $this->assertArrayHasKey("download", $response["data"][0]["_links"]);
+        // asset_url is the only link the AdvAttemptAsset schema declares, and it is required.
+        $this->assertArrayHasKey("asset_url", $response["data"][0]["_links"]);
+        $this->assertArrayNotHasKey("download", $response["data"][0]["_links"]);
+        $this->assertNotEmpty($response["data"][0]["_links"]["asset_url"]["href"]);
     }
 
     private function buildExpectedAddressDocumentVerificationAttemptsResponse(): array

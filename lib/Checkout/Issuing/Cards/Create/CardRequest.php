@@ -12,7 +12,9 @@ abstract class CardRequest
     /**
      * The card type.
      * [Required]
-     * @var string value of CardType
+     * Enum: "virtual" "physical"
+     * Example: virtual
+     * @var string value of Checkout\Issuing\CardType
      */
     public $type;
 
@@ -21,6 +23,7 @@ abstract class CardRequest
      * [Required]
      * ^crh_[a-z0-9]{26}$
      * min 30 characters, max 30 characters
+     * Example: crh_d3ozhf43pcq2xbldn2g45qnb44
      * @var string
      */
     public $cardholder_id;
@@ -36,6 +39,7 @@ abstract class CardRequest
      * Your reference.
      * [Optional]
      * max 256 characters
+     * Example: X-123456-N11
      * @var string
      */
     public $reference;
@@ -53,6 +57,7 @@ abstract class CardRequest
      * [Optional]
      * ^[0-9a-zA-Z.\- ]{2,26}$
      * min 2 characters, max 26 characters
+     * Example: JOHN KENNEDY
      * @var string
      */
     public $display_name;
@@ -61,6 +66,7 @@ abstract class CardRequest
      * Sets whether to activate the newly created card upon creation. If set to false, the cardholder will
      * not be able to process transactions until you activate the card.
      * [Optional]
+     * Default: true
      * @var bool
      */
     public $activate_card;

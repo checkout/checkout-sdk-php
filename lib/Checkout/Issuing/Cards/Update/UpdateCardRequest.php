@@ -10,6 +10,7 @@ class UpdateCardRequest
      * Your reference.
      * [Optional]
      * max 256 characters
+     * Example: X-123456-N11
      * @var string
      */
     public $reference;
@@ -24,8 +25,10 @@ class UpdateCardRequest
     /**
      * The card's expiration month.
      * [Optional]
+     * Format: int32
      * min 1
      * max 12
+     * Example: 5
      * @var int
      */
     public $expiry_month;
@@ -33,7 +36,9 @@ class UpdateCardRequest
     /**
      * The card's expiration year.
      * [Optional]
+     * Format: int32
      * min 4 characters, max 4 characters
+     * Example: 2025
      * @var int
      */
     public $expiry_year;

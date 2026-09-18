@@ -107,6 +107,10 @@ class IdentityVerificationClient extends Client
     }
 
     /**
+     * Get all the attempts for a specific identity verification.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
+     *
      * identityVerificationId is the identity verification's unique identifier. (Required)
      *
      * @param string $identityVerificationId
@@ -158,7 +162,11 @@ class IdentityVerificationClient extends Client
     }
 
     /**
-     * Retrieves the assets (face images, videos, and document images) captured during an identity verification attempt.
+     * Get the assets (face images, videos, and document images) captured during an identity
+     * verification attempt. Videos are not exposed by default; contact your account manager to
+     * enable them.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
      *
      * identityVerificationId is the identity verification's unique identifier. (Required)
      * attemptId is the attempt's unique identifier. (Required)

@@ -89,6 +89,10 @@ class FaceAuthenticationClient extends Client
     }
 
     /**
+     * Get the details of all attempts for a specific face authentication.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
+     *
      * faceAuthenticationId is the face authentication's unique identifier. (Required)
      *
      * @param string $faceAuthenticationId
@@ -125,7 +129,10 @@ class FaceAuthenticationClient extends Client
     }
 
     /**
-     * Retrieves the assets (face images and videos) captured during a face authentication attempt.
+     * Get the assets (face images and videos) captured during a face authentication attempt.
+     * Videos are not exposed by default; contact your account manager to enable them.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
      *
      * faceAuthenticationId is the face authentication's unique identifier. (Required)
      * attemptId is the attempt's unique identifier. (Required)

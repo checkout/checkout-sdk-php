@@ -16,9 +16,11 @@ class IdentityDeclaredData extends DeclaredData
     public $phone_number;
 
     /**
-     * The applicant's email address.
+     * The applicant's email address. Explicitly nullable in the spec, so the API may return null
+     * for it rather than omitting it.
      * [Optional]
      * Format: email
+     * Nullable: true
      * Example: hannah.bret@example.com
      * @var string|null
      */

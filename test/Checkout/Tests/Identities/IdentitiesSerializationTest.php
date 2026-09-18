@@ -119,6 +119,32 @@ class IdentitiesSerializationTest extends TestCase
         );
     }
 
+    public function testIdentityDeclaredDataOmitsUnsetEmail()
+    {
+        $declaredData = new IdentityDeclaredData();
+        $declaredData->name = "Hannah Bret";
+
+        $decoded = json_decode($this->serializer->serialize($declaredData), true);
+
+        $this->assertSame(["name"], array_keys($decoded));
+        $this->assertArrayNotHasKey("email", $decoded);
+    }
+
+    /**
+     * The spec marks email nullable, so a response may carry an explicit null rather than omitting
+     * the key. Deserialization must preserve that instead of dropping it.
+     */
+    public function testIdentityDeclaredDataReadsAnExplicitNullEmail()
+    {
+        $json = '{"name":"Hannah Bret","birth_date":"1994-10-15","email":null}';
+
+        $decoded = $this->serializer->deserialize($json);
+
+        $this->assertArrayHasKey("email", $decoded);
+        $this->assertNull($decoded["email"]);
+        $this->assertSame("Hannah Bret", $decoded["name"]);
+    }
+
     public function testFaceAuthenticationClientInformationKeepsTheTwoFieldShape()
     {
         $clientInformation = new ClientInformation();

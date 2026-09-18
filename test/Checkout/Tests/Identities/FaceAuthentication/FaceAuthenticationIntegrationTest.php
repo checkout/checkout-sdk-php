@@ -6,7 +6,9 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\ClientInformation;
+use Checkout\Identities\Entities\PhoneNumber;
 use Checkout\Identities\FaceAuthentication\Requests\FaceAuthenticationRequest;
 use Checkout\Identities\FaceAuthentication\Requests\FaceAuthenticationAttemptRequest;
 use Checkout\PlatformType;
@@ -218,6 +220,32 @@ class FaceAuthenticationIntegrationTest extends SandboxTestFixture
         $this->validateWorkflowProgression($createdFaceAuthentication, $retrievedFaceAuthentication, $createdAttempt, $attemptsResponse, $retrievedAttempt, $anonymizedFaceAuthentication);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetFaceAuthenticationAttemptsWithPagination()
+    {
+        $this->markTestSkipped("This test requires valid test environment setup");
+
+        $created = $this->checkoutApi->getFaceAuthenticationClient()
+            ->createFaceAuthentication($this->buildFaceAuthenticationRequest());
+
+        $createdAttempt = $this->checkoutApi->getFaceAuthenticationClient()
+            ->createFaceAuthenticationAttempt($created["id"], $this->buildFaceAuthenticationAttemptRequest());
+
+        $query = new AttemptsQueryFilter();
+        $query->skip = 0;
+        $query->limit = 1;
+
+        $response = $this->checkoutApi->getFaceAuthenticationClient()
+            ->getFaceAuthenticationAttempts($created["id"], $query);
+
+        $this->validateRetrievedFaceAuthenticationAttempts($response, $createdAttempt);
+        $this->assertLessThanOrEqual(1, count($response["data"]));
+        $this->assertEquals(1, $response["limit"]);
+    }
+
     private function buildFaceAuthenticationRequest(): FaceAuthenticationRequest
     {
         $request = new FaceAuthenticationRequest();
@@ -233,8 +261,13 @@ class FaceAuthenticationIntegrationTest extends SandboxTestFixture
         $clientInformation->pre_selected_residence_country = "US";
         $clientInformation->pre_selected_language = "en-US";
 
+        $phoneNumber = new PhoneNumber();
+        $phoneNumber->country_code = "+1";
+        $phoneNumber->number = "5555550102";
+
         $request = new FaceAuthenticationAttemptRequest();
         $request->redirect_url = "https://example.com/redirect";
+        $request->phone_number = $phoneNumber;
         $request->client_information = $clientInformation;
 
         return $request;
@@ -299,15 +332,18 @@ class FaceAuthenticationIntegrationTest extends SandboxTestFixture
     {
         $this->assertResponse(
             $response,
-            "attempts",
-            "total_count"
+            "data",
+            "total_count",
+            "skip",
+            "limit",
+            "_links"
         );
 
-        $this->assertTrue(is_array($response["attempts"]));
+        $this->assertTrue(is_array($response["data"]));
         $this->assertGreaterThan(0, $response["total_count"]);
-        
-        if (!empty($response["attempts"])) {
-            $this->validateBaseFaceAuthenticationAttemptResponse($response["attempts"][0]);
+
+        if (!empty($response["data"])) {
+            $this->validateBaseFaceAuthenticationAttemptResponse($response["data"][0]);
         }
     }
 
@@ -337,7 +373,7 @@ class FaceAuthenticationIntegrationTest extends SandboxTestFixture
 
         // Attempts response should contain the created attempt
         $this->assertGreaterThan(0, $attemptsResponse["total_count"]);
-        $this->assertTrue(is_array($attemptsResponse["attempts"]));
+        $this->assertTrue(is_array($attemptsResponse["data"]));
 
         // Retrieved attempt should match created attempt
         $this->assertEquals($createdAttempt["id"], $retrievedAttempt["id"]);

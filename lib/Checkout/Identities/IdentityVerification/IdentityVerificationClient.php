@@ -7,6 +7,7 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationRequest;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationAndOpenRequest;
@@ -109,13 +110,17 @@ class IdentityVerificationClient extends Client
      * identityVerificationId is the identity verification's unique identifier. (Required)
      *
      * @param string $identityVerificationId
+     * @param AttemptsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
      */
-    public function getIdentityVerificationAttempts(string $identityVerificationId): array
-    {
-        return $this->apiClient->get(
+    public function getIdentityVerificationAttempts(
+        string $identityVerificationId,
+        ?AttemptsQueryFilter $query = null
+    ): array {
+        return $this->apiClient->query(
             $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ATTEMPTS_PATH),
+            $query,
             $this->sdkAuthorization()
         );
     }

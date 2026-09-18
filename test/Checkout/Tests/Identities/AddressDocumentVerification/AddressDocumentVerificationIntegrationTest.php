@@ -8,6 +8,8 @@ use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\Identities\AddressDocumentVerification\Requests\AddressDocumentVerificationRequest;
 use Checkout\Identities\AddressDocumentVerification\Requests\AddressDocumentVerificationAttemptRequest;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\DeclaredData;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
@@ -158,6 +160,59 @@ class AddressDocumentVerificationIntegrationTest extends SandboxTestFixture
         $this->assertResponse($response, "id");
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetAddressDocumentVerificationAttemptsWithPagination()
+    {
+        $this->markTestSkipped("This test requires valid test environment setup");
+
+        $verificationRequest = $this->buildAddressDocumentVerificationRequest();
+        $created = $this->checkoutApi->getAddressDocumentVerificationClient()
+            ->createAddressDocumentVerification($verificationRequest);
+
+        $attemptRequest = $this->buildAddressDocumentVerificationAttemptRequest();
+        $this->checkoutApi->getAddressDocumentVerificationClient()
+            ->createAddressDocumentVerificationAttempt($created["id"], $attemptRequest);
+
+        $query = new AttemptsQueryFilter();
+        $query->skip = 0;
+        $query->limit = 1;
+
+        $response = $this->checkoutApi->getAddressDocumentVerificationClient()
+            ->getAddressDocumentVerificationAttempts($created["id"], $query);
+
+        $this->validateRetrievedAddressDocumentVerificationAttempts($response);
+        $this->assertLessThanOrEqual(1, count($response["data"]));
+        $this->assertEquals(1, $response["limit"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetAddressDocumentVerificationAttemptAssets()
+    {
+        $this->markTestSkipped("This test requires valid test environment setup");
+
+        $verificationRequest = $this->buildAddressDocumentVerificationRequest();
+        $created = $this->checkoutApi->getAddressDocumentVerificationClient()
+            ->createAddressDocumentVerification($verificationRequest);
+
+        $attemptRequest = $this->buildAddressDocumentVerificationAttemptRequest();
+        $createdAttempt = $this->checkoutApi->getAddressDocumentVerificationClient()
+            ->createAddressDocumentVerificationAttempt($created["id"], $attemptRequest);
+
+        $query = new AttemptAssetsQueryFilter();
+        $query->limit = 10;
+
+        $response = $this->checkoutApi->getAddressDocumentVerificationClient()
+            ->getAddressDocumentVerificationAttemptAssets($created["id"], $createdAttempt["id"], $query);
+
+        $this->validateRetrievedAddressDocumentVerificationAttemptAssets($response);
+    }
+
     private function buildAddressDocumentVerificationRequest(): AddressDocumentVerificationRequest
     {
         $declaredData = new DeclaredData();
@@ -225,6 +280,18 @@ class AddressDocumentVerificationIntegrationTest extends SandboxTestFixture
 
         if (!empty($response["data"])) {
             $this->validateBaseAddressDocumentVerificationAttemptResponse($response["data"][0]);
+        }
+    }
+
+    private function validateRetrievedAddressDocumentVerificationAttemptAssets(array $response): void
+    {
+        $this->assertResponse($response, "total_count", "skip", "limit", "data", "_links");
+
+        $this->assertTrue(is_array($response["data"]));
+
+        if (!empty($response["data"])) {
+            $this->assertResponse($response["data"][0], "type", "_links");
+            $this->assertEquals("document", $response["data"][0]["type"]);
         }
     }
 

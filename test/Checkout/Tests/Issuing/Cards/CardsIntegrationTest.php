@@ -14,6 +14,10 @@ use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Revoke\RevokeReason;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendReason;
+use Checkout\Issuing\Cards\Create\CardLifetime;
+use Checkout\Issuing\Cards\Create\LifetimeUnit;
+use Checkout\Issuing\Cards\Create\VirtualCardRequest;
+use Checkout\Issuing\Cards\Update\CardUpdateHeaders;
 use Checkout\Issuing\Cards\Update\UpdateCardRequest;
 use Checkout\Issuing\Cards\Renew\RenewCardRequest;
 use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
@@ -237,6 +241,110 @@ class CardsIntegrationTest extends AbstractIssuingIntegrationTest
             "id",
             "last_modified_date"
         );
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateCardWithScheduledActivationDate()
+    {
+        $lifetime = new CardLifetime();
+        $lifetime->unit = LifetimeUnit::$months;
+        $lifetime->value = 6;
+
+        $cardRequest = new VirtualCardRequest();
+        $cardRequest->cardholder_id = $this->cardholder["id"];
+        $cardRequest->card_product_id = "pro_3fn6pv2ikshurn36dbd3iysyha";
+        $cardRequest->lifetime = $lifetime;
+        $cardRequest->reference = "X-123456-N11";
+        $cardRequest->display_name = "John Kennedy";
+        $cardRequest->is_single_use = false;
+        $cardRequest->scheduled_activation_date = $this->nextRoundHour();
+
+        $cardResponse = $this->issuingApi->getIssuingClient()->createCard($cardRequest);
+
+        $this->assertResponse($cardResponse, "id");
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardScheduledActivationDate()
+    {
+        $card = $this->createCard($this->cardholder["id"]);
+
+        $updateRequest = new UpdateCardRequest();
+        $updateRequest->scheduled_activation_date = $this->nextRoundHour();
+
+        $updateResponse = $this->issuingApi->getIssuingClient()->updateCardDetails($card["id"], $updateRequest);
+
+        $this->assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
+        $this->assertResponse($updateResponse, "last_modified_date");
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardRevocationDate()
+    {
+        $card = $this->createCard($this->cardholder["id"]);
+
+        $updateRequest = new UpdateCardRequest();
+        $updateRequest->revocation_date = gmdate("Y-m-d", strtotime("+1 year"));
+
+        $updateResponse = $this->issuingApi->getIssuingClient()->updateCardDetails($card["id"], $updateRequest);
+
+        $this->assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
+        $this->assertResponse($updateResponse, "last_modified_date");
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardDetailsReturningEncryptedCvv()
+    {
+        $card = $this->createCard($this->cardholder["id"], true);
+
+        $updateRequest = new UpdateCardRequest();
+        $updateRequest->reference = "UPDATED-REF-123";
+
+        $headers = new CardUpdateHeaders();
+        $headers->return_encrypted_cvv = "true";
+        $headers->encryption_key = $this->getEncryptionKey();
+
+        $updateResponse = $this->issuingApi->getIssuingClient()
+            ->updateCardDetails($card["id"], $updateRequest, $headers);
+
+        $this->assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
+        $this->assertResponse($updateResponse, "last_modified_date", "encrypted_cvv");
+        $this->assertNotEmpty($updateResponse["encrypted_cvv"]);
+    }
+
+    /**
+     * The next round hour in UTC, which is the earliest value the API accepts for a scheduled
+     * activation date carrying a time.
+     *
+     * @return string
+     */
+    private function nextRoundHour(): string
+    {
+        return gmdate("Y-m-d\\TH:00\\Z", strtotime("+2 hours"));
+    }
+
+    /**
+     * The RSA public key used to encrypt returned credentials, with the PEM headers and newlines
+     * removed. Supplied by the environment because it pairs with a private key the test cannot
+     * hold.
+     *
+     * @return string
+     */
+    private function getEncryptionKey(): string
+    {
+        return getenv("CHECKOUT_ISSUING_ENCRYPTION_KEY") ?: "";
     }
 
     /**

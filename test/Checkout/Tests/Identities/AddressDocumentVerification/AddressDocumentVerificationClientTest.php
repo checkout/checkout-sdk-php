@@ -9,6 +9,8 @@ use Checkout\CheckoutException;
 use Checkout\Identities\AddressDocumentVerification\AddressDocumentVerificationClient;
 use Checkout\Identities\AddressDocumentVerification\Requests\AddressDocumentVerificationRequest;
 use Checkout\Identities\AddressDocumentVerification\Requests\AddressDocumentVerificationAttemptRequest;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\DeclaredData;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
@@ -115,7 +117,7 @@ class AddressDocumentVerificationClientTest extends UnitTestFixture
         $expectedResponse = $this->buildExpectedAddressDocumentVerificationAttemptsResponse();
 
         $this->apiClient
-            ->method("get")
+            ->method("query")
             ->willReturn($expectedResponse);
 
         $response = $this->client->getAddressDocumentVerificationAttempts("adv_tkoi5db4hryu5cei5vwoabr7we");
@@ -254,7 +256,7 @@ class AddressDocumentVerificationClientTest extends UnitTestFixture
 
         $this->apiClient
             ->expects($this->once())
-            ->method("get")
+            ->method("query")
             ->with("address-document-verifications/" . $advId . "/attempts")
             ->willReturn($expectedResponse);
 
@@ -300,6 +302,77 @@ class AddressDocumentVerificationClientTest extends UnitTestFixture
             ->willReturn($expectedResponse);
 
         $response = $this->client->getAddressDocumentVerificationReport($advId);
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetAddressDocumentVerificationAttemptsWithPagination()
+    {
+        $advId = "adv_tkoi5db4hryu5cei5vwoabr7we";
+        $expectedResponse = $this->buildExpectedAddressDocumentVerificationAttemptsResponse();
+
+        $query = new AttemptsQueryFilter();
+        $query->skip = 5;
+        $query->limit = 25;
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("query")
+            ->with("address-document-verifications/" . $advId . "/attempts", $query)
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->getAddressDocumentVerificationAttempts($advId, $query);
+
+        $this->assertNotNull($response);
+        $this->assertSame("skip=5&limit=25", $query->getEncodedQueryParameters());
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetAddressDocumentVerificationAttemptAssets()
+    {
+        $expectedResponse = $this->buildExpectedAddressDocumentVerificationAttemptAssetsResponse();
+
+        $this->apiClient
+            ->method("query")
+            ->willReturn($expectedResponse);
+
+        $query = new AttemptAssetsQueryFilter();
+        $query->limit = 10;
+
+        $response = $this->client->getAddressDocumentVerificationAttemptAssets(
+            "adv_tkoi5db4hryu5cei5vwoabr7we",
+            "adva_tkoi5db4hryu5cei5vwoabr7we",
+            $query
+        );
+
+        $this->assertNotNull($response);
+        $this->validateAddressDocumentVerificationAttemptAssetsResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCallCorrectApiEndpointForGetAddressDocumentVerificationAttemptAssets()
+    {
+        $advId = "adv_tkoi5db4hryu5cei5vwoabr7we";
+        $attemptId = "adva_tkoi5db4hryu5cei5vwoabr7we";
+        $expectedResponse = $this->buildExpectedAddressDocumentVerificationAttemptAssetsResponse();
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("query")
+            ->with("address-document-verifications/" . $advId . "/attempts/" . $attemptId . "/assets")
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->getAddressDocumentVerificationAttemptAssets($advId, $attemptId);
 
         $this->assertNotNull($response);
     }
@@ -364,6 +437,43 @@ class AddressDocumentVerificationClientTest extends UnitTestFixture
             ],
             "created_on" => "2024-03-20T10:30:00Z"
         ];
+    }
+
+    private function buildExpectedAddressDocumentVerificationAttemptAssetsResponse(): array
+    {
+        return [
+            "total_count" => 1,
+            "skip" => 0,
+            "limit" => 10,
+            "data" => [
+                [
+                    "type" => "document",
+                    "_links" => [
+                        "download" => [
+                            "href" => "https://api.checkout.com/address-document-verifications/"
+                                . "adv_id/attempts/adva_id/assets/document"
+                        ]
+                    ]
+                ]
+            ],
+            "_links" => [
+                "self" => [
+                    "href" => "https://api.checkout.com/address-document-verifications/"
+                        . "adv_id/attempts/adva_id/assets"
+                ]
+            ]
+        ];
+    }
+
+    private function validateAddressDocumentVerificationAttemptAssetsResponse(array $response): void
+    {
+        $this->assertArrayHasKey("total_count", $response);
+        $this->assertArrayHasKey("skip", $response);
+        $this->assertArrayHasKey("limit", $response);
+        $this->assertArrayHasKey("data", $response);
+        $this->assertArrayHasKey("_links", $response);
+        $this->assertSame("document", $response["data"][0]["type"]);
+        $this->assertArrayHasKey("download", $response["data"][0]["_links"]);
     }
 
     private function buildExpectedAddressDocumentVerificationAttemptsResponse(): array

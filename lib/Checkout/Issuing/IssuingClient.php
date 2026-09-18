@@ -14,6 +14,7 @@ use Checkout\Issuing\Cards\Enrollment\ThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Enrollment\UpdateThreeDSEnrollmentRequest;
 use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
+use Checkout\Issuing\Cards\Update\CardUpdateHeaders;
 use Checkout\Issuing\Cards\Update\UpdateCardRequest;
 use Checkout\Issuing\Cards\Renew\RenewCardRequest;
 use Checkout\Issuing\Controls\Create\CardControlRequest;
@@ -756,15 +757,21 @@ class IssuingClient extends Client
      *
      * @param string $cardId - The card's unique identifier. (Required)
      * @param UpdateCardRequest $updateCardRequest (Required)
+     * @param CardUpdateHeaders|null $headers - The optional return-encrypted-cvv and
+     *                                          Encryption-Key HTTP headers. (Optional)
      * @return array
      * @throws CheckoutApiException
      */
-    public function updateCardDetails(string $cardId, UpdateCardRequest $updateCardRequest) : array
-    {
+    public function updateCardDetails(
+        string $cardId,
+        UpdateCardRequest $updateCardRequest,
+        ?CardUpdateHeaders $headers = null
+    ) : array {
         return $this->apiClient->patch(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId),
             $updateCardRequest,
-            $this->sdkAuthorization()
+            $this->sdkAuthorization(),
+            $headers
         );
     }
 

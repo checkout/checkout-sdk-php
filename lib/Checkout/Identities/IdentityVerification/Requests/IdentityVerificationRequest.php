@@ -2,7 +2,7 @@
 
 namespace Checkout\Identities\IdentityVerification\Requests;
 
-use Checkout\Identities\Entities\DeclaredData;
+use Checkout\Identities\Entities\IdentityDeclaredData;
 
 class IdentityVerificationRequest
 {
@@ -16,7 +16,8 @@ class IdentityVerificationRequest
     /**
      * The personal details provided by the applicant.
      *
-     * @var DeclaredData
+     * [Required]
+     * @var IdentityDeclaredData
      */
     public $declared_data;
 

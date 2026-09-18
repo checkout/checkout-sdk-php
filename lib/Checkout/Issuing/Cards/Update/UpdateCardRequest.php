@@ -10,6 +10,7 @@ class UpdateCardRequest
      * Your reference.
      * [Optional]
      * max 256 characters
+     * Example: X-123456-N11
      * @var string
      */
     public $reference;
@@ -24,8 +25,10 @@ class UpdateCardRequest
     /**
      * The card's expiration month.
      * [Optional]
+     * Format: int32
      * min 1
      * max 12
+     * Example: 5
      * @var int
      */
     public $expiry_month;
@@ -33,26 +36,31 @@ class UpdateCardRequest
     /**
      * The card's expiration year.
      * [Optional]
+     * Format: int32
      * min 4 characters, max 4 characters
+     * Example: 2025
      * @var int
      */
     public $expiry_year;
 
     /**
-     * ISO 8601 date scheduling the card's activation. Two formats are supported: date only (YYYY-MM-DD,
-     * treated as midnight UTC), or date with round hour (YYYY-MM-DDTHH:mmZ in UTC, or
-     * YYYY-MM-DDTHH:mm±HH:mm with offset). Only round hours are allowed when a time is provided (HH:00).
+     * Date scheduling the card's first activation. Only applies to the initial activation of a card.
+     * Two formats are supported: date only (YYYY-MM-DD, treated as midnight UTC), or date with
+     * round hour (YYYY-MM-DDTHH:mmZ in UTC, or YYYY-MM-DDTHH:mm+HH:mm with offset). Only round
+     * hours are allowed when a time is provided (HH:00). The value must be at least the next round
+     * hour after the request time.
      * [Optional]
-     * @var string
+     * Example: 2026-06-01T10:00Z
+     * @var string|null
      */
-    public $activation_date;
+    public $scheduled_activation_date;
 
     /**
-     * Date for the card to be automatically revoked. Must be after the current date and date only in the
-     * form yyyy-mm-dd.
+     * Date scheduling the card's automatic revocation.
      * [Optional]
-     * Format: yyyy-MM-dd
-     * @var string
+     * Format: date (YYYY-MM-DD, time is midnight UTC)
+     * Example: 2027-03-12
+     * @var string|null
      */
     public $revocation_date;
 }

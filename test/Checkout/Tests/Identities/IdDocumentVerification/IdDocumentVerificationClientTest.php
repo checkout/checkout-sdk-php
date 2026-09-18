@@ -6,6 +6,8 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\DeclaredData;
 use Checkout\Identities\IdDocumentVerification\IdDocumentVerificationClient;
 use Checkout\Identities\IdDocumentVerification\Requests\IdDocumentVerificationRequest;
@@ -115,7 +117,7 @@ class IdDocumentVerificationClientTest extends UnitTestFixture
         $expectedResponse = $this->buildExpectedIdDocumentVerificationAttemptsResponse();
         
         $this->apiClient
-            ->method("get")
+            ->method("query")
             ->willReturn($expectedResponse);
 
         $response = $this->client->getIdDocumentVerificationAttempts("iddoc_12345");
@@ -252,7 +254,7 @@ class IdDocumentVerificationClientTest extends UnitTestFixture
         
         $this->apiClient
             ->expects($this->once())
-            ->method("get")
+            ->method("query")
             ->with("id-document-verifications/" . $idDocVerificationId . "/attempts")
             ->willReturn($expectedResponse);
 
@@ -322,6 +324,141 @@ class IdDocumentVerificationClientTest extends UnitTestFixture
         $this->validateIdDocumentVerificationResponse($response);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetIdDocumentVerificationAttemptsWithPagination()
+    {
+        $iddvId = "iddoc_12345";
+        $expectedResponse = $this->buildExpectedIdDocumentVerificationAttemptsResponse();
+
+        $query = new AttemptsQueryFilter();
+        $query->skip = 5;
+        $query->limit = 25;
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("query")
+            ->with("id-document-verifications/" . $iddvId . "/attempts", $query)
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->getIdDocumentVerificationAttempts($iddvId, $query);
+
+        $this->assertNotNull($response);
+        $this->assertSame("skip=5&limit=25", $query->getEncodedQueryParameters());
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetIdDocumentVerificationAttemptAssets()
+    {
+        $expectedResponse = $this->buildExpectedIdDocumentVerificationAttemptAssetsResponse();
+
+        $this->apiClient
+            ->method("query")
+            ->willReturn($expectedResponse);
+
+        $query = new AttemptAssetsQueryFilter();
+        $query->limit = 10;
+
+        $response = $this->client->getIdDocumentVerificationAttemptAssets(
+            "iddoc_12345",
+            "attempt_67890",
+            $query
+        );
+
+        $this->assertNotNull($response);
+        $this->validateIdDocumentVerificationAttemptAssetsResponse($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCallCorrectApiEndpointForGetIdDocumentVerificationAttemptAssets()
+    {
+        $iddvId = "iddoc_12345";
+        $attemptId = "attempt_67890";
+        $expectedResponse = $this->buildExpectedIdDocumentVerificationAttemptAssetsResponse();
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("query")
+            ->with("id-document-verifications/" . $iddvId . "/attempts/" . $attemptId . "/assets")
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->getIdDocumentVerificationAttemptAssets($iddvId, $attemptId);
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldDeserializeTheIdDocumentVerificationAttemptAssetsSwaggerExample()
+    {
+        $decoded = json_decode(self::IDDV_ATTEMPT_ASSETS_SWAGGER_EXAMPLE, true);
+
+        $this->apiClient
+            ->method("query")
+            ->willReturn($decoded);
+
+        $response = $this->client->getIdDocumentVerificationAttemptAssets(
+            "iddv_tkoi5db4hryu5cei5vwoabr7we",
+            "datp_tkoi5db4hryu5cei5vwoabraio"
+        );
+
+        $this->assertSame(2, $response["total_count"]);
+        $this->assertSame(0, $response["skip"]);
+        $this->assertSame(10, $response["limit"]);
+        $this->assertCount(2, $response["data"]);
+        $this->assertStringContainsString(
+            "document_front.png",
+            $response["data"][0]["_links"]["asset_url"]["href"]
+        );
+        $this->assertStringContainsString(
+            "document_back.png",
+            $response["data"][1]["_links"]["asset_url"]["href"]
+        );
+        $this->assertArrayHasKey("self", $response["_links"]);
+        $this->assertArrayHasKey("next", $response["_links"]);
+        $this->assertArrayHasKey("previous", $response["_links"]);
+    }
+
+    /**
+     * The data array declares minItems 0, so an attempt with no assets yet is a valid page.
+     *
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldHandleAnEmptyIdDocumentVerificationAttemptAssetsPage()
+    {
+        $this->apiClient
+            ->method("query")
+            ->willReturn([
+                "total_count" => 0,
+                "skip" => 0,
+                "limit" => 10,
+                "data" => [],
+                "_links" => [
+                    "self" => [
+                        "href" => "https://api.checkout.com/id-document-verifications/"
+                            . "iddoc_12345/attempts/datp_12345/assets"
+                    ]
+                ]
+            ]);
+
+        $response = $this->client->getIdDocumentVerificationAttemptAssets("iddoc_12345", "datp_12345");
+
+        $this->assertSame(0, $response["total_count"]);
+        $this->assertSame([], $response["data"]);
+        $this->assertArrayHasKey("_links", $response);
+    }
+
     private function buildIdDocumentVerificationRequest(): IdDocumentVerificationRequest
     {
         $declaredData = new DeclaredData();
@@ -369,9 +506,76 @@ class IdDocumentVerificationClientTest extends UnitTestFixture
         ];
     }
 
+    /**
+     * The swagger example for this response, verbatim, from
+     * components.examples.iddv_attempt_assets_response_body. Kept as raw JSON rather than a PHP
+     * array so that a key renamed in the spec shows up as a test failure instead of being silently
+     * carried over from a hand-written fixture.
+     */
+    private const IDDV_ATTEMPT_ASSETS_SWAGGER_EXAMPLE = <<<'JSON'
+{
+  "total_count": 2,
+  "skip": 0,
+  "limit": 10,
+  "data": [
+    {
+      "type": "document_front_image",
+      "_links": {
+        "asset_url": {
+          "href": "https://storage-b.env.ubble.ai/ubble-ai/NDYOOVHGZPAQ/a54b3393-f02a-47c9-a9c5-2f6ee73560e1/bb603e2f-5de9-40f2-9631-8285a33c24c0/document_front.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=3600"
+        }
+      }
+    },
+    {
+      "type": "document_back_image",
+      "_links": {
+        "asset_url": {
+          "href": "https://storage-b.env.ubble.ai/ubble-ai/NDYOOVHGZPAQ/a54b3393-f02a-47c9-a9c5-2f6ee73560e1/bb603e2f-5de9-40f2-9631-8285a33c24c0/document_back.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=3600"
+        }
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://identity-verification.checkout.com/id-document-verifications/iddv_tkoi5db4hryu5cei5vwoabr7we/attempts/datp_tkoi5db4hryu5cei5vwoabraio/assets"
+    },
+    "next": {
+      "href": "https://identity-verification.checkout.com/id-document-verifications/iddv_tkoi5db4hryu5cei5vwoabr7we/attempts/datp_tkoi5db4hryu5cei5vwoabraio/assets?..."
+    },
+    "previous": {
+      "href": "https://identity-verification.checkout.com/id-document-verifications/iddv_tkoi5db4hryu5cei5vwoabr7we/attempts/datp_tkoi5db4hryu5cei5vwoabraio/assets?..."
+    }
+  }
+}
+JSON;
+
+    private function buildExpectedIdDocumentVerificationAttemptAssetsResponse(): array
+    {
+        return json_decode(self::IDDV_ATTEMPT_ASSETS_SWAGGER_EXAMPLE, true);
+    }
+
+    private function validateIdDocumentVerificationAttemptAssetsResponse(array $response): void
+    {
+        $this->assertArrayHasKey("total_count", $response);
+        $this->assertArrayHasKey("skip", $response);
+        $this->assertArrayHasKey("limit", $response);
+        $this->assertArrayHasKey("data", $response);
+        $this->assertArrayHasKey("_links", $response);
+        $this->assertSame("document_front_image", $response["data"][0]["type"]);
+        $this->assertSame("document_back_image", $response["data"][1]["type"]);
+        // asset_url is the only link the IddvAttemptAsset schema declares, and it is required.
+        $this->assertArrayHasKey("asset_url", $response["data"][0]["_links"]);
+        $this->assertArrayHasKey("asset_url", $response["data"][1]["_links"]);
+        $this->assertArrayNotHasKey("download", $response["data"][0]["_links"]);
+        $this->assertNotEmpty($response["data"][0]["_links"]["asset_url"]["href"]);
+    }
+
     private function buildExpectedIdDocumentVerificationAttemptsResponse(): array
     {
         return [
+            "total_count" => 1,
+            "skip" => 0,
+            "limit" => 10,
             "data" => [
                 [
                     "id" => "attempt_67890",
@@ -380,7 +584,11 @@ class IdDocumentVerificationClientTest extends UnitTestFixture
                     "created_on" => "2024-03-20T10:30:00Z"
                 ]
             ],
-            "total_count" => 1
+            "_links" => [
+                "self" => [
+                    "href" => "https://api.checkout.com/id-document-verifications/iddoc_12345/attempts"
+                ]
+            ]
         ];
     }
 
@@ -425,7 +633,10 @@ class IdDocumentVerificationClientTest extends UnitTestFixture
     {
         $this->assertArrayHasKey("data", $response);
         $this->assertArrayHasKey("total_count", $response);
-        
+        $this->assertArrayHasKey("skip", $response);
+        $this->assertArrayHasKey("limit", $response);
+        $this->assertArrayHasKey("_links", $response);
+
         $this->assertNotNull($response["data"]);
         $this->assertTrue(is_array($response["data"]));
         $this->assertNotNull($response["total_count"]);

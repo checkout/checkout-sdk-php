@@ -2,14 +2,15 @@
 
 namespace Checkout\Identities\IdentityVerification\Requests;
 
-use Checkout\Identities\Entities\DeclaredData;
+use Checkout\Identities\Entities\IdentityDeclaredData;
 
 class IdentityVerificationAndOpenRequest
 {
     /**
      * The personal details provided by the applicant. (Required)
      *
-     * @var DeclaredData
+     * [Required]
+     * @var IdentityDeclaredData
      */
     public $declared_data;
 

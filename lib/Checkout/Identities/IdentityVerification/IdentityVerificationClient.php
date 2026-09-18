@@ -7,6 +7,7 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationRequest;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationAndOpenRequest;
@@ -106,16 +107,24 @@ class IdentityVerificationClient extends Client
     }
 
     /**
+     * Get all the attempts for a specific identity verification.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
+     *
      * identityVerificationId is the identity verification's unique identifier. (Required)
      *
      * @param string $identityVerificationId
+     * @param AttemptsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
      */
-    public function getIdentityVerificationAttempts(string $identityVerificationId): array
-    {
-        return $this->apiClient->get(
+    public function getIdentityVerificationAttempts(
+        string $identityVerificationId,
+        ?AttemptsQueryFilter $query = null
+    ): array {
+        return $this->apiClient->query(
             $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ATTEMPTS_PATH),
+            $query,
             $this->sdkAuthorization()
         );
     }
@@ -153,7 +162,11 @@ class IdentityVerificationClient extends Client
     }
 
     /**
-     * Retrieves the assets (face images, videos, and document images) captured during an identity verification attempt.
+     * Get the assets (face images, videos, and document images) captured during an identity
+     * verification attempt. Videos are not exposed by default; contact your account manager to
+     * enable them.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
      *
      * identityVerificationId is the identity verification's unique identifier. (Required)
      * attemptId is the attempt's unique identifier. (Required)

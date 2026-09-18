@@ -7,6 +7,7 @@ use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\ClientInformation;
 use Checkout\Identities\FaceAuthentication\FaceAuthenticationClient;
 use Checkout\Identities\FaceAuthentication\Requests\FaceAuthenticationRequest;
@@ -116,7 +117,7 @@ class FaceAuthenticationClientTest extends UnitTestFixture
         $expectedResponse = $this->buildExpectedFaceAuthenticationAttemptsResponse();
         
         $this->apiClient
-            ->method("get")
+            ->method("query")
             ->willReturn($expectedResponse);
 
         $response = $this->client->getFaceAuthenticationAttempts("face_auth_12345");
@@ -277,7 +278,7 @@ class FaceAuthenticationClientTest extends UnitTestFixture
         
         $this->apiClient
             ->expects($this->once())
-            ->method("get")
+            ->method("query")
             ->with("face-authentications/" . $faceAuthId . "/attempts")
             ->willReturn($expectedResponse);
 
@@ -349,6 +350,31 @@ class FaceAuthenticationClientTest extends UnitTestFixture
         return $request;
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetFaceAuthenticationAttemptsWithPagination()
+    {
+        $faceAuthenticationId = "face_auth_12345";
+        $expectedResponse = $this->buildExpectedFaceAuthenticationAttemptsResponse();
+
+        $query = new AttemptsQueryFilter();
+        $query->skip = 5;
+        $query->limit = 25;
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("query")
+            ->with("face-authentications/" . $faceAuthenticationId . "/attempts", $query)
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->getFaceAuthenticationAttempts($faceAuthenticationId, $query);
+
+        $this->assertNotNull($response);
+        $this->assertSame("skip=5&limit=25", $query->getEncodedQueryParameters());
+    }
+
     private function buildExpectedFaceAuthenticationResponse(): array
     {
         return [
@@ -375,15 +401,27 @@ class FaceAuthenticationClientTest extends UnitTestFixture
     private function buildExpectedFaceAuthenticationAttemptsResponse(): array
     {
         return [
-            "attempts" => [
+            "total_count" => 1,
+            "skip" => 0,
+            "limit" => 10,
+            "data" => [
                 [
                     "id" => "attempt_67890",
-                    "face_authentication_id" => "face_auth_12345",
                     "status" => "pending",
+                    "redirect_url" => "https://verify.checkout.com/attempt_67890",
+                    "response_codes" => [],
+                    "phone_number" => [
+                        "country_code" => "+33",
+                        "number" => "1234567890"
+                    ],
                     "created_on" => "2024-03-20T10:30:00Z"
                 ]
             ],
-            "total_count" => 1
+            "_links" => [
+                "self" => [
+                    "href" => "https://api.checkout.com/face-authentications/face_auth_12345/attempts"
+                ]
+            ]
         ];
     }
 
@@ -417,13 +455,15 @@ class FaceAuthenticationClientTest extends UnitTestFixture
 
     private function validateFaceAuthenticationAttemptsResponse(array $response): void
     {
-        $this->assertArrayHasKey("attempts", $response);
         $this->assertArrayHasKey("total_count", $response);
+        $this->assertArrayHasKey("skip", $response);
+        $this->assertArrayHasKey("limit", $response);
+        $this->assertArrayHasKey("data", $response);
+        $this->assertArrayHasKey("_links", $response);
 
-        $this->assertNotNull($response["attempts"]);
-        $this->assertTrue(is_array($response["attempts"]));
-        $this->assertNotNull($response["total_count"]);
         $this->assertTrue(is_numeric($response["total_count"]));
+        $this->assertTrue(is_array($response["data"]));
+        $this->assertSame("+33", $response["data"][0]["phone_number"]["country_code"]);
     }
 
     private function buildExpectedFaceAuthenticationAttemptAssetsResponse(): array

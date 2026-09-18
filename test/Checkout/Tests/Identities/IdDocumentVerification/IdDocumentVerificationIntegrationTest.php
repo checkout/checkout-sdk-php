@@ -6,6 +6,8 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\DeclaredData;
 use Checkout\Identities\IdDocumentVerification\Requests\IdDocumentVerificationRequest;
 use Checkout\Identities\IdDocumentVerification\Requests\IdDocumentVerificationAttemptRequest;
@@ -213,6 +215,63 @@ class IdDocumentVerificationIntegrationTest extends SandboxTestFixture
         $this->validateWorkflowProgression($createdIdDocumentVerification, $retrievedIdDocumentVerification, $createdAttempt, $attemptsResponse, $retrievedAttempt, $reportResponse, $anonymizedIdDocumentVerification);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetIdDocumentVerificationAttemptsWithPagination()
+    {
+        $this->markTestSkipped("This test requires valid test environment setup");
+
+        $idDocVerificationRequest = $this->buildIdDocumentVerificationRequest();
+        $createdIdDocumentVerification = $this->checkoutApi->getIdDocumentVerificationClient()
+            ->createIdDocumentVerification($idDocVerificationRequest);
+
+        $attemptRequest = $this->buildIdDocumentVerificationAttemptRequest();
+        $createdAttempt = $this->checkoutApi->getIdDocumentVerificationClient()
+            ->createIdDocumentVerificationAttempt($createdIdDocumentVerification["id"], $attemptRequest);
+
+        $query = new AttemptsQueryFilter();
+        $query->skip = 0;
+        $query->limit = 1;
+
+        $response = $this->checkoutApi->getIdDocumentVerificationClient()
+            ->getIdDocumentVerificationAttempts($createdIdDocumentVerification["id"], $query);
+
+        $this->validateRetrievedIdDocumentVerificationAttempts($response, $createdAttempt);
+        $this->assertLessThanOrEqual(1, count($response["data"]));
+        $this->assertEquals(1, $response["limit"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetIdDocumentVerificationAttemptAssets()
+    {
+        $this->markTestSkipped("This test requires valid test environment setup");
+
+        $idDocVerificationRequest = $this->buildIdDocumentVerificationRequest();
+        $createdIdDocumentVerification = $this->checkoutApi->getIdDocumentVerificationClient()
+            ->createIdDocumentVerification($idDocVerificationRequest);
+
+        $attemptRequest = $this->buildIdDocumentVerificationAttemptRequest();
+        $createdAttempt = $this->checkoutApi->getIdDocumentVerificationClient()
+            ->createIdDocumentVerificationAttempt($createdIdDocumentVerification["id"], $attemptRequest);
+
+        $query = new AttemptAssetsQueryFilter();
+        $query->limit = 10;
+
+        $response = $this->checkoutApi->getIdDocumentVerificationClient()
+            ->getIdDocumentVerificationAttemptAssets(
+                $createdIdDocumentVerification["id"],
+                $createdAttempt["id"],
+                $query
+            );
+
+        $this->validateRetrievedIdDocumentVerificationAttemptAssets($response);
+    }
+
     private function buildIdDocumentVerificationRequest(): IdDocumentVerificationRequest
     {
         $declaredData = new DeclaredData();
@@ -296,7 +355,10 @@ class IdDocumentVerificationIntegrationTest extends SandboxTestFixture
         $this->assertResponse(
             $response,
             "data",
-            "total_count"
+            "total_count",
+            "skip",
+            "limit",
+            "_links"
         );
 
         $this->assertTrue(is_array($response["data"]));
@@ -304,6 +366,21 @@ class IdDocumentVerificationIntegrationTest extends SandboxTestFixture
         
         if (!empty($response["data"])) {
             $this->validateBaseIdDocumentVerificationAttemptResponse($response["data"][0]);
+        }
+    }
+
+    private function validateRetrievedIdDocumentVerificationAttemptAssets(array $response): void
+    {
+        $this->assertResponse($response, "total_count", "skip", "limit", "data", "_links");
+
+        $this->assertTrue(is_array($response["data"]));
+
+        if (!empty($response["data"])) {
+            $this->assertResponse($response["data"][0], "type", "_links");
+            $this->assertContains(
+                $response["data"][0]["type"],
+                ["document_front_image", "document_back_image"]
+            );
         }
     }
 

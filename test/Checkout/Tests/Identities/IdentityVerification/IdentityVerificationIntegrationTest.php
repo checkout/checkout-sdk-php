@@ -6,8 +6,11 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
-use Checkout\Identities\Entities\DeclaredData;
-use Checkout\Identities\Entities\ClientInformation;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
+use Checkout\Identities\Entities\IdentityDeclaredData;
+use Checkout\Identities\Entities\IdentityVerificationClientInformation;
+use Checkout\Identities\Entities\IdvAddress;
+use Checkout\Identities\Entities\PhoneNumber;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationRequest;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationAndOpenRequest;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationAttemptRequest;
@@ -262,9 +265,33 @@ class IdentityVerificationIntegrationTest extends SandboxTestFixture
     }
 
     // Request builders
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetIdentityVerificationAttemptsWithPagination()
+    {
+        $this->markTestSkipped("This test requires valid test environment setup");
+
+        $created = $this->checkoutApi->getIdentityVerificationClient()
+            ->createIdentityVerificationAndAttempt($this->buildIdentityVerificationAndOpenRequest());
+
+        $query = new AttemptsQueryFilter();
+        $query->skip = 0;
+        $query->limit = 1;
+
+        $response = $this->checkoutApi->getIdentityVerificationClient()
+            ->getIdentityVerificationAttempts($created["id"], $query);
+
+        $this->assertNotNull($response);
+        $this->assertLessThanOrEqual(1, count($response["data"]));
+        $this->assertEquals(1, $response["limit"]);
+        $this->assertEquals(0, $response["skip"]);
+    }
+
     private function buildIdentityVerificationAndOpenRequest()
     {
-        $declared_data = new DeclaredData();
+        $declared_data = new IdentityDeclaredData();
         $declared_data->name = "John Doe " . $this->generateRandomString();
 
         $request = new IdentityVerificationAndOpenRequest();
@@ -278,8 +305,22 @@ class IdentityVerificationIntegrationTest extends SandboxTestFixture
 
     private function buildIdentityVerificationRequest()
     {
-        $declared_data = new DeclaredData();
+        $address = new IdvAddress();
+        $address->address_line1 = "123 Main Street";
+        $address->city = "London";
+        $address->zip = "SW1A 1AA";
+        $address->country = "GB";
+
+        $phone_number = new PhoneNumber();
+        $phone_number->country_code = "+44";
+        $phone_number->number = "7700900000";
+
+        $declared_data = new IdentityDeclaredData();
         $declared_data->name = "Jane Smith " . $this->generateRandomString();
+        $declared_data->birth_date = "1994-10-15";
+        $declared_data->email = "jane.smith@example.com";
+        $declared_data->phone_number = $phone_number;
+        $declared_data->address = $address;
 
         $request = new IdentityVerificationRequest();
         $request->applicant_id = "applicant_" . $this->generateRandomString();
@@ -291,12 +332,19 @@ class IdentityVerificationIntegrationTest extends SandboxTestFixture
 
     private function buildIdentityVerificationAttemptRequest()
     {
-        $client_information = new ClientInformation();
+        $client_information = new IdentityVerificationClientInformation();
         $client_information->pre_selected_residence_country = "GB";
         $client_information->pre_selected_language = "en";
+        $client_information->pre_selected_document_issuing_country = "GB";
+        $client_information->pre_selected_document_type = "Passport";
+
+        $phone_number = new PhoneNumber();
+        $phone_number->country_code = "+44";
+        $phone_number->number = "7700900000";
 
         $request = new IdentityVerificationAttemptRequest();
         $request->redirect_url = "https://example.com/success?session=" . $this->generateRandomString();
+        $request->phone_number = $phone_number;
         $request->client_information = $client_information;
 
         return $request;
@@ -381,13 +429,15 @@ class IdentityVerificationIntegrationTest extends SandboxTestFixture
     private function validateRetrievedIdentityVerificationAttempts($response, $createdAttempt)
     {
         $this->assertNotNull($response);
-        $this->assertNotNull($response["count"]);
-        $this->assertTrue(is_array($response["attempts"]));
-        $this->assertGreaterThanOrEqual(1, $response["count"]);
-        
+        $this->assertNotNull($response["total_count"]);
+        $this->assertArrayHasKey("skip", $response);
+        $this->assertArrayHasKey("limit", $response);
+        $this->assertTrue(is_array($response["data"]));
+        $this->assertGreaterThanOrEqual(1, $response["total_count"]);
+
         // Find the created attempt in the list
         $found = false;
-        foreach ($response["attempts"] as $attempt) {
+        foreach ($response["data"] as $attempt) {
             if ($attempt["id"] === $createdAttempt["id"]) {
                 $found = true;
                 break;

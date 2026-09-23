@@ -97,8 +97,13 @@ class ApiClient
     }
 
     /**
+     * Performs a GET with an optional query filter.
+     *
+     * The filter is nullable: several clients expose an optional filter argument and pass it
+     * straight through, so a null must behave exactly like a plain get().
+     *
      * @param string $path
-     * @param AbstractQueryFilter $requestBody
+     * @param AbstractQueryFilter|null $requestBody
      * @param SdkAuthorization $authorization
      * @param mixed $headers
      * @return array
@@ -106,14 +111,16 @@ class ApiClient
      */
     public function query(
         string $path,
-        AbstractQueryFilter $requestBody,
+        ?AbstractQueryFilter $requestBody,
         SdkAuthorization $authorization,
         $headers = null
     ): array {
         $this->logger->info("GET " . $path);
-        $queryParameters = $requestBody->getEncodedQueryParameters();
-        if (!empty($queryParameters)) {
-            $path .= "?" . $queryParameters;
+        if ($requestBody !== null) {
+            $queryParameters = $requestBody->getEncodedQueryParameters();
+            if (!empty($queryParameters)) {
+                $path .= "?" . $queryParameters;
+            }
         }
         return $this->invoke("GET", $path, null, $authorization, null, $headers);
     }

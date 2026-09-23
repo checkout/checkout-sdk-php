@@ -7,8 +7,10 @@ use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
 use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
-use Checkout\Identities\Entities\DeclaredData;
-use Checkout\Identities\Entities\ClientInformation;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
+use Checkout\Identities\Entities\IdentityDeclaredData;
+use Checkout\Identities\Entities\IdentityVerificationClientInformation;
+use Checkout\Identities\Entities\PhoneNumber;
 use Checkout\Identities\IdentityVerification\IdentityVerificationClient;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationRequest;
 use Checkout\Identities\IdentityVerification\Requests\IdentityVerificationAndOpenRequest;
@@ -238,7 +240,7 @@ class IdentityVerificationClientTest extends UnitTestFixture
         $expectedResponse = $this->buildExpectedIdentityVerificationAttemptsResponse();
         
         $this->apiClient
-            ->method("get")
+            ->method("query")
             ->willReturn($expectedResponse);
 
         $response = $this->client->getIdentityVerificationAttempts("idv_test123");
@@ -258,7 +260,7 @@ class IdentityVerificationClientTest extends UnitTestFixture
         
         $this->apiClient
             ->expects($this->once())
-            ->method("get")
+            ->method("query")
             ->with("identity-verifications/" . $identityVerificationId . "/attempts")
             ->willReturn($expectedResponse);
 
@@ -386,10 +388,35 @@ class IdentityVerificationClientTest extends UnitTestFixture
         $this->assertNotNull($response);
     }
 
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldGetIdentityVerificationAttemptsWithPagination()
+    {
+        $identityVerificationId = "idv_test123";
+        $expectedResponse = $this->buildExpectedIdentityVerificationAttemptsResponse();
+
+        $query = new AttemptsQueryFilter();
+        $query->skip = 5;
+        $query->limit = 25;
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("query")
+            ->with("identity-verifications/" . $identityVerificationId . "/attempts", $query)
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->getIdentityVerificationAttempts($identityVerificationId, $query);
+
+        $this->assertNotNull($response);
+        $this->assertSame("skip=5&limit=25", $query->getEncodedQueryParameters());
+    }
+
     // Request builders
     private function buildIdentityVerificationAndOpenRequest()
     {
-        $declared_data = new DeclaredData();
+        $declared_data = new IdentityDeclaredData();
         $declared_data->name = "John Doe";
 
         $request = new IdentityVerificationAndOpenRequest();
@@ -403,7 +430,7 @@ class IdentityVerificationClientTest extends UnitTestFixture
 
     private function buildIdentityVerificationRequest()
     {
-        $declared_data = new DeclaredData();
+        $declared_data = new IdentityDeclaredData();
         $declared_data->name = "Jane Smith";
 
         $request = new IdentityVerificationRequest();
@@ -416,12 +443,19 @@ class IdentityVerificationClientTest extends UnitTestFixture
 
     private function buildIdentityVerificationAttemptRequest()
     {
-        $client_information = new ClientInformation();
+        $client_information = new IdentityVerificationClientInformation();
         $client_information->pre_selected_residence_country = "GB";
         $client_information->pre_selected_language = "en";
+        $client_information->pre_selected_document_issuing_country = "GB";
+        $client_information->pre_selected_document_type = "Passport";
+
+        $phone_number = new PhoneNumber();
+        $phone_number->country_code = "+33";
+        $phone_number->number = "5555550102";
 
         $request = new IdentityVerificationAttemptRequest();
         $request->redirect_url = "https://example.com/success";
+        $request->phone_number = $phone_number;
         $request->client_information = $client_information;
 
         return $request;
@@ -487,18 +521,31 @@ class IdentityVerificationClientTest extends UnitTestFixture
     private function buildExpectedIdentityVerificationAttemptsResponse()
     {
         return [
-            "count" => 2,
-            "attempts" => [
+            "total_count" => 2,
+            "skip" => 0,
+            "limit" => 10,
+            "data" => [
                 [
                     "id" => "att_test456",
-                    "identity_verification_id" => "idv_test123",
                     "status" => "pending",
+                    "redirect_url" => "https://verify.checkout.com/att_test456",
+                    "response_codes" => [],
+                    "phone_number" => [
+                        "country_code" => "+33",
+                        "number" => "1234567890"
+                    ],
+                    "client_information" => [
+                        "pre_selected_residence_country" => "GB",
+                        "pre_selected_document_issuing_country" => "GB",
+                        "pre_selected_document_type" => "Passport"
+                    ],
                     "created_on" => "2023-03-15T10:35:00Z"
                 ],
                 [
                     "id" => "att_test789",
-                    "identity_verification_id" => "idv_test123",
                     "status" => "completed",
+                    "redirect_url" => "https://verify.checkout.com/att_test789",
+                    "response_codes" => [],
                     "created_on" => "2023-03-15T11:00:00Z"
                 ]
             ],
@@ -558,9 +605,14 @@ class IdentityVerificationClientTest extends UnitTestFixture
 
     private function validateIdentityVerificationAttemptsResponse($response)
     {
-        $this->assertNotNull($response["count"]);
-        $this->assertTrue(is_array($response["attempts"]));
-        $this->assertGreaterThanOrEqual(0, $response["count"]);
+        $this->assertNotNull($response["total_count"]);
+        $this->assertArrayHasKey("skip", $response);
+        $this->assertArrayHasKey("limit", $response);
+        $this->assertTrue(is_array($response["data"]));
+        $this->assertGreaterThanOrEqual(0, $response["total_count"]);
+        $this->assertSame("+33", $response["data"][0]["phone_number"]["country_code"]);
+        $this->assertSame("GB", $response["data"][0]["client_information"]["pre_selected_document_issuing_country"]);
+        $this->assertSame("Passport", $response["data"][0]["client_information"]["pre_selected_document_type"]);
     }
 
     private function validateIdentityVerificationPdfReportResponse($response)

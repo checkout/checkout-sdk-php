@@ -7,6 +7,7 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
 use Checkout\Identities\FaceAuthentication\Requests\FaceAuthenticationRequest;
 use Checkout\Identities\FaceAuthentication\Requests\FaceAuthenticationAttemptRequest;
@@ -88,16 +89,24 @@ class FaceAuthenticationClient extends Client
     }
 
     /**
+     * Get the details of all attempts for a specific face authentication.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
+     *
      * faceAuthenticationId is the face authentication's unique identifier. (Required)
      *
      * @param string $faceAuthenticationId
+     * @param AttemptsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
      */
-    public function getFaceAuthenticationAttempts(string $faceAuthenticationId): array
-    {
-        return $this->apiClient->get(
+    public function getFaceAuthenticationAttempts(
+        string $faceAuthenticationId,
+        ?AttemptsQueryFilter $query = null
+    ): array {
+        return $this->apiClient->query(
             $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ATTEMPTS_PATH),
+            $query,
             $this->sdkAuthorization()
         );
     }
@@ -120,7 +129,10 @@ class FaceAuthenticationClient extends Client
     }
 
     /**
-     * Retrieves the assets (face images and videos) captured during a face authentication attempt.
+     * Get the assets (face images and videos) captured during a face authentication attempt.
+     * Videos are not exposed by default; contact your account manager to enable them.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
      *
      * faceAuthenticationId is the face authentication's unique identifier. (Required)
      * attemptId is the attempt's unique identifier. (Required)

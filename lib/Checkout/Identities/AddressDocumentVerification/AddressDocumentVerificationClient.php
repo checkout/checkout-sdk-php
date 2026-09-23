@@ -7,6 +7,8 @@ use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
+use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
+use Checkout\Identities\Entities\AttemptsQueryFilter;
 use Checkout\Identities\AddressDocumentVerification\Requests\AddressDocumentVerificationRequest;
 use Checkout\Identities\AddressDocumentVerification\Requests\AddressDocumentVerificationAttemptRequest;
 
@@ -15,6 +17,7 @@ class AddressDocumentVerificationClient extends Client
     const ADDRESS_DOCUMENT_VERIFICATIONS_PATH = "address-document-verifications";
     const ANONYMIZE_PATH = "anonymize";
     const ATTEMPTS_PATH = "attempts";
+    const ASSETS_PATH = "assets";
     const PDF_REPORT_PATH = "pdf-report";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
@@ -96,20 +99,28 @@ class AddressDocumentVerificationClient extends Client
     }
 
     /**
+     * Get the details of all attempts for a specific address document verification.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
+     *
      * addressDocumentVerificationId is the address document verification's unique identifier. (Required)
      *
      * @param string $addressDocumentVerificationId
+     * @param AttemptsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
      */
-    public function getAddressDocumentVerificationAttempts(string $addressDocumentVerificationId): array
-    {
-        return $this->apiClient->get(
+    public function getAddressDocumentVerificationAttempts(
+        string $addressDocumentVerificationId,
+        ?AttemptsQueryFilter $query = null
+    ): array {
+        return $this->apiClient->query(
             $this->buildPath(
                 self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
                 $addressDocumentVerificationId,
                 self::ATTEMPTS_PATH
             ),
+            $query,
             $this->sdkAuthorization()
         );
     }
@@ -153,6 +164,38 @@ class AddressDocumentVerificationClient extends Client
                 $addressDocumentVerificationId,
                 self::PDF_REPORT_PATH
             ),
+            $this->sdkAuthorization()
+        );
+    }
+
+    /**
+     * Get the assets (the document image) uploaded for an address document verification attempt.
+     * Results are paginated. Use the skip and limit query parameters to page through them.
+     * Beta.
+     *
+     * addressDocumentVerificationId is the address document verification's unique identifier. (Required)
+     * attemptId is the attempt's unique identifier. (Required)
+     *
+     * @param string $addressDocumentVerificationId
+     * @param string $attemptId
+     * @param AttemptAssetsQueryFilter|null $query the pagination query parameters (skip and limit)
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function getAddressDocumentVerificationAttemptAssets(
+        string $addressDocumentVerificationId,
+        string $attemptId,
+        ?AttemptAssetsQueryFilter $query = null
+    ): array {
+        return $this->apiClient->query(
+            $this->buildPath(
+                self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
+                $addressDocumentVerificationId,
+                self::ATTEMPTS_PATH,
+                $attemptId,
+                self::ASSETS_PATH
+            ),
+            $query,
             $this->sdkAuthorization()
         );
     }

@@ -10,6 +10,7 @@ use Checkout\Issuing\IssuingClient;
 use Checkout\Issuing\Cards\Create\VirtualCardRequest;
 use Checkout\Issuing\Cards\Credentials\CardCredentialsQuery;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
+use Checkout\Issuing\Cards\Update\UpdateCardRequest;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
@@ -48,6 +49,80 @@ class CardsClientTest extends UnitTestFixture
         $this->assertNotNull($response);
         $this->assertArrayHasKey("id", $response);
         $this->assertEquals("crd_12345", $response["id"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateCardWithScheduledRevocationDate()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn([
+                "id" => "crd_12345",
+                "scheduled_revocation_date" => "2027-03-12",
+                "last_activated_on" => null
+            ]);
+
+        $request = new VirtualCardRequest();
+        $request->scheduled_revocation_date = "2027-03-12";
+
+        $response = $this->client->createCard($request);
+
+        $this->assertEquals("2027-03-12", $request->scheduled_revocation_date);
+        $this->assertNotNull($response);
+        $this->assertEquals("2027-03-12", $response["scheduled_revocation_date"]);
+        $this->assertNull($response["last_activated_on"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateCardWithStatusAndScheduledRevocationDate()
+    {
+        $this->apiClient
+            ->method("patch")
+            ->willReturn([
+                "id" => "crd_12345",
+                "status" => "active",
+                "scheduled_revocation_date" => "2027-03-12",
+                "last_modified_date" => "2026-09-17T10:00:00Z"
+            ]);
+
+        $request = new UpdateCardRequest();
+        $request->status = "active";
+        $request->scheduled_revocation_date = "2027-03-12";
+
+        $response = $this->client->updateCardDetails("crd_12345", $request);
+
+        $this->assertEquals("active", $request->status);
+        $this->assertEquals("2027-03-12", $request->scheduled_revocation_date);
+        $this->assertNotNull($response);
+        $this->assertEquals("active", $response["status"]);
+        $this->assertEquals("2027-03-12", $response["scheduled_revocation_date"]);
+        $this->assertArrayNotHasKey("encrypted_cvv", $response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldActivateCardWithLastActivatedOn()
+    {
+        $this->apiClient
+            ->method("post")
+            ->willReturn([
+                "id" => "crd_12345",
+                "last_activated_on" => "2026-09-17T10:00:00Z"
+            ]);
+
+        $response = $this->client->activateCard("crd_12345");
+
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey("last_activated_on", $response);
+        $this->assertEquals("2026-09-17T10:00:00Z", $response["last_activated_on"]);
     }
 
     /**

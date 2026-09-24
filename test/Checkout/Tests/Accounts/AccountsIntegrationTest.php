@@ -351,8 +351,12 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $onboardEntityRequest->contact_details->phone = $phone;
         $onboardEntityRequest->contact_details->email_addresses = $emailAddresses;
 
-        // The holding currency scope is configured on the platform (USD here), while the
-        // processing_details currency reflects the sub-entity region (GBP); they are independent.
+        // Every currency on this request has to sit inside the platform's currency scope, which is
+        // USD only. This previously set the processing_details currency to GBP on the theory that
+        // the profile reflects the platform while processing details reflect the sub-entity region,
+        // and that the two are independent. The API rejects that with
+        // processing_details_currency_invalid_for_currency_scope. Widening the profile to GBP
+        // instead is also rejected, because the scope itself does not permit GBP.
         $onboardEntityRequest->profile = new Profile();
         $onboardEntityRequest->profile->urls = array("https://www.example-test-entity.com");
         $onboardEntityRequest->profile->mccs = array("0742");
@@ -428,7 +432,7 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $processingDetails->annual_processing_volume = 1000000;
         $processingDetails->average_transaction_value = 5000;
         $processingDetails->average_order_fulfillment_time = 3;
-        $processingDetails->currency = Currency::$GBP;
+        $processingDetails->currency = Currency::$USD;
         $processingDetails->target_countries = array(Country::$GB);
         $processingDetails->payments = $payments;
 

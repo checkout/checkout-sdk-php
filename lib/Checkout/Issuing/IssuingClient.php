@@ -755,6 +755,9 @@ class IssuingClient extends Client
      * Update the details of an issued card.
      * Only the fields for which you provide values will be updated.
      *
+     * For virtual cards, the response may include is_single_use, specifying whether
+     * the card is set to expire after a single use. Physical cards never send it.
+     *
      * @param string $cardId - The card's unique identifier. (Required)
      * @param UpdateCardRequest $updateCardRequest (Required)
      * @param CardUpdateHeaders|null $headers - The optional return-encrypted-cvv and

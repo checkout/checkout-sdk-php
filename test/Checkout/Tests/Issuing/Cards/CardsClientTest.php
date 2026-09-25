@@ -106,6 +106,30 @@ class CardsClientTest extends UnitTestFixture
     }
 
     /**
+     * The 2026-09-23 spec update split update-card-response into a virtual/physical
+     * discriminator; the virtual variant adds is_single_use.
+     *
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUpdateVirtualCardWithIsSingleUse()
+    {
+        $this->apiClient
+            ->method("patch")
+            ->willReturn([
+                "type" => "virtual",
+                "last_modified_date" => "2026-09-17T10:00:00Z",
+                "is_single_use" => true
+            ]);
+
+        $request = new UpdateCardRequest();
+        $response = $this->client->updateCardDetails("crd_12345", $request);
+
+        $this->assertNotNull($response);
+        $this->assertTrue($response["is_single_use"]);
+    }
+
+    /**
      * @test
      * @throws CheckoutApiException
      */

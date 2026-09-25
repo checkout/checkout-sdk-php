@@ -17,7 +17,6 @@ use Checkout\Issuing\Cards\Suspend\SuspendReason;
 use Checkout\Issuing\Cards\Create\CardLifetime;
 use Checkout\Issuing\Cards\Create\LifetimeUnit;
 use Checkout\Issuing\Cards\Create\VirtualCardRequest;
-use Checkout\Issuing\Cards\Update\CardUpdateHeaders;
 use Checkout\Issuing\Cards\Update\UpdateCardRequest;
 use Checkout\Issuing\Cards\Renew\RenewCardRequest;
 use Checkout\Tests\Issuing\AbstractIssuingIntegrationTest;
@@ -301,28 +300,9 @@ class CardsIntegrationTest extends AbstractIssuingIntegrationTest
         $this->assertResponse($updateResponse, "last_modified_date");
     }
 
-    /**
-     * @test
-     * @throws CheckoutApiException
-     */
-    public function shouldUpdateCardDetailsReturningEncryptedCvv()
-    {
-        $card = $this->createCard($this->cardholder["id"], true);
-
-        $updateRequest = new UpdateCardRequest();
-        $updateRequest->reference = "UPDATED-REF-123";
-
-        $headers = new CardUpdateHeaders();
-        $headers->return_encrypted_cvv = "true";
-        $headers->encryption_key = $this->getEncryptionKey();
-
-        $updateResponse = $this->issuingApi->getIssuingClient()
-            ->updateCardDetails($card["id"], $updateRequest, $headers);
-
-        $this->assertEquals(200, $updateResponse["http_metadata"]->getStatusCode());
-        $this->assertResponse($updateResponse, "last_modified_date", "encrypted_cvv");
-        $this->assertNotEmpty($updateResponse["encrypted_cvv"]);
-    }
+    // The 2026-09-17 spec (INT-1700) removed encrypted_cvv from update-card-response entirely,
+    // so return-encrypted-cvv/Encryption-Key no longer make the update response carry it. This
+    // test previously asserted the opposite (added by INT-1695, when the field still existed).
 
     /**
      * The next round hour in UTC, which is the earliest value the API accepts for a scheduled
@@ -333,18 +313,6 @@ class CardsIntegrationTest extends AbstractIssuingIntegrationTest
     private function nextRoundHour(): string
     {
         return gmdate("Y-m-d\\TH:00\\Z", strtotime("+2 hours"));
-    }
-
-    /**
-     * The RSA public key used to encrypt returned credentials, with the PEM headers and newlines
-     * removed. Supplied by the environment because it pairs with a private key the test cannot
-     * hold.
-     *
-     * @return string
-     */
-    private function getEncryptionKey(): string
-    {
-        return getenv("CHECKOUT_ISSUING_ENCRYPTION_KEY") ?: "";
     }
 
     /**

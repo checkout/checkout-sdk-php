@@ -134,7 +134,7 @@ class CardUpdateHeadersTest extends UnitTestFixture
         $response = $this->client->updateCardDetails("crd_12345", $request, $headers);
 
         $this->assertNotNull($response);
-        $this->assertSame("oJMoNMEEUiQKYOsQ4Zd", $response["encrypted_cvv"]);
+        $this->assertArrayNotHasKey("encrypted_cvv", $response);
         $this->assertArrayHasKey("last_modified_date", $response);
     }
 
@@ -193,14 +193,15 @@ class CardUpdateHeadersTest extends UnitTestFixture
     }
 
     /**
+     * The 2026-09-17 spec (INT-1700) removed encrypted_cvv from update-card-response entirely,
+     * so return-encrypted-cvv/Encryption-Key no longer make the response carry it. This test
+     * previously asserted the opposite (added by INT-1695, when the field still existed).
+     *
      * @test
      */
     public function shouldSucceedWhenBothHeadersAreSupplied()
     {
-        $client = $this->buildClientReturning(200, '{'
-            . '"last_modified_date":"2026-06-01T10:00:00Z",'
-            . '"encrypted_cvv":"oJMoNMEEUiQKYOsQ4Zd"'
-            . '}');
+        $client = $this->buildClientReturning(200, '{"last_modified_date":"2026-06-01T10:00:00Z"}');
 
         $headers = new CardUpdateHeaders();
         $headers->return_encrypted_cvv = "true";
@@ -208,7 +209,7 @@ class CardUpdateHeadersTest extends UnitTestFixture
 
         $response = $client->updateCardDetails("crd_12345", new UpdateCardRequest(), $headers);
 
-        $this->assertSame("oJMoNMEEUiQKYOsQ4Zd", $response["encrypted_cvv"]);
+        $this->assertArrayNotHasKey("encrypted_cvv", $response);
         $this->assertSame(200, $response["http_metadata"]->getStatusCode());
     }
 
@@ -287,7 +288,6 @@ class CardUpdateHeadersTest extends UnitTestFixture
     {
         return [
             "last_modified_date" => "2026-06-01T10:00:00Z",
-            "encrypted_cvv" => "oJMoNMEEUiQKYOsQ4Zd",
             "_links" => [
                 "self" => ["href" => "https://api.checkout.com/issuing/cards/crd_12345"]
             ]

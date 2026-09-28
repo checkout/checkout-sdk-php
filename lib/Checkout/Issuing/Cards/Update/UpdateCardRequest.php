@@ -56,11 +56,35 @@ class UpdateCardRequest
     public $scheduled_activation_date;
 
     /**
-     * Date scheduling the card's automatic revocation.
+     * Deprecated. Use `scheduled_revocation_date` instead.
+     *
+     * Date scheduling the card's automatic revocation. If you provide both fields, the
+     * `scheduled_revocation_date` value overrides this value.
+     * [Optional]
+     * Format: yyyy-MM-dd
+     * @var string
+     * @deprecated Use $scheduled_revocation_date instead.
+     */
+    public $revocation_date;
+
+    /**
+     * The card will be revoked at midnight UTC on the date specified. Overrides the deprecated
+     * `revocation_date` if both are provided.
      * [Optional]
      * Format: date (YYYY-MM-DD, time is midnight UTC)
      * Example: 2027-03-12
      * @var string|null
      */
-    public $revocation_date;
+    public $scheduled_revocation_date;
+
+    /**
+     * Set the card's status to `active` to activate an `inactive` or `suspended` card.
+     *
+     * If you submit this field, you cannot specify a `scheduled_activation_date`. If you do, you
+     * receive a `scheduled_activation_date_conflicts_with_activation` error.
+     * [Optional]
+     * Enum: "active"
+     * @var string
+     */
+    public $status;
 }

@@ -4,6 +4,14 @@ namespace Checkout\Payments;
 
 use Checkout\Payments\Previous\SenderInformation;
 
+/**
+ * Settings that control how the payment is processed.
+ *
+ * Shared across several request shapes. POST /payments resolves to PaymentRequestProcessing, while
+ * hosted payments, payment links and payment sessions resolve to the wider
+ * PaymentInterfacesProcessing. A property is therefore not necessarily read by every endpoint that
+ * accepts this object.
+ */
 class ProcessingSettings
 {
     /**
@@ -55,20 +63,24 @@ class ProcessingSettings
     public $partner_customer_risk_data;
 
     /**
-     * Custom payment method IDs to be used for this payment.
-     * @var array of string
+     * Promo codes. They define which of the configured payment options within a payment
+     * category (pay_later, pay_over_time, and so on) are shown for this purchase.
+     * [Optional]
+     * @var string[]
      */
     public $custom_payment_method_ids;
 
     /**
-     * Airline-specific data for travel payments.
-     * @var array of AirlineData
+     * Contains information about the airline ticket and flights booked by the customer.
+     * [Optional]
+     * @var AirlineData[]
      */
     public $airline_data;
 
     /**
-     * Accommodation-specific data for hotel payments.
-     * @var array of AccommodationData
+     * Contains information about the accommodation booked by the customer.
+     * [Optional]
+     * @var AccommodationData[]
      */
     public $accommodation_data;
 
@@ -182,42 +194,64 @@ class ProcessingSettings
 
     /**
      * The shipping preference for the payment.
+     *
+     * Declared on PaymentContextProcessing only,
+     * so it is read by POST /payment-contexts and not by POST /payments, hosted payments or payment links.
      * @var string value of ShippingPreference
      */
     public $shipping_preference;
 
     /**
      * The user action required for the payment.
+     *
+     * Declared on PaymentContextProcessing only.
+     * Required by PayPal to have an appropriate payment flow.
      * @var string value of UserAction
      */
     public $user_action;
 
     /**
      * Additional transaction context information.
+     *
+     * Not in the current specification, neither NAS nor Previous (ABC). Serializes as
+     * set_transaction_context, which no request processing schema defines, so the gateway
+     * discards it. Retained for backwards compatibility.
      * @var array
      */
     public $set_transaction_context;
 
     /**
      * The OTP (One-Time Password) value for authentication.
+     *
+     * Declared on the payment contexts payment request and on the capture request only,
+     * not on PaymentRequestProcessing or PaymentInterfacesProcessing.
      * @var string
      */
     public $otp_value;
 
     /**
      * The shipping delay in days.
+     *
+     * Not in the current specification, neither NAS nor Previous (ABC).
+     * The gateway discards it. Retained for backwards compatibility.
      * @var int
      */
     public $shipping_delay;
 
     /**
      * Additional shipping information for the payment.
-     * @var array of ShippingInfo
+     *
+     * Not in the current specification, neither NAS nor Previous (ABC). The gateway discards
+     * it. Retained for backwards compatibility.
+     * @var ShippingInfo[]
      */
     public $shipping_info;
 
     /**
      * DLocal-specific processing settings.
+     *
+     * Previous API (ABC) only.
+     * It is absent from the NAS processing schemas.
      * @var DLocalProcessingSettings
      */
     public $dlocal;
@@ -230,12 +264,18 @@ class ProcessingSettings
 
     /**
      * Sender information for the payment.
+     *
+     * Previous API (ABC) only.
+     * The camelCase property name is deliberate and correct: the ABC specification spells this property "senderInformation", not "sender_information". Do not change it to snake_case.
      * @var SenderInformation
      */
     public $senderInformation;
 
     /**
      * The purpose of the payment.
+     *
+     * Not declared on any processing schema in either specification.
+     * The name appears elsewhere in the spec on unrelated objects. The gateway discards it here.
      * @var string
      */
     public $purpose;

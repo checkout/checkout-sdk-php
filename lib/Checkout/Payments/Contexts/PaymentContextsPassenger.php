@@ -5,6 +5,9 @@ namespace Checkout\Payments\Contexts;
 use Checkout\Common\Address;
 use Checkout\Common\DateOnly;
 
+/**
+ * Contains information about a passenger on the flight.
+ */
 class PaymentContextsPassenger
 {
     /**

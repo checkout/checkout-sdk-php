@@ -5,6 +5,9 @@ namespace Checkout\Payments;
 use DateTime;
 use Checkout\Common\DateOnly;
 
+/**
+ * Contains information about a guest staying at the accommodation.
+ */
 class AccommodationGuest
 {
     /**

@@ -2,8 +2,13 @@
 
 namespace Checkout\Payments\Setups\Common\Industry;
 
+use Checkout\Payments\FlightLegDetails;
+use Checkout\Payments\Passenger;
 use Checkout\Payments\Ticket;
 
+/**
+ * Details about the airline ticket and flights the customer booked.
+ */
 class AirlineData
 {
     /**
@@ -16,14 +21,14 @@ class AirlineData
     /**
      * The list of passengers on the flight.
      * [Optional]
-     * @var array of Passenger
+     * @var Passenger[]
      */
     public $passengers;
 
     /**
      * The list of flight legs booked by the customer.
      * [Optional]
-     * @var array of FlightLegDetails
+     * @var FlightLegDetails[]
      */
     public $flight_leg_details;
 

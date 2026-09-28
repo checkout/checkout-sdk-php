@@ -17,6 +17,11 @@ use Checkout\Payments\CustomerSummary;
 use Checkout\Payments\Hosted\HostedPaymentsSessionRequest;
 use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\PaymentType;
+use Checkout\Payments\AirlineData;
+use Checkout\Payments\FlightLegDetails;
+use Checkout\Payments\Passenger;
+use Checkout\Payments\PassengerAddress;
+use Checkout\Payments\Ticket;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentInstruction;
 use Checkout\Payments\RiskRequest;
@@ -79,6 +84,55 @@ class HostedPaymentsIntegrationTest extends SandboxTestFixture
             "_links.self",
             "_links.redirect"
         );
+    }
+
+
+    /**
+     * Sends processing.airline_data to a live endpoint.
+     *
+     * Hosted payments rejects the array form of passenger with 422
+     * processing_airline_data_0_passenger_invalid and accepts a single object, which is the
+     * opposite of what the specification declares. Nothing else in this suite sends airline data
+     * anywhere, and the equivalent test in the Go SDK is what caught that mistake before it
+     * reached a merchant. A 422 here means the documented guidance on AirlineData::$passenger no
+     * longer matches what the endpoint accepts.
+     *
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateHostedPaymentsPageSessionWithAirlineData(): void
+    {
+        $request = $this->createHostedPaymentsRequest();
+
+        $ticket = new Ticket();
+        $ticket->number = "045-21351455613";
+        $ticket->issuing_carrier_code = "AI";
+        $ticket->travel_package_indicator = "B";
+
+        // A single object, not a one-element array: see AirlineData::$passenger.
+        $passenger = new Passenger();
+        $passenger->first_name = "John";
+        $passenger->last_name = "White";
+        $passenger->address = new PassengerAddress();
+        $passenger->address->country = Country::$GB;
+
+        $leg = new FlightLegDetails();
+        $leg->flight_number = "101";
+        $leg->carrier_code = "BA";
+        $leg->class_of_travelling = "J";
+        $leg->departure_airport = "LHR";
+        $leg->arrival_airport = "LAX";
+
+        $airline = new AirlineData();
+        $airline->ticket = $ticket;
+        $airline->passenger = $passenger;
+        $airline->flight_leg_details = array($leg);
+
+        $request->processing->airline_data = array($airline);
+
+        $response = $this->checkoutApi->getHostedPaymentsClient()->createHostedPaymentsPageSession($request);
+
+        $this->assertResponse($response, "id", "reference", "_links", "_links.redirect");
     }
 
     private function createHostedPaymentsRequest(): HostedPaymentsSessionRequest

@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments;
 
+/**
+ * Contains information about a room booked by the customer.
+ */
 class AccommodationRoom
 {
     /**

@@ -13,9 +13,9 @@ use Checkout\Payments\Setups\Common\Industry\Industry;
 use Checkout\Payments\Setups\Common\Order\AmountAllocationCommission;
 use Checkout\Payments\Setups\Common\Order\Order;
 use Checkout\Payments\Setups\Common\Order\PaymentSetupAmountAllocation;
-use Checkout\Payments\AccommodationAddress;
+use Checkout\Payments\Setups\Common\Industry\PaymentSetupAccommodationAddress;
 use Checkout\Payments\AccommodationGuest;
-use Checkout\Payments\AccommodationRoom;
+use Checkout\Payments\Setups\Common\Industry\PaymentSetupAccommodationRoom;
 use Checkout\Payments\Ticket;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\Bacs;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\BacsAccountHolder;
@@ -148,17 +148,21 @@ class PaymentSetupFieldsSerializationTest extends TestCase
 
     public function testSerializesAccommodationIndustryDataIncludingNewFields()
     {
-        $address = new AccommodationAddress();
+        $address = new PaymentSetupAccommodationAddress();
         $address->address_line1 = "1 Main Street";
+        $address->city = "London";
+        $address->state = "Greater London";
+        $address->country = "GB";
         $address->zip = "SW1A 1AA";
 
         $guest = new AccommodationGuest();
         $guest->first_name = "Jane";
         $guest->last_name = "Smith";
 
-        $room = new AccommodationRoom();
-        $room->rate = "150.00";
-        $room->number_of_nights_at_room_rate = "3";
+        $room = new PaymentSetupAccommodationRoom();
+        $room->rate = 42.3;
+        $room->number_of_nights = 3;
+        $room->type = "deluxe";
 
         $host = new AccommodationHost();
         $host->total_reservation_count = 42;
@@ -176,20 +180,38 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $accommodation->host = $host;
 
         $industry = new Industry();
-        $industry->accommodation_data = $accommodation;
+        $industry->accommodation = [$accommodation];
 
         $request = new PaymentSetupRequest();
         $request->industry = $industry;
 
         $decoded = json_decode((new JsonSerializer())->serialize($request), true);
-        $decodedAccommodation = $decoded['industry']['accommodation_data'];
+        $decodedAccommodation = $decoded['industry']['accommodation'][0];
 
         $this->assertSame("Grand Hotel", $decodedAccommodation['name']);
         $this->assertSame("book_123", $decodedAccommodation['booking_reference']);
         $this->assertSame("1 Main Street", $decodedAccommodation['address']['address_line1']);
         $this->assertSame(2, $decodedAccommodation['number_of_rooms']);
         $this->assertSame("Jane", $decodedAccommodation['guests'][0]['first_name']);
-        $this->assertSame("150.00", $decodedAccommodation['room'][0]['rate']);
+        // rate is a number on this schema, not a string: the specification's own example is
+        // 42.3. Verified by round-trip against the sandbox, where a string "150.00" came back
+        // as 150. A whole float like 150.00 json-encodes to 150, so the fixture uses a
+        // fractional value to keep the type visible in the assertion.
+        $this->assertSame(42.3, $decodedAccommodation['room'][0]['rate']);
+        // number_of_nights and type were unsendable while this reused the payments
+        // AccommodationRoom, which declares number_of_nights_at_room_rate and no type.
+        $this->assertSame(3, $decodedAccommodation['room'][0]['number_of_nights']);
+        $this->assertSame("deluxe", $decodedAccommodation['room'][0]['type']);
+        $this->assertArrayNotHasKey('number_of_nights_at_room_rate', $decodedAccommodation['room'][0]);
+        // city, state and country were unsendable while this reused the payments
+        // AccommodationAddress, which declares only address_line1 and zip.
+        $this->assertSame("London", $decodedAccommodation['address']['city']);
+        $this->assertSame("Greater London", $decodedAccommodation['address']['state']);
+        $this->assertSame("GB", $decodedAccommodation['address']['country']);
+        // industry.accommodation is an array under that exact key; accommodation_data was
+        // discarded wholesale by the API.
+        $this->assertArrayHasKey('accommodation', $decoded['industry']);
+        $this->assertArrayNotHasKey('accommodation_data', $decoded['industry']);
         $this->assertSame(3, $decodedAccommodation['total_number_of_guests']);
         $this->assertTrue($decodedAccommodation['refundable']);
         $this->assertSame("jane.smith@example.com", $decodedAccommodation['delivery_recipient']);
@@ -222,13 +244,16 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $airline->insurance = $insurance;
 
         $industry = new Industry();
-        $industry->airline_data = $airline;
+        $industry->airline = [$airline];
 
         $request = new PaymentSetupRequest();
         $request->industry = $industry;
 
         $decoded = json_decode((new JsonSerializer())->serialize($request), true);
-        $decodedAirline = $decoded['industry']['airline_data'];
+        $decodedAirline = $decoded['industry']['airline'][0];
+
+        $this->assertArrayHasKey('airline', $decoded['industry']);
+        $this->assertArrayNotHasKey('airline_data', $decoded['industry']);
 
         $this->assertSame("TCK123", $decodedAirline['ticket']['number']);
         $this->assertSame(2, $decodedAirline['total_number_of_passengers']);

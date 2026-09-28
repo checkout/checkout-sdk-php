@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments;
 
+/**
+ * The address details of the accommodation.
+ */
 class AccommodationAddress
 {
     /**

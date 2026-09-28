@@ -4,6 +4,9 @@ namespace Checkout\Payments\Contexts;
 
 use Checkout\Common\DateOnly;
 
+/**
+ * Contains information about the airline ticket.
+ */
 class PaymentContextsTicket
 {
     /**

@@ -5,6 +5,9 @@ namespace Checkout\Payments;
 use DateTime;
 use Checkout\Common\DateOnly;
 
+/**
+ * Contains information about a flight leg booked by the customer.
+ */
 class FlightLegDetails
 {
     /**
@@ -21,6 +24,11 @@ class FlightLegDetails
 
     /**
      * The service class of the flight.
+     *
+     * @deprecated Not in the current specification. Serializes as "service_class", which the API
+     * does not define, so the gateway discards it. Use $class_of_travelling instead, which maps
+     * the specification property class_of_travelling. Retained for backwards compatibility and
+     * will be removed in a future version.
      * @var string
      */
     public $service_class;

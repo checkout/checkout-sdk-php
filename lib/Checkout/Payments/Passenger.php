@@ -5,6 +5,9 @@ namespace Checkout\Payments;
 use DateTime;
 use Checkout\Common\DateOnly;
 
+/**
+ * Contains information about a passenger on the flight.
+ */
 class Passenger
 {
     /**

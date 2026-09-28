@@ -265,8 +265,14 @@ class ProcessingSettings
     /**
      * Sender information for the payment.
      *
-     * Previous API (ABC) only.
-     * The camelCase property name is deliberate and correct: the ABC specification spells this property "senderInformation", not "sender_information". Do not change it to snake_case.
+     * Previous API (ABC) only, and absent from every specification available to this workspace
+     * under both "senderInformation" and "sender_information", including the live API reference.
+     * No processing schema declares a sender property of any kind; the current API carries sender
+     * details in the top level "sender" object on the payment request. Deprecated in practice.
+     *
+     * The camelCase property name is long standing and is left exactly as it is. It has never
+     * been confirmed against a live ABC endpoint, so treat it as unverified rather than correct,
+     * and do not change it in either direction without such a confirmation.
      * @var SenderInformation
      */
     public $senderInformation;

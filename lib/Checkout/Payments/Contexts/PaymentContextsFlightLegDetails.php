@@ -4,6 +4,9 @@ namespace Checkout\Payments\Contexts;
 
 use Checkout\Common\DateOnly;
 
+/**
+ * Contains information about a flight leg booked by the customer.
+ */
 class PaymentContextsFlightLegDetails
 {
     /**

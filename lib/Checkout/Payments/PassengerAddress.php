@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments;
 
+/**
+ * Contains information about a passenger's address.
+ */
 class PassengerAddress
 {
     /**

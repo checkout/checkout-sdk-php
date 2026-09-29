@@ -5,6 +5,9 @@ namespace Checkout\Payments;
 use DateTime;
 use Checkout\Common\DateOnly;
 
+/**
+ * Contains information about the accommodation booked by the customer.
+ */
 class AccommodationData
 {
     /**
@@ -67,13 +70,31 @@ class AccommodationData
 
     /**
      * The list of guests staying at the accommodation.
-     * @var array of AccommodationGuest
+     * @var AccommodationGuest[]
      */
     public $guests;
 
     /**
      * The room details and rates.
-     * @var array of AccommodationRoom
+     * [Optional]
+     *
+     * @var AccommodationRoom[]
      */
     public $room;
+
+    /**
+     * The property's phone information.
+     * [Optional]
+     *
+     * @var AccommodationPhone[]
+     */
+    public $property_phone;
+
+    /**
+     * The customer service phone information.
+     * [Optional]
+     *
+     * @var AccommodationPhone[]
+     */
+    public $customer_service_phone;
 }

@@ -4,10 +4,11 @@ namespace Checkout\Payments\Setups\Common\Industry;
 
 use DateTime;
 use Checkout\Common\DateOnly;
-use Checkout\Payments\AccommodationAddress;
 use Checkout\Payments\AccommodationGuest;
-use Checkout\Payments\AccommodationRoom;
 
+/**
+ * Details about the accommodation the customer booked, for lodging or cruise bookings.
+ */
 class AccommodationData
 {
     /**
@@ -48,7 +49,11 @@ class AccommodationData
     /**
      * The accommodation's address.
      * [Optional]
-     * @var AccommodationAddress
+     *
+     * Uses the setups-local PaymentSetupAccommodationAddress: this schema declares city, state
+     * and country, which the payments AccommodationAddress does not have.
+     *
+     * @var PaymentSetupAccommodationAddress
      */
     public $address;
 
@@ -62,14 +67,19 @@ class AccommodationData
     /**
      * The list of guests staying at the accommodation.
      * [Optional]
-     * @var array of AccommodationGuest
+     * @var AccommodationGuest[]
      */
     public $guests;
 
     /**
      * The list of rooms booked by the customer.
      * [Optional]
-     * @var array of AccommodationRoom
+     *
+     * Uses the setups-local PaymentSetupAccommodationRoom: this schema declares
+     * number_of_nights and type, where the payments AccommodationRoom declares
+     * number_of_nights_at_room_rate and no type.
+     *
+     * @var PaymentSetupAccommodationRoom[]
      */
     public $room;
 

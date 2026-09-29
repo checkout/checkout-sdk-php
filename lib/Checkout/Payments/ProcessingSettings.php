@@ -22,19 +22,19 @@ class ProcessingSettings
 
     /**
      * The discount amount applied to the payment, in minor currency units.
-     * @var int
+     * @var float
      */
     public $discount_amount;
 
     /**
      * The shipping amount for the payment, in minor currency units.
-     * @var int
+     * @var float
      */
     public $shipping_amount;
 
     /**
      * The tax amount for the payment, in minor currency units.
-     * @var int
+     * @var float
      */
     public $tax_amount;
 
@@ -98,13 +98,13 @@ class ProcessingSettings
 
     /**
      * The duty amount for the payment, in minor currency units.
-     * @var int
+     * @var float
      */
     public $duty_amount;
 
     /**
      * The tax amount applied to shipping, in minor currency units.
-     * @var int
+     * @var float
      */
     public $shipping_tax_amount;
 
@@ -128,7 +128,7 @@ class ProcessingSettings
 
     /**
      * The original order amount before any modifications, in minor currency units.
-     * @var int
+     * @var float
      */
     public $original_order_amount;
 

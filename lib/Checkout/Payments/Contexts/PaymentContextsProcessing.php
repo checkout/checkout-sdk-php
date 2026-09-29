@@ -28,7 +28,7 @@ class PaymentContextsProcessing
      * [Optional]
      * minimum 0
      *
-     * @var int
+     * @var float
      */
     public $discount_amount;
 
@@ -36,7 +36,7 @@ class PaymentContextsProcessing
      * The total freight or shipping and handling charges for the transaction.
      * [Optional]
      *
-     * @var int
+     * @var float
      */
     public $shipping_amount;
 
@@ -44,7 +44,7 @@ class PaymentContextsProcessing
      * The total tax amount for the transaction, in the minor currency unit.
      * [Optional]
      *
-     * @var int
+     * @var float
      */
     public $tax_amount;
 
@@ -99,7 +99,12 @@ class PaymentContextsProcessing
      * payments request schemas resolve partner_customer_risk_data to the same specification
      * shape, and maintaining two identical classes for it invited drift.
      *
-     * @var PartnerCustomerRiskData[]
+     * A single object, not a collection. The specification declares it as one object with
+     * `key` and `value`, even though its description calls it "an array of key-and-value
+     * pairs". The sandbox accepts both shapes; this follows the declared one, which Java,
+     * .NET, Go and Ruby also use.
+     *
+     * @var PartnerCustomerRiskData
      */
     public $partner_customer_risk_data;
 

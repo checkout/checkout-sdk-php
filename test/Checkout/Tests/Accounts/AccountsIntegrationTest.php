@@ -4,10 +4,13 @@ namespace Checkout\Tests\Accounts;
 
 use Checkout\Accounts\AccountsFileRequest;
 use Checkout\Accounts\BusinessType;
+use Checkout\Accounts\CertifiedAuthorisedSignatory;
+use Checkout\Accounts\CertifiedAuthorisedSignatoryType;
 use Checkout\Accounts\Company;
 use Checkout\Accounts\ContactDetails;
 use Checkout\Accounts\DateOfBirth;
 use Checkout\Accounts\DateOfIncorporation;
+use Checkout\Accounts\Document;
 use Checkout\Accounts\EntityEmailAddresses;
 use Checkout\Accounts\EntityRoles;
 use Checkout\Accounts\InstrumentDetailsFasterPayments;
@@ -21,11 +24,13 @@ use Checkout\Accounts\PaymentInstrumentRequest;
 use Checkout\Accounts\PaymentInstrumentsQuery;
 use Checkout\Accounts\Profile;
 use Checkout\Accounts\Representative;
+use Checkout\Accounts\RepresentativeDocuments;
 use Checkout\Accounts\RepresentativeIndividual;
 use Checkout\Accounts\ReserveRules\Requests\CreateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Requests\UpdateReserveRuleRequest;
 use Checkout\Accounts\ReserveRules\Entities\Rolling;
 use Checkout\Accounts\ReserveRules\Entities\HoldingDuration;
+use Checkout\Accounts\Files\Entities\FilePurpose;
 use Checkout\Accounts\Files\Requests\UploadFileRequest;
 use Checkout\CheckoutApi;
 use Checkout\CheckoutApiException;
@@ -34,6 +39,7 @@ use Checkout\CheckoutException;
 use Checkout\CheckoutSdk;
 use Checkout\Common\Country;
 use Checkout\Common\Currency;
+use Checkout\Common\DocumentType;
 use Checkout\Common\InstrumentType;
 use Checkout\Common\Phone;
 use Checkout\OAuthScope;
@@ -91,6 +97,79 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $this->assertResponse($updateResponse, "id");
 
         $this->assertEquals($response["id"], $updateResponse["id"]);
+    }
+
+    /**
+     * The representative's documents go through RepresentativeDocuments. The sandbox platform
+     * resolves to a company variant, where identity_verification and certified_authorised_signatory
+     * are the representative documents the API accepts.
+     *
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreateEntityWithRepresentativeDocuments()
+    {
+        $identityFile = $this->uploadFile(FilePurpose::$identity_verification);
+        $signatoryFile = $this->uploadFile(FilePurpose::$certified_authorised_signatory);
+
+        $identity = new Document();
+        $identity->type = DocumentType::$passport;
+        $identity->front = $identityFile["id"];
+
+        $signatory = new CertifiedAuthorisedSignatory();
+        $signatory->type = CertifiedAuthorisedSignatoryType::$power_of_attorney;
+        $signatory->front = $signatoryFile["id"];
+
+        $documents = new RepresentativeDocuments();
+        $documents->identity_verification = $identity;
+        $documents->certified_authorised_signatory = $signatory;
+
+        $onboardEntityRequest = $this->buildOnboardCompanyRequest();
+        $onboardEntityRequest->company->representatives[0]->documents = $documents;
+
+        $response = $this->accountsApi()->getAccountsClient()->createEntity($onboardEntityRequest);
+
+        $this->assertResponse($response, "id", "reference");
+
+        // The documents are linked on the representative, not dropped: the API echoes them back.
+        $entity = $this->accountsApi()->getAccountsClient()->getEntity($response["id"]);
+        $this->assertResponse($entity, "company.representatives");
+        $linked = $entity["company"]["representatives"][0]["documents"];
+        $this->assertEquals(
+            array("type" => DocumentType::$passport, "front" => $identityFile["id"]),
+            $linked["identity_verification"]
+        );
+        $this->assertEquals(
+            array("type" => CertifiedAuthorisedSignatoryType::$power_of_attorney, "front" => $signatoryFile["id"]),
+            $linked["certified_authorised_signatory"]
+        );
+    }
+
+    /**
+     * The two EEA Sole Trader representative documents need their own upload purposes before
+     * they can be linked on the representative. Goes through POST /entities/{id}/files, the
+     * endpoint whose request schema (PlatformsFileUpload) defines the purpose enum.
+     *
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldUploadRepresentativeProofFiles()
+    {
+        $entityId = $this->createTestEntity();
+        $purposes = array(FilePurpose::$proof_of_residential_address, FilePurpose::$proof_of_registration);
+
+        foreach ($purposes as $purpose) {
+            $uploadRequest = new UploadFileRequest();
+            $uploadRequest->purpose = $purpose;
+
+            $uploadResponse = $this->accountsApi()->getAccountsClient()->uploadFile($entityId, $uploadRequest);
+            $this->validateFileUploadResponse($uploadResponse);
+
+            $retrieveResponse = $this->accountsApi()->getAccountsClient()
+                ->retrieveFile($entityId, $uploadResponse["id"]);
+            $this->validateFileRetrieveResponse($retrieveResponse);
+            $this->assertEquals($purpose, $retrieveResponse["purpose"]);
+        }
     }
 
     /**
@@ -295,7 +374,6 @@ class AccountsIntegrationTest extends SandboxTestFixture
 
     /**
      * @test
-     * @skip API temporarily unavailable
      * @throws CheckoutApiException
      */
     public function shouldUploadAndRetrieveFile()
@@ -611,15 +689,16 @@ class AccountsIntegrationTest extends SandboxTestFixture
     }
 
     /**
+     * @param string $purpose value of FilePurpose
      * @return array
      * @throws CheckoutApiException
      */
-    public function uploadFile()
+    public function uploadFile($purpose = "bank_verification")
     {
         $fileRequest = new AccountsFileRequest();
         $fileRequest->file = $this->getCheckoutFilePath();
         $fileRequest->content_type = "image/jpeg";
-        $fileRequest->purpose = "bank_verification";
+        $fileRequest->purpose = $purpose;
 
         $response = $this->accountsApi()->getAccountsClient()->submitFile($fileRequest);
 

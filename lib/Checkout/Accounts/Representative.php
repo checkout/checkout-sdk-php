@@ -15,6 +15,7 @@ class Representative
     /**
      * The representative's id.
      * [Optional]
+     * ^rep_[a-z0-9]{26}$
      * Length: 30 characters
      *
      * @var string
@@ -59,10 +60,12 @@ class Representative
     public $ownership_percentage;
 
     /**
-     * The representative's verification documents.
-     * [Optional]
+     * The representative's verification documents. The API rejects any key other than
+     * identity_verification, certified_authorised_signatory, proof_of_residential_address and
+     * proof_of_registration; see RepresentativeDocuments for which apply to each variant.
+     * [Optional] (required for the sole trader full variants, Accounts API v3.0)
      *
-     * @var OnboardSubEntityDocuments
+     * @var RepresentativeDocuments
      */
     public $documents;
 

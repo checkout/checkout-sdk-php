@@ -3,17 +3,16 @@
 namespace Checkout\Accounts;
 
 /**
- * Shareholder structure chart (including % of shares) certified by a competent authority
- * individual and dated within the last 3 months.
+ * A regulatory licence document required for the company to operate (when applicable).
  */
-class ShareholderStructure
+class ProofOfLegality
 {
     /**
-     * The type of document.
+     * The type of document used for proof of legality.
      * [Required]
-     * Enum: "certified_shareholder_structure"
+     * Enum: "proof_of_legality"
      *
-     * @var string value of ShareholderStructureType
+     * @var string value of ProofOfLegalityType
      */
     public $type;
 

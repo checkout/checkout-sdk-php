@@ -130,19 +130,46 @@ class AccountsIntegrationTest extends SandboxTestFixture
         $response = $this->accountsApi()->getAccountsClient()->createEntity($onboardEntityRequest);
 
         $this->assertResponse($response, "id", "reference");
+
+        // The documents are linked on the representative, not dropped: the API echoes them back.
+        $entity = $this->accountsApi()->getAccountsClient()->getEntity($response["id"]);
+        $this->assertResponse($entity, "company.representatives");
+        $linked = $entity["company"]["representatives"][0]["documents"];
+        $this->assertEquals(
+            array("type" => DocumentType::$passport, "front" => $identityFile["id"]),
+            $linked["identity_verification"]
+        );
+        $this->assertEquals(
+            array("type" => CertifiedAuthorisedSignatoryType::$power_of_attorney, "front" => $signatoryFile["id"]),
+            $linked["certified_authorised_signatory"]
+        );
     }
 
     /**
      * The two EEA Sole Trader representative documents need their own upload purposes before
-     * they can be linked on the representative.
+     * they can be linked on the representative. Goes through POST /entities/{id}/files, the
+     * endpoint whose request schema (PlatformsFileUpload) defines the purpose enum.
      *
      * @test
      * @throws CheckoutApiException
      */
     public function shouldUploadRepresentativeProofFiles()
     {
-        $this->uploadFile(FilePurpose::$proof_of_residential_address);
-        $this->uploadFile(FilePurpose::$proof_of_registration);
+        $entityId = $this->createTestEntity();
+        $purposes = array(FilePurpose::$proof_of_residential_address, FilePurpose::$proof_of_registration);
+
+        foreach ($purposes as $purpose) {
+            $uploadRequest = new UploadFileRequest();
+            $uploadRequest->purpose = $purpose;
+
+            $uploadResponse = $this->accountsApi()->getAccountsClient()->uploadFile($entityId, $uploadRequest);
+            $this->validateFileUploadResponse($uploadResponse);
+
+            $retrieveResponse = $this->accountsApi()->getAccountsClient()
+                ->retrieveFile($entityId, $uploadResponse["id"]);
+            $this->validateFileRetrieveResponse($retrieveResponse);
+            $this->assertEquals($purpose, $retrieveResponse["purpose"]);
+        }
     }
 
     /**
@@ -347,7 +374,6 @@ class AccountsIntegrationTest extends SandboxTestFixture
 
     /**
      * @test
-     * @skip API temporarily unavailable
      * @throws CheckoutApiException
      */
     public function shouldUploadAndRetrieveFile()

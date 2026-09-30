@@ -3,9 +3,23 @@
 namespace Checkout\Tests\Accounts;
 
 use Checkout\Accounts\AccountsClient;
+use Checkout\Accounts\BankVerification;
+use Checkout\Accounts\BankVerificationType;
+use Checkout\Accounts\BusinessType;
+use Checkout\Accounts\Company;
+use Checkout\Accounts\Document;
+use Checkout\Accounts\EntityRoles;
 use Checkout\Accounts\OnboardEntityRequest;
+use Checkout\Accounts\OnboardSubEntityDocuments;
+use Checkout\Accounts\ProofOfRegistration;
+use Checkout\Accounts\ProofOfRegistrationType;
+use Checkout\Accounts\ProofOfResidentialAddress;
+use Checkout\Accounts\ProofOfResidentialAddressType;
+use Checkout\Accounts\Representative;
+use Checkout\Accounts\RepresentativeDocuments;
 use Checkout\ApiClient;
 use Checkout\CheckoutConfiguration;
+use Checkout\Common\DocumentType;
 use Checkout\Environment;
 use Checkout\HttpClientBuilderInterface;
 use Checkout\PlatformType;
@@ -129,5 +143,77 @@ class AccountsSchemaVersionHeaderTest extends MockeryTestCase
     {
         $this->buildAccountsClient()->getEntity('ent_123', '2.0');
         $this->assertAcceptHeader('application/json;schema_version=2.0');
+    }
+
+    /**
+     * The EEA Sole Trader (3.0) representative documents cannot be exercised against the sandbox,
+     * whose platform is not EEA-scoped, so this asserts the bytes that reach the wire instead: on
+     * POST and PUT, the three documents sit under company.representatives[0].documents, on the v3.0
+     * schema, and only bank_verification is sent at the top level.
+     *
+     * @test
+     */
+    public function eeaSoleTraderRepresentativeDocumentsReachTheWire()
+    {
+        $expectedRepresentativeDocuments = array(
+            "identity_verification" => array("type" => "passport", "front" => "file_identityverificationaaaaaa"),
+            "proof_of_residential_address" => array(
+                "type" => "proof_of_address",
+                "front" => "file_proofofresidentialaddressa",
+            ),
+            "proof_of_registration" => array(
+                "type" => "extract_from_trade_register",
+                "front" => "file_proofofregistrationaaaaaaa",
+            ),
+        );
+
+        $this->buildAccountsClient()->createEntity($this->buildEeaSoleTraderRequest());
+        $this->assertSame('POST', $this->capturedRequest->getMethod());
+        $this->assertSame('/accounts/entities', $this->capturedRequest->getUri()->getPath());
+        $this->assertAcceptHeader('application/json;schema_version=3.0');
+        $body = json_decode((string) $this->capturedRequest->getBody(), true);
+        $this->assertSame($expectedRepresentativeDocuments, $body['company']['representatives'][0]['documents']);
+        $this->assertSame(array('bank_verification'), array_keys($body['documents']));
+
+        $this->buildAccountsClient()->updateEntity('ent_123', $this->buildEeaSoleTraderRequest());
+        $this->assertSame('PUT', $this->capturedRequest->getMethod());
+        $this->assertSame('/accounts/entities/ent_123', $this->capturedRequest->getUri()->getPath());
+        $body = json_decode((string) $this->capturedRequest->getBody(), true);
+        $this->assertSame($expectedRepresentativeDocuments, $body['company']['representatives'][0]['documents']);
+    }
+
+    private function buildEeaSoleTraderRequest(): OnboardEntityRequest
+    {
+        $identity = new Document();
+        $identity->type = DocumentType::$passport;
+        $identity->front = "file_identityverificationaaaaaa";
+
+        $proofOfResidentialAddress = new ProofOfResidentialAddress();
+        $proofOfResidentialAddress->type = ProofOfResidentialAddressType::$proof_of_address;
+        $proofOfResidentialAddress->front = "file_proofofresidentialaddressa";
+
+        $proofOfRegistration = new ProofOfRegistration();
+        $proofOfRegistration->type = ProofOfRegistrationType::$extract_from_trade_register;
+        $proofOfRegistration->front = "file_proofofregistrationaaaaaaa";
+
+        $representative = new Representative();
+        $representative->roles = array(EntityRoles::$ubo);
+        $representative->documents = new RepresentativeDocuments();
+        $representative->documents->identity_verification = $identity;
+        $representative->documents->proof_of_residential_address = $proofOfResidentialAddress;
+        $representative->documents->proof_of_registration = $proofOfRegistration;
+
+        $bankVerification = new BankVerification();
+        $bankVerification->type = BankVerificationType::$bank_statement;
+        $bankVerification->front = "file_bankverificationaaaaaaaaaa";
+
+        $request = new OnboardEntityRequest();
+        $request->reference = "ref_sole_trader";
+        $request->company = new Company();
+        $request->company->business_type = BusinessType::$individual_or_sole_proprietorship;
+        $request->company->representatives = array($representative);
+        $request->documents = new OnboardSubEntityDocuments();
+        $request->documents->bank_verification = $bankVerification;
+        return $request;
     }
 }

@@ -15,6 +15,7 @@ class Representative
     /**
      * The representative's id.
      * [Optional]
+     * ^rep_[a-z0-9]{26}$
      * Length: 30 characters
      *
      * @var string

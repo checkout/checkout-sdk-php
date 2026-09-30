@@ -75,16 +75,20 @@ class RepresentativeIndividual
 
     /**
      * The representative's national identification number.
-     * [Optional]
-     * Format: region-specific (validated by the API against the sub-entity's country)
+     * [Required] for the US ISV Seller variants; [Optional] for the other v3.0 variants.
+     * The format depends on the variant:
+     * - US ISV Seller: the number for the national_id_type given. ^[a-zA-Z0-9\-]+$,
+     *   Length: 5 to 16 characters.
+     * - Other v3.0 variants: a Social Security Number (SSN) or Individual Taxpayer Identification
+     *   Number (ITIN), US residents only. ^\d{9}$, Length: 9 characters.
      *
      * @var string
      */
     public $national_id_number;
 
     /**
-     * The representative's email address.
-     * [Optional]
+     * The representative's personal email address.
+     * [Required] for the US ISV Seller variants; [Optional] for the other v3.0 variants.
      * Format: email
      *
      * @var string
@@ -93,7 +97,7 @@ class RepresentativeIndividual
 
     /**
      * The representative's phone number.
-     * [Optional]
+     * [Required] for the US ISV Seller variants; [Optional] for the other v3.0 variants.
      *
      * @var Phone
      */

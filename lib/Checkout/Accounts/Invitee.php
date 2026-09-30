@@ -8,7 +8,8 @@ namespace Checkout\Accounts;
 class Invitee
 {
     /**
-     * The invitee's email address.
+     * The main email address for this sub-entity. Despite the spec's wording, this is the address
+     * of the invitee, the user responsible for onboarding the sub-entity.
      * [Optional]
      * Format: email
      *

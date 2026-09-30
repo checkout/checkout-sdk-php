@@ -4,6 +4,12 @@ namespace Checkout\Tests\Accounts;
 
 use Checkout\Accounts\ArticlesOfAssociationType;
 use Checkout\Accounts\BankVerificationType;
+use Checkout\Accounts\CertifiedAuthorisedSignatoryType;
+use Checkout\Accounts\FinancialVerificationType;
+use Checkout\Accounts\ProofOfLegalityType;
+use Checkout\Accounts\ProofOfPrincipalAddressType;
+use Checkout\Accounts\ProofOfRegistrationType;
+use Checkout\Accounts\ProofOfResidentialAddressType;
 use Checkout\Accounts\ShareholderStructureType;
 use Checkout\Common\DocumentType;
 use PHPUnit\Framework\TestCase;
@@ -27,6 +33,22 @@ class OnboardingDocumentTypeTest extends TestCase
         $this->assertSame("memorandum_of_association", ArticlesOfAssociationType::$memorandum_of_association);
         $this->assertSame("articles_of_association", ArticlesOfAssociationType::$articles_of_association);
         $this->assertSame("certified_shareholder_structure", ShareholderStructureType::$certified_shareholder_structure);
+        $this->assertSame("proof_of_address", ProofOfPrincipalAddressType::$proof_of_address);
+        $this->assertSame("proof_of_legality", ProofOfLegalityType::$proof_of_legality);
+        $this->assertSame("financial_statement", FinancialVerificationType::$financial_statement);
+    }
+
+    /**
+     * The document types of the representative documents (company.representatives[].documents).
+     * proof_of_address appears on both ProofOfResidentialAddressType and ProofOfPrincipalAddressType
+     * on purpose: the spec defines them as two enums on two different documents.
+     */
+    public function testExposesTheRepresentativeDocumentTypes()
+    {
+        $this->assertSame("proof_of_address", ProofOfResidentialAddressType::$proof_of_address);
+        $this->assertSame("extract_from_trade_register", ProofOfRegistrationType::$extract_from_trade_register);
+        $this->assertSame("other", ProofOfRegistrationType::$other);
+        $this->assertSame("power_of_attorney", CertifiedAuthorisedSignatoryType::$power_of_attorney);
     }
 
     /**
@@ -48,5 +70,8 @@ class OnboardingDocumentTypeTest extends TestCase
         $this->assertNotContains("bank_statement", $identity);
         $this->assertNotContains("articles_of_association", $identity);
         $this->assertNotContains("certified_shareholder_structure", $identity);
+        $this->assertNotContains("proof_of_address", $identity);
+        $this->assertNotContains("extract_from_trade_register", $identity);
+        $this->assertNotContains("power_of_attorney", $identity);
     }
 }

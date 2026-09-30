@@ -56,7 +56,8 @@ class RepresentativeIndividual
 
     /**
      * The list of citizenships or legal statuses for the representative.
-     * [Required] (Accounts API v3.0)
+     * [Required] for the US ISV Seller variants only (Accounts API v3.0). Not part of the other
+     * v3.0 schemas; leave unset for them.
      *
      * @var array values of Citizenship
      */
@@ -64,7 +65,8 @@ class RepresentativeIndividual
 
     /**
      * The classification of the national identification number provided.
-     * [Required] (Accounts API v3.0)
+     * [Required] for the US ISV Seller variants only (Accounts API v3.0). Not part of the other
+     * v3.0 schemas; leave unset for them.
      * Enum: "ssn", "itin", "passport", "driving_license", "national_id_card", "residence_permit", "other"
      *
      * @var string value of NationalIdType

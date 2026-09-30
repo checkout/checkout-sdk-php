@@ -2,20 +2,30 @@
 
 namespace Checkout\Tests\Accounts;
 
+use Checkout\Accounts\AdditionalDocument;
 use Checkout\Accounts\AgreedTerms;
 use Checkout\Accounts\ArticlesOfAssociation;
 use Checkout\Accounts\ArticlesOfAssociationType;
 use Checkout\Accounts\BankVerification;
 use Checkout\Accounts\BankVerificationType;
 use Checkout\Accounts\CompanyVerification;
+use Checkout\Accounts\CompanyVerificationType;
 use Checkout\Accounts\Document;
 use Checkout\Accounts\FinancialStatements;
 use Checkout\Accounts\FinancialStatementsType;
+use Checkout\Accounts\FinancialVerification;
+use Checkout\Accounts\FinancialVerificationType;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\OnboardSubEntityDocuments;
+use Checkout\Accounts\ProofOfLegality;
+use Checkout\Accounts\ProofOfLegalityType;
+use Checkout\Accounts\ProofOfPrincipalAddress;
+use Checkout\Accounts\ProofOfPrincipalAddressType;
 use Checkout\Accounts\ShareholderStructure;
 use Checkout\Accounts\ShareholderStructureType;
 use Checkout\Accounts\TaxVerification;
+use Checkout\Accounts\TaxVerificationType;
+use Checkout\Common\DocumentType;
 use Checkout\JsonSerializer;
 use PHPUnit\Framework\TestCase;
 
@@ -50,21 +60,18 @@ class OnboardEntityRequestSerializationTest extends TestCase
     {
         $decoded = json_decode((new JsonSerializer())->serialize($this->buildDocuments()), true);
 
-        // Every property of OnboardSubEntityDocuments must serialize with its type + front.
+        // Every typed property of OnboardSubEntityDocuments must serialize with its spec type + front.
         $expectedTypes = array(
-            "identity_verification" => "identity_card",
-            "company_verification" => "certificate_of_incorporation",
-            "tax_verification" => "tax_document",
+            "identity_verification" => "passport",
+            "company_verification" => "incorporation_document",
+            "tax_verification" => "ein_letter",
             "articles_of_association" => "articles_of_association",
             "shareholder_structure" => "certified_shareholder_structure",
             "bank_verification" => "bank_statement",
             "financial_statements" => "financial_statements",
-            "financial_verification" => "financial_verification",
-            "proof_of_principal_address" => "utility_bill",
+            "financial_verification" => "financial_statement",
+            "proof_of_principal_address" => "proof_of_address",
             "proof_of_legality" => "proof_of_legality",
-            "additional_document1" => "additional_document",
-            "additional_document2" => "additional_document",
-            "additional_document3" => "additional_document",
         );
 
         foreach ($expectedTypes as $field => $type) {
@@ -73,11 +80,18 @@ class OnboardEntityRequestSerializationTest extends TestCase
             $this->assertSame("file_$field", $decoded[$field]['front'], "documents.$field.front");
         }
 
-        // identity_verification is a Document (supports back); the others carry type + front only.
-        // articles_of_association, shareholder_structure and bank_verification are their own
-        // classes rather than the generic Document, so this also proves the retyped fields
-        // still serialize to the same JSON.
-        $this->assertSame("back_id", $decoded['identity_verification']['back']);
+        // identity_verification is the only top-level document with a back side.
+        $this->assertSame("file_identity_back", $decoded['identity_verification']['back']);
+        foreach (array_keys($expectedTypes) as $field) {
+            if ($field !== "identity_verification") {
+                $this->assertArrayNotHasKey("back", $decoded[$field], "documents.$field has no back");
+            }
+        }
+
+        // The additional documents carry a file ID only: the API defines no type for them.
+        foreach (array("additional_document1", "additional_document2", "additional_document3") as $field) {
+            $this->assertSame(array("front" => "file_$field"), $decoded[$field], "documents.$field");
+        }
     }
 
     private function buildDocuments()
@@ -85,18 +99,18 @@ class OnboardEntityRequestSerializationTest extends TestCase
         $documents = new OnboardSubEntityDocuments();
 
         $identity = new Document();
-        $identity->type = "identity_card";
+        $identity->type = DocumentType::$passport;
         $identity->front = "file_identity_verification";
-        $identity->back = "back_id";
+        $identity->back = "file_identity_back";
         $documents->identity_verification = $identity;
 
         $companyVerification = new CompanyVerification();
-        $companyVerification->type = "certificate_of_incorporation";
+        $companyVerification->type = CompanyVerificationType::$incorporation_document;
         $companyVerification->front = "file_company_verification";
         $documents->company_verification = $companyVerification;
 
         $taxVerification = new TaxVerification();
-        $taxVerification->type = "tax_document";
+        $taxVerification->type = TaxVerificationType::$ein_letter;
         $taxVerification->front = "file_tax_verification";
         $documents->tax_verification = $taxVerification;
 
@@ -120,21 +134,32 @@ class OnboardEntityRequestSerializationTest extends TestCase
         $financialStatements->front = "file_financial_statements";
         $documents->financial_statements = $financialStatements;
 
-        $documents->financial_verification = $this->document("financial_verification", "financial_verification");
-        $documents->proof_of_principal_address = $this->document("proof_of_principal_address", "utility_bill");
-        $documents->proof_of_legality = $this->document("proof_of_legality", "proof_of_legality");
-        $documents->additional_document1 = $this->document("additional_document1", "additional_document");
-        $documents->additional_document2 = $this->document("additional_document2", "additional_document");
-        $documents->additional_document3 = $this->document("additional_document3", "additional_document");
+        $financialVerification = new FinancialVerification();
+        $financialVerification->type = FinancialVerificationType::$financial_statement;
+        $financialVerification->front = "file_financial_verification";
+        $documents->financial_verification = $financialVerification;
+
+        $proofOfPrincipalAddress = new ProofOfPrincipalAddress();
+        $proofOfPrincipalAddress->type = ProofOfPrincipalAddressType::$proof_of_address;
+        $proofOfPrincipalAddress->front = "file_proof_of_principal_address";
+        $documents->proof_of_principal_address = $proofOfPrincipalAddress;
+
+        $proofOfLegality = new ProofOfLegality();
+        $proofOfLegality->type = ProofOfLegalityType::$proof_of_legality;
+        $proofOfLegality->front = "file_proof_of_legality";
+        $documents->proof_of_legality = $proofOfLegality;
+
+        $documents->additional_document1 = $this->additionalDocument("file_additional_document1");
+        $documents->additional_document2 = $this->additionalDocument("file_additional_document2");
+        $documents->additional_document3 = $this->additionalDocument("file_additional_document3");
 
         return $documents;
     }
 
-    private function document($field, $type)
+    private function additionalDocument($front)
     {
-        $document = new Document();
-        $document->type = $type;
-        $document->front = "file_$field";
+        $document = new AdditionalDocument();
+        $document->front = $front;
         return $document;
     }
 }

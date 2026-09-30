@@ -5,6 +5,12 @@ namespace Checkout\Accounts;
 /**
  * The documents supplied to onboard a sub-entity. Which documents are required depends on the
  * sub-entity's region and business type (see the Accounts API onboarding schema variants).
+ *
+ * This is the top-level request documents object. The API ignores keys it does not recognise here
+ * rather than rejecting them, so a misplaced document is dropped silently. The representative's
+ * own documents (proof_of_residential_address, proof_of_registration,
+ * certified_authorised_signatory) do not go here: set them on Representative::$documents, using
+ * RepresentativeDocuments.
  */
 class OnboardSubEntityDocuments
 {
@@ -66,50 +72,51 @@ class OnboardSubEntityDocuments
     public $financial_statements;
 
     /**
-     * Financial verification document.
-     * [Optional]
+     * Financial statement document. Becomes mandatory depending on the answer provided for
+     * annual_processing_volume.
+     * [Optional] (EEA Company Full (2.0))
      *
-     * @var Document
+     * @var FinancialVerification
      */
     public $financial_verification;
 
     /**
-     * Proof of principal address document.
-     * [Optional]
+     * Proof of the company's principal place of business.
+     * [Optional] (company variants, Accounts API v3.0)
      *
-     * @var Document
+     * @var ProofOfPrincipalAddress
      */
     public $proof_of_principal_address;
 
     /**
-     * Proof of legality document.
-     * [Optional]
+     * A regulatory licence document required for the company to operate (when applicable).
+     * [Optional] (company variants, Accounts API v3.0)
      *
-     * @var Document
+     * @var ProofOfLegality
      */
     public $proof_of_legality;
 
     /**
-     * Additional supporting document.
-     * [Optional]
+     * Additional space for documents to be provided when requested.
+     * [Optional] (Accounts API v3.0)
      *
-     * @var Document
+     * @var AdditionalDocument
      */
     public $additional_document1;
 
     /**
-     * Additional supporting document.
-     * [Optional]
+     * Additional space for documents to be provided when requested.
+     * [Optional] (Accounts API v3.0)
      *
-     * @var Document
+     * @var AdditionalDocument
      */
     public $additional_document2;
 
     /**
-     * Additional supporting document.
-     * [Optional]
+     * Additional space for documents to be provided when requested.
+     * [Optional] (Accounts API v3.0)
      *
-     * @var Document
+     * @var AdditionalDocument
      */
     public $additional_document3;
 }

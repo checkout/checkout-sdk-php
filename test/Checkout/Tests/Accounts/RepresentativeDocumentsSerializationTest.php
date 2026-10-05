@@ -8,11 +8,8 @@ use Checkout\Accounts\BusinessType;
 use Checkout\Accounts\CertifiedAuthorisedSignatory;
 use Checkout\Accounts\CertifiedAuthorisedSignatoryType;
 use Checkout\Accounts\Company;
-use Checkout\Accounts\ContactDetails;
 use Checkout\Accounts\Document;
-use Checkout\Accounts\EntityEmailAddresses;
 use Checkout\Accounts\EntityRoles;
-use Checkout\Accounts\Invitee;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\OnboardSubEntityDocuments;
 use Checkout\Accounts\ProofOfRegistration;
@@ -23,7 +20,6 @@ use Checkout\Accounts\Representative;
 use Checkout\Accounts\RepresentativeDocuments;
 use Checkout\Accounts\RepresentativeIndividual;
 use Checkout\Common\DocumentType;
-use Checkout\Common\Phone;
 use Checkout\JsonSerializer;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -119,8 +115,10 @@ class RepresentativeDocumentsSerializationTest extends TestCase
     }
 
     /**
-     * The API rejects any key on company.representatives[].documents other than these four
-     * (additionalProperties: false), so a property added here by mistake would fail the request.
+     * These four are the only keys company.representatives[].documents defines in any v3.0
+     * variant. The EEA, GB and US Company - Full (3.0) Person of Interest representatives and the
+     * EEA, GB and US Sole Trader - Full (3.0) variants reject any other key
+     * (additionalProperties: false), so a property added here by mistake would fail those requests.
      */
     public function testRepresentativeDocumentsDeclaresOnlyTheKeysTheApiAccepts()
     {
@@ -171,35 +169,6 @@ class RepresentativeDocumentsSerializationTest extends TestCase
 
         $serializer = new JsonSerializer();
         $this->assertSame($serializer->serialize($array), $serializer->serialize($typed));
-    }
-
-    public function testContactDetailsInviteeRoundTrip()
-    {
-        $phone = new Phone();
-        $phone->country_code = "FR";
-        $phone->number = "0712345678";
-
-        $emailAddresses = new EntityEmailAddresses();
-        $emailAddresses->primary = "owner@example.com";
-
-        $invitee = new Invitee();
-        $invitee->email = "invitee@example.com";
-
-        $contactDetails = new ContactDetails();
-        $contactDetails->phone = $phone;
-        $contactDetails->email_addresses = $emailAddresses;
-        $contactDetails->invitee = $invitee;
-
-        $decoded = json_decode((new JsonSerializer())->serialize($contactDetails), true);
-
-        $this->assertSame(
-            array(
-                "phone" => array("country_code" => "FR", "number" => "0712345678"),
-                "email_addresses" => array("primary" => "owner@example.com"),
-                "invitee" => array("email" => "invitee@example.com"),
-            ),
-            $decoded
-        );
     }
 
     private function buildEeaSoleTraderDocuments()

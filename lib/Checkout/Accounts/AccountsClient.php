@@ -163,10 +163,13 @@ class AccountsClient extends Client
         $instrumentId,
         UpdatePaymentInstrumentRequest $instrumentRequest
     ) {
+        // The API reads the ETag only from the If-Match HTTP header and answers 428 without it, so the
+        // request's headers are sent as HTTP headers.
         return $this->apiClient->patch(
             $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $instrumentId),
             $instrumentRequest,
-            $this->sdkAuthorization()
+            $this->sdkAuthorization(),
+            $instrumentRequest->headers
         );
     }
 

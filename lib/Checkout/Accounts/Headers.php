@@ -5,8 +5,8 @@ namespace Checkout\Accounts;
 class Headers
 {
     /**
-     * Value for the If-Match header, used to identify a specific version of a
-     * reserve rule to update (for example "Y3Y9MCZydj0w"). Etag.
+     * Value for the If-Match header: the ETag of the reserve rule or payment instrument to update
+     * (for example "Y3Y9MCZydj0w"), sent as the If-Match HTTP header.
      *
      * @var string
      */

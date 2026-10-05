@@ -31,7 +31,8 @@ class ContactDetails
 
     /**
      * The details of the user responsible for onboarding the sub-entity.
-     * [Optional] (not part of the US ISV Seller variants)
+     * [Required] in the hosted onboarding invite request; [Optional] in the full and lite onboarding
+     * variants; not part of the US ISV Seller variants.
      *
      * @var Invitee
      */

@@ -6,14 +6,20 @@ namespace Checkout\Accounts;
  * Verification documents for an individual representative, sent as
  * company.representatives[].documents (Accounts API v3.0).
  *
- * The API validates this object strictly: a key it does not recognise is rejected, not ignored.
- * These four are the only keys it accepts, and which of them apply depends on the onboarding
- * variant:
+ * Which keys apply depends on the onboarding variant:
  * - EEA Sole Trader - Full (3.0): identity_verification, proof_of_residential_address and
  *   proof_of_registration, all three required.
  * - GB and US Sole Trader - Full (3.0): identity_verification, required.
- * - EEA, GB and US Company - Full (3.0): identity_verification and certified_authorised_signatory,
- *   both optional.
+ * - EEA, GB and US Company - Full (3.0), Person of Interest representatives:
+ *   identity_verification and certified_authorised_signatory, both optional.
+ * - US ISV Seller Company (3.0): identity_verification and certified_authorised_signatory, both
+ *   optional.
+ * - US ISV Seller Sole Trader (3.0): identity_verification, optional.
+ *
+ * The API validates this object strictly (a key it does not recognise is rejected, not ignored)
+ * only on the EEA, GB and US Company - Full (3.0) Person of Interest representatives and the EEA,
+ * GB and US Sole Trader - Full (3.0) variants. The spec does not declare that restriction for the
+ * US ISV Seller variants (3.0).
  *
  * Company-level documents such as bank_verification belong on the top-level request documents
  * (OnboardSubEntityDocuments), not here.
@@ -31,7 +37,7 @@ class RepresentativeDocuments
     /**
      * Certified authorised signatory document. Required when the legal representative or other
      * role owner is not registered on the certificate of incorporation.
-     * [Optional] (company full variants only)
+     * [Optional] (EEA, GB and US Company - Full (3.0) and US ISV Seller Company (3.0) only)
      *
      * @var CertifiedAuthorisedSignatory
      */

@@ -8,6 +8,7 @@ use Checkout\Accounts\AccountsPaymentInstrument;
 use Checkout\Accounts\OnboardEntityRequest;
 use Checkout\Accounts\PaymentInstrumentRequest;
 use Checkout\Accounts\PaymentInstrumentsQuery;
+use Checkout\Accounts\Headers;
 use Checkout\Accounts\UpdatePaymentInstrumentRequest;
 use Checkout\Accounts\UpdateScheduleRequest;
 use Checkout\Accounts\ReserveRules\Requests\CreateReserveRuleRequest;
@@ -224,11 +225,38 @@ class AccountsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldSendUpdateBankPaymentInstrumentEtagAsIfMatchHeader()
+    {
+        $request = new UpdatePaymentInstrumentRequest();
+        $request->label = "Renamed account";
+        $request->headers = new Headers();
+        $request->headers->if_match = '"Y3Y9MCZydj0w"';
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("patch")
+            ->with(
+                "accounts/entities/entity_id/payment-instruments/instrument_id",
+                $request,
+                $this->anything(),
+                $this->identicalTo($request->headers)
+            )
+            ->willReturn(["response"]);
+
+        $response = $this->client->updateBankPaymentInstrumentDetails("entity_id", "instrument_id", $request);
+
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldGetSubEntityMembers()
     {
         $this->apiClient
             ->method("get")
-            ->willReturn(["data" => [["user_id" => "usr_test123"]]]);
+            ->willReturn(["data" => [["user_id" => "usr_eyk754cqieqexfh6u46no5nnha"]]]);
 
         $response = $this->client->getSubEntityMembers("entity_id");
 
@@ -244,7 +272,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn(["id" => "usr_test123"]);
+            ->willReturn(["id" => "usr_eyk754cqieqexfh6u46no5nnha"]);
 
         $response = $this->client->reinviteSubEntityMember("entity_id", "user_id");
 
@@ -260,7 +288,10 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("post")
-            ->willReturn(["id" => "rsv_test123", "_links" => ["self" => ["href" => "/reserve-rules/rsv_test123"]]]);
+            ->willReturn([
+                "id" => "rsv_qn4nis4k3ykpzzu7cvtuvhqqga",
+                "_links" => ["self" => ["href" => "/reserve-rules/rsv_qn4nis4k3ykpzzu7cvtuvhqqga"]]
+            ]);
 
         $request = $this->buildCreateReserveRuleRequest();
         $response = $this->client->createReserveRule("entity_id", $request);
@@ -277,7 +308,7 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn(["data" => [["id" => "rsv_test123", "type" => "rolling"]]]);
+            ->willReturn(["data" => [["id" => "rsv_qn4nis4k3ykpzzu7cvtuvhqqga", "type" => "rolling"]]]);
 
         $response = $this->client->getReserveRules("entity_id");
 
@@ -293,7 +324,11 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("get")
-            ->willReturn(["id" => "rsv_test123", "type" => "rolling", "valid_from" => "2024-01-01T00:00:00Z"]);
+            ->willReturn([
+                "id" => "rsv_qn4nis4k3ykpzzu7cvtuvhqqga",
+                "type" => "rolling",
+                "valid_from" => "2024-01-01T00:00:00Z"
+            ]);
 
         $response = $this->client->getReserveRuleDetails("entity_id", "reserve_rule_id");
 
@@ -310,7 +345,10 @@ class AccountsClientTest extends UnitTestFixture
     {
         $this->apiClient
             ->method("put")
-            ->willReturn(["id" => "rsv_test123", "_links" => ["self" => ["href" => "/reserve-rules/rsv_test123"]]]);
+            ->willReturn([
+                "id" => "rsv_qn4nis4k3ykpzzu7cvtuvhqqga",
+                "_links" => ["self" => ["href" => "/reserve-rules/rsv_qn4nis4k3ykpzzu7cvtuvhqqga"]]
+            ]);
 
         $request = $this->buildUpdateReserveRuleRequest();
         $response = $this->client->updateReserveRule("entity_id", "reserve_rule_id", "etag_value", $request);
@@ -325,31 +363,44 @@ class AccountsClientTest extends UnitTestFixture
      */
     public function shouldUploadFile()
     {
+        // Per-field examples of PlatformsFileUploadResponse in the spec.
+        $expected = [
+            "id" => "file_6lbss42ezvoufcb2beo76rvwly",
+            "maximum_size_in_bytes" => 4194304,
+            "document_types_for_purpose" => ["image/jpeg", "image/png", "image/jpg"],
+            "_links" => [
+                "upload" => [
+                    "href" => "https://s3.eu-west-1.amazonaws.com/mp-files-api-staging-prod/"
+                        . "ent_ociwguf5a5fe3ndmpnvpnwsi3e/file_6lbss42ezvoufcb2beo76rvwly"
+                        . "?AWSAccessKeyId=ASIX4BFJOBCQFLAMPKU3&Expires=1661355993&x-amz-security-token=some_token"
+                ],
+                "self" => [
+                    "href" => "https://files.checkout.com/files/file_6lbss42ezvoufcb2beo76rvwly"
+                ]
+            ]
+        ];
+
         $this->apiClient
             ->method("post")
-            ->willReturn([
-                "id" => "file_6lbss42ezvoufcb2beo76rvwly",
-                "maximum_size_in_bytes" => 4194304,
-                "document_types_for_purpose" => ["image/jpeg", "image/png", "image/jpg"],
-                "_links" => [
-                    "upload" => [
-                        "href" => "https://s3.eu-west-1.amazonaws.com/mp-files-api-staging-prod/ent_ociwguf5a5fe3ndmpnvpnwsi3e/file_6lbss42ezvoufcb2beo76rvwly?AWSAccessKeyId=ASIX4BFJOBCQFLAMPKU3&Expires=1661355993&x-amz-security-token=some_token"
-                    ],
-                    "self" => [
-                        "href" => "https://files.checkout.com/files/file_6lbss42ezvoufcb2beo76rvwly"
-                    ]
-                ]
-            ]);
+            ->willReturn($expected);
 
         $fileRequest = $this->buildUploadFileRequest();
         $response = $this->client->uploadFile("entity_id", $fileRequest);
 
-        $this->assertNotNull($response);
-        $this->assertArrayHasKey("id", $response);
-        $this->assertArrayHasKey("maximum_size_in_bytes", $response);
-        $this->assertArrayHasKey("document_types_for_purpose", $response);
-        $this->assertArrayHasKey("_links", $response);
-        $this->assertEquals("file_6lbss42ezvoufcb2beo76rvwly", $response["id"]);
+        $this->assertSame("file_6lbss42ezvoufcb2beo76rvwly", $response["id"]);
+        $this->assertSame(4194304, $response["maximum_size_in_bytes"]);
+        $this->assertSame(["image/jpeg", "image/png", "image/jpg"], $response["document_types_for_purpose"]);
+        $this->assertSame(
+            "https://s3.eu-west-1.amazonaws.com/mp-files-api-staging-prod/"
+            . "ent_ociwguf5a5fe3ndmpnvpnwsi3e/file_6lbss42ezvoufcb2beo76rvwly"
+            . "?AWSAccessKeyId=ASIX4BFJOBCQFLAMPKU3&Expires=1661355993&x-amz-security-token=some_token",
+            $response["_links"]["upload"]["href"]
+        );
+        $this->assertSame(
+            "https://files.checkout.com/files/file_6lbss42ezvoufcb2beo76rvwly",
+            $response["_links"]["self"]["href"]
+        );
+        $this->assertSame($expected, $response);
     }
 
     /**
@@ -358,38 +409,52 @@ class AccountsClientTest extends UnitTestFixture
      */
     public function shouldRetrieveFile()
     {
+        // Per-field examples of PlatformsFileRetrieveResponse in the spec, including the
+        // seven fractional digits of uploaded_on, which the SDK returns as an unparsed string.
+        $expected = [
+            "id" => "file_6lbss42ezvoufcb2beo76rvwly",
+            "status" => "invalid",
+            "status_reasons" => ["InvalidMimeType"],
+            "size" => 1024,
+            "mime_type" => "application/pdf",
+            "uploaded_on" => "2020-12-01T15:01:01.0000000+00:00",
+            "purpose" => "identity_verification",
+            "_links" => [
+                "download" => [
+                    "href" => "https://s3.eu-west-1.amazonaws.com/mp-files-api-clean-prod/"
+                        . "ent_ociwguf5a5fe3ndmpnvpnwsi3e/file_6lbss42ezvoufcb2beo76rvwly"
+                        . "?X-Amz-Expires=3600&x-amz-security-token=some_token"
+                ],
+                "self" => [
+                    "href" => "https://files.checkout.com/files/file_6lbss42ezvoufcb2beo76rvwly"
+                ]
+            ]
+        ];
+
         $this->apiClient
             ->method("get")
-            ->willReturn([
-                "id" => "file_6lbss42ezvoufcb2beo76rvwly",
-                "status" => "valid",
-                "status_reasons" => null,
-                "size" => 1024,
-                "mime_type" => "application/pdf",
-                "uploaded_on" => "2020-12-01T15:01:01Z",
-                "purpose" => "identity_verification",
-                "_links" => [
-                    "download" => [
-                        "href" => "https://s3.eu-west-1.amazonaws.com/mp-files-api-clean-prod/ent_ociwguf5a5fe3ndmpnvpnwsi3e/file_6lbss42ezvoufcb2beo76rvwly?X-Amz-Expires=3600&x-amz-security-token=some_token"
-                    ],
-                    "self" => [
-                        "href" => "https://files.checkout.com/files/file_6lbss42ezvoufcb2beo76rvwly"
-                    ]
-                ]
-            ]);
+            ->willReturn($expected);
 
         $response = $this->client->retrieveFile("entity_id", "file_6lbss42ezvoufcb2beo76rvwly");
 
-        $this->assertNotNull($response);
-        $this->assertArrayHasKey("id", $response);
-        $this->assertArrayHasKey("status", $response);
-        $this->assertArrayHasKey("size", $response);
-        $this->assertArrayHasKey("mime_type", $response);
-        $this->assertArrayHasKey("uploaded_on", $response);
-        $this->assertArrayHasKey("purpose", $response);
-        $this->assertArrayHasKey("_links", $response);
-        $this->assertEquals("file_6lbss42ezvoufcb2beo76rvwly", $response["id"]);
-        $this->assertEquals("valid", $response["status"]);
+        $this->assertSame("file_6lbss42ezvoufcb2beo76rvwly", $response["id"]);
+        $this->assertSame("invalid", $response["status"]);
+        $this->assertSame(["InvalidMimeType"], $response["status_reasons"]);
+        $this->assertSame(1024, $response["size"]);
+        $this->assertSame("application/pdf", $response["mime_type"]);
+        $this->assertSame("2020-12-01T15:01:01.0000000+00:00", $response["uploaded_on"]);
+        $this->assertSame("identity_verification", $response["purpose"]);
+        $this->assertSame(
+            "https://s3.eu-west-1.amazonaws.com/mp-files-api-clean-prod/"
+            . "ent_ociwguf5a5fe3ndmpnvpnwsi3e/file_6lbss42ezvoufcb2beo76rvwly"
+            . "?X-Amz-Expires=3600&x-amz-security-token=some_token",
+            $response["_links"]["download"]["href"]
+        );
+        $this->assertSame(
+            "https://files.checkout.com/files/file_6lbss42ezvoufcb2beo76rvwly",
+            $response["_links"]["self"]["href"]
+        );
+        $this->assertSame($expected, $response);
     }
 
     /**

@@ -56,7 +56,7 @@ class AccountsSchemaVersionHeaderTest extends MockeryTestCase
 
         $stack->setHandler(function () {
             return \GuzzleHttp\Promise\Create::promiseFor(
-                new Response(200, ['Content-Type' => 'application/json'], '{"id":"ent_123"}')
+                new Response(200, ['Content-Type' => 'application/json'], '{"id":"ent_w4jelhppmfiufdnatam37wrfc4"}')
             );
         });
 
@@ -114,7 +114,7 @@ class AccountsSchemaVersionHeaderTest extends MockeryTestCase
      */
     public function getEntitySendsSchemaVersion3ByDefault()
     {
-        $this->buildAccountsClient()->getEntity('ent_123');
+        $this->buildAccountsClient()->getEntity('ent_w4jelhppmfiufdnatam37wrfc4');
         $this->assertAcceptHeader('application/json;schema_version=3.0');
     }
 
@@ -123,7 +123,7 @@ class AccountsSchemaVersionHeaderTest extends MockeryTestCase
      */
     public function updateEntitySendsSchemaVersion3ByDefault()
     {
-        $this->buildAccountsClient()->updateEntity('ent_123', new OnboardEntityRequest());
+        $this->buildAccountsClient()->updateEntity('ent_w4jelhppmfiufdnatam37wrfc4', new OnboardEntityRequest());
         $this->assertAcceptHeader('application/json;schema_version=3.0');
     }
 
@@ -132,7 +132,7 @@ class AccountsSchemaVersionHeaderTest extends MockeryTestCase
      */
     public function getEntityRequirementsSendsSchemaVersion3ByDefault()
     {
-        $this->buildAccountsClient()->getEntityRequirements('ent_123');
+        $this->buildAccountsClient()->getEntityRequirements('ent_w4jelhppmfiufdnatam37wrfc4');
         $this->assertAcceptHeader('application/json;schema_version=3.0');
     }
 
@@ -141,7 +141,7 @@ class AccountsSchemaVersionHeaderTest extends MockeryTestCase
      */
     public function allowsOverridingTheSchemaVersion()
     {
-        $this->buildAccountsClient()->getEntity('ent_123', '2.0');
+        $this->buildAccountsClient()->getEntity('ent_w4jelhppmfiufdnatam37wrfc4', '2.0');
         $this->assertAcceptHeader('application/json;schema_version=2.0');
     }
 
@@ -175,9 +175,15 @@ class AccountsSchemaVersionHeaderTest extends MockeryTestCase
         $this->assertSame($expectedRepresentativeDocuments, $body['company']['representatives'][0]['documents']);
         $this->assertSame(array('bank_verification'), array_keys($body['documents']));
 
-        $this->buildAccountsClient()->updateEntity('ent_123', $this->buildEeaSoleTraderRequest());
+        $this->buildAccountsClient()->updateEntity(
+            'ent_w4jelhppmfiufdnatam37wrfc4',
+            $this->buildEeaSoleTraderRequest()
+        );
         $this->assertSame('PUT', $this->capturedRequest->getMethod());
-        $this->assertSame('/accounts/entities/ent_123', $this->capturedRequest->getUri()->getPath());
+        $this->assertSame(
+            '/accounts/entities/ent_w4jelhppmfiufdnatam37wrfc4',
+            $this->capturedRequest->getUri()->getPath()
+        );
         $body = json_decode((string) $this->capturedRequest->getBody(), true);
         $this->assertSame($expectedRepresentativeDocuments, $body['company']['representatives'][0]['documents']);
     }

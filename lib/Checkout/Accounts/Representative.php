@@ -60,9 +60,11 @@ class Representative
     public $ownership_percentage;
 
     /**
-     * The representative's verification documents. The API rejects any key other than
-     * identity_verification, certified_authorised_signatory, proof_of_residential_address and
-     * proof_of_registration; see RepresentativeDocuments for which apply to each variant.
+     * The representative's verification documents; see RepresentativeDocuments for which keys
+     * apply to each variant. On the EEA, GB and US Company - Full (3.0) Person of Interest
+     * representatives and the EEA, GB and US Sole Trader - Full (3.0) variants the API rejects any
+     * key it does not recognise. The spec does not declare that restriction for the US ISV Seller
+     * variants (3.0).
      * [Optional] (required for the sole trader full variants, Accounts API v3.0)
      *
      * @var RepresentativeDocuments

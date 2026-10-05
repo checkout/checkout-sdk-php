@@ -5,6 +5,8 @@ namespace Checkout\Tests\Accounts;
 use Checkout\Accounts\ArticlesOfAssociationType;
 use Checkout\Accounts\BankVerificationType;
 use Checkout\Accounts\CertifiedAuthorisedSignatoryType;
+use Checkout\Accounts\CompanyVerificationType;
+use Checkout\Accounts\FinancialStatementsType;
 use Checkout\Accounts\FinancialVerificationType;
 use Checkout\Accounts\ProofOfLegalityType;
 use Checkout\Accounts\ProofOfPrincipalAddressType;
@@ -36,6 +38,22 @@ class OnboardingDocumentTypeTest extends TestCase
         $this->assertSame("proof_of_address", ProofOfPrincipalAddressType::$proof_of_address);
         $this->assertSame("proof_of_legality", ProofOfLegalityType::$proof_of_legality);
         $this->assertSame("financial_statement", FinancialVerificationType::$financial_statement);
+        $this->assertSame("financial_statements", FinancialStatementsType::$financial_statements);
+        $this->assertSame("incorporation_document", CompanyVerificationType::$incorporation_document);
+        $this->assertSame("articles_of_association", CompanyVerificationType::$articles_of_association);
+    }
+
+    /**
+     * The identity_verification document types, the same six values in every variant.
+     */
+    public function testExposesTheIdentityDocumentTypes()
+    {
+        $this->assertSame("passport", DocumentType::$passport);
+        $this->assertSame("national_identity_card", DocumentType::$national_identity_card);
+        $this->assertSame("driving_license", DocumentType::$driving_license);
+        $this->assertSame("citizen_card", DocumentType::$citizen_card);
+        $this->assertSame("residence_permit", DocumentType::$residence_permit);
+        $this->assertSame("electoral_id", DocumentType::$electoral_id);
     }
 
     /**

@@ -21,6 +21,10 @@ use Checkout\Accounts\ProcessingDetails;
 use Checkout\Accounts\ProcessingDetailsAch;
 use Checkout\Accounts\ProcessingDetailsPayments;
 use Checkout\Accounts\PaymentInstrumentRequest;
+use Checkout\Accounts\Headers;
+use Checkout\Accounts\UpdatePaymentInstrumentRequest;
+use Checkout\Accounts\InstrumentAccountType;
+use Checkout\Accounts\InstrumentDetailsAch;
 use Checkout\Accounts\PaymentInstrumentsQuery;
 use Checkout\Accounts\Profile;
 use Checkout\Accounts\Representative;
@@ -221,6 +225,50 @@ class AccountsIntegrationTest extends SandboxTestFixture
 
         $queryResponse = $api->getAccountsClient()->queryPaymentInstruments($entity["id"], new PaymentInstrumentsQuery());
         $this->assertResponse($queryResponse, "data");
+    }
+
+    /**
+     * The update only succeeds when the ETag reaches the API as the If-Match HTTP header: without it
+     * the API answers 428, and with a stale ETag 412.
+     *
+     * @test
+     * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
+     */
+    public function shouldUpdatePaymentInstrumentWithEtag()
+    {
+        $client = $this->accountsApi()->getAccountsClient();
+        $entity = $client->createEntity($this->buildOnboardCompanyRequest());
+        $file = $this->uploadFile();
+
+        $instrumentRequest = new PaymentInstrumentRequest();
+        $instrumentRequest->label = "Main account";
+        $instrumentRequest->type = InstrumentType::$bank_account;
+        $instrumentRequest->currency = Currency::$USD;
+        $instrumentRequest->country = Country::$US;
+        $instrumentRequest->document = new InstrumentDocument();
+        $instrumentRequest->document->type = "bank_statement";
+        $instrumentRequest->document->file_id = $file["id"];
+        $instrumentRequest->instrument_details = new InstrumentDetailsAch();
+        $instrumentRequest->instrument_details->account_number = "123456789";
+        $instrumentRequest->instrument_details->routing_number = "026009593";
+        // The sandbox rejects checking (instrument_details_account_type_invalid), although the spec lists it.
+        $instrumentRequest->instrument_details->account_type = InstrumentAccountType::$savings;
+        $instrumentId = $client->createBankPaymentInstrument($entity["id"], $instrumentRequest)["id"];
+
+        $details = $client->retrievePaymentInstrumentDetails($entity["id"], $instrumentId);
+        $responseHeaders = array_change_key_case($details["http_metadata"]->getHeaders(), CASE_LOWER);
+
+        $updateRequest = new UpdatePaymentInstrumentRequest();
+        $updateRequest->label = "Renamed account";
+        $updateRequest->headers = new Headers();
+        $updateRequest->headers->if_match = $responseHeaders["etag"][0];
+        $response = $client->updateBankPaymentInstrumentDetails($entity["id"], $instrumentId, $updateRequest);
+
+        $this->assertEquals($instrumentId, $response["id"]);
+        $updated = $client->retrievePaymentInstrumentDetails($entity["id"], $instrumentId);
+        $this->assertEquals("Renamed account", $updated["label"]);
     }
 
     /**

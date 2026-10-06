@@ -3,17 +3,16 @@
 namespace Checkout\Accounts;
 
 /**
- * Shareholder structure chart (including % of shares) certified by a competent authority
- * individual and dated within the last 3 months.
+ * Proof of the company's principal place of business.
  */
-class ShareholderStructure
+class ProofOfPrincipalAddress
 {
     /**
-     * The type of document.
+     * The type of document being used as address verification.
      * [Required]
-     * Enum: "certified_shareholder_structure"
+     * Enum: "proof_of_address"
      *
-     * @var string value of ShareholderStructureType
+     * @var string value of ProofOfPrincipalAddressType
      */
     public $type;
 

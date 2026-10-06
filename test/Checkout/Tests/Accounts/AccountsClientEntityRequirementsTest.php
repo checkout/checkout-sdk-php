@@ -37,8 +37,8 @@ class AccountsClientEntityRequirementsTest extends UnitTestFixture
             ->willReturn([
                 "data" => [
                     [
-                        "id" => "req_123",
-                        "resource" => "ent_456",
+                        "id" => "req_5wmacwhrhbzhqkhx5hlqmzje44",
+                        "resource" => "ent_azsiyswl7bwe2ynjzujy7lcjca",
                         "reason" => "periodic_review",
                         "priority" => "high"
                     ]
@@ -58,8 +58,8 @@ class AccountsClientEntityRequirementsTest extends UnitTestFixture
         $this->apiClient
             ->method("get")
             ->willReturn([
-                "id" => "req_123",
-                "resource" => "ent_456",
+                "id" => "req_5wmacwhrhbzhqkhx5hlqmzje44",
+                "resource" => "ent_azsiyswl7bwe2ynjzujy7lcjca",
                 "reason" => "periodic_review",
                 "priority" => "high",
                 "message" => "Please provide your ID",
@@ -79,13 +79,13 @@ class AccountsClientEntityRequirementsTest extends UnitTestFixture
         $this->apiClient
             ->method("put")
             ->willReturn([
-                "id" => "req_123",
+                "id" => "req_5wmacwhrhbzhqkhx5hlqmzje44",
                 "status" => "processing",
                 "submitted_at" => "2026-05-05T10:15:30Z"
             ]);
 
         $request = new EntityRequirementUpdateRequest();
-        $request->value = ["file_id" => "file_test123"];
+        $request->value = ["file_id" => "file_awonj5x3g4oupitqp6dhsc4hyy"];
         
         $response = $this->client->resolveEntityRequirement("entity_id", "requirement_id", $request);
         $this->assertNotNull($response);
@@ -100,7 +100,7 @@ class AccountsClientEntityRequirementsTest extends UnitTestFixture
         $this->apiClient
             ->method("put")
             ->willReturn([
-                "id" => "req_123",
+                "id" => "req_5wmacwhrhbzhqkhx5hlqmzje44",
                 "status" => "processing",
                 "submitted_at" => "2026-05-05T10:15:30Z"
             ]);

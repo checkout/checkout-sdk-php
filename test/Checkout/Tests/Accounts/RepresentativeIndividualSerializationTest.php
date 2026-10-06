@@ -54,17 +54,37 @@ class RepresentativeIndividualSerializationTest extends TestCase
 
         $decoded = json_decode((new JsonSerializer())->serialize($individual), true);
 
-        $this->assertSame("John", $decoded['first_name']);
-        $this->assertSame("Robert", $decoded['middle_name']);
-        $this->assertSame("Representative", $decoded['last_name']);
-        $this->assertSame("citizenship", $decoded['citizenships'][0]['type']);
-        $this->assertSame("GB", $decoded['citizenships'][0]['country']);
-        $this->assertSame("ssn", $decoded['national_id_type']);
-        $this->assertSame("123456789", $decoded['national_id_number']);
-        $this->assertSame("john@example.com", $decoded['email_address']);
-        $this->assertSame(1996, $decoded['date_of_birth']['year']);
-        $this->assertSame("GB", $decoded['place_of_birth']['country']);
-        $this->assertSame("GB", $decoded['phone']['country_code']);
-        $this->assertSame("W1T 4TJ", $decoded['address']['zip']);
+        $this->assertSame(
+            array(
+                "first_name" => "John",
+                "middle_name" => "Robert",
+                "last_name" => "Representative",
+                "date_of_birth" => array("day" => 5, "month" => 6, "year" => 1996),
+                "place_of_birth" => array("country" => "GB"),
+                "citizenships" => array(array("type" => "citizenship", "country" => "GB")),
+                "national_id_type" => "ssn",
+                "national_id_number" => "123456789",
+                "email_address" => "john@example.com",
+                "phone" => array("country_code" => "GB", "number" => "2072343000"),
+                "address" => array(
+                    "address_line1" => "CheckoutSdk.com",
+                    "city" => "London",
+                    "zip" => "W1T 4TJ",
+                    "country" => "GB",
+                ),
+            ),
+            $decoded
+        );
+    }
+
+    public function testNationalIdTypeValuesMatchSwagger()
+    {
+        $this->assertSame("ssn", NationalIdType::$ssn);
+        $this->assertSame("itin", NationalIdType::$itin);
+        $this->assertSame("passport", NationalIdType::$passport);
+        $this->assertSame("driving_license", NationalIdType::$driving_license);
+        $this->assertSame("national_id_card", NationalIdType::$national_id_card);
+        $this->assertSame("residence_permit", NationalIdType::$residence_permit);
+        $this->assertSame("other", NationalIdType::$other);
     }
 }

@@ -16,6 +16,9 @@ use Checkout\Payments\Setups\Common\Settings\Settings;
 use Checkout\Payments\Setups\Common\Customer\Customer;
 use Checkout\Payments\Setups\Common\Customer\Email;
 use Checkout\Payments\Setups\Common\Customer\Device;
+use Checkout\Payments\Setups\Common\Customer\DeviceClient;
+use Checkout\Payments\Setups\Common\Customer\DeviceOs;
+use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashApp;
 use Checkout\Payments\PaymentType;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
@@ -135,6 +138,83 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $this->assertEquals($paymentSetupsRequest->amount, $response["amount"]);
         $this->assertEquals($paymentSetupsRequest->currency, $response["currency"]);
         $this->assertNotNull($response["processed_on"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreatePaymentSetupWithDeviceFieldsAndEchoThem()
+    {
+        // Arrange
+        $request = $this->createPaymentSetupRequest();
+        $request->customer->device->fingerprint = "fp_abc123xyz";
+        $request->customer->device->ipv4 = "203.0.113.0";
+        $request->customer->device->ipv6 = "2001:db8:85a3::8a2e:370:7334";
+        $request->customer->device->client = DeviceClient::$web;
+        $request->customer->device->os = DeviceOs::$android;
+
+        // Act
+        $response = $this->checkoutApi->getPaymentSetupsClient()->createPaymentSetup($request);
+
+        // Assert
+        $device = $response["customer"]["device"];
+        $this->assertEquals("en_GB", $device["locale"]);
+        $this->assertEquals("fp_abc123xyz", $device["fingerprint"]);
+        $this->assertEquals("203.0.113.0", $device["ipv4"]);
+        $this->assertEquals("2001:db8:85a3::8a2e:370:7334", $device["ipv6"]);
+        $this->assertEquals("web", $device["client"]);
+        $this->assertEquals("android", $device["os"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreatePaymentSetupWithCustomerIdentifiersAndEchoThem()
+    {
+        // Arrange
+        $request = $this->createPaymentSetupRequest();
+        $request->customer->id = "cus_123456789";
+        $request->customer->country = "GB";
+        $request->customer->tax_number = "GB123456789";
+
+        // Act
+        $response = $this->checkoutApi->getPaymentSetupsClient()->createPaymentSetup($request);
+
+        // Assert
+        $this->assertEquals("cus_123456789", $response["customer"]["id"]);
+        $this->assertEquals("GB", $response["customer"]["country"]);
+        $this->assertEquals("GB123456789", $response["customer"]["tax_number"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldCreatePaymentSetupWithCashAppAndReturnItsState()
+    {
+        // Arrange
+        $request = $this->createPaymentSetupRequest();
+        $request->currency = Currency::$USD;
+        $request->customer->device->client = DeviceClient::$web;
+        $cashApp = new CashApp();
+        $cashApp->initialization = "enabled";
+        $cashApp->customer_profile_sharing = true;
+        $request->payment_methods = new PaymentMethods();
+        $request->payment_methods->cashapp = $cashApp;
+
+        // Act
+        $response = $this->checkoutApi->getPaymentSetupsClient()->createPaymentSetup($request);
+
+        // Assert
+        $available = isset($response["available_payment_methods"]) ? $response["available_payment_methods"] : [];
+        if (!in_array("cashapp", $available, true)) {
+            $this->markTestSkipped("Cash App Pay is not enabled on the sandbox processing channel");
+        }
+        $this->assertArrayHasKey("cashapp", $response["payment_methods"]);
+        $this->assertNotNull($response["payment_methods"]["cashapp"]["status"]);
+        $this->assertEquals("enabled", $response["payment_methods"]["cashapp"]["initialization"]);
     }
 
     /**

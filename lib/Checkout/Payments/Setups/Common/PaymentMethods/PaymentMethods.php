@@ -10,6 +10,7 @@ use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\Bacs;
 use Checkout\Payments\Setups\Common\PaymentMethods\CardPresent\CardPresent;
 use Checkout\Payments\Setups\Common\PaymentMethods\PayByBank\PayByBank;
 use Checkout\Payments\Setups\Common\PaymentMethods\Stablecoin\Stablecoin;
+use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashApp;
 
 class PaymentMethods
 {
@@ -68,4 +69,11 @@ class PaymentMethods
      * @var Stablecoin
      */
     public $stablecoin;
+
+    /**
+     * The Cash App payment method's details and configuration. Serialized under the key "cashapp".
+     * [Optional]
+     * @var CashApp
+     */
+    public $cashapp;
 }

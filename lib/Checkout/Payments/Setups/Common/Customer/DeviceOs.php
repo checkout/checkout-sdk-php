@@ -7,6 +7,15 @@ namespace Checkout\Payments\Setups\Common\Customer;
  */
 class DeviceOs
 {
+    /**
+     * Android.
+     * @var string
+     */
     public static $android = "android";
+
+    /**
+     * iOS.
+     * @var string
+     */
     public static $ios = "ios";
 }

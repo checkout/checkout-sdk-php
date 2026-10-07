@@ -7,5 +7,9 @@ namespace Checkout\Payments\Setups\Common\PaymentMethods\CashApp;
  */
 class CashAppActionType
 {
+    /**
+     * Redirect the customer to Cash App to authorize the payment.
+     * @var string
+     */
     public static $redirect = "redirect";
 }

@@ -72,12 +72,11 @@ class CashAppCustomerProfile
     public $suffix;
 
     /**
-     * The customer's date of birth.
+     * The customer's date of birth. Kept as a string because the provider's format varies (the API
+     * example is a date-time, for example 1990-01-01T00:00:00.0000000).
      * [Optional]
      * readOnly
      * Format: date
-     * Kept as a string because the provider's format varies (the API example is a date-time,
-     * for example 1990-01-01T00:00:00.0000000).
      * @var string
      */
     public $birth_date;
@@ -107,12 +106,12 @@ class CashAppCustomerProfile
     public $email_address;
 
     /**
-     * The date and time the customer's Cash App account was created.
+     * The date and time the customer's Cash App account was created. Kept as a string because the
+     * provider's format varies (for example 1970-01-18T12:46:04.8000000+00:00, with seven
+     * fractional digits).
      * [Optional]
      * readOnly
      * Format: date-time
-     * Kept as a string because the provider's format varies (for example
-     * 1970-01-18T12:46:04.8000000+00:00, with seven fractional digits).
      * @var string
      */
     public $customer_since;

@@ -323,6 +323,19 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         );
     }
 
+    public function testSerializesCustomerProfileSharingFalse()
+    {
+        $cashApp = new CashApp();
+        $cashApp->initialization = "enabled";
+        $cashApp->customer_profile_sharing = false;
+
+        $decoded = json_decode((new JsonSerializer())->serialize($cashApp), true);
+
+        // The serializer strips nulls only; an explicit false must still reach the API.
+        $this->assertArrayHasKey("customer_profile_sharing", $decoded);
+        $this->assertFalse($decoded["customer_profile_sharing"]);
+    }
+
     public function testSerializesEveryDeviceClientValue()
     {
         $serializer = new JsonSerializer();
@@ -437,6 +450,7 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $this->assertStringContainsString('"address_line_3":', $json);
         $this->assertStringContainsString('"administrative_district_level_1":', $json);
         $this->assertStringNotContainsString('"address_line1"', $json);
+        $this->assertStringNotContainsString('"administrative_district_level1"', $json);
 
         $this->assertSame("action_required", $decoded['status']);
         $this->assertSame([], $decoded['flags']);

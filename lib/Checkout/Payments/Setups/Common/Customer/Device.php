@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\Customer;
 
+/**
+ * Details of the customer's device.
+ */
 class Device
 {
     /**

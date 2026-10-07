@@ -212,9 +212,12 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         if (!in_array("cashapp", $available, true)) {
             $this->markTestSkipped("Cash App Pay is not enabled on the sandbox processing channel");
         }
-        $this->assertArrayHasKey("cashapp", $response["payment_methods"]);
-        $this->assertNotNull($response["payment_methods"]["cashapp"]["status"]);
-        $this->assertEquals("enabled", $response["payment_methods"]["cashapp"]["initialization"]);
+        $fetched = $this->checkoutApi->getPaymentSetupsClient()->getPaymentSetup($response["id"]);
+        $this->assertArrayHasKey("cashapp", $fetched["payment_methods"]);
+        $cashAppResponse = $fetched["payment_methods"]["cashapp"];
+        $this->assertNotNull($cashAppResponse["status"]);
+        $this->assertEquals("enabled", $cashAppResponse["initialization"]);
+        $this->assertTrue($cashAppResponse["customer_profile_sharing"]);
     }
 
     /**

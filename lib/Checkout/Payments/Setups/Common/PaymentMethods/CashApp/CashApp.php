@@ -8,7 +8,9 @@ use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodBase;
  * The Cash App payment method's details and configuration.
  *
  * Inherits status, flags and initialization from PaymentMethodBase. Send initialization and
- * customer_profile_sharing; the remaining properties are returned by the API only.
+ * customer_profile_sharing; the remaining properties are returned by the API only. To authorize the
+ * payment, send the customer to the redirect URL returned in the action. The customer device client
+ * (Device::$client) is required when using this payment method.
  */
 class CashApp extends PaymentMethodBase
 {

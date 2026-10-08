@@ -17,20 +17,40 @@ use Checkout\Payments\Setups\Common\Industry\PaymentSetupAccommodationAddress;
 use Checkout\Payments\AccommodationGuest;
 use Checkout\Payments\Setups\Common\Industry\PaymentSetupAccommodationRoom;
 use Checkout\Payments\Ticket;
+use Checkout\Common\Phone;
+use Checkout\Payments\Setups\Common\Customer\Customer;
+use Checkout\Payments\Setups\Common\Customer\Device;
+use Checkout\Payments\Setups\Common\Customer\DeviceClient;
+use Checkout\Payments\Setups\Common\Customer\DeviceOs;
+use Checkout\Payments\Setups\Common\Customer\Email;
+use Checkout\Payments\Setups\Common\Customer\MerchantAccount;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\Bacs;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\BacsAccountHolder;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\BacsAccountHolderType;
 use Checkout\Payments\Setups\Common\PaymentMethods\CardPresent\CardPresent;
+use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashApp;
+use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodInitialization;
+use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodStatus;
+use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppActionType;
+use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppAddress;
+use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppCustomerProfile;
 use Checkout\Payments\Setups\Common\PaymentMethods\PayByBank\PayByBank;
 use Checkout\Payments\Setups\Common\PaymentMethods\PaymentMethods;
 use Checkout\Payments\Setups\Common\PaymentMethods\Stablecoin\Stablecoin;
 use Checkout\Payments\Setups\Common\PresentmentDetails\PaymentSetupPresentmentDetails;
 use Checkout\Payments\Setups\Common\Terminal\PaymentSetupTerminal;
 use Checkout\Payments\Setups\Request\PaymentSetupRequest;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 
 class PaymentSetupFieldsSerializationTest extends TestCase
 {
+    const CASHAPP_REDIRECT_URL = "https://sandbox.api.cash.app/customer-request/v1/requests/"
+        . "GRR_f5xg6wrxhtv3p4w24g0wrexa/interstitial?validity_token=bap03y";
+
+    const CASHAPP_CUSTOMER_ID = "CST_AYVkuLzfsRqEhf4OyQFxQNv22m7IjNFjO6f2J5CDE2nxAC4-21wJ2H8_2kvsdIsDZMN4";
+
     public function testSerializesBillingDescriptorPresentmentDetailsAndTerminal()
     {
         $request = new PaymentSetupRequest();
@@ -275,5 +295,443 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $this->assertArrayNotHasKey('billing_descriptor', $decoded);
         $this->assertArrayNotHasKey('presentment_details', $decoded);
         $this->assertArrayNotHasKey('terminal', $decoded);
+    }
+
+    public function testSerializesCashAppUnderLiteralKeyWithMerchantFields()
+    {
+        $cashApp = new CashApp();
+        $cashApp->initialization = "enabled";
+        $cashApp->customer_profile_sharing = true;
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->cashapp = $cashApp;
+
+        $request = new PaymentSetupRequest();
+        $request->processing_channel_id = "pc_aaaaaaaaaaaaaaaaaaaaaaaaaa";
+        $request->amount = 1000;
+        $request->currency = "USD";
+        $request->payment_methods = $paymentMethods;
+
+        $json = (new JsonSerializer())->serialize($request);
+        $decoded = json_decode($json, true);
+
+        $this->assertStringContainsString('"cashapp":', $json);
+        $this->assertStringNotContainsString('cash_app', $json);
+        $this->assertStringNotContainsString('cashApp', $json);
+        $this->assertStringNotContainsString('customerProfileSharing', $json);
+        $this->assertSame(
+            ["initialization" => "enabled", "customer_profile_sharing" => true],
+            $decoded['payment_methods']['cashapp']
+        );
+    }
+
+    public function testSerializesCustomerProfileSharingFalse()
+    {
+        $cashApp = new CashApp();
+        $cashApp->initialization = "enabled";
+        $cashApp->customer_profile_sharing = false;
+
+        $decoded = json_decode((new JsonSerializer())->serialize($cashApp), true);
+
+        // The serializer strips nulls only; an explicit false must still reach the API.
+        $this->assertArrayHasKey("customer_profile_sharing", $decoded);
+        $this->assertFalse($decoded["customer_profile_sharing"]);
+    }
+
+    public function testSerializesEveryDeviceClientValue()
+    {
+        $serializer = new JsonSerializer();
+        $device = new Device();
+
+        $device->client = DeviceClient::$web;
+        $this->assertSame('{"client":"web"}', $serializer->serialize($device));
+
+        $device->client = DeviceClient::$mobile_web;
+        $this->assertSame('{"client":"mobile_web"}', $serializer->serialize($device));
+
+        $device->client = DeviceClient::$app;
+        $this->assertSame('{"client":"app"}', $serializer->serialize($device));
+    }
+
+    public function testSerializesEveryDeviceOsValue()
+    {
+        $serializer = new JsonSerializer();
+        $device = new Device();
+
+        $device->os = DeviceOs::$android;
+        $this->assertSame('{"os":"android"}', $serializer->serialize($device));
+
+        $device->os = DeviceOs::$ios;
+        $this->assertSame('{"os":"ios"}', $serializer->serialize($device));
+    }
+
+    public function testSerializesAllDeviceFields()
+    {
+        $device = new Device();
+        $device->locale = "en_US";
+        $device->fingerprint = "fp_abc123xyz";
+        $device->ipv4 = "203.0.113.0";
+        $device->ipv6 = "2001:db8:85a3::8a2e:370:7334";
+        $device->client = DeviceClient::$web;
+        $device->os = DeviceOs::$android;
+
+        $customer = new Customer();
+        $customer->device = $device;
+        $request = new PaymentSetupRequest();
+        $request->customer = $customer;
+
+        $decoded = json_decode((new JsonSerializer())->serialize($request), true);
+
+        $this->assertSame(
+            [
+                "locale" => "en_US",
+                "fingerprint" => "fp_abc123xyz",
+                "ipv4" => "203.0.113.0",
+                "ipv6" => "2001:db8:85a3::8a2e:370:7334",
+                "client" => "web",
+                "os" => "android",
+            ],
+            $decoded['customer']['device']
+        );
+    }
+
+    public function testSerializesDeviceWithOnlyLocale()
+    {
+        $device = new Device();
+        $device->locale = "en_US";
+
+        $this->assertSame('{"locale":"en_US"}', (new JsonSerializer())->serialize($device));
+    }
+
+    public function testCashAppRoundTripKeepsEveryProperty()
+    {
+        $address = new CashAppAddress();
+        $address->address_line_1 = "123 Main St";
+        $address->address_line_2 = "Apt 2";
+        $address->address_line_3 = "Floor 3";
+        $address->locality = "Springfield";
+        $address->sublocality = "Downtown";
+        $address->administrative_district_level_1 = "IL";
+        $address->postal_code = "62701";
+        $address->country = "US";
+
+        $profile = new CashAppCustomerProfile();
+        $profile->customer_id = self::CASHAPP_CUSTOMER_ID;
+        $profile->cashtag = '$CASHTAG_C_TOKEN';
+        $profile->reference_id = "value";
+        $profile->full_name = "John Middle Doe";
+        $profile->given_name = "John";
+        $profile->middle_name = "Middle";
+        $profile->family_name = "Doe";
+        $profile->suffix = "Jr.";
+        $profile->birth_date = "1990-01-01T00:00:00.0000000";
+        $profile->address = $address;
+        $profile->phone_number = "5555555555";
+        $profile->email_address = "cash@cash.com";
+        $profile->customer_since = "1970-01-18T12:46:04.8000000+00:00";
+
+        $action = new CashAppAction();
+        $action->type = CashAppActionType::$redirect;
+        $action->redirect_url = self::CASHAPP_REDIRECT_URL;
+
+        $cashApp = new CashApp();
+        $cashApp->status = "action_required";
+        $cashApp->flags = [];
+        $cashApp->initialization = "enabled";
+        $cashApp->customer_profile_sharing = true;
+        $cashApp->reference = "ORDER-99";
+        $cashApp->action = $action;
+        $cashApp->customer_profile = $profile;
+
+        $serializer = new JsonSerializer();
+        $json = $serializer->serialize($cashApp);
+        $decoded = $serializer->deserialize($json);
+
+        $this->assertStringContainsString('"address_line_1":', $json);
+        $this->assertStringContainsString('"address_line_2":', $json);
+        $this->assertStringContainsString('"address_line_3":', $json);
+        $this->assertStringContainsString('"administrative_district_level_1":', $json);
+        $this->assertStringNotContainsString('"address_line1"', $json);
+        $this->assertStringNotContainsString('"administrative_district_level1"', $json);
+
+        $this->assertSame("action_required", $decoded['status']);
+        $this->assertSame([], $decoded['flags']);
+        $this->assertSame("enabled", $decoded['initialization']);
+        $this->assertTrue($decoded['customer_profile_sharing']);
+        $this->assertSame("ORDER-99", $decoded['reference']);
+        $this->assertSame("redirect", $decoded['action']['type']);
+        $this->assertSame(self::CASHAPP_REDIRECT_URL, $decoded['action']['redirect_url']);
+
+        $decodedProfile = $decoded['customer_profile'];
+        $this->assertCount(13, $decodedProfile);
+        $this->assertSame(self::CASHAPP_CUSTOMER_ID, $decodedProfile['customer_id']);
+        $this->assertSame('$CASHTAG_C_TOKEN', $decodedProfile['cashtag']);
+        $this->assertSame("value", $decodedProfile['reference_id']);
+        $this->assertSame("John Middle Doe", $decodedProfile['full_name']);
+        $this->assertSame("John", $decodedProfile['given_name']);
+        $this->assertSame("Middle", $decodedProfile['middle_name']);
+        $this->assertSame("Doe", $decodedProfile['family_name']);
+        $this->assertSame("Jr.", $decodedProfile['suffix']);
+        $this->assertSame("1990-01-01T00:00:00.0000000", $decodedProfile['birth_date']);
+        $this->assertSame("5555555555", $decodedProfile['phone_number']);
+        $this->assertSame("cash@cash.com", $decodedProfile['email_address']);
+        $this->assertSame("1970-01-18T12:46:04.8000000+00:00", $decodedProfile['customer_since']);
+        $this->assertSame(
+            [
+                "address_line_1" => "123 Main St",
+                "address_line_2" => "Apt 2",
+                "address_line_3" => "Floor 3",
+                "locality" => "Springfield",
+                "sublocality" => "Downtown",
+                "administrative_district_level_1" => "IL",
+                "postal_code" => "62701",
+                "country" => "US",
+            ],
+            $decodedProfile['address']
+        );
+    }
+
+    public function testDeserializesCashAppSwaggerExampleResponse()
+    {
+        $json = '{
+            "id": "ps_2Un4Ld0Qm8Dj6kXHm0LqT0bK5mL",
+            "payment_methods": {
+                "cashapp": {
+                    "status": "action_required",
+                    "flags": [],
+                    "initialization": "enabled",
+                    "customer_profile_sharing": true,
+                    "reference": "ORDER-99",
+                    "action": {
+                        "type": "redirect",
+                        "redirect_url": "' . self::CASHAPP_REDIRECT_URL . '"
+                    },
+                    "customer_profile": {
+                        "customer_id": "' . self::CASHAPP_CUSTOMER_ID . '",
+                        "cashtag": "$CASHTAG_C_TOKEN",
+                        "reference_id": "value",
+                        "full_name": "John Middle Doe",
+                        "given_name": "John",
+                        "middle_name": "Middle",
+                        "family_name": "Doe",
+                        "suffix": "Jr.",
+                        "birth_date": "1990-01-01T00:00:00.0000000",
+                        "address": {
+                            "address_line_1": "123 Main St",
+                            "address_line_2": "Apt 2",
+                            "address_line_3": "Floor 3",
+                            "locality": "Springfield",
+                            "sublocality": "Downtown",
+                            "administrative_district_level_1": "IL",
+                            "postal_code": "62701",
+                            "country": "US"
+                        },
+                        "phone_number": "5555555555",
+                        "email_address": "cash@cash.com",
+                        "customer_since": "1970-01-18T12:46:04.8000000+00:00"
+                    }
+                }
+            },
+            "customer": {
+                "device": {
+                    "locale": "en_US",
+                    "fingerprint": "fp_abc123xyz",
+                    "ipv4": "203.0.113.0",
+                    "ipv6": "2001:db8:85a3::8a2e:370:7334",
+                    "client": "web",
+                    "os": "android"
+                }
+            }
+        }';
+
+        $response = (new JsonSerializer())->deserialize($json);
+        $cashApp = $response['payment_methods']['cashapp'];
+
+        $this->assertSame("action_required", $cashApp['status']);
+        $this->assertSame([], $cashApp['flags']);
+        $this->assertSame("enabled", $cashApp['initialization']);
+        $this->assertTrue($cashApp['customer_profile_sharing']);
+        $this->assertSame("ORDER-99", $cashApp['reference']);
+        $this->assertSame(CashAppActionType::$redirect, $cashApp['action']['type']);
+        $this->assertSame(self::CASHAPP_REDIRECT_URL, $cashApp['action']['redirect_url']);
+
+        $profile = $cashApp['customer_profile'];
+        $this->assertCount(13, $profile);
+        $this->assertSame(self::CASHAPP_CUSTOMER_ID, $profile['customer_id']);
+        $this->assertSame('$CASHTAG_C_TOKEN', $profile['cashtag']);
+        $this->assertSame("value", $profile['reference_id']);
+        $this->assertSame("John Middle Doe", $profile['full_name']);
+        $this->assertSame("John", $profile['given_name']);
+        $this->assertSame("Middle", $profile['middle_name']);
+        $this->assertSame("Doe", $profile['family_name']);
+        $this->assertSame("Jr.", $profile['suffix']);
+        $this->assertSame("1990-01-01T00:00:00.0000000", $profile['birth_date']);
+        $this->assertSame("5555555555", $profile['phone_number']);
+        $this->assertSame("cash@cash.com", $profile['email_address']);
+        $this->assertSame("1970-01-18T12:46:04.8000000+00:00", $profile['customer_since']);
+
+        $address = $profile['address'];
+        $this->assertCount(8, $address);
+        $this->assertSame("123 Main St", $address['address_line_1']);
+        $this->assertSame("Apt 2", $address['address_line_2']);
+        $this->assertSame("Floor 3", $address['address_line_3']);
+        $this->assertSame("Springfield", $address['locality']);
+        $this->assertSame("Downtown", $address['sublocality']);
+        $this->assertSame("IL", $address['administrative_district_level_1']);
+        $this->assertSame("62701", $address['postal_code']);
+        $this->assertSame("US", $address['country']);
+
+        $device = $response['customer']['device'];
+        $this->assertSame("en_US", $device['locale']);
+        $this->assertSame("fp_abc123xyz", $device['fingerprint']);
+        $this->assertSame("203.0.113.0", $device['ipv4']);
+        $this->assertSame("2001:db8:85a3::8a2e:370:7334", $device['ipv6']);
+        $this->assertSame(DeviceClient::$web, $device['client']);
+        $this->assertSame(DeviceOs::$android, $device['os']);
+    }
+
+    public function testCustomerRoundTripKeepsAllEightProperties()
+    {
+        $email = new Email();
+        $email->address = "johnsmith@example.com";
+        $email->verified = true;
+
+        $phone = new Phone();
+        $phone->country_code = "+44";
+        $phone->number = "207 946 0000";
+
+        $device = new Device();
+        $device->locale = "en_GB";
+        $device->fingerprint = "fp_abc123xyz";
+        $device->ipv4 = "203.0.113.0";
+        $device->ipv6 = "2001:db8:85a3::8a2e:370:7334";
+        $device->client = DeviceClient::$app;
+        $device->os = DeviceOs::$ios;
+
+        $merchantAccount = new MerchantAccount();
+        $merchantAccount->id = "1234";
+        $merchantAccount->registration_date = new DateTime("2023-05-01");
+        $merchantAccount->last_modified = new DateTime("2023-05-01");
+        $merchantAccount->returning_customer = true;
+        $merchantAccount->first_transaction_date = new DateTime("2023-09-15");
+        $merchantAccount->last_transaction_date = new DateTime("2025-03-28");
+        $merchantAccount->total_order_count = 6;
+        $merchantAccount->last_payment_amount = 55;
+
+        $customer = new Customer();
+        $customer->email = $email;
+        $customer->name = "John Smith";
+        $customer->phone = $phone;
+        $customer->device = $device;
+        $customer->merchant_account = $merchantAccount;
+        $customer->id = "cus_123456789";
+        $customer->country = "GB";
+        $customer->tax_number = "GB123456789";
+
+        $serializer = new JsonSerializer();
+        $json = $serializer->serialize($customer);
+        $decoded = $serializer->deserialize($json);
+
+        $this->assertStringContainsString('"tax_number":"GB123456789"', $json);
+        $this->assertStringNotContainsString('taxNumber', $json);
+        $this->assertCount(8, $decoded);
+        $this->assertSame("cus_123456789", $decoded['id']);
+        $this->assertSame("GB", $decoded['country']);
+        $this->assertSame("GB123456789", $decoded['tax_number']);
+        $this->assertSame("John Smith", $decoded['name']);
+        $this->assertSame(["address" => "johnsmith@example.com", "verified" => true], $decoded['email']);
+        $this->assertSame(["country_code" => "+44", "number" => "207 946 0000"], $decoded['phone']);
+        $this->assertSame(
+            [
+                "locale" => "en_GB",
+                "fingerprint" => "fp_abc123xyz",
+                "ipv4" => "203.0.113.0",
+                "ipv6" => "2001:db8:85a3::8a2e:370:7334",
+                "client" => "app",
+                "os" => "ios",
+            ],
+            $decoded['device']
+        );
+        $this->assertSame(
+            [
+                "id" => "1234",
+                "registration_date" => "2023-05-01",
+                "last_modified" => "2023-05-01",
+                "returning_customer" => true,
+                "first_transaction_date" => "2023-09-15",
+                "last_transaction_date" => "2025-03-28",
+                "total_order_count" => 6,
+                "last_payment_amount" => 55,
+            ],
+            $decoded['merchant_account']
+        );
+    }
+
+    public function testDeserializesCustomerSwaggerExample()
+    {
+        $json = '{
+            "customer": {
+                "country": "GB",
+                "id": "cus_123456789",
+                "email": { "address": "johnsmith@example.com", "verified": true },
+                "name": "John Smith",
+                "tax_number": "GB123456789",
+                "phone": { "country_code": "+44", "number": "207 946 0000" },
+                "device": {
+                    "locale": "en_GB",
+                    "fingerprint": "fp_abc123xyz",
+                    "ipv4": "203.0.113.0",
+                    "ipv6": "2001:db8:85a3::8a2e:370:7334",
+                    "client": "web",
+                    "os": "android"
+                },
+                "merchant_account": {
+                    "id": "1234",
+                    "registration_date": "2023-05-01T00:00:00.0000000",
+                    "last_modified": "2023-05-01T00:00:00.0000000",
+                    "returning_customer": true,
+                    "first_transaction_date": "2023-09-15T00:00:00.0000000",
+                    "last_transaction_date": "2025-03-28T00:00:00.0000000",
+                    "total_order_count": 6,
+                    "last_payment_amount": 55.99
+                }
+            }
+        }';
+
+        $customer = (new JsonSerializer())->deserialize($json)['customer'];
+
+        $this->assertSame("GB", $customer['country']);
+        $this->assertSame("cus_123456789", $customer['id']);
+        $this->assertSame("johnsmith@example.com", $customer['email']['address']);
+        $this->assertTrue($customer['email']['verified']);
+        $this->assertSame("John Smith", $customer['name']);
+        $this->assertSame("GB123456789", $customer['tax_number']);
+        $this->assertSame("+44", $customer['phone']['country_code']);
+        $this->assertSame("207 946 0000", $customer['phone']['number']);
+        $this->assertSame("en_GB", $customer['device']['locale']);
+        $this->assertSame("fp_abc123xyz", $customer['device']['fingerprint']);
+        $this->assertSame("203.0.113.0", $customer['device']['ipv4']);
+        $this->assertSame("2001:db8:85a3::8a2e:370:7334", $customer['device']['ipv6']);
+        $this->assertSame(DeviceClient::$web, $customer['device']['client']);
+        $this->assertSame(DeviceOs::$android, $customer['device']['os']);
+        $this->assertSame("1234", $customer['merchant_account']['id']);
+        $this->assertSame("2023-05-01T00:00:00.0000000", $customer['merchant_account']['registration_date']);
+        $this->assertSame("2023-05-01T00:00:00.0000000", $customer['merchant_account']['last_modified']);
+        $this->assertTrue($customer['merchant_account']['returning_customer']);
+        $this->assertSame("2023-09-15T00:00:00.0000000", $customer['merchant_account']['first_transaction_date']);
+        $this->assertSame("2025-03-28T00:00:00.0000000", $customer['merchant_account']['last_transaction_date']);
+        $this->assertSame(6, $customer['merchant_account']['total_order_count']);
+        $this->assertSame(55.99, $customer['merchant_account']['last_payment_amount']);
+    }
+
+    public function testPaymentMethodStatusAndInitializationConstantsMatchTheSpec()
+    {
+        $this->assertSame("unavailable", PaymentMethodStatus::$unavailable);
+        $this->assertSame("action_required", PaymentMethodStatus::$action_required);
+        $this->assertSame("ready", PaymentMethodStatus::$ready);
+        $this->assertSame("initialization_required", PaymentMethodStatus::$initialization_required);
+        $this->assertSame("invalid", PaymentMethodStatus::$invalid);
+        $this->assertSame("disabled", PaymentMethodInitialization::$disabled);
+        $this->assertSame("enabled", PaymentMethodInitialization::$enabled);
     }
 }

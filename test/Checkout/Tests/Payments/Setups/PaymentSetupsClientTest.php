@@ -119,6 +119,28 @@ class PaymentSetupsClientTest extends UnitTestFixture
      * @test
      * @throws CheckoutApiException
      */
+    public function shouldConfirmPaymentSetupWithCashApp()
+    {
+        $paymentSetupId = "setup_123456";
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("post")
+            ->with(
+                $this->equalTo("payments/setups/" . $paymentSetupId . "/confirm/cashapp"),
+                $this->isNull(),
+                $this->anything()
+            )
+            ->willReturn(["response"]);
+
+        $response = $this->client->confirmPaymentSetup($paymentSetupId, "cashapp");
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
     public function shouldCreatePaymentSetupWithNewFields()
     {
         $bacs = new Bacs();

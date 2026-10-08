@@ -9,7 +9,7 @@ abstract class PaymentMethodBase
      * [Optional]
      * readOnly
      * Enum: "unavailable" "action_required" "ready" "initialization_required" "invalid"
-     * @var string
+     * @var string value of PaymentMethodStatus
      */
     public $status;
 
@@ -27,7 +27,7 @@ abstract class PaymentMethodBase
      * [Optional]
      * Default: "disabled"
      * Enum: "disabled" "enabled"
-     * @var string
+     * @var string value of PaymentMethodInitialization
      */
     public $initialization;
 }

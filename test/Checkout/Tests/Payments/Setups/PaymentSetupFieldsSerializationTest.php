@@ -29,6 +29,8 @@ use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\BacsAccountHolder;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bacs\BacsAccountHolderType;
 use Checkout\Payments\Setups\Common\PaymentMethods\CardPresent\CardPresent;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashApp;
+use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodInitialization;
+use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodStatus;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppActionType;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppAddress;
@@ -675,7 +677,24 @@ class PaymentSetupFieldsSerializationTest extends TestCase
                 "name": "John Smith",
                 "tax_number": "GB123456789",
                 "phone": { "country_code": "+44", "number": "207 946 0000" },
-                "device": { "locale": "en_GB" }
+                "device": {
+                    "locale": "en_GB",
+                    "fingerprint": "fp_abc123xyz",
+                    "ipv4": "203.0.113.0",
+                    "ipv6": "2001:db8:85a3::8a2e:370:7334",
+                    "client": "web",
+                    "os": "android"
+                },
+                "merchant_account": {
+                    "id": "1234",
+                    "registration_date": "2023-05-01T00:00:00.0000000",
+                    "last_modified": "2023-05-01T00:00:00.0000000",
+                    "returning_customer": true,
+                    "first_transaction_date": "2023-09-15T00:00:00.0000000",
+                    "last_transaction_date": "2025-03-28T00:00:00.0000000",
+                    "total_order_count": 6,
+                    "last_payment_amount": 55.99
+                }
             }
         }';
 
@@ -690,5 +709,29 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $this->assertSame("+44", $customer['phone']['country_code']);
         $this->assertSame("207 946 0000", $customer['phone']['number']);
         $this->assertSame("en_GB", $customer['device']['locale']);
+        $this->assertSame("fp_abc123xyz", $customer['device']['fingerprint']);
+        $this->assertSame("203.0.113.0", $customer['device']['ipv4']);
+        $this->assertSame("2001:db8:85a3::8a2e:370:7334", $customer['device']['ipv6']);
+        $this->assertSame(DeviceClient::$web, $customer['device']['client']);
+        $this->assertSame(DeviceOs::$android, $customer['device']['os']);
+        $this->assertSame("1234", $customer['merchant_account']['id']);
+        $this->assertSame("2023-05-01T00:00:00.0000000", $customer['merchant_account']['registration_date']);
+        $this->assertSame("2023-05-01T00:00:00.0000000", $customer['merchant_account']['last_modified']);
+        $this->assertTrue($customer['merchant_account']['returning_customer']);
+        $this->assertSame("2023-09-15T00:00:00.0000000", $customer['merchant_account']['first_transaction_date']);
+        $this->assertSame("2025-03-28T00:00:00.0000000", $customer['merchant_account']['last_transaction_date']);
+        $this->assertSame(6, $customer['merchant_account']['total_order_count']);
+        $this->assertSame(55.99, $customer['merchant_account']['last_payment_amount']);
+    }
+
+    public function testPaymentMethodStatusAndInitializationConstantsMatchTheSpec()
+    {
+        $this->assertSame("unavailable", PaymentMethodStatus::$unavailable);
+        $this->assertSame("action_required", PaymentMethodStatus::$action_required);
+        $this->assertSame("ready", PaymentMethodStatus::$ready);
+        $this->assertSame("initialization_required", PaymentMethodStatus::$initialization_required);
+        $this->assertSame("invalid", PaymentMethodStatus::$invalid);
+        $this->assertSame("disabled", PaymentMethodInitialization::$disabled);
+        $this->assertSame("enabled", PaymentMethodInitialization::$enabled);
     }
 }

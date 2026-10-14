@@ -36,6 +36,7 @@ use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppActionType;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppAddress;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppCustomerProfile;
 use Checkout\Payments\Setups\Common\PaymentMethods\PayByBank\PayByBank;
+use Checkout\Payments\Setups\Common\Risk\PaymentSetupRisk;
 use Checkout\Payments\Setups\Common\PaymentMethods\PaymentMethods;
 use Checkout\Payments\Setups\Common\PaymentMethods\Stablecoin\Stablecoin;
 use Checkout\Payments\Setups\Common\PresentmentDetails\PaymentSetupPresentmentDetails;
@@ -104,7 +105,7 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $paymentMethods = new PaymentMethods();
         $paymentMethods->bacs = $bacs;
         $paymentMethods->card_present = $cardPresent;
-        $paymentMethods->pay_by_bank = $payByBank;
+        $paymentMethods->paybybank = $payByBank;
         $paymentMethods->stablecoin = new Stablecoin();
 
         $request = new PaymentSetupRequest();
@@ -122,7 +123,8 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $this->assertSame("chip", $decoded['payment_methods']['card_present']['entry_mode']);
         $this->assertTrue($decoded['payment_methods']['card_present']['store_for_future_use']);
 
-        $this->assertSame("bank_123", $decoded['payment_methods']['pay_by_bank']['bank_id']);
+        $this->assertSame("bank_123", $decoded['payment_methods']['paybybank']['bank_id']);
+        $this->assertArrayNotHasKey('pay_by_bank', $decoded['payment_methods']);
 
         $this->assertArrayHasKey('stablecoin', $decoded['payment_methods']);
     }
@@ -733,5 +735,82 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $this->assertSame("invalid", PaymentMethodStatus::$invalid);
         $this->assertSame("disabled", PaymentMethodInitialization::$disabled);
         $this->assertSame("enabled", PaymentMethodInitialization::$enabled);
+    }
+
+    public function testSerializesPayByBankUnderLiteralPaybybankKey()
+    {
+        $payByBank = new PayByBank();
+        $payByBank->bank_id = "ob-natwest";
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->paybybank = $payByBank;
+
+        $request = new PaymentSetupRequest();
+        $request->payment_methods = $paymentMethods;
+
+        $json = (new JsonSerializer())->serialize($request);
+
+        $this->assertStringContainsString('"paybybank":{"bank_id":"ob-natwest"}', $json);
+        $this->assertStringNotContainsString('pay_by_bank', $json);
+    }
+
+    public function testDeserializesPayByBankActionFromResponse()
+    {
+        $json = '{
+            "id": "ps_2Un4Ld0Qm8Dj6kXHm0LqT0bK5mL",
+            "payment_methods": {
+                "paybybank": {
+                    "status": "action_required",
+                    "flags": [],
+                    "bank_id": "ob-natwest",
+                    "action": {
+                        "type": "select_bank",
+                        "banks": [
+                            {
+                                "bank_id": "ob-natwest",
+                                "display_name": "NatWest",
+                                "logo_url": "https://cdn.token.io/banks/natwest.png",
+                                "available": true
+                            }
+                        ]
+                    }
+                }
+            }
+        }';
+
+        $response = (new JsonSerializer())->deserialize($json);
+        $payByBank = $response['payment_methods']['paybybank'];
+
+        $this->assertSame("action_required", $payByBank['status']);
+        $this->assertSame([], $payByBank['flags']);
+        $this->assertSame("ob-natwest", $payByBank['bank_id']);
+        $this->assertSame("select_bank", $payByBank['action']['type']);
+        $this->assertCount(1, $payByBank['action']['banks']);
+        $bank = $payByBank['action']['banks'][0];
+        $this->assertSame("ob-natwest", $bank['bank_id']);
+        $this->assertSame("NatWest", $bank['display_name']);
+        $this->assertSame("https://cdn.token.io/banks/natwest.png", $bank['logo_url']);
+        $this->assertTrue($bank['available']);
+    }
+
+    public function testSerializesRiskEnabled()
+    {
+        $serializer = new JsonSerializer();
+        foreach ([true, false] as $enabled) {
+            $request = new PaymentSetupRequest();
+            $request->risk = new PaymentSetupRisk();
+            $request->risk->enabled = $enabled;
+
+            $decoded = json_decode($serializer->serialize($request), true);
+
+            $this->assertSame(["enabled" => $enabled], $decoded['risk']);
+        }
+    }
+
+    public function testRiskIsOmittedWhenUnset()
+    {
+        $decoded = json_decode((new JsonSerializer())->serialize(new PaymentSetupRequest()), true);
+
+        $this->assertArrayNotHasKey('risk', $decoded);
     }
 }

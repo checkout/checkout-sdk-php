@@ -57,9 +57,20 @@ class PaymentMethods
     public $card_present;
 
     /**
-     * The Pay by Bank (Open Banking) payment method's details and configuration.
+     * The Pay by Bank (Open Banking) payment method's details and configuration. Serialized under the key
+     * "paybybank".
      * [Optional]
      * @var PayByBank
+     */
+    public $paybybank;
+
+    /**
+     * The Pay by Bank (Open Banking) payment method's details and configuration, serialized under the key
+     * "pay_by_bank".
+     * [Optional]
+     * @var PayByBank
+     * @deprecated The API does not recognise the "pay_by_bank" key and ignores it without returning an
+     * error. Use $paybybank instead. This property will be removed in a future major release.
      */
     public $pay_by_bank;
 

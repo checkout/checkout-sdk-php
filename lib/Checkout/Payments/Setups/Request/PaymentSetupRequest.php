@@ -10,6 +10,7 @@ use Checkout\Payments\Setups\Common\PaymentMethods\PaymentMethods;
 use Checkout\Payments\Setups\Common\BillingDescriptor\PaymentSetupBillingDescriptor;
 use Checkout\Payments\Setups\Common\PresentmentDetails\PaymentSetupPresentmentDetails;
 use Checkout\Payments\Setups\Common\Terminal\PaymentSetupTerminal;
+use Checkout\Payments\Setups\Common\Risk\PaymentSetupRisk;
 
 class PaymentSetupRequest
 {
@@ -114,4 +115,11 @@ class PaymentSetupRequest
      * @var PaymentSetupTerminal
      */
     public $terminal;
+
+    /**
+     * Risk assessment settings for the Payment Setup.
+     * [Optional]
+     * @var PaymentSetupRisk
+     */
+    public $risk;
 }

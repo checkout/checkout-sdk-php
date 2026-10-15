@@ -155,7 +155,7 @@ class PaymentSetupsClientTest extends UnitTestFixture
         $paymentMethods = new PaymentMethods();
         $paymentMethods->bacs = $bacs;
         $paymentMethods->card_present = new CardPresent();
-        $paymentMethods->pay_by_bank = new PayByBank();
+        $paymentMethods->paybybank = new PayByBank();
         $paymentMethods->stablecoin = new Stablecoin();
 
         $allocation = new PaymentSetupAmountAllocation();
@@ -182,7 +182,7 @@ class PaymentSetupsClientTest extends UnitTestFixture
 
         $this->assertEquals("individual", $request->payment_methods->bacs->account_holder->type);
         $this->assertInstanceOf(CardPresent::class, $request->payment_methods->card_present);
-        $this->assertInstanceOf(PayByBank::class, $request->payment_methods->pay_by_bank);
+        $this->assertInstanceOf(PayByBank::class, $request->payment_methods->paybybank);
         $this->assertInstanceOf(Stablecoin::class, $request->payment_methods->stablecoin);
         $this->assertEquals("ent_test", $request->order->amount_allocations[0]->id);
         $this->assertEquals(1.5, $request->order->amount_allocations[0]->commission->percentage);

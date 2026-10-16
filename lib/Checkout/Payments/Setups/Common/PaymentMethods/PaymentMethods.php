@@ -11,9 +11,27 @@ use Checkout\Payments\Setups\Common\PaymentMethods\CardPresent\CardPresent;
 use Checkout\Payments\Setups\Common\PaymentMethods\PayByBank\PayByBank;
 use Checkout\Payments\Setups\Common\PaymentMethods\Stablecoin\Stablecoin;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashApp;
+use Checkout\Payments\Setups\Common\PaymentMethods\Card\Card;
+use Checkout\Payments\Setups\Common\PaymentMethods\ApplePay\ApplePay;
+use Checkout\Payments\Setups\Common\PaymentMethods\GooglePay\GooglePay;
+use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrument;
 
 class PaymentMethods
 {
+    /**
+     * The payment method that automatically confirms the payment when it is ready, for example card.
+     * [Optional]
+     * @var string
+     */
+    public $auto_confirm;
+
+    /**
+     * The instrument payment method's details and configuration.
+     * [Optional]
+     * @var PaymentSetupInstrument
+     */
+    public $instrument;
+
     /**
      * The Klarna payment method's details and configuration.
      * [Optional]
@@ -38,6 +56,7 @@ class PaymentMethods
     /**
      * The Bizum payment method's details and configuration.
      * [Optional]
+     * readOnly
      * @var Bizum
      */
     public $bizum;
@@ -87,4 +106,25 @@ class PaymentMethods
      * @var CashApp
      */
     public $cashapp;
+
+    /**
+     * The Google Pay payment method's details and configuration. Serialized under the key "googlepay".
+     * [Optional]
+     * @var GooglePay
+     */
+    public $googlepay;
+
+    /**
+     * The Apple Pay payment method's details and configuration. Serialized under the key "applepay".
+     * [Optional]
+     * @var ApplePay
+     */
+    public $applepay;
+
+    /**
+     * The Card payment method's details and configuration.
+     * [Optional]
+     * @var Card
+     */
+    public $card;
 }

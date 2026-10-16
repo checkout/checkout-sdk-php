@@ -35,6 +35,24 @@ use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppActionType;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppAddress;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashAppCustomerProfile;
+use Checkout\Common\AccountHolderType;
+use Checkout\Payments\PreferredSchema;
+use Checkout\Payments\Setups\Common\Order\OrderSubMerchant;
+use Checkout\Payments\Setups\Common\PaymentMethods\ApplePay\ApplePay;
+use Checkout\Payments\Setups\Common\PaymentMethods\ApplePay\ApplePayTokenData;
+use Checkout\Payments\Setups\Common\PaymentMethods\ApplePay\ApplePayTokenDataHeader;
+use Checkout\Payments\Setups\Common\PaymentMethods\Card\Card;
+use Checkout\Payments\Setups\Common\PaymentMethods\Card\CardDetails;
+use Checkout\Payments\Setups\Common\PaymentMethods\Card\CardToken;
+use Checkout\Payments\Setups\Common\PaymentMethods\Common\CardAccountHolder;
+use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentSetupCardScheme;
+use Checkout\Payments\Setups\Common\PaymentMethods\Common\WalletToken;
+use Checkout\Payments\Setups\Common\PaymentMethods\GooglePay\GooglePay;
+use Checkout\Payments\Setups\Common\PaymentMethods\GooglePay\GooglePayTokenData;
+use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrument;
+use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrumentAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrumentActionType;
+use Checkout\Payments\Setups\Common\Settings\Settings;
 use Checkout\Payments\Setups\Common\PaymentMethods\PayByBank\PayByBank;
 use Checkout\Payments\Setups\Common\Risk\PaymentSetupRisk;
 use Checkout\Payments\Setups\Common\PaymentMethods\PaymentMethods;
@@ -51,6 +69,11 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         . "GRR_f5xg6wrxhtv3p4w24g0wrexa/interstitial?validity_token=bap03y";
 
     const CASHAPP_CUSTOMER_ID = "CST_AYVkuLzfsRqEhf4OyQFxQNv22m7IjNFjO6f2J5CDE2nxAC4-21wJ2H8_2kvsdIsDZMN4";
+
+    const WALLET_TOKEN_ID = "tok_ubfj2q76miwundwlk72vxt2i7q";
+
+    const GOOGLEPAY_SIGNATURE = "MEQCIH6Q4OwQ0jAceFEkGF0JID6sJNXxOEi4r+mA7biRxqBQAiAondqoUpU/"
+        . "bdsrAOpZIsrHQS9nwiiNwOrr24RyPeHA0Q==";
 
     public function testSerializesBillingDescriptorPresentmentDetailsAndTerminal()
     {
@@ -812,5 +835,519 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $decoded = json_decode((new JsonSerializer())->serialize(new PaymentSetupRequest()), true);
 
         $this->assertArrayNotHasKey('risk', $decoded);
+    }
+
+    public function testCardRoundTripKeepsEveryProperty()
+    {
+        $token = new CardToken();
+        $token->id = self::WALLET_TOKEN_ID;
+
+        $details = new CardDetails();
+        $details->number = "4242424242424242";
+        $details->last4 = "4242";
+        $details->bin = "424242";
+        $details->scheme = "visa";
+        $details->expiry_month = 12;
+        $details->expiry_year = 2030;
+        $details->name = "John Smith";
+        $details->cvv = "100";
+        $details->stored = false;
+        $details->expires_on = new DateTime("2026-12-31T23:59:59+00:00");
+        $details->allow_update = true;
+
+        $card = new Card();
+        $card->status = PaymentMethodStatus::$ready;
+        $card->flags = ["missing_cvv"];
+        $card->token = $token;
+        $card->details = $details;
+        $card->store_for_future_use = true;
+        $card->phone = $this->buildPhone();
+        $card->account_holder = $this->buildCardAccountHolder();
+        $card->schemes = [PaymentSetupCardScheme::$visa, PaymentSetupCardScheme::$cartes_bancaires];
+        $card->preferred_scheme = PreferredSchema::$cartes_bancaires;
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->card = $card;
+        $request = new PaymentSetupRequest();
+        $request->payment_methods = $paymentMethods;
+
+        $serializer = new JsonSerializer();
+        $json = $serializer->serialize($request);
+        $decoded = $serializer->deserialize($json)['payment_methods']['card'];
+
+        $this->assertStringContainsString('"card":{', $json);
+        $this->assertStringContainsString('"store_for_future_use":true', $json);
+        $this->assertStringContainsString('"preferred_scheme":"cartes_bancaires"', $json);
+        $this->assertStringContainsString('"account_name_inquiry":true', $json);
+        $this->assertStringNotContainsString('initialization', $json);
+        $this->assertCount(9, $decoded);
+        $this->assertSame("ready", $decoded['status']);
+        $this->assertSame(["missing_cvv"], $decoded['flags']);
+        $this->assertSame(["id" => self::WALLET_TOKEN_ID], $decoded['token']);
+        $this->assertSame(
+            [
+                "number" => "4242424242424242",
+                "last4" => "4242",
+                "bin" => "424242",
+                "scheme" => "visa",
+                "expiry_month" => 12,
+                "expiry_year" => 2030,
+                "name" => "John Smith",
+                "cvv" => "100",
+                "stored" => false,
+                "expires_on" => "2026-12-31T23:59:59+0000",
+                "allow_update" => true,
+            ],
+            $decoded['details']
+        );
+        $this->assertTrue($decoded['store_for_future_use']);
+        $this->assertSame(["country_code" => "+44", "number" => "207 946 0000"], $decoded['phone']);
+        $this->assertSame($this->expectedCardAccountHolder(), $decoded['account_holder']);
+        $this->assertSame(["visa", "cartes_bancaires"], $decoded['schemes']);
+        $this->assertSame("cartes_bancaires", $decoded['preferred_scheme']);
+    }
+
+    public function testApplePayRoundTripKeepsEveryPropertyWithoutDetails()
+    {
+        $header = new ApplePayTokenDataHeader();
+        $header->ephemeral_public_key = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE";
+        $header->public_key_hash = "tqYV+tmG9aMh+l/K6cicUnPqkb1gUiLjSTM9gEz6Nl0=";
+        $header->transaction_id = "3cee89679130a4b2617c76118a1790";
+
+        $tokenData = new ApplePayTokenData();
+        $tokenData->version = "EC_v1";
+        $tokenData->data = "t7GeajLB9skXB6QSWfEC";
+        $tokenData->signature = "MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCAMIID";
+        $tokenData->header = $header;
+
+        $applePay = new ApplePay();
+        $applePay->status = PaymentMethodStatus::$action_required;
+        $applePay->flags = [];
+        $applePay->token_data = $tokenData;
+        $applePay->token = $this->buildWalletToken();
+        $applePay->store_for_future_use = false;
+        $applePay->phone = $this->buildPhone();
+        $applePay->account_holder = $this->buildCardAccountHolder();
+        $applePay->schemes = [PaymentSetupCardScheme::$amex, PaymentSetupCardScheme::$mada];
+        $applePay->preferred_scheme = PreferredSchema::$visa;
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->applepay = $applePay;
+        $request = new PaymentSetupRequest();
+        $request->payment_methods = $paymentMethods;
+
+        $serializer = new JsonSerializer();
+        $json = $serializer->serialize($request);
+        $decoded = $serializer->deserialize($json)['payment_methods']['applepay'];
+
+        $this->assertStringContainsString('"applepay":{', $json);
+        $this->assertStringNotContainsString('apple_pay', $json);
+        $this->assertStringContainsString('"token_data":{', $json);
+        $this->assertStringContainsString('"ephemeral_public_key":', $json);
+        $this->assertStringNotContainsString('"details"', $json);
+        $this->assertStringNotContainsString('initialization', $json);
+        $this->assertCount(9, $decoded);
+        $this->assertSame("action_required", $decoded['status']);
+        $this->assertSame([], $decoded['flags']);
+        $this->assertSame(
+            [
+                "version" => "EC_v1",
+                "data" => "t7GeajLB9skXB6QSWfEC",
+                "signature" => "MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCAMIID",
+                "header" => [
+                    "ephemeral_public_key" => "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE",
+                    "public_key_hash" => "tqYV+tmG9aMh+l/K6cicUnPqkb1gUiLjSTM9gEz6Nl0=",
+                    "transaction_id" => "3cee89679130a4b2617c76118a1790",
+                ],
+            ],
+            $decoded['token_data']
+        );
+        $this->assertSame($this->expectedWalletToken(), $decoded['token']);
+        $this->assertFalse($decoded['store_for_future_use']);
+        $this->assertSame(["country_code" => "+44", "number" => "207 946 0000"], $decoded['phone']);
+        $this->assertSame($this->expectedCardAccountHolder(), $decoded['account_holder']);
+        $this->assertSame(["amex", "mada"], $decoded['schemes']);
+        $this->assertSame("visa", $decoded['preferred_scheme']);
+    }
+
+    public function testGooglePayRoundTripKeepsEveryPropertyWithoutDetails()
+    {
+        $tokenData = new GooglePayTokenData();
+        $tokenData->protocol_version = "ECv2";
+        $tokenData->signature = self::GOOGLEPAY_SIGNATURE;
+        $tokenData->signed_message = '{"encryptedMessage":"ZW5jcnlwdGVk","ephemeralPublicKey":"BOdoXP","tag":"WhBT"}';
+        $tokenData->tokenization_key = "pk_sbox_xxxxxxxxxxxxxxxxxxxxxxxxxx";
+
+        $googlePay = new GooglePay();
+        $googlePay->status = PaymentMethodStatus::$ready;
+        $googlePay->flags = ["token_expired"];
+        $googlePay->token_data = $tokenData;
+        $googlePay->token = $this->buildWalletToken();
+        $googlePay->store_for_future_use = true;
+        $googlePay->phone = $this->buildPhone();
+        $googlePay->account_holder = $this->buildCardAccountHolder();
+        $googlePay->schemes = [PaymentSetupCardScheme::$mastercard, PaymentSetupCardScheme::$visa];
+        $googlePay->preferred_scheme = PreferredSchema::$mastercard;
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->googlepay = $googlePay;
+        $request = new PaymentSetupRequest();
+        $request->payment_methods = $paymentMethods;
+
+        $serializer = new JsonSerializer();
+        $json = $serializer->serialize($request);
+        $decoded = $serializer->deserialize($json)['payment_methods']['googlepay'];
+
+        $this->assertStringContainsString('"googlepay":{', $json);
+        $this->assertStringNotContainsString('google_pay', $json);
+        $this->assertStringContainsString('"signed_message":', $json);
+        $this->assertStringNotContainsString('signedMessage', $json);
+        $this->assertStringNotContainsString('"details"', $json);
+        $this->assertStringNotContainsString('initialization', $json);
+        $this->assertCount(9, $decoded);
+        $this->assertSame("ready", $decoded['status']);
+        $this->assertSame(["token_expired"], $decoded['flags']);
+        $this->assertSame(
+            [
+                "protocol_version" => "ECv2",
+                "signature" => self::GOOGLEPAY_SIGNATURE,
+                "signed_message" => '{"encryptedMessage":"ZW5jcnlwdGVk","ephemeralPublicKey":"BOdoXP","tag":"WhBT"}',
+                "tokenization_key" => "pk_sbox_xxxxxxxxxxxxxxxxxxxxxxxxxx",
+            ],
+            $decoded['token_data']
+        );
+        $this->assertSame($this->expectedWalletToken(), $decoded['token']);
+        $this->assertTrue($decoded['store_for_future_use']);
+        $this->assertSame(["country_code" => "+44", "number" => "207 946 0000"], $decoded['phone']);
+        $this->assertSame($this->expectedCardAccountHolder(), $decoded['account_holder']);
+        $this->assertSame(["mastercard", "visa"], $decoded['schemes']);
+        $this->assertSame("mastercard", $decoded['preferred_scheme']);
+    }
+
+    public function testInstrumentAndAutoConfirmRoundTrip()
+    {
+        $action = new PaymentSetupInstrumentAction();
+        $action->type = PaymentSetupInstrumentActionType::$set_instrument;
+
+        $instrument = new PaymentSetupInstrument();
+        $instrument->status = PaymentMethodStatus::$ready;
+        $instrument->flags = [];
+        $instrument->id = "src_wmlfc3zttb4uzmk6snpwb43jbi";
+        $instrument->type = "bacs";
+        $instrument->action = $action;
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->auto_confirm = "card";
+        $paymentMethods->instrument = $instrument;
+        $request = new PaymentSetupRequest();
+        $request->payment_methods = $paymentMethods;
+
+        $serializer = new JsonSerializer();
+        $json = $serializer->serialize($request);
+        $decoded = $serializer->deserialize($json)['payment_methods'];
+
+        $this->assertStringContainsString('"auto_confirm":"card"', $json);
+        $this->assertStringContainsString('"instrument":{', $json);
+        $this->assertStringNotContainsString('autoConfirm', $json);
+        $this->assertStringNotContainsString('initialization', $json);
+        $this->assertSame("card", $decoded['auto_confirm']);
+        $this->assertSame(
+            [
+                "status" => "ready",
+                "flags" => [],
+                "id" => "src_wmlfc3zttb4uzmk6snpwb43jbi",
+                "type" => "bacs",
+                "action" => ["type" => "set_instrument"],
+            ],
+            $decoded['instrument']
+        );
+    }
+
+    public function testSettingsRoundTripKeepsAllFourProperties()
+    {
+        $settings = new Settings();
+        $settings->success_url = "https://example.com/payments/success";
+        $settings->failure_url = "https://example.com/payments/fail";
+        $settings->capture = false;
+        $settings->excluded_payment_methods = ["card", "klarna", "stcpay"];
+
+        $request = new PaymentSetupRequest();
+        $request->settings = $settings;
+
+        $serializer = new JsonSerializer();
+        $json = $serializer->serialize($request);
+        $decoded = $serializer->deserialize($json);
+
+        // capture defaults to true on the API, so an explicit false must still be sent.
+        $this->assertStringContainsString('"capture":false', $json);
+        $this->assertStringContainsString('"excluded_payment_methods":["card","klarna","stcpay"]', $json);
+        $this->assertSame(
+            [
+                "success_url" => "https://example.com/payments/success",
+                "failure_url" => "https://example.com/payments/fail",
+                "capture" => false,
+                "excluded_payment_methods" => ["card", "klarna", "stcpay"],
+            ],
+            $decoded['settings']
+        );
+    }
+
+    public function testSubMerchantSendsNumberOfSales()
+    {
+        $subMerchant = new OrderSubMerchant();
+        $subMerchant->id = "SUB12345";
+        $subMerchant->product_category = "Electronics";
+        $subMerchant->number_of_sales = 500;
+        $subMerchant->registration_date = new DateTime("2023-01-15");
+
+        $order = new Order();
+        $order->sub_merchants = [$subMerchant];
+        $request = new PaymentSetupRequest();
+        $request->order = $order;
+
+        $json = (new JsonSerializer())->serialize($request);
+        $decoded = json_decode($json, true);
+
+        $this->assertStringContainsString('"number_of_sales":500', $json);
+        $this->assertStringNotContainsString('number_of_trades', $json);
+        $this->assertSame(
+            [
+                "id" => "SUB12345",
+                "product_category" => "Electronics",
+                "number_of_sales" => 500,
+                "registration_date" => "2023-01-15",
+            ],
+            $decoded['order']['sub_merchants'][0]
+        );
+    }
+
+    public function testDeprecatedNumberOfTradesIsSentAsNumberOfSales()
+    {
+        $subMerchant = new OrderSubMerchant();
+        $subMerchant->id = "SUB12345";
+        $subMerchant->number_of_trades = 500;
+
+        $order = new Order();
+        $order->sub_merchants = [$subMerchant];
+        $request = new PaymentSetupRequest();
+        $request->order = $order;
+
+        $json = (new JsonSerializer())->serialize($request);
+        $decoded = json_decode($json, true);
+
+        $this->assertStringNotContainsString('number_of_trades', $json);
+        $this->assertSame(["id" => "SUB12345", "number_of_sales" => 500], $decoded['order']['sub_merchants'][0]);
+    }
+
+    public function testNumberOfSalesWinsOverDeprecatedNumberOfTrades()
+    {
+        $subMerchant = new OrderSubMerchant();
+        $subMerchant->number_of_trades = 10;
+        $subMerchant->number_of_sales = 500;
+
+        $json = (new JsonSerializer())->serialize($subMerchant);
+
+        $this->assertSame('{"number_of_sales":500}', $json);
+    }
+
+    public function testMetadataSerializesStringNumberAndBooleanValues()
+    {
+        $request = new PaymentSetupRequest();
+        $request->metadata = ["coupon_code" => "NY2018", "partner_id" => 123989, "vip" => true];
+
+        $json = (new JsonSerializer())->serialize($request);
+        $decoded = json_decode($json, true);
+
+        $this->assertStringContainsString('"metadata":{"coupon_code":"NY2018","partner_id":123989,"vip":true}', $json);
+        $this->assertSame(["coupon_code" => "NY2018", "partner_id" => 123989, "vip" => true], $decoded['metadata']);
+    }
+
+    public function testDeserializesPaymentSetupSwaggerExampleWithNewFields()
+    {
+        $json = '{
+            "id": "ps_2Un4Ld0Qm8Dj6kXHm0LqT0bK5mL",
+            "processing_channel_id": "pc_q4dbxom5jbgudnjzjpz7j2z6uq",
+            "amount": 10000,
+            "currency": "GBP",
+            "payment_methods": {
+                "auto_confirm": "card",
+                "instrument": {
+                    "status": "ready",
+                    "flags": [],
+                    "id": "src_wmlfc3zttb4uzmk6snpwb43jbi",
+                    "type": "bacs",
+                    "action": { "type": "set_instrument" }
+                },
+                "card": {
+                    "status": "ready",
+                    "flags": [],
+                    "token": { "id": "' . self::WALLET_TOKEN_ID . '" },
+                    "details": {
+                        "last4": "4242",
+                        "bin": "424242",
+                        "scheme": "visa",
+                        "expiry_month": 12,
+                        "expiry_year": 2030,
+                        "expires_on": "2026-12-31T23:59:59Z",
+                        "allow_update": true
+                    },
+                    "phone": { "country_code": "+44", "number": "207 946 0000" },
+                    "account_holder": {
+                        "type": "individual",
+                        "first_name": "John",
+                        "last_name": "Smith",
+                        "middle_name": "Paul",
+                        "company_name": "Acme Ltd",
+                        "account_name_inquiry": true
+                    },
+                    "schemes": ["visa", "mastercard", "cartes_bancaires"],
+                    "preferred_scheme": "visa"
+                },
+                "applepay": {
+                    "status": "ready",
+                    "token": { "id": "' . self::WALLET_TOKEN_ID . '", "expires_on": "2026-12-31T23:59:59Z" },
+                    "schemes": ["visa", "mastercard"],
+                    "preferred_scheme": "visa"
+                },
+                "googlepay": {
+                    "status": "ready",
+                    "token": { "id": "' . self::WALLET_TOKEN_ID . '", "expires_on": "2026-12-31T23:59:59Z" },
+                    "schemes": ["visa", "mastercard"],
+                    "preferred_scheme": "mastercard"
+                }
+            },
+            "settings": {
+                "success_url": "https://example.com/payments/success",
+                "failure_url": "https://example.com/payments/fail",
+                "capture": true,
+                "excluded_payment_methods": ["card", "klarna", "stcpay"]
+            },
+            "order": {
+                "sub_merchants": [
+                    {
+                        "id": "SUB12345",
+                        "product_category": "Electronics",
+                        "number_of_sales": 500,
+                        "registration_date": "2023-01-15T00:00:00.0000000"
+                    }
+                ]
+            },
+            "metadata": { "coupon_code": "NY2018", "partner_id": 123989 }
+        }';
+
+        $response = (new JsonSerializer())->deserialize($json);
+        $paymentMethods = $response['payment_methods'];
+
+        $this->assertSame("card", $paymentMethods['auto_confirm']);
+        $this->assertSame("src_wmlfc3zttb4uzmk6snpwb43jbi", $paymentMethods['instrument']['id']);
+        $this->assertSame("bacs", $paymentMethods['instrument']['type']);
+        $this->assertSame(
+            PaymentSetupInstrumentActionType::$set_instrument,
+            $paymentMethods['instrument']['action']['type']
+        );
+
+        $card = $paymentMethods['card'];
+        $this->assertSame(PaymentMethodStatus::$ready, $card['status']);
+        $this->assertSame(self::WALLET_TOKEN_ID, $card['token']['id']);
+        $this->assertSame("4242", $card['details']['last4']);
+        $this->assertSame("424242", $card['details']['bin']);
+        $this->assertSame("visa", $card['details']['scheme']);
+        $this->assertSame(12, $card['details']['expiry_month']);
+        $this->assertSame(2030, $card['details']['expiry_year']);
+        $this->assertSame("2026-12-31T23:59:59Z", $card['details']['expires_on']);
+        $this->assertTrue($card['details']['allow_update']);
+        $this->assertSame("+44", $card['phone']['country_code']);
+        $this->assertSame(AccountHolderType::$individual, $card['account_holder']['type']);
+        $this->assertSame("Paul", $card['account_holder']['middle_name']);
+        $this->assertTrue($card['account_holder']['account_name_inquiry']);
+        $this->assertSame(
+            [
+                PaymentSetupCardScheme::$visa,
+                PaymentSetupCardScheme::$mastercard,
+                PaymentSetupCardScheme::$cartes_bancaires,
+            ],
+            $card['schemes']
+        );
+        $this->assertSame(PreferredSchema::$visa, $card['preferred_scheme']);
+
+        $walletSchemes = ['applepay' => PreferredSchema::$visa, 'googlepay' => PreferredSchema::$mastercard];
+        foreach ($walletSchemes as $key => $scheme) {
+            $wallet = $paymentMethods[$key];
+            $this->assertArrayNotHasKey('details', $wallet);
+            $this->assertSame(self::WALLET_TOKEN_ID, $wallet['token']['id']);
+            $this->assertSame("2026-12-31T23:59:59Z", $wallet['token']['expires_on']);
+            $this->assertSame(["visa", "mastercard"], $wallet['schemes']);
+            $this->assertSame($scheme, $wallet['preferred_scheme']);
+        }
+
+        $this->assertSame("https://example.com/payments/success", $response['settings']['success_url']);
+        $this->assertSame("https://example.com/payments/fail", $response['settings']['failure_url']);
+        $this->assertTrue($response['settings']['capture']);
+        $this->assertSame(["card", "klarna", "stcpay"], $response['settings']['excluded_payment_methods']);
+
+        $subMerchant = $response['order']['sub_merchants'][0];
+        $this->assertSame("SUB12345", $subMerchant['id']);
+        $this->assertSame("Electronics", $subMerchant['product_category']);
+        $this->assertSame(500, $subMerchant['number_of_sales']);
+        $this->assertSame("2023-01-15T00:00:00.0000000", $subMerchant['registration_date']);
+
+        $this->assertSame(["coupon_code" => "NY2018", "partner_id" => 123989], $response['metadata']);
+    }
+
+    public function testCardSchemeAndInstrumentActionConstantsMatchTheSpec()
+    {
+        $expected = [
+            "accel", "amex", "cartes_bancaires", "china_union_pay", "diners", "discover", "jcb", "mada",
+            "maestro", "mastercard", "nyce", "omannet", "pulse", "shazam", "star", "upi", "visa",
+        ];
+        $actual = array_values((new \ReflectionClass(PaymentSetupCardScheme::class))->getStaticProperties());
+
+        $this->assertSame($expected, $actual);
+        $this->assertSame("set_instrument", PaymentSetupInstrumentActionType::$set_instrument);
+    }
+
+    private function buildPhone()
+    {
+        $phone = new Phone();
+        $phone->country_code = "+44";
+        $phone->number = "207 946 0000";
+        return $phone;
+    }
+
+    private function buildCardAccountHolder()
+    {
+        $accountHolder = new CardAccountHolder();
+        $accountHolder->type = AccountHolderType::$corporate;
+        $accountHolder->first_name = "John";
+        $accountHolder->last_name = "Smith";
+        $accountHolder->middle_name = "Paul";
+        $accountHolder->company_name = "Acme Ltd";
+        $accountHolder->account_name_inquiry = true;
+        return $accountHolder;
+    }
+
+    private function expectedCardAccountHolder()
+    {
+        return [
+            "type" => "corporate",
+            "first_name" => "John",
+            "last_name" => "Smith",
+            "middle_name" => "Paul",
+            "company_name" => "Acme Ltd",
+            "account_name_inquiry" => true,
+        ];
+    }
+
+    private function buildWalletToken()
+    {
+        $token = new WalletToken();
+        $token->id = self::WALLET_TOKEN_ID;
+        $token->expires_on = new DateTime("2026-12-31T23:59:59+00:00");
+        return $token;
+    }
+
+    private function expectedWalletToken()
+    {
+        return ["id" => self::WALLET_TOKEN_ID, "expires_on" => "2026-12-31T23:59:59+0000"];
     }
 }

@@ -40,8 +40,7 @@ class PaymentSetupRequest
      * The type of payment. You must provide this field for card payments in which the cardholder is not
      * present, for example a recurring payment or a mail order/telephone order (MOTO) payment.
      * [Optional]
-     * Default: "regular"
-     * Enum: "regular" "recurring" "moto" "installment" "pay_later" "unscheduled"
+     * Default: "Regular"
      * @var string value of PaymentType
      */
     public $payment_type = "Regular";

@@ -67,7 +67,7 @@ class GooglePay extends PaymentSetupPaymentMethod
      * The preferred card scheme to process the payment.
      * [Optional]
      * Enum: "visa" "mastercard"
-     * @var string value of PreferredSchema (visa or mastercard only)
+     * @var string value of GooglePayPreferredScheme
      */
     public $preferred_scheme;
 }

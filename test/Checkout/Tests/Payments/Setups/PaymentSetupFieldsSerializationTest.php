@@ -48,6 +48,7 @@ use Checkout\Payments\Setups\Common\PaymentMethods\Common\CardAccountHolder;
 use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentSetupCardScheme;
 use Checkout\Payments\Setups\Common\PaymentMethods\Common\WalletToken;
 use Checkout\Payments\Setups\Common\PaymentMethods\GooglePay\GooglePay;
+use Checkout\Payments\Setups\Common\PaymentMethods\GooglePay\GooglePayPreferredScheme;
 use Checkout\Payments\Setups\Common\PaymentMethods\GooglePay\GooglePayTokenData;
 use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrument;
 use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrumentAction;
@@ -987,7 +988,7 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $googlePay->phone = $this->buildPhone();
         $googlePay->account_holder = $this->buildCardAccountHolder();
         $googlePay->schemes = [PaymentSetupCardScheme::$mastercard, PaymentSetupCardScheme::$visa];
-        $googlePay->preferred_scheme = PreferredSchema::$mastercard;
+        $googlePay->preferred_scheme = GooglePayPreferredScheme::$mastercard;
 
         $paymentMethods = new PaymentMethods();
         $paymentMethods->googlepay = $googlePay;
@@ -1121,33 +1122,14 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         );
     }
 
-    public function testDeprecatedNumberOfTradesIsSentAsNumberOfSales()
+    public function testMetadataKeysAreSentUnchanged()
     {
-        $subMerchant = new OrderSubMerchant();
-        $subMerchant->id = "SUB12345";
-        $subMerchant->number_of_trades = 500;
-
-        $order = new Order();
-        $order->sub_merchants = [$subMerchant];
         $request = new PaymentSetupRequest();
-        $request->order = $order;
+        $request->metadata = ["number_of_trades" => 5];
 
-        $json = (new JsonSerializer())->serialize($request);
-        $decoded = json_decode($json, true);
+        $decoded = json_decode((new JsonSerializer())->serialize($request), true);
 
-        $this->assertStringNotContainsString('number_of_trades', $json);
-        $this->assertSame(["id" => "SUB12345", "number_of_sales" => 500], $decoded['order']['sub_merchants'][0]);
-    }
-
-    public function testNumberOfSalesWinsOverDeprecatedNumberOfTrades()
-    {
-        $subMerchant = new OrderSubMerchant();
-        $subMerchant->number_of_trades = 10;
-        $subMerchant->number_of_sales = 500;
-
-        $json = (new JsonSerializer())->serialize($subMerchant);
-
-        $this->assertSame('{"number_of_sales":500}', $json);
+        $this->assertSame(["number_of_trades" => 5], $decoded['metadata']);
     }
 
     public function testMetadataSerializesStringNumberAndBooleanValues()
@@ -1304,6 +1286,13 @@ class PaymentSetupFieldsSerializationTest extends TestCase
 
         $this->assertSame($expected, $actual);
         $this->assertSame("set_instrument", PaymentSetupInstrumentActionType::$set_instrument);
+    }
+
+    public function testGooglePayPreferredSchemeAllowsOnlyVisaAndMastercard()
+    {
+        $actual = array_values((new \ReflectionClass(GooglePayPreferredScheme::class))->getStaticProperties());
+
+        $this->assertSame(["visa", "mastercard"], $actual);
     }
 
     private function buildPhone()

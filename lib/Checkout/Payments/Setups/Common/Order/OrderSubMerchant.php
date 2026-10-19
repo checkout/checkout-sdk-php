@@ -27,9 +27,9 @@ class OrderSubMerchant
     /**
      * Deprecated. Use $number_of_sales instead.
      *
-     * Not in the specification. The serializer sends this value under the key number_of_sales, and the
-     * key number_of_trades is never sent. If both are set, $number_of_sales wins. Retained for backwards
-     * compatibility and will be removed in the next major version.
+     * Not in the specification: the API does not read number_of_trades, so the value is ignored. Set
+     * $number_of_sales instead. Retained for backwards compatibility and will be removed in the next
+     * major version.
      * [Optional]
      * @var int
      * @deprecated Use $number_of_sales instead. Will be removed in the next major version.

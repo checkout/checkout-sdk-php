@@ -11,9 +11,7 @@ class JsonSerializer
 
     const KEYS_TRANSFORMATIONS = array(
         "three_ds" => "3ds",
-        "if_match" => "if-match",
-        // Deprecated OrderSubMerchant::$number_of_trades: the API only defines number_of_sales.
-        "number_of_trades" => "number_of_sales"
+        "if_match" => "if-match"
     );
 
     /**

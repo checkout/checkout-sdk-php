@@ -37,8 +37,10 @@ class PaymentSetupRequest
     public $currency;
 
     /**
-     * The type of payment.
+     * The type of payment. You must provide this field for card payments in which the cardholder is not
+     * present, for example a recurring payment or a mail order/telephone order (MOTO) payment.
      * [Optional]
+     * Default: "Regular"
      * @var string value of PaymentType
      */
     public $payment_type = "Regular";
@@ -122,4 +124,13 @@ class PaymentSetupRequest
      * @var PaymentSetupRisk
      */
     public $risk;
+
+    /**
+     * A set of key/value pairs you can attach to a payment. It can be useful for storing additional
+     * information about the payment. Values are a string (max 255 characters), a number or a boolean.
+     * [Optional]
+     * max 20 properties
+     * @var array
+     */
+    public $metadata;
 }

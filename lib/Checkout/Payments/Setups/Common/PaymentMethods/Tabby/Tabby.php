@@ -20,6 +20,10 @@ class Tabby extends PaymentMethodBase
     public $payment_types;
 
     /**
+     * The payment method options.
+     * [Optional]
+     * @deprecated Not part of the API spec; the API no longer sends it and ignores it on requests.
+     *     There is no replacement. It will be removed in the next major version.
      * @var PaymentMethodOptions
      */
     public $payment_method_options;

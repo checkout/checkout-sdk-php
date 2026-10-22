@@ -53,13 +53,18 @@ use Checkout\Payments\Setups\Common\PaymentMethods\GooglePay\GooglePayTokenData;
 use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrument;
 use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrumentAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrumentActionType;
-use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\Klarna;
 use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\KlarnaAccountHolder;
+use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\KlarnaAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\KlarnaActionType;
 use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\Paypal;
+use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\PaypalAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\PaypalActionType;
 use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\PaypalShippingPreference;
 use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\PaypalUserAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\Stcpay\Stcpay;
+use Checkout\Payments\Setups\Common\PaymentMethods\Stcpay\StcpayAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\Stcpay\StcpayActionType;
 use Checkout\Payments\Setups\Common\PaymentMethods\Tabby\Tabby;
 use Checkout\Payments\Setups\Common\Settings\Settings;
 use Checkout\Payments\Setups\Common\PaymentMethods\PayByBank\PayByBank;
@@ -1344,8 +1349,8 @@ class PaymentSetupFieldsSerializationTest extends TestCase
 
     public function testPaypalRoundTripKeepsEveryProperty()
     {
-        $action = new PaymentMethodAction();
-        $action->type = "sdk";
+        $action = new PaypalAction();
+        $action->type = PaypalActionType::$sdk;
         $action->order_id = self::PAYPAL_ORDER_ID;
 
         $paypal = new Paypal();
@@ -1376,8 +1381,8 @@ class PaymentSetupFieldsSerializationTest extends TestCase
 
     public function testKlarnaRoundTripKeepsEveryProperty()
     {
-        $action = new PaymentMethodAction();
-        $action->type = "sdk";
+        $action = new KlarnaAction();
+        $action->type = KlarnaActionType::$sdk;
         $action->client_token = self::KLARNA_CLIENT_TOKEN;
         $action->session_id = self::KLARNA_SESSION_ID;
 
@@ -1414,8 +1419,8 @@ class PaymentSetupFieldsSerializationTest extends TestCase
 
     public function testStcpayAndTabbyRoundTripKeepEveryProperty()
     {
-        $action = new PaymentMethodAction();
-        $action->type = "otp";
+        $action = new StcpayAction();
+        $action->type = StcpayActionType::$otp;
 
         $stcpay = new Stcpay();
         $stcpay->status = PaymentMethodStatus::$action_required;
@@ -1453,7 +1458,7 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         );
     }
 
-    public function testDeserializesFlattenedPaymentMethodActionsFromResponse()
+    public function testResponseActionsMapToTheTypedModels()
     {
         $json = '{
             "id": "ps_2Un4Ld0Qm8Dj6kXHm0LqT0bK5mL",
@@ -1497,59 +1502,74 @@ class PaymentSetupFieldsSerializationTest extends TestCase
             }
         }';
 
-        $response = (new JsonSerializer())->deserialize($json);
-        $methods = $response['payment_methods'];
+        $methods = (new JsonSerializer())->deserialize($json)['payment_methods'];
 
-        $klarna = $methods['klarna'];
-        $this->assertSame("action_required", $klarna['status']);
-        $this->assertSame([], $klarna['flags']);
-        $this->assertSame("enabled", $klarna['initialization']);
-        $this->assertSame("sdk", $klarna['action']['type']);
-        $this->assertSame(self::KLARNA_CLIENT_TOKEN, $klarna['action']['client_token']);
-        $this->assertSame(self::KLARNA_SESSION_ID, $klarna['action']['session_id']);
-        $this->assertSame("John Smith", $klarna['account_holder']['name']);
-        $this->assertSame(self::KLARNA_IBAN, $klarna['iban']);
+        $this->assertSame(
+            ["type" => "sdk", "client_token" => self::KLARNA_CLIENT_TOKEN, "session_id" => self::KLARNA_SESSION_ID],
+            $methods['klarna']['action']
+        );
+        $this->assertSame(self::KLARNA_IBAN, $methods['klarna']['iban']);
+        $this->assertSame(["type" => "sdk", "order_id" => self::PAYPAL_ORDER_ID], $methods['paypal']['action']);
+        $this->assertSame(["type" => "otp"], $methods['stcpay']['action']);
 
-        $paypal = $methods['paypal'];
-        $this->assertSame("action_required", $paypal['status']);
-        $this->assertSame([], $paypal['flags']);
-        $this->assertSame("enabled", $paypal['initialization']);
-        $this->assertSame(PaypalUserAction::$pay_now, $paypal['user_action']);
-        $this->assertSame("Acme Corporation", $paypal['brand_name']);
-        $this->assertSame(PaypalShippingPreference::$no_shipping, $paypal['shipping_preference']);
-        $this->assertSame("sdk", $paypal['action']['type']);
-        $this->assertSame(self::PAYPAL_ORDER_ID, $paypal['action']['order_id']);
-
-        $stcpay = $methods['stcpay'];
-        $this->assertSame("action_required", $stcpay['status']);
-        $this->assertSame([], $stcpay['flags']);
-        $this->assertSame("enabled", $stcpay['initialization']);
-        $this->assertSame(["type" => "otp"], $stcpay['action']);
-
-        $tabby = $methods['tabby'];
-        $this->assertSame("ready", $tabby['status']);
-        $this->assertSame([], $tabby['flags']);
-        $this->assertSame("enabled", $tabby['initialization']);
-        $this->assertSame(["pay_later"], $tabby['payment_types']);
-
-        // The typed models expose every key the API returns for these methods.
-        $expectedProperties = [
-            Klarna::class => ["action", "account_holder", "iban"],
-            Paypal::class => ["user_action", "brand_name", "shipping_preference", "action"],
-            Stcpay::class => ["otp", "action"],
-            Tabby::class => ["payment_types"],
-            PaymentMethodAction::class => ["type", "client_token", "session_id", "order_id"],
+        // Every key the API returns for these methods has a property on the typed model.
+        $models = [
+            "klarna" => Klarna::class,
+            "paypal" => Paypal::class,
+            "stcpay" => Stcpay::class,
+            "tabby" => Tabby::class,
         ];
-        foreach ($expectedProperties as $class => $properties) {
-            foreach ($properties as $property) {
+        foreach ($models as $key => $class) {
+            foreach (array_keys($methods[$key]) as $property) {
+                $this->assertTrue(property_exists($class, $property), $class . "::" . $property);
+            }
+        }
+        $actions = [
+            "klarna" => KlarnaAction::class,
+            "paypal" => PaypalAction::class,
+            "stcpay" => StcpayAction::class,
+        ];
+        foreach ($actions as $key => $class) {
+            foreach (array_keys($methods[$key]['action']) as $property) {
                 $this->assertTrue(property_exists($class, $property), $class . "::" . $property);
             }
         }
         $this->assertTrue(property_exists(PaymentMethods::class, "paypal"));
     }
 
-    public function testPaypalConstantsMatchTheSpec()
+    public function testSerializesKlarnaAndStcpayUnderLiteralKeys()
     {
+        $klarna = new Klarna();
+        $klarna->initialization = PaymentMethodInitialization::$enabled;
+
+        $stcpay = new Stcpay();
+        $stcpay->initialization = PaymentMethodInitialization::$enabled;
+        $stcpay->otp = "123456";
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->klarna = $klarna;
+        $paymentMethods->stcpay = $stcpay;
+
+        $request = new PaymentSetupRequest();
+        $request->payment_methods = $paymentMethods;
+
+        $json = (new JsonSerializer())->serialize($request);
+
+        $this->assertStringContainsString('"klarna":{"initialization":"enabled"}', $json);
+        $this->assertStringContainsString('"stcpay":{"initialization":"enabled","otp":"123456"}', $json);
+        $this->assertStringNotContainsString('payment_method_options', $json);
+        $this->assertStringNotContainsString('"action"', $json);
+        $this->assertStringNotContainsString('"iban"', $json);
+    }
+
+    public function testPaypalAndActionTypeConstantsMatchTheSpec()
+    {
+        $values = function ($class) {
+            return array_values((new \ReflectionClass($class))->getStaticProperties());
+        };
+        $this->assertSame(["sdk"], $values(KlarnaActionType::class));
+        $this->assertSame(["sdk"], $values(PaypalActionType::class));
+        $this->assertSame(["otp"], $values(StcpayActionType::class));
         $this->assertSame(
             ["pay_now", "continue"],
             array_values((new \ReflectionClass(PaypalUserAction::class))->getStaticProperties())

@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Stcpay;
 
-use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodBase;
 use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodOptions;
 
@@ -25,11 +24,15 @@ class Stcpay extends PaymentMethodBase
      * The next available action for the payment method. For stc pay the type is "otp".
      * [Optional]
      * readOnly
-     * @var PaymentMethodAction
+     * @var StcpayAction
      */
     public $action;
 
     /**
+     * The payment method options.
+     * [Optional]
+     * @deprecated Not part of the API spec; the API no longer sends it and ignores it on requests.
+     *     Use $action instead. It will be removed in the next major version.
      * @var PaymentMethodOptions
      */
     public $payment_method_options;

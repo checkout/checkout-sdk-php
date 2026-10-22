@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Paypal;
 
-use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodBase;
 
 /**
@@ -49,7 +48,7 @@ class Paypal extends PaymentMethodBase
      * holds the PayPal order ID to use with the PayPal SDK.
      * [Optional]
      * readOnly
-     * @var PaymentMethodAction
+     * @var PaypalAction
      */
     public $action;
 }

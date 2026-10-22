@@ -2,7 +2,6 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Klarna;
 
-use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodBase;
 use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodOptions;
 
@@ -18,7 +17,7 @@ class Klarna extends PaymentMethodBase
      * client_token and session_id to use with the Klarna SDK.
      * [Optional]
      * readOnly
-     * @var PaymentMethodAction
+     * @var KlarnaAction
      */
     public $action;
 
@@ -39,6 +38,10 @@ class Klarna extends PaymentMethodBase
     public $iban;
 
     /**
+     * The payment method options.
+     * [Optional]
+     * @deprecated Not part of the API spec; the API no longer sends it and ignores it on requests.
+     *     Use $action instead. It will be removed in the next major version.
      * @var PaymentMethodOptions
      */
     public $payment_method_options;

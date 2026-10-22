@@ -5,30 +5,22 @@ namespace Checkout\Tests\Issuing\Cards;
 use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
-use Checkout\ApiClient;
-use Checkout\CheckoutConfiguration;
 use Checkout\CheckoutException;
-use Checkout\Environment;
-use Checkout\HttpClientBuilderInterface;
-use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
-use Checkout\Issuing\Cards\Revoke\RevokeReason;
-use Checkout\Issuing\Cards\Suspend\SuspendReason;
-use Checkout\SdkAuthorization;
-use Checkout\SdkCredentialsInterface;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
-use Monolog\Handler\NullHandler;
-use Monolog\Logger;
-use Checkout\Issuing\IssuingClient;
 use Checkout\Issuing\Cards\Create\VirtualCardRequest;
 use Checkout\Issuing\Cards\Credentials\CardCredentialsQuery;
+use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
+use Checkout\Issuing\Cards\Revoke\RevokeReason;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
+use Checkout\Issuing\Cards\Suspend\SuspendReason;
 use Checkout\Issuing\Cards\Update\UpdateCardRequest;
+use Checkout\Issuing\IssuingClient;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
 class CardsClientTest extends UnitTestFixture
 {
+    use StubbedHttpIssuingClientTrait;
+
     /**
      * @var IssuingClient
      */
@@ -261,7 +253,7 @@ class CardsClientTest extends UnitTestFixture
     public function shouldSendNoBodyOnTheWireWhenRevokeAndSuspendHaveNoRequest()
     {
         $captured = [];
-        $client = $this->buildCapturingClient($captured);
+        $client = $this->buildStubbedClient(200, '{"_links":{}}', $captured);
 
         $client->revokeCard("crd_12345");
         $client->suspendCard("crd_12345");
@@ -283,7 +275,7 @@ class CardsClientTest extends UnitTestFixture
     public function shouldSendTheReasonOnTheWireWhenRevokeAndSuspendHaveARequest()
     {
         $captured = [];
-        $client = $this->buildCapturingClient($captured);
+        $client = $this->buildStubbedClient(200, '{"_links":{}}', $captured);
 
         $revoke = new RevokeCardRequest();
         $revoke->reason = RevokeReason::$reported_lost;
@@ -295,40 +287,5 @@ class CardsClientTest extends UnitTestFixture
 
         $this->assertSame(["reason" => "reported_lost"], json_decode((string) $captured[0]->getBody(), true));
         $this->assertSame(["reason" => "suspected_lost"], json_decode((string) $captured[1]->getBody(), true));
-    }
-
-    /**
-     * Builds an IssuingClient on a real ApiClient whose HTTP layer records every request and
-     * answers 200 with a revoke/suspend style response.
-     *
-     * @param array $captured
-     * @return IssuingClient
-     * @throws CheckoutArgumentException
-     * @throws CheckoutException
-     */
-    private function buildCapturingClient(array &$captured): IssuingClient
-    {
-        $stack = HandlerStack::create();
-        $stack->setHandler(function ($request) use (&$captured) {
-            $captured[] = $request;
-            return \GuzzleHttp\Promise\Create::promiseFor(
-                new Response(200, ["Content-Type" => "application/json"], '{"_links":{}}')
-            );
-        });
-
-        $httpBuilder = $this->createMock(HttpClientBuilderInterface::class);
-        $httpBuilder->method("getClient")->willReturn(new \GuzzleHttp\Client(["handler" => $stack]));
-
-        $sdkCredentials = $this->createMock(SdkCredentialsInterface::class);
-        $sdkCredentials
-            ->method("getAuthorization")
-            ->willReturn(new SdkAuthorization(PlatformType::$default, "sk_sbox_key"));
-
-        $logger = new Logger("checkout-sdk-test-php");
-        $logger->pushHandler(new NullHandler());
-
-        $configuration = new CheckoutConfiguration($sdkCredentials, Environment::sandbox(), $httpBuilder, $logger);
-
-        return new IssuingClient(new ApiClient($configuration), $configuration);
     }
 }

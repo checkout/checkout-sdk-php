@@ -7,7 +7,7 @@ class SuspendCardRequest
     /**
      * The reason why the card is being suspended.
      * [Optional]
-     * Values: see SuspendReason.
+     * Enum: suspected_lost, suspected_stolen (see SuspendReason).
      *
      * @var string|null value of SuspendReason
      */

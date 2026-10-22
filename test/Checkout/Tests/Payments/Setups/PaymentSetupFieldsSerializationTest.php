@@ -53,6 +53,19 @@ use Checkout\Payments\Setups\Common\PaymentMethods\GooglePay\GooglePayTokenData;
 use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrument;
 use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrumentAction;
 use Checkout\Payments\Setups\Common\PaymentMethods\Instrument\PaymentSetupInstrumentActionType;
+use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\Klarna;
+use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\KlarnaAccountHolder;
+use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\KlarnaAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\KlarnaActionType;
+use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\Paypal;
+use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\PaypalAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\PaypalActionType;
+use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\PaypalShippingPreference;
+use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\PaypalUserAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\Stcpay\Stcpay;
+use Checkout\Payments\Setups\Common\PaymentMethods\Stcpay\StcpayAction;
+use Checkout\Payments\Setups\Common\PaymentMethods\Stcpay\StcpayActionType;
+use Checkout\Payments\Setups\Common\PaymentMethods\Tabby\Tabby;
 use Checkout\Payments\Setups\Common\Settings\Settings;
 use Checkout\Payments\Setups\Common\PaymentMethods\PayByBank\PayByBank;
 use Checkout\Payments\Setups\Common\Risk\PaymentSetupRisk;
@@ -72,6 +85,14 @@ class PaymentSetupFieldsSerializationTest extends TestCase
     const CASHAPP_CUSTOMER_ID = "CST_AYVkuLzfsRqEhf4OyQFxQNv22m7IjNFjO6f2J5CDE2nxAC4-21wJ2H8_2kvsdIsDZMN4";
 
     const WALLET_TOKEN_ID = "tok_ubfj2q76miwundwlk72vxt2i7q";
+
+    const KLARNA_CLIENT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJzZXNzaW9uX2lkIiA6ICIw";
+
+    const KLARNA_SESSION_ID = "0b1d9815-165e-42e2-8867-35bc03789e00";
+
+    const KLARNA_IBAN = "DE89370400440532013000";
+
+    const PAYPAL_ORDER_ID = "dd4b1a85-31de-404b-99f4-f143f8ba35ba";
 
     const GOOGLEPAY_SIGNATURE = "MEQCIH6Q4OwQ0jAceFEkGF0JID6sJNXxOEi4r+mA7biRxqBQAiAondqoUpU/"
         . "bdsrAOpZIsrHQS9nwiiNwOrr24RyPeHA0Q==";
@@ -1293,6 +1314,270 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $actual = array_values((new \ReflectionClass(GooglePayPreferredScheme::class))->getStaticProperties());
 
         $this->assertSame(["visa", "mastercard"], $actual);
+    }
+
+    public function testSerializesPaypalAndTabbyUnderLiteralKeys()
+    {
+        $paypal = new Paypal();
+        $paypal->initialization = PaymentMethodInitialization::$enabled;
+        $paypal->user_action = PaypalUserAction::$pay_now;
+        $paypal->brand_name = "Acme Corporation";
+        $paypal->shipping_preference = PaypalShippingPreference::$no_shipping;
+
+        $tabby = new Tabby();
+        $tabby->payment_types = ["pay_later"];
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->paypal = $paypal;
+        $paymentMethods->tabby = $tabby;
+
+        $request = new PaymentSetupRequest();
+        $request->payment_methods = $paymentMethods;
+
+        $json = (new JsonSerializer())->serialize($request);
+
+        $this->assertStringContainsString(
+            '"paypal":{"initialization":"enabled","user_action":"pay_now","brand_name":"Acme Corporation",'
+            . '"shipping_preference":"no_shipping"}',
+            $json
+        );
+        $this->assertStringContainsString('"tabby":{"payment_types":["pay_later"]}', $json);
+        $this->assertStringNotContainsString('"pay_pal"', $json);
+        $this->assertStringNotContainsString('payment_method_options', $json);
+        $this->assertStringNotContainsString('"action"', $json);
+    }
+
+    public function testPaypalRoundTripKeepsEveryProperty()
+    {
+        $action = new PaypalAction();
+        $action->type = PaypalActionType::$sdk;
+        $action->order_id = self::PAYPAL_ORDER_ID;
+
+        $paypal = new Paypal();
+        $paypal->status = PaymentMethodStatus::$ready;
+        $paypal->flags = [];
+        $paypal->initialization = PaymentMethodInitialization::$enabled;
+        $paypal->user_action = PaypalUserAction::$continue;
+        $paypal->brand_name = "Acme Corporation";
+        $paypal->shipping_preference = PaypalShippingPreference::$set_provided_address;
+        $paypal->action = $action;
+
+        $serializer = new JsonSerializer();
+        $decoded = $serializer->deserialize($serializer->serialize($paypal));
+
+        $this->assertSame(
+            [
+                "status" => "ready",
+                "flags" => [],
+                "initialization" => "enabled",
+                "user_action" => "continue",
+                "brand_name" => "Acme Corporation",
+                "shipping_preference" => "set_provided_address",
+                "action" => ["type" => "sdk", "order_id" => self::PAYPAL_ORDER_ID],
+            ],
+            $decoded
+        );
+    }
+
+    public function testKlarnaRoundTripKeepsEveryProperty()
+    {
+        $action = new KlarnaAction();
+        $action->type = KlarnaActionType::$sdk;
+        $action->client_token = self::KLARNA_CLIENT_TOKEN;
+        $action->session_id = self::KLARNA_SESSION_ID;
+
+        $accountHolder = new KlarnaAccountHolder();
+        $accountHolder->name = "John Smith";
+
+        $klarna = new Klarna();
+        $klarna->status = PaymentMethodStatus::$action_required;
+        $klarna->flags = [];
+        $klarna->initialization = PaymentMethodInitialization::$enabled;
+        $klarna->action = $action;
+        $klarna->account_holder = $accountHolder;
+        $klarna->iban = self::KLARNA_IBAN;
+
+        $serializer = new JsonSerializer();
+        $decoded = $serializer->deserialize($serializer->serialize($klarna));
+
+        $this->assertSame(
+            [
+                "status" => "action_required",
+                "flags" => [],
+                "initialization" => "enabled",
+                "action" => [
+                    "type" => "sdk",
+                    "client_token" => self::KLARNA_CLIENT_TOKEN,
+                    "session_id" => self::KLARNA_SESSION_ID,
+                ],
+                "account_holder" => ["name" => "John Smith"],
+                "iban" => self::KLARNA_IBAN,
+            ],
+            $decoded
+        );
+    }
+
+    public function testStcpayAndTabbyRoundTripKeepEveryProperty()
+    {
+        $action = new StcpayAction();
+        $action->type = StcpayActionType::$otp;
+
+        $stcpay = new Stcpay();
+        $stcpay->status = PaymentMethodStatus::$action_required;
+        $stcpay->flags = [];
+        $stcpay->initialization = PaymentMethodInitialization::$enabled;
+        $stcpay->otp = "123456";
+        $stcpay->action = $action;
+
+        $tabby = new Tabby();
+        $tabby->status = PaymentMethodStatus::$ready;
+        $tabby->flags = [];
+        $tabby->initialization = PaymentMethodInitialization::$disabled;
+        $tabby->payment_types = ["pay_later", "installments"];
+
+        $serializer = new JsonSerializer();
+
+        $this->assertSame(
+            [
+                "status" => "action_required",
+                "flags" => [],
+                "initialization" => "enabled",
+                "otp" => "123456",
+                "action" => ["type" => "otp"],
+            ],
+            $serializer->deserialize($serializer->serialize($stcpay))
+        );
+        $this->assertSame(
+            [
+                "status" => "ready",
+                "flags" => [],
+                "initialization" => "disabled",
+                "payment_types" => ["pay_later", "installments"],
+            ],
+            $serializer->deserialize($serializer->serialize($tabby))
+        );
+    }
+
+    public function testResponseActionsMapToTheTypedModels()
+    {
+        $json = '{
+            "id": "ps_2Un4Ld0Qm8Dj6kXHm0LqT0bK5mL",
+            "payment_methods": {
+                "klarna": {
+                    "status": "action_required",
+                    "flags": [],
+                    "initialization": "enabled",
+                    "action": {
+                        "type": "sdk",
+                        "client_token": "' . self::KLARNA_CLIENT_TOKEN . '",
+                        "session_id": "' . self::KLARNA_SESSION_ID . '"
+                    },
+                    "account_holder": { "name": "John Smith" },
+                    "iban": "' . self::KLARNA_IBAN . '"
+                },
+                "paypal": {
+                    "status": "action_required",
+                    "flags": [],
+                    "initialization": "enabled",
+                    "user_action": "pay_now",
+                    "brand_name": "Acme Corporation",
+                    "shipping_preference": "no_shipping",
+                    "action": {
+                        "type": "sdk",
+                        "order_id": "' . self::PAYPAL_ORDER_ID . '"
+                    }
+                },
+                "stcpay": {
+                    "status": "action_required",
+                    "flags": [],
+                    "initialization": "enabled",
+                    "action": { "type": "otp" }
+                },
+                "tabby": {
+                    "status": "ready",
+                    "flags": [],
+                    "initialization": "enabled",
+                    "payment_types": ["pay_later"]
+                }
+            }
+        }';
+
+        $methods = (new JsonSerializer())->deserialize($json)['payment_methods'];
+
+        $this->assertSame(
+            ["type" => "sdk", "client_token" => self::KLARNA_CLIENT_TOKEN, "session_id" => self::KLARNA_SESSION_ID],
+            $methods['klarna']['action']
+        );
+        $this->assertSame(self::KLARNA_IBAN, $methods['klarna']['iban']);
+        $this->assertSame(["type" => "sdk", "order_id" => self::PAYPAL_ORDER_ID], $methods['paypal']['action']);
+        $this->assertSame(["type" => "otp"], $methods['stcpay']['action']);
+
+        // Every key the API returns for these methods has a property on the typed model.
+        $models = [
+            "klarna" => Klarna::class,
+            "paypal" => Paypal::class,
+            "stcpay" => Stcpay::class,
+            "tabby" => Tabby::class,
+        ];
+        foreach ($models as $key => $class) {
+            foreach (array_keys($methods[$key]) as $property) {
+                $this->assertTrue(property_exists($class, $property), $class . "::" . $property);
+            }
+        }
+        $actions = [
+            "klarna" => KlarnaAction::class,
+            "paypal" => PaypalAction::class,
+            "stcpay" => StcpayAction::class,
+        ];
+        foreach ($actions as $key => $class) {
+            foreach (array_keys($methods[$key]['action']) as $property) {
+                $this->assertTrue(property_exists($class, $property), $class . "::" . $property);
+            }
+        }
+        $this->assertTrue(property_exists(PaymentMethods::class, "paypal"));
+    }
+
+    public function testSerializesKlarnaAndStcpayUnderLiteralKeys()
+    {
+        $klarna = new Klarna();
+        $klarna->initialization = PaymentMethodInitialization::$enabled;
+
+        $stcpay = new Stcpay();
+        $stcpay->initialization = PaymentMethodInitialization::$enabled;
+        $stcpay->otp = "123456";
+
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->klarna = $klarna;
+        $paymentMethods->stcpay = $stcpay;
+
+        $request = new PaymentSetupRequest();
+        $request->payment_methods = $paymentMethods;
+
+        $json = (new JsonSerializer())->serialize($request);
+
+        $this->assertStringContainsString('"klarna":{"initialization":"enabled"}', $json);
+        $this->assertStringContainsString('"stcpay":{"initialization":"enabled","otp":"123456"}', $json);
+        $this->assertStringNotContainsString('payment_method_options', $json);
+        $this->assertStringNotContainsString('"action"', $json);
+        $this->assertStringNotContainsString('"iban"', $json);
+    }
+
+    public function testPaypalAndActionTypeConstantsMatchTheSpec()
+    {
+        $values = function ($class) {
+            return array_values((new \ReflectionClass($class))->getStaticProperties());
+        };
+        $this->assertSame(["sdk"], $values(KlarnaActionType::class));
+        $this->assertSame(["sdk"], $values(PaypalActionType::class));
+        $this->assertSame(["otp"], $values(StcpayActionType::class));
+        $this->assertSame(
+            ["pay_now", "continue"],
+            array_values((new \ReflectionClass(PaypalUserAction::class))->getStaticProperties())
+        );
+        $this->assertSame(
+            ["no_shipping", "get_from_file", "set_provided_address"],
+            array_values((new \ReflectionClass(PaypalShippingPreference::class))->getStaticProperties())
+        );
     }
 
     private function buildPhone()

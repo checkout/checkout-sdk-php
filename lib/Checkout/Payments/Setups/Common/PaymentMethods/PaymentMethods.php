@@ -3,6 +3,7 @@
 namespace Checkout\Payments\Setups\Common\PaymentMethods;
 
 use Checkout\Payments\Setups\Common\PaymentMethods\Klarna\Klarna;
+use Checkout\Payments\Setups\Common\PaymentMethods\Paypal\Paypal;
 use Checkout\Payments\Setups\Common\PaymentMethods\Stcpay\Stcpay;
 use Checkout\Payments\Setups\Common\PaymentMethods\Tabby\Tabby;
 use Checkout\Payments\Setups\Common\PaymentMethods\Bizum\Bizum;
@@ -38,6 +39,13 @@ class PaymentMethods
      * @var Klarna
      */
     public $klarna;
+
+    /**
+     * The PayPal payment method's details and configuration. Serialized under the key "paypal".
+     * [Optional]
+     * @var Paypal
+     */
+    public $paypal;
 
     /**
      * The stc pay payment method's details and configuration.

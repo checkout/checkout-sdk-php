@@ -8,6 +8,9 @@ namespace Checkout\Issuing\Cards\Update;
  * Header values are sent as strings, so declare the boolean header as the string "true"
  * rather than a PHP boolean: a boolean true would be serialized as "1" and a boolean false
  * would be serialized as an empty string and dropped from the request.
+ *
+ * @deprecated The API no longer supports these headers; use the method without headers.
+ *             Will be removed in the next major version.
  */
 class CardUpdateHeaders
 {
@@ -19,6 +22,7 @@ class CardUpdateHeaders
      * Example: "true"
      *
      * @var string|null
+     * @deprecated The API no longer supports this header. Will be removed in the next major version.
      */
     public $return_encrypted_cvv;
 
@@ -31,6 +35,7 @@ class CardUpdateHeaders
      * Maps to HTTP header Encryption-Key.
      *
      * @var string|null
+     * @deprecated The API no longer supports this header. Will be removed in the next major version.
      */
     public $encryption_key;
 

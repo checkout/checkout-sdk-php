@@ -5,7 +5,11 @@ namespace Checkout\Issuing\Cards\Suspend;
 class SuspendCardRequest
 {
     /**
-     * @var string value of SuspendReason
+     * The reason why the card is being suspended.
+     * [Optional]
+     * Values: see SuspendReason.
+     *
+     * @var string|null value of SuspendReason
      */
     public $reason;
 }

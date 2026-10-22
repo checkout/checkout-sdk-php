@@ -218,12 +218,14 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param string $cardId
-     * @param RevokeCardRequest $revokeCardRequest
+     * Revoke a card. The request body is optional; pass null (or omit it) to send no body.
+     *
+     * @param string $cardId - The card's unique identifier. (Required)
+     * @param RevokeCardRequest|null $revokeCardRequest - The optional reason for the request. (Optional)
      * @return array
      * @throws CheckoutApiException
      */
-    public function revokeCard(string $cardId, RevokeCardRequest $revokeCardRequest) : array
+    public function revokeCard(string $cardId, ?RevokeCardRequest $revokeCardRequest = null) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::REVOKE_PATH),
@@ -233,12 +235,14 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param string $cardId
-     * @param SuspendCardRequest $suspendCardRequest
+     * Suspend a card. The request body is optional; pass null (or omit it) to send no body.
+     *
+     * @param string $cardId - The card's unique identifier. (Required)
+     * @param SuspendCardRequest|null $suspendCardRequest - The optional reason for the request. (Optional)
      * @return array
      * @throws CheckoutApiException
      */
-    public function suspendCard(string $cardId, SuspendCardRequest $suspendCardRequest) : array
+    public function suspendCard(string $cardId, ?SuspendCardRequest $suspendCardRequest = null) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SUSPEND_PATH),
@@ -760,8 +764,10 @@ class IssuingClient extends Client
      *
      * @param string $cardId - The card's unique identifier. (Required)
      * @param UpdateCardRequest $updateCardRequest (Required)
-     * @param CardUpdateHeaders|null $headers - The optional return-encrypted-cvv and
-     *                                          Encryption-Key HTTP headers. (Optional)
+     * @param CardUpdateHeaders|null $headers - Deprecated. The API no longer supports these
+     *                                          headers; call this method without headers. The
+     *                                          parameter will be removed in the next major
+     *                                          version. Headers set here are still sent. (Optional)
      * @return array
      * @throws CheckoutApiException
      */

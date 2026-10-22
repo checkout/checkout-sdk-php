@@ -300,9 +300,8 @@ class CardsIntegrationTest extends AbstractIssuingIntegrationTest
         $this->assertResponse($updateResponse, "last_modified_date");
     }
 
-    // The 2026-09-17 spec (INT-1700) removed encrypted_cvv from update-card-response entirely,
-    // so return-encrypted-cvv/Encryption-Key no longer make the update response carry it. This
-    // test previously asserted the opposite (added by INT-1695, when the field still existed).
+    // encrypted_cvv is not part of update-card-response, so the deprecated return-encrypted-cvv
+    // and Encryption-Key headers do not make the update response carry it.
 
     /**
      * The next round hour in UTC, which is the earliest value the API accepts for a scheduled

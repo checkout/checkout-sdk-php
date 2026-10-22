@@ -193,9 +193,8 @@ class CardUpdateHeadersTest extends UnitTestFixture
     }
 
     /**
-     * The 2026-09-17 spec (INT-1700) removed encrypted_cvv from update-card-response entirely,
-     * so return-encrypted-cvv/Encryption-Key no longer make the response carry it. This test
-     * previously asserted the opposite (added by INT-1695, when the field still existed).
+     * encrypted_cvv is not part of update-card-response and the headers are deprecated, but
+     * headers set by the caller are still sent and the call still succeeds.
      *
      * @test
      */

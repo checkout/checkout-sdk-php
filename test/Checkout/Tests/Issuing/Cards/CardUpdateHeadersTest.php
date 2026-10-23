@@ -158,8 +158,9 @@ class CardUpdateHeadersTest extends UnitTestFixture
     }
 
     /**
-     * The API ignores the deprecated headers: setting only return-encrypted-cvv, without an
-     * Encryption-Key, still succeeds and the response carries no encrypted_cvv.
+     * The deprecated headers are no longer documented by the API and are still sent when set:
+     * setting only return-encrypted-cvv, without an Encryption-Key, still succeeds and the
+     * response carries no encrypted_cvv.
      *
      * @test
      */

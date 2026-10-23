@@ -3,8 +3,8 @@
 namespace Checkout\Issuing\Cards\Update;
 
 /**
- * The optional HTTP headers formerly documented for updating a card's details. The API no
- * longer documents them and ignores them.
+ * The optional HTTP headers formerly documented for updating a card's details. They are no
+ * longer documented by the API and are still sent when set.
  *
  * Header values are sent as strings, so declare the boolean header as the string "true"
  * rather than a PHP boolean: a boolean true would be serialized as "1" and a boolean false
@@ -16,9 +16,8 @@ namespace Checkout\Issuing\Cards\Update;
 class CardUpdateHeaders
 {
     /**
-     * Deprecated. The API no longer documents this header and ignores it: the update card
-     * response does not include encrypted credentials. Kept so existing callers keep working;
-     * when set, it is still sent.
+     * Deprecated. This header is no longer documented by the API and is still sent when set.
+     * The update card response does not include encrypted credentials.
      * [Optional]
      * Maps to HTTP header return-encrypted-cvv.
      * Example: "true"
@@ -29,8 +28,7 @@ class CardUpdateHeaders
     public $return_encrypted_cvv;
 
     /**
-     * Deprecated. The API no longer documents this header and ignores it. Kept so existing
-     * callers keep working; when set, it is still sent.
+     * Deprecated. This header is no longer documented by the API and is still sent when set.
      * [Optional]
      * Maps to HTTP header Encryption-Key.
      *

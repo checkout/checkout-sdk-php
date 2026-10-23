@@ -218,7 +218,8 @@ class IssuingClient extends Client
     }
 
     /**
-     * Revoke a card. The request body is optional; pass null (or omit it) to send no body.
+     * Revoke a card. The request body is optional: a null request, or a request with no reason
+     * set, sends no body. A request with a reason sends it as JSON.
      *
      * @param string $cardId - The card's unique identifier. (Required)
      * @param RevokeCardRequest|null $revokeCardRequest - The optional reason for the request. (Optional)
@@ -229,13 +230,14 @@ class IssuingClient extends Client
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::REVOKE_PATH),
-            $revokeCardRequest,
+            $this->optionalReasonBody($revokeCardRequest),
             $this->sdkAuthorization()
         );
     }
 
     /**
-     * Suspend a card. The request body is optional; pass null (or omit it) to send no body.
+     * Suspend a card. The request body is optional: a null request, or a request with no reason
+     * set, sends no body. A request with a reason sends it as JSON.
      *
      * @param string $cardId - The card's unique identifier. (Required)
      * @param SuspendCardRequest|null $suspendCardRequest - The optional reason for the request. (Optional)
@@ -246,7 +248,7 @@ class IssuingClient extends Client
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SUSPEND_PATH),
-            $suspendCardRequest,
+            $this->optionalReasonBody($suspendCardRequest),
             $this->sdkAuthorization()
         );
     }
@@ -898,5 +900,17 @@ class IssuingClient extends Client
             $updateCardholderRequest,
             $this->sdkAuthorization()
         );
+    }
+
+    /**
+     * The revoke and suspend bodies are optional and an empty request object would serialize
+     * to an empty JSON array, which the API rejects. Send no body unless a reason is set.
+     *
+     * @param RevokeCardRequest|SuspendCardRequest|null $request
+     * @return RevokeCardRequest|SuspendCardRequest|null
+     */
+    private function optionalReasonBody($request)
+    {
+        return ($request !== null && $request->reason !== null) ? $request : null;
     }
 }

@@ -243,6 +243,22 @@ class CardsClientTest extends UnitTestFixture
     }
 
     /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldPassNoBodyForAnEmptyRevokeOrSuspendRequestObject()
+    {
+        $this->apiClient
+            ->expects($this->exactly(2))
+            ->method("post")
+            ->with($this->anything(), $this->isNull())
+            ->willReturn(["_links" => []]);
+
+        $this->client->revokeCard("crd_12345", new RevokeCardRequest());
+        $this->client->suspendCard("crd_12345", new SuspendCardRequest());
+    }
+
+    /**
      * With no request the real ApiClient sends a POST with an empty body.
      *
      * @test

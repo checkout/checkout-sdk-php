@@ -6,16 +6,21 @@ use Checkout\CheckoutApiException;
 use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutException;
-use Checkout\Issuing\IssuingClient;
 use Checkout\Issuing\Cards\Create\VirtualCardRequest;
 use Checkout\Issuing\Cards\Credentials\CardCredentialsQuery;
+use Checkout\Issuing\Cards\Revoke\RevokeCardRequest;
+use Checkout\Issuing\Cards\Revoke\RevokeReason;
 use Checkout\Issuing\Cards\Suspend\SuspendCardRequest;
+use Checkout\Issuing\Cards\Suspend\SuspendReason;
 use Checkout\Issuing\Cards\Update\UpdateCardRequest;
+use Checkout\Issuing\IssuingClient;
 use Checkout\PlatformType;
 use Checkout\Tests\UnitTestFixture;
 
 class CardsClientTest extends UnitTestFixture
 {
+    use StubbedHttpIssuingClientTrait;
+
     /**
      * @var IssuingClient
      */
@@ -106,8 +111,8 @@ class CardsClientTest extends UnitTestFixture
     }
 
     /**
-     * The 2026-09-23 spec update split update-card-response into a virtual/physical
-     * discriminator; the virtual variant adds is_single_use.
+     * update-card-response uses a virtual/physical discriminator; the virtual variant adds
+     * is_single_use.
      *
      * @test
      * @throws CheckoutApiException
@@ -205,5 +210,98 @@ class CardsClientTest extends UnitTestFixture
         $this->assertNotNull($response);
         $this->assertArrayHasKey("id", $response);
         $this->assertEquals("crd_12345", $response["id"]);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRevokeCardWithoutRequestBody()
+    {
+        $this->apiClient
+            ->expects($this->once())
+            ->method("post")
+            ->with($this->equalTo("issuing/cards/crd_12345/revoke"), $this->isNull())
+            ->willReturn(["_links" => []]);
+
+        $this->assertNotNull($this->client->revokeCard("crd_12345"));
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldSuspendCardWithoutRequestBody()
+    {
+        $this->apiClient
+            ->expects($this->once())
+            ->method("post")
+            ->with($this->equalTo("issuing/cards/crd_12345/suspend"), $this->isNull())
+            ->willReturn(["_links" => []]);
+
+        $this->assertNotNull($this->client->suspendCard("crd_12345", null));
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldPassNoBodyForAnEmptyRevokeOrSuspendRequestObject()
+    {
+        $this->apiClient
+            ->expects($this->exactly(2))
+            ->method("post")
+            ->with($this->anything(), $this->isNull())
+            ->willReturn(["_links" => []]);
+
+        $this->client->revokeCard("crd_12345", new RevokeCardRequest());
+        $this->client->suspendCard("crd_12345", new SuspendCardRequest());
+    }
+
+    /**
+     * With no request the real ApiClient sends a POST with an empty body.
+     *
+     * @test
+     * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
+     */
+    public function shouldSendNoBodyOnTheWireWhenRevokeAndSuspendHaveNoRequest()
+    {
+        $captured = [];
+        $client = $this->buildStubbedClient(200, '{"_links":{}}', $captured);
+
+        $client->revokeCard("crd_12345");
+        $client->suspendCard("crd_12345");
+
+        $this->assertCount(2, $captured);
+        $this->assertSame("POST", $captured[0]->getMethod());
+        $this->assertStringEndsWith("issuing/cards/crd_12345/revoke", $captured[0]->getUri()->getPath());
+        $this->assertSame("", (string) $captured[0]->getBody());
+        $this->assertStringEndsWith("issuing/cards/crd_12345/suspend", $captured[1]->getUri()->getPath());
+        $this->assertSame("", (string) $captured[1]->getBody());
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
+     * @throws CheckoutException
+     */
+    public function shouldSendTheReasonOnTheWireWhenRevokeAndSuspendHaveARequest()
+    {
+        $captured = [];
+        $client = $this->buildStubbedClient(200, '{"_links":{}}', $captured);
+
+        $revoke = new RevokeCardRequest();
+        $revoke->reason = RevokeReason::$reported_lost;
+        $suspend = new SuspendCardRequest();
+        $suspend->reason = SuspendReason::$suspected_lost;
+
+        $client->revokeCard("crd_12345", $revoke);
+        $client->suspendCard("crd_12345", $suspend);
+
+        $this->assertSame(["reason" => "reported_lost"], json_decode((string) $captured[0]->getBody(), true));
+        $this->assertSame(["reason" => "suspected_lost"], json_decode((string) $captured[1]->getBody(), true));
     }
 }

@@ -218,31 +218,37 @@ class IssuingClient extends Client
     }
 
     /**
-     * @param string $cardId
-     * @param RevokeCardRequest $revokeCardRequest
+     * Revoke a card. The request body is optional: a null request, or a request with no reason
+     * set, sends no body. A request with a reason sends it as JSON.
+     *
+     * @param string $cardId - The card's unique identifier. (Required)
+     * @param RevokeCardRequest|null $revokeCardRequest - The optional reason for the request. (Optional)
      * @return array
      * @throws CheckoutApiException
      */
-    public function revokeCard(string $cardId, RevokeCardRequest $revokeCardRequest) : array
+    public function revokeCard(string $cardId, ?RevokeCardRequest $revokeCardRequest = null) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::REVOKE_PATH),
-            $revokeCardRequest,
+            $this->optionalReasonBody($revokeCardRequest),
             $this->sdkAuthorization()
         );
     }
 
     /**
-     * @param string $cardId
-     * @param SuspendCardRequest $suspendCardRequest
+     * Suspend a card. The request body is optional: a null request, or a request with no reason
+     * set, sends no body. A request with a reason sends it as JSON.
+     *
+     * @param string $cardId - The card's unique identifier. (Required)
+     * @param SuspendCardRequest|null $suspendCardRequest - The optional reason for the request. (Optional)
      * @return array
      * @throws CheckoutApiException
      */
-    public function suspendCard(string $cardId, SuspendCardRequest $suspendCardRequest) : array
+    public function suspendCard(string $cardId, ?SuspendCardRequest $suspendCardRequest = null) : array
     {
         return $this->apiClient->post(
             $this->buildPath(self::ISSUING_PATH, self::CARDS_PATH, $cardId, self::SUSPEND_PATH),
-            $suspendCardRequest,
+            $this->optionalReasonBody($suspendCardRequest),
             $this->sdkAuthorization()
         );
     }
@@ -760,8 +766,10 @@ class IssuingClient extends Client
      *
      * @param string $cardId - The card's unique identifier. (Required)
      * @param UpdateCardRequest $updateCardRequest (Required)
-     * @param CardUpdateHeaders|null $headers - The optional return-encrypted-cvv and
-     *                                          Encryption-Key HTTP headers. (Optional)
+     * @param CardUpdateHeaders|null $headers - Deprecated. (Optional)
+     *        The API no longer documents these headers; use the method without headers.
+     *        Will be removed in the next major version.
+     *        Headers set here are still sent.
      * @return array
      * @throws CheckoutApiException
      */
@@ -892,5 +900,17 @@ class IssuingClient extends Client
             $updateCardholderRequest,
             $this->sdkAuthorization()
         );
+    }
+
+    /**
+     * The revoke and suspend bodies are optional and an empty request object would serialize
+     * to an empty JSON array, which the API rejects. Send no body unless a reason is set.
+     *
+     * @param RevokeCardRequest|SuspendCardRequest|null $request
+     * @return RevokeCardRequest|SuspendCardRequest|null
+     */
+    private function optionalReasonBody($request)
+    {
+        return ($request !== null && $request->reason !== null) ? $request : null;
     }
 }

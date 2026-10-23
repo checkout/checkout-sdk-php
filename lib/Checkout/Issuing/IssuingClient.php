@@ -766,10 +766,9 @@ class IssuingClient extends Client
      *
      * @param string $cardId - The card's unique identifier. (Required)
      * @param UpdateCardRequest $updateCardRequest (Required)
-     * @param CardUpdateHeaders|null $headers - Deprecated. The API no longer supports these
-     *                                          headers; call this method without headers. The
-     *                                          parameter will be removed in the next major
-     *                                          version. Headers set here are still sent. (Optional)
+     * @param CardUpdateHeaders|null $headers - Deprecated. (Optional)
+     *        The API no longer documents these headers; use the method without headers. Will be removed in the next major version.
+     *        Headers set here are still sent.
      * @return array
      * @throws CheckoutApiException
      */

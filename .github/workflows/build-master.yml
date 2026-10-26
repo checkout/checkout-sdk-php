@@ -157,9 +157,14 @@ jobs:
               shell: bash
               run: composer validate
 
-            - name: Composer update
+            # Install exactly what composer.lock pins. composer update would re-resolve every
+            # range on each run and pick up any version published since, including a malicious
+            # one, in a job that holds repository secrets. composer validate above fails the
+            # job if the lock no longer matches composer.json. The lock is resolved for PHP 8.1
+            # (config.platform in composer.json), so it installs on every leg of the matrix.
+            - name: Composer install
               shell: bash
-              run: composer update --prefer-dist --no-interaction
+              run: composer install --prefer-dist --no-interaction
 
             - name: Run PHPStan
               run: vendor/bin/phpstan analyse --no-progress

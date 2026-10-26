@@ -50,6 +50,11 @@
             "Checkout\\Tests\\": "test/Checkout/Tests/"
         }
     },
+    "config": {
+        "platform": {
+            "php": "8.1"
+        }
+    },
     "scripts": {
         "install-hooks": [
             "sh ./vendor/smgladkovskiy/phpcs-git-pre-commit/src/setup.sh"

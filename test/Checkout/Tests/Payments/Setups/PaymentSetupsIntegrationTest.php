@@ -19,7 +19,7 @@ use Checkout\Payments\Setups\Common\Customer\Device;
 use Checkout\Payments\Setups\Common\Customer\DeviceClient;
 use Checkout\Payments\Setups\Common\Customer\DeviceOs;
 use Checkout\Payments\Setups\Common\PaymentMethods\CashApp\CashApp;
-use Checkout\Payments\PaymentType;
+use Checkout\Payments\Setups\Common\PaymentType\PaymentSetupPaymentType;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 
@@ -54,8 +54,7 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $this->assertEquals($request->processing_channel_id, $response["processing_channel_id"]);
         $this->assertEquals($request->amount, $response["amount"]);
         $this->assertEquals($request->currency, $response["currency"]);
-        // API returns lowercase payment_type despite spec saying PascalCase
-        $this->assertEquals(strtolower($request->payment_type), strtolower($response["payment_type"]));
+        $this->assertEquals($request->payment_type, $response["payment_type"]);
         $this->assertEquals($request->reference, $response["reference"]);
         $this->assertEquals($request->description, $response["description"]);
     }
@@ -104,8 +103,7 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $this->assertEquals($paymentSetupsRequest->processing_channel_id, $response["processing_channel_id"]);
         $this->assertEquals($paymentSetupsRequest->amount, $response["amount"]);
         $this->assertEquals($paymentSetupsRequest->currency, $response["currency"]);
-        // API returns lowercase payment_type despite spec saying PascalCase
-        $this->assertEquals(strtolower($paymentSetupsRequest->payment_type), strtolower($response["payment_type"]));
+        $this->assertEquals($paymentSetupsRequest->payment_type, $response["payment_type"]);
         $this->assertEquals($paymentSetupsRequest->reference, $response["reference"]);
         $this->assertEquals($paymentSetupsRequest->description, $response["description"]);
     }
@@ -230,7 +228,7 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $request->processing_channel_id = getenv("CHECKOUT_PROCESSING_CHANNEL_ID");
         $request->amount = 1000;
         $request->currency = Currency::$GBP;
-        $request->payment_type = PaymentType::$regular;
+        $request->payment_type = PaymentSetupPaymentType::$regular;
         $request->reference = "TEST-REF-" . substr(uniqid(), -6);
         $request->description = "Integration test payment setup";
 

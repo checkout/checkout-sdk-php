@@ -145,8 +145,10 @@ The exception encapsulates `http_metadata` and `$error_details`, if available.
 Once you check out the code from GitHub, the project can be built using composer:
 
 ```
-composer update
+composer install
 ```
+
+This installs the dependency versions pinned in `composer.lock`, the same ones CI uses. Run `composer update` only when you mean to move those pins, and commit the updated `composer.lock`.
 
 The execution of integration tests require the following environment variables set in your system:
 

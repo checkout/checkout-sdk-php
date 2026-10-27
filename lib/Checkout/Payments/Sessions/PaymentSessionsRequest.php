@@ -3,7 +3,7 @@
 namespace Checkout\Payments\Sessions;
 
 use Checkout\Payments\Request\PaymentInstruction;
-use Checkout\Payments\Request\PaymentRetryRequest;
+use Checkout\Payments\Request\CustomerRetry;
 use Checkout\Payments\RiskRequest;
 use Checkout\Payments\Sender\PaymentSender;
 use Checkout\Payments\ShippingDetails;
@@ -114,9 +114,10 @@ class PaymentSessionsRequest
     public $risk;
 
     /**
-     * Configuration for retrying failed payments.
+     * Configures the parameters for customer retries. A customer retry is a payment attempt
+     * performed by the customer on the checkout page, not an authorization retry.
      * [Optional]
-     * @var PaymentRetryRequest|null $customer_retry
+     * @var CustomerRetry|null $customer_retry
      */
     public $customer_retry;
 

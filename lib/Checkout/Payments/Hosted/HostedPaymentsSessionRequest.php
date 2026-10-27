@@ -9,7 +9,7 @@ use Checkout\Payments\PaymentPlan;
 use Checkout\Payments\PaymentRecipient;
 use Checkout\Payments\ProcessingSettings;
 use Checkout\Payments\Request\PaymentInstruction;
-use Checkout\Payments\Request\PaymentRetryRequest;
+use Checkout\Payments\Request\CustomerRetry;
 use Checkout\Payments\RiskRequest;
 use Checkout\Payments\Sender\PaymentSender;
 use Checkout\Payments\Sessions\PaymentMethodConfiguration;
@@ -145,7 +145,10 @@ class HostedPaymentsSessionRequest
     public $disabled_payment_methods;
 
     /**
-     * @var PaymentRetryRequest
+     * Configures the parameters for customer retries. A customer retry is a payment attempt
+     * performed by the customer on the checkout page, not an authorization retry.
+     * [Optional]
+     * @var CustomerRetry|null $customer_retry
      */
     public $customer_retry;
 

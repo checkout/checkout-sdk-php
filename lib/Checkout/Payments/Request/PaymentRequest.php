@@ -201,7 +201,9 @@ class PaymentRequest
     public $items;
 
     /**
-     * @var PaymentRetryRequest
+     * Configuration of asynchronous retries.
+     * [Optional]
+     * @var PaymentRetryRequest|null $retry
      */
     public $retry;
 

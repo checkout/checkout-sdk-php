@@ -51,7 +51,8 @@ class MerchantAccount
     public $total_order_count;
 
     /**
-     * The payment amount of the customer's most recent transaction.
+     * The payment amount of the customer's most recent transaction. The specification types this
+     * as a number (example 55.99); the API currently stores it as an integer.
      * [Optional]
      * @var float
      */

@@ -3,6 +3,7 @@
 namespace Checkout;
 
 use Checkout\Common\DateOnly;
+use Checkout\Common\EmptyAsObject;
 use DateTime;
 use ReflectionClass;
 
@@ -23,6 +24,14 @@ class JsonSerializer
     private static $dateOnlyCache = array();
 
     /**
+     * Per-class flag: whether the class or one of its parents is annotated #[EmptyAsObject].
+     * Populated by reflection on first use of each class.
+     *
+     * @var array<string, bool>
+     */
+    private static $emptyAsObjectCache = array();
+
+    /**
      * @param mixed $body
      * @return string
      */
@@ -31,7 +40,7 @@ class JsonSerializer
         return json_encode(
             is_array($body)
                 ? $this->normalize($body, null)
-                : $this->normalize(get_object_vars($body), $body),
+                : $this->normalizeObject($body),
             JSON_UNESCAPED_SLASHES
         );
     }
@@ -58,12 +67,52 @@ class JsonSerializer
                 if (PHP_VERSION_ID >= 70100 && is_iterable($value)) {
                     $array[$key] = $this->normalize(iterator_to_array($value), null);
                 } else {
-                    $array[$key] = $this->normalize(get_object_vars($value), $value);
+                    $array[$key] = $this->normalizeObject($value);
                 }
             }
             $array = $this->applyKeysTransformations($array, $key);
         }
         return $array;
+    }
+
+    /**
+     * Normalizes a non iterable object. An object of a class annotated #[EmptyAsObject] with nothing set
+     * becomes an empty stdClass, so it is written as {} instead of [].
+     *
+     * @param object $value
+     * @return array|\stdClass
+     */
+    private function normalizeObject($value)
+    {
+        $normalized = $this->normalize(get_object_vars($value), $value);
+        if (empty($normalized) && $this->isEmptyAsObject($value)) {
+            return new \stdClass();
+        }
+        return $normalized;
+    }
+
+    /**
+     * Whether the class of $value, or one of its parent classes, is annotated #[EmptyAsObject].
+     *
+     * Cached per class, so reflection runs once per class per process.
+     *
+     * @param object $value
+     * @return bool
+     */
+    private function isEmptyAsObject($value)
+    {
+        $class = get_class($value);
+        if (!isset(self::$emptyAsObjectCache[$class])) {
+            $annotated = false;
+            for ($reflected = new ReflectionClass($class); $reflected; $reflected = $reflected->getParentClass()) {
+                if (count($reflected->getAttributes(EmptyAsObject::class)) > 0) {
+                    $annotated = true;
+                    break;
+                }
+            }
+            self::$emptyAsObjectCache[$class] = $annotated;
+        }
+        return self::$emptyAsObjectCache[$class];
     }
 
     /**

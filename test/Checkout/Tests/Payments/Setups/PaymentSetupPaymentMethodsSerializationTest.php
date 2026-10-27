@@ -717,4 +717,61 @@ class PaymentSetupPaymentMethodsSerializationTest extends TestCase
             $this->encode($paymentMethods)
         );
     }
+
+    public function testEmptyMethodsTheApiRejectsAsArraySerializeAsJsonObject()
+    {
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->alma = new Alma();
+        $paymentMethods->sequra = new Sequra();
+        $paymentMethods->wechatpay = new WeChatPay();
+
+        $json = $this->encode($paymentMethods);
+
+        $this->assertStringContainsString('"alma":{}', $json);
+        $this->assertStringContainsString('"sequra":{}', $json);
+        $this->assertStringContainsString('"wechatpay":{}', $json);
+        $this->assertStringNotContainsString('[]', $json);
+        $this->assertSame('{"alma":{}}', $this->encode(["alma" => new Alma()]));
+    }
+
+    public function testEmptyMethodTheApiAcceptsInBothFormsAlsoSerializesAsJsonObject()
+    {
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->eps = new Eps();
+
+        $this->assertSame('{"eps":{}}', $this->encode($paymentMethods));
+        $this->assertSame('{}', $this->encode(new Eps()));
+    }
+
+    public function testExistingMethodsWithNothingSetSerializeAsJsonObject()
+    {
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->bizum = new Bizum();
+        $paymentMethods->paybybank = new PayByBank();
+        $paymentMethods->stablecoin = new Stablecoin();
+
+        $json = $this->encode($paymentMethods);
+
+        $this->assertStringContainsString('"bizum":{}', $json);
+        $this->assertStringContainsString('"paybybank":{}', $json);
+        $this->assertStringContainsString('"stablecoin":{}', $json);
+    }
+
+    public function testEmptyListInsideAMethodStillSerializesAsJsonArray()
+    {
+        $alma = new Alma();
+        $alma->flags = [];
+        $paymentMethods = new PaymentMethods();
+        $paymentMethods->alma = $alma;
+
+        $this->assertSame('{"alma":{"flags":[]}}', $this->encode($paymentMethods));
+    }
+
+    public function testEmptyObjectOutsidePaymentMethodsIsUnchanged()
+    {
+        $billing = new PaymentSetupBilling();
+        $billing->address = new Address();
+
+        $this->assertSame('{"address":[]}', $this->encode($billing));
+    }
 }

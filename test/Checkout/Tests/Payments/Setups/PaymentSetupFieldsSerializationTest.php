@@ -680,6 +680,7 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $decoded = $serializer->deserialize($json);
 
         $this->assertStringContainsString('"tax_number":"GB123456789"', $json);
+        $this->assertStringContainsString('"last_payment_amount":55.99', $json);
         $this->assertStringNotContainsString('taxNumber', $json);
         $this->assertCount(8, $decoded);
         $this->assertSame("cus_123456789", $decoded['id']);

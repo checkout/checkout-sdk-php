@@ -697,7 +697,7 @@ class PaymentSetupPaymentMethodsSerializationTest extends TestCase
         );
     }
 
-    public function testDeprecatedCardPresentIsStillSentUnderItsKey()
+    public function testCardPresentIsSentUnderItsKey()
     {
         $pin = new CardPresentPin();
         $pin->key_set_id = "ks_123";

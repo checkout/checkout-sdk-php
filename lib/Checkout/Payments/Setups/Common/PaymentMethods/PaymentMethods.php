@@ -377,8 +377,6 @@ class PaymentMethods
     /**
      * The Card Present payment method's details and configuration.
      * [Optional]
-     * @deprecated card_present is no longer part of the Payment Setups API specification. There is no
-     *     replacement. Will be removed in the next major version.
      * @var CardPresent
      */
     public $card_present;

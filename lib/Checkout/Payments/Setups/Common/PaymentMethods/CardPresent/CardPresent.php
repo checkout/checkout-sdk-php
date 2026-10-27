@@ -4,12 +4,6 @@ namespace Checkout\Payments\Setups\Common\PaymentMethods\CardPresent;
 
 use Checkout\Payments\Setups\Common\PaymentMethods\Common\PaymentMethodBase;
 
-/**
- * The Card Present payment method's details and configuration.
- *
- * @deprecated card_present is no longer part of the Payment Setups API specification. There is no
- *     replacement. Will be removed in the next major version.
- */
 class CardPresent extends PaymentMethodBase
 {
     /**

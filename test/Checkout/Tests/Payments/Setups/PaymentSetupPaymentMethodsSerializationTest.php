@@ -648,9 +648,20 @@ class PaymentSetupPaymentMethodsSerializationTest extends TestCase
         $this->assertSame(["initialization" => "disabled"], $this->roundTrip($stablecoin));
 
         foreach ([$bizum, $payByBank, $stablecoin] as $method) {
-            $this->assertInstanceOf(PaymentSetupPaymentMethod::class, $method);
-            $this->assertNotInstanceOf(PaymentMethodBase::class, $method);
+            $this->assertInstanceOf(PaymentMethodBase::class, $method);
         }
+    }
+
+    public function testInitializationIsRedeclaredAsDeprecatedOnlyWhereTheSchemaLacksIt()
+    {
+        foreach ([Bizum::class, PayByBank::class, Stablecoin::class] as $class) {
+            $property = new \ReflectionProperty($class, "initialization");
+            $this->assertSame($class, $property->getDeclaringClass()->getName(), $class);
+            $this->assertStringContainsString("@deprecated", $property->getDocComment(), $class);
+        }
+
+        $base = new \ReflectionProperty(PaymentMethodBase::class, "initialization");
+        $this->assertStringNotContainsString("@deprecated", $base->getDocComment());
     }
 
     public function testDeprecatedInitializationIsNotSentWhenUnset()

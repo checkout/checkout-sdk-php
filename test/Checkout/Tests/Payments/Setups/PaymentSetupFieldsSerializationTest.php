@@ -663,7 +663,7 @@ class PaymentSetupFieldsSerializationTest extends TestCase
         $merchantAccount->first_transaction_date = new DateTime("2023-09-15");
         $merchantAccount->last_transaction_date = new DateTime("2025-03-28");
         $merchantAccount->total_order_count = 6;
-        $merchantAccount->last_payment_amount = 55;
+        $merchantAccount->last_payment_amount = 55.99;
 
         $customer = new Customer();
         $customer->email = $email;
@@ -708,7 +708,7 @@ class PaymentSetupFieldsSerializationTest extends TestCase
                 "first_transaction_date" => "2023-09-15",
                 "last_transaction_date" => "2025-03-28",
                 "total_order_count" => 6,
-                "last_payment_amount" => 55,
+                "last_payment_amount" => 55.99,
             ],
             $decoded['merchant_account']
         );

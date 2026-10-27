@@ -51,7 +51,9 @@ class MerchantAccount
     public $total_order_count;
 
     /**
-     * @var int
+     * The payment amount of the customer's most recent transaction.
+     * [Optional]
+     * @var float
      */
     public $last_payment_amount;
 }

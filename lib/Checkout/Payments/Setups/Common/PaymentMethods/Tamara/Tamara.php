@@ -13,8 +13,7 @@ class Tamara extends PaymentMethodBase
 {
     /**
      * The initialization state of the payment method. When you create a Payment Setup, this defaults to
-     * disabled. On update the API replaces the payment methods, so send enabled again to keep the method
-     * enabled.
+     * disabled.
      * [Optional]
      * Default: "disabled"
      * @var string value of PaymentMethodInitialization

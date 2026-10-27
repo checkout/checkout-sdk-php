@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Setups\Common\Industry;
 
+use Checkout\Common\EmptyAsObject;
 use DateTime;
 use Checkout\Common\DateOnly;
 use Checkout\Payments\AccommodationGuest;
@@ -9,6 +10,7 @@ use Checkout\Payments\AccommodationGuest;
 /**
  * Details about the accommodation the customer booked, for lodging or cruise bookings.
  */
+#[EmptyAsObject]
 class AccommodationData
 {
     /**

@@ -2,12 +2,15 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\CashApp;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The address in a Cash App customer profile (response only).
  *
  * Uses Cash App's own key names (address_line_1, administrative_district_level_1), which differ from the
  * Checkout.com Address (address_line1, city, state, zip). Do not replace it with the common Address.
  */
+#[EmptyAsObject]
 class CashAppAddress
 {
     /**

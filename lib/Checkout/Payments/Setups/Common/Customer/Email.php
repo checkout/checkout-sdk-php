@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\Customer;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class Email
 {
     /**

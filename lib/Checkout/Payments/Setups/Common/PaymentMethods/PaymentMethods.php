@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods;
 
+use Checkout\Common\EmptyAsObject;
 use Checkout\Payments\Setups\Common\PaymentMethods\Ach\Ach;
 use Checkout\Payments\Setups\Common\PaymentMethods\AlipayCn\AlipayCn;
 use Checkout\Payments\Setups\Common\PaymentMethods\AlipayHk\AlipayHk;
@@ -51,6 +52,7 @@ use Checkout\Payments\Setups\Common\PaymentMethods\WeChatPay\WeChatPay;
  *
  * Each property name is the literal key sent to the API, for example "gcash", "alipay_cn" or "paybybank".
  */
+#[EmptyAsObject]
 class PaymentMethods
 {
     /**

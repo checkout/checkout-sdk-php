@@ -3,10 +3,12 @@
 namespace Checkout\Payments\Setups\Common\Billing;
 
 use Checkout\Common\Address;
+use Checkout\Common\EmptyAsObject;
 
 /**
  * The billing details for the payment.
  */
+#[EmptyAsObject]
 class PaymentSetupBilling
 {
     /**

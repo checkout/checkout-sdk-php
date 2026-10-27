@@ -2,11 +2,13 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Card;
 
+use Checkout\Common\EmptyAsObject;
 use DateTime;
 
 /**
  * The card details for the Card payment method.
  */
+#[EmptyAsObject]
 class CardDetails
 {
     /**

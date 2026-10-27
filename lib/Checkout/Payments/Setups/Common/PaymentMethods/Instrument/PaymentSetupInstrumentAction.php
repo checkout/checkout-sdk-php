@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Instrument;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The next available action for the instrument payment method (response only).
  */
+#[EmptyAsObject]
 class PaymentSetupInstrumentAction
 {
     /**

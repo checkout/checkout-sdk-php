@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\P24;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The P24 account holder's details.
  */
+#[EmptyAsObject]
 class P24AccountHolder
 {
     /**

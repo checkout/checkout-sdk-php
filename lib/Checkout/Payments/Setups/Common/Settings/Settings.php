@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\Settings;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * Settings for the Payment Setup.
  */
+#[EmptyAsObject]
 class Settings
 {
     /**

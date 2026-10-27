@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments\Setups\Common\Industry;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The accommodation's address, as declared on PaymentSetupAccommodation.address.
  *
@@ -9,6 +11,7 @@ namespace Checkout\Payments\Setups\Common\Industry;
  * address_line1 and zip because that is all the payments schema defines. This schema adds city,
  * state and country, so reusing the payments class made those three impossible to send.
  */
+#[EmptyAsObject]
 class PaymentSetupAccommodationAddress
 {
     /**

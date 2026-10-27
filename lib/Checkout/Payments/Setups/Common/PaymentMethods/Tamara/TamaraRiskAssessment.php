@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Tamara;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * Risk signals about the customer, forwarded to Tamara with the payment.
  */
+#[EmptyAsObject]
 class TamaraRiskAssessment
 {
     /**

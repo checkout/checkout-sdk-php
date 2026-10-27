@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\GooglePay;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The Google Pay payment token data (request only).
  */
+#[EmptyAsObject]
 class GooglePayTokenData
 {
     /**

@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\Risk;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class PaymentSetupRisk
 {
     /**

@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\Industry;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * Industry-specific information for a payment setup.
  */
+#[EmptyAsObject]
 class Industry
 {
     /**

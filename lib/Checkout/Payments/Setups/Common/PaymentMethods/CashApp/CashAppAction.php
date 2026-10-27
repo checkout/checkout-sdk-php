@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\CashApp;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The next available action for the Cash App payment method (response only).
  */
+#[EmptyAsObject]
 class CashAppAction
 {
     /**

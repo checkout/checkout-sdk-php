@@ -2,12 +2,14 @@
 
 namespace Checkout\Payments\Setups\Common\Order;
 
+use Checkout\Common\EmptyAsObject;
 use DateTime;
 use Checkout\Common\DateOnly;
 
 /**
  * Details about a sub-merchant in the order.
  */
+#[EmptyAsObject]
 class OrderSubMerchant
 {
     /**

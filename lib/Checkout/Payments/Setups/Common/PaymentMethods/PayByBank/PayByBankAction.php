@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\PayByBank;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class PayByBankAction
 {
     /**

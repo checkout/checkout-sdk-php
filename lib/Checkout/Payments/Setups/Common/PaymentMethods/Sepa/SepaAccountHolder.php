@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Sepa;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The SEPA account holder details.
  */
+#[EmptyAsObject]
 class SepaAccountHolder
 {
     /**

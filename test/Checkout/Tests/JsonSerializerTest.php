@@ -157,4 +157,57 @@ class JsonSerializerTest extends TestCase
         $decoded = json_decode($json, true);
         $this->assertSame($signedMessage, $decoded['token_data']['signedMessage']);
     }
+
+    public function testEmptyAnnotatedObjectSerializesAsJsonObjectAtTopLevel()
+    {
+        $serializer = new JsonSerializer();
+
+        $this->assertSame('{}', $serializer->serialize(new EmptyAsObjectParentFixture()));
+        $this->assertSame('{}', $serializer->serialize(new EmptyAsObjectChildFixture()));
+    }
+
+    public function testEmptyAnnotatedObjectSerializesAsJsonObjectWhenNested()
+    {
+        $serializer = new JsonSerializer();
+        $child = new EmptyAsObjectChildFixture();
+        $child->nested = new EmptyAsObjectParentFixture();
+
+        $this->assertSame('{"nested":{}}', $serializer->serialize($child));
+        $this->assertSame('{"value":{}}', $serializer->serialize(["value" => new EmptyAsObjectChildFixture()]));
+    }
+
+    public function testEmptyAnnotatedObjectsInsideAListSerializeAsJsonObjects()
+    {
+        $serializer = new JsonSerializer();
+        $input = ["values" => [new EmptyAsObjectParentFixture(), new EmptyAsObjectChildFixture()]];
+
+        $this->assertSame('{"values":[{},{}]}', $serializer->serialize($input));
+    }
+
+    public function testEmptyListOnAnAnnotatedObjectStaysJsonArray()
+    {
+        $serializer = new JsonSerializer();
+        $fixture = new EmptyAsObjectParentFixture();
+        $fixture->tags = [];
+
+        $this->assertSame('{"tags":[]}', $serializer->serialize($fixture));
+        $this->assertSame('{"values":[]}', $serializer->serialize(["values" => []]));
+    }
+
+    public function testAnnotatedObjectWithValuesIsUnchanged()
+    {
+        $serializer = new JsonSerializer();
+        $child = new EmptyAsObjectChildFixture();
+        $child->name = "a";
+
+        $this->assertSame('{"name":"a"}', $serializer->serialize($child));
+    }
+
+    public function testEmptyObjectWithoutTheAttributeIsUnchanged()
+    {
+        $serializer = new JsonSerializer();
+
+        $this->assertSame('[]', $serializer->serialize(new PlainObjectFixture()));
+        $this->assertSame('{"plain":[]}', $serializer->serialize(["plain" => new PlainObjectFixture()]));
+    }
 }

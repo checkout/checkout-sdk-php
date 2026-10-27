@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Swish;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The Swish account holder's details.
  */
+#[EmptyAsObject]
 class SwishAccountHolder
 {
     /**

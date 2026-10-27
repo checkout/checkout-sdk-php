@@ -2,12 +2,14 @@
 
 namespace Checkout\Payments\Setups\Common\Customer;
 
+use Checkout\Common\EmptyAsObject;
 use DateTime;
 use Checkout\Common\DateOnly;
 
 /**
  * Details of the account the customer holds with the merchant (PaymentSetupMerchantAccount).
  */
+#[EmptyAsObject]
 class MerchantAccount
 {
     /**

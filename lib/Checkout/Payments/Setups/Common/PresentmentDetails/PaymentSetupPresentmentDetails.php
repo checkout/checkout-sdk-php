@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\PresentmentDetails;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class PaymentSetupPresentmentDetails
 {
     /**

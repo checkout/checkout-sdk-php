@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Ach;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The ACH account holder details.
  */
+#[EmptyAsObject]
 class AchAccountHolder
 {
     /**

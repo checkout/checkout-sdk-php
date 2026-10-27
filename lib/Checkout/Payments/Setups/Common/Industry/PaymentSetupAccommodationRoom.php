@@ -2,6 +2,8 @@
 
 namespace Checkout\Payments\Setups\Common\Industry;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * A room booked by the customer, as declared on PaymentSetupAccommodation.room.
  *
@@ -11,6 +13,7 @@ namespace Checkout\Payments\Setups\Common\Industry;
  * class here sent the nights value under a key POST /payments/setups does not define, and made
  * the room type impossible to send at all.
  */
+#[EmptyAsObject]
 class PaymentSetupAccommodationRoom
 {
     /**

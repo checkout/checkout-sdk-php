@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Setups\Request;
 
+use Checkout\Common\EmptyAsObject;
 use Checkout\Payments\Setups\Common\Settings\Settings;
 use Checkout\Payments\Setups\Common\Customer\Customer;
 use Checkout\Payments\Setups\Common\Order\Order;
@@ -13,6 +14,7 @@ use Checkout\Payments\Setups\Common\PresentmentDetails\PaymentSetupPresentmentDe
 use Checkout\Payments\Setups\Common\Terminal\PaymentSetupTerminal;
 use Checkout\Payments\Setups\Common\Risk\PaymentSetupRisk;
 
+#[EmptyAsObject]
 class PaymentSetupRequest
 {
     /**

@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\CashApp;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The customer's Cash App profile that they consented to share (response only).
  */
+#[EmptyAsObject]
 class CashAppCustomerProfile
 {
     /**

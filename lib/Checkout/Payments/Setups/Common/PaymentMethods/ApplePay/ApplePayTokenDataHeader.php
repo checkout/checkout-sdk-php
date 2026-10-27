@@ -2,10 +2,13 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\ApplePay;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * Additional version-dependent information used to decrypt and verify the Apple Pay payment (request
  * only).
  */
+#[EmptyAsObject]
 class ApplePayTokenDataHeader
 {
     /**

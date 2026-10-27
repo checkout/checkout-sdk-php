@@ -2,11 +2,13 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Common;
 
+use Checkout\Common\EmptyAsObject;
 use DateTime;
 
 /**
  * The Checkout.com token for a digital wallet payment method (Apple Pay or Google Pay).
  */
+#[EmptyAsObject]
 class WalletToken
 {
     /**

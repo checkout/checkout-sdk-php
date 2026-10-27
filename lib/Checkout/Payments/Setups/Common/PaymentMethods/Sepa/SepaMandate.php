@@ -3,11 +3,13 @@
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Sepa;
 
 use Checkout\Common\DateOnly;
+use Checkout\Common\EmptyAsObject;
 use DateTime;
 
 /**
  * The SEPA mandate details.
  */
+#[EmptyAsObject]
 class SepaMandate
 {
     /**

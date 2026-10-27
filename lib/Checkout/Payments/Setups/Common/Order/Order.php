@@ -2,8 +2,10 @@
 
 namespace Checkout\Payments\Setups\Common\Order;
 
+use Checkout\Common\EmptyAsObject;
 use Checkout\Payments\ShippingDetails;
 
+#[EmptyAsObject]
 class Order
 {
     /**

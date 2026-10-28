@@ -9,6 +9,7 @@ use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\PayoutRequest;
+use Checkout\Payments\Request\UnreferencedRefundRequest;
 
 class PaymentsClient extends Client
 {
@@ -39,6 +40,26 @@ class PaymentsClient extends Client
     public function requestPayout(PayoutRequest $payoutRequest, ?string $idempotencyKey = null): array
     {
         return $this->apiClient->post(self::PAYMENTS_PATH, $payoutRequest, $this->sdkAuthorization(), $idempotencyKey);
+    }
+
+    /**
+     * Requests an unreferenced refund, sent to POST /payments.
+     *
+     * @param UnreferencedRefundRequest $unreferencedRefundRequest
+     * @param string|null $idempotencyKey
+     * @return array
+     * @throws CheckoutApiException
+     */
+    public function requestUnreferencedRefund(
+        UnreferencedRefundRequest $unreferencedRefundRequest,
+        ?string $idempotencyKey = null
+    ): array {
+        return $this->apiClient->post(
+            self::PAYMENTS_PATH,
+            $unreferencedRefundRequest,
+            $this->sdkAuthorization(),
+            $idempotencyKey
+        );
     }
 
     /**

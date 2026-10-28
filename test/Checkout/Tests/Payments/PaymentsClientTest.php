@@ -12,6 +12,7 @@ use Checkout\Payments\PaymentsQueryFilter;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\PayoutRequest;
 use Checkout\Payments\Request\Source\RequestProviderTokenSource;
+use Checkout\Payments\Request\UnreferencedRefundRequest;
 use Checkout\Payments\RefundRequest;
 use Checkout\Payments\ReversePaymentRequest;
 use Checkout\Payments\SearchPaymentRequest;
@@ -70,6 +71,30 @@ class PaymentsClientTest extends UnitTestFixture
             ->willReturn(["response"]);
 
         $response = $this->client->requestPayout(new PayoutRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRequestUnreferencedRefund()
+    {
+        $request = new UnreferencedRefundRequest();
+        $idempotencyKey = "idempotency_key";
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("post")
+            ->with(
+                $this->equalTo("payments"),
+                $this->identicalTo($request),
+                $this->anything(),
+                $this->equalTo($idempotencyKey)
+            )
+            ->willReturn(["response"]);
+
+        $response = $this->client->requestUnreferencedRefund($request, $idempotencyKey);
         $this->assertNotNull($response);
     }
 

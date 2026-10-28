@@ -59,7 +59,17 @@ class PayoutRequest
     public $reference;
 
     /**
+     * The billing descriptor for bank payouts. Beneficiary banks typically construct it using the
+     * billing descriptor reference and the sender information.
+     * [Required] for bank payouts, not used by card payouts
+     * @var PayoutBillingDescriptor
+     */
+    public $billing_descriptor;
+
+    /**
      * The sender of the payout.
+     * Required for money transfer card payouts. For bank payouts, the ultimate sender of the payout,
+     * that is, your customer; not supported for Platform or Direct Seller Checkout.com clients.
      * [Optional]
      * @var PaymentSender
      */
@@ -76,7 +86,8 @@ class PayoutRequest
      * The unique identifier for the processing channel.
      * [Required]
      * ^(pc)_(\w{26})$
-     * max 29 characters for card payouts
+     * min 29 characters
+     * max 29 characters
      * @var string
      */
     public $processing_channel_id;

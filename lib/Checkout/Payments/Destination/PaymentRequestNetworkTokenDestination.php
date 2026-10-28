@@ -8,6 +8,8 @@ use Checkout\Payments\PaymentDestinationType;
 /**
  * A network token payout destination.
  * Card payout destination with type "network_token".
+ * Also the "network_token" destination of an unreferenced refund (UnreferencedRefundRequest), same
+ * wire shape.
  */
 class PaymentRequestNetworkTokenDestination extends PaymentRequestDestination
 {
@@ -63,7 +65,8 @@ class PaymentRequestNetworkTokenDestination extends PaymentRequestDestination
     public $eci;
 
     /**
-     * The payout destination account holder.
+     * The payout destination account holder. For unreferenced refunds, the unreferenced refund
+     * destination account holder, with the same keys; individual requires first_name and last_name.
      * [Required]
      * Discriminated by type: "individual" "corporate" "government".
      * Accepted keys for individual: type, first_name, middle_name, last_name, billing_address,

@@ -5,7 +5,9 @@ namespace Checkout\Tests\Payments;
 use Checkout\JsonSerializer;
 use Checkout\Payments\Hosted\HostedPaymentsSessionRequest;
 use Checkout\Payments\Links\PaymentLinkRequest;
+use Checkout\Payments\NetworkTokenType;
 use Checkout\Payments\PaymentPlan;
+use Checkout\Payments\Request\Source\RequestNetworkTokenSource;
 use Checkout\Payments\Sessions\PaymentSessionsRequest;
 use PHPUnit\Framework\TestCase;
 
@@ -68,5 +70,18 @@ class PaymentRequestFieldsSerializationTest extends TestCase
 
         $this->assertArrayNotHasKey('authorization_type', $decoded);
         $this->assertArrayNotHasKey('payment_plan', $decoded);
+    }
+
+    public function testNetworkTokenSourceSerializesEveryTokenTypeLiteral()
+    {
+        foreach (array("vts", "mdes", "applepay", "googlepay") as $name) {
+            $source = new RequestNetworkTokenSource();
+            $source->token_type = NetworkTokenType::$$name;
+
+            $decoded = json_decode((new JsonSerializer())->serialize($source), true);
+
+            $this->assertSame($name, $decoded['token_type']);
+            $this->assertSame('network_token', $decoded['type']);
+        }
     }
 }

@@ -245,9 +245,10 @@ JSON;
         $this->assertSame("4242424242424242", $decoded["number"]);
         $this->assertSame(6, $decoded["expiry_month"]);
         $this->assertSame(2030, $decoded["expiry_year"]);
-        $this->assertSame("individual", $decoded["account_holder"]["type"]);
-        $this->assertSame("John", $decoded["account_holder"]["first_name"]);
-        $this->assertSame("Smith", $decoded["account_holder"]["last_name"]);
+        $this->assertEquals(
+            json_decode(self::NETWORK_TOKEN_FIXTURE, true)["account_holder"],
+            $decoded["account_holder"]
+        );
     }
 
     public function testTokenDestinationSerializesAllProperties()

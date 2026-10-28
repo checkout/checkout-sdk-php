@@ -2,7 +2,13 @@
 
 namespace Checkout\Tests\Payments;
 
+use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutConfiguration;
+use Checkout\Environment;
+use Checkout\HttpClientBuilderInterface;
+use Checkout\SdkAuthorization;
+use Checkout\SdkCredentialsInterface;
 use Checkout\Common\AccountHolder;
 use Checkout\Payments\AuthorizationRequest;
 use Checkout\Payments\CancelScheduledRetryRequest;
@@ -82,6 +88,20 @@ class PaymentsClientTest extends UnitTestFixture
     {
         $request = new UnreferencedRefundRequest();
         $idempotencyKey = "idempotency_key";
+        $authorization = new SdkAuthorization(PlatformType::$default, "key");
+
+        $credentials = $this->createMock(SdkCredentialsInterface::class);
+        $credentials
+            ->expects($this->once())
+            ->method("getAuthorization")
+            ->with($this->equalTo(AuthorizationType::$secretKeyOrOAuth))
+            ->willReturn($authorization);
+        $configuration = new CheckoutConfiguration(
+            $credentials,
+            Environment::sandbox(),
+            $this->createMock(HttpClientBuilderInterface::class),
+            $this->configuration->getLogger()
+        );
 
         $this->apiClient
             ->expects($this->once())
@@ -89,12 +109,13 @@ class PaymentsClientTest extends UnitTestFixture
             ->with(
                 $this->equalTo("payments"),
                 $this->identicalTo($request),
-                $this->anything(),
+                $this->identicalTo($authorization),
                 $this->equalTo($idempotencyKey)
             )
             ->willReturn(["response"]);
 
-        $response = $this->client->requestUnreferencedRefund($request, $idempotencyKey);
+        $client = new PaymentsClient($this->apiClient, $configuration);
+        $response = $client->requestUnreferencedRefund($request, $idempotencyKey);
         $this->assertNotNull($response);
     }
 

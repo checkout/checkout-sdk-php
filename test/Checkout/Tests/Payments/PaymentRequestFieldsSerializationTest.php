@@ -7,6 +7,8 @@ use Checkout\Payments\Hosted\HostedPaymentsSessionRequest;
 use Checkout\Payments\Links\PaymentLinkRequest;
 use Checkout\Payments\NetworkTokenType;
 use Checkout\Payments\PaymentPlan;
+use Checkout\Payments\PaymentType;
+use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\RequestNetworkTokenSource;
 use Checkout\Payments\Sessions\PaymentSessionsRequest;
 use PHPUnit\Framework\TestCase;
@@ -83,5 +85,21 @@ class PaymentRequestFieldsSerializationTest extends TestCase
             $this->assertSame($name, $decoded['token_type']);
             $this->assertSame('network_token', $decoded['type']);
         }
+    }
+
+    public function testPaymentTypeHasEverySpecValue()
+    {
+        $this->assertSame(
+            array(
+                "regular" => "Regular", "recurring" => "Recurring", "moto" => "MOTO",
+                "installment" => "Installment", "pay_later" => "PayLater", "unscheduled" => "Unscheduled"
+            ),
+            (new \ReflectionClass(PaymentType::class))->getStaticProperties()
+        );
+
+        $request = new PaymentRequest();
+        $request->payment_type = PaymentType::$pay_later;
+        $decoded = json_decode((new JsonSerializer())->serialize($request), true);
+        $this->assertSame("PayLater", $decoded['payment_type']);
     }
 }

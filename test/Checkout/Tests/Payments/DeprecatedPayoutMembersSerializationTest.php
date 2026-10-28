@@ -2,6 +2,7 @@
 
 namespace Checkout\Tests\Payments;
 
+use Checkout\Common\AccountHolder;
 use Checkout\Common\BankDetails;
 use Checkout\JsonSerializer;
 use Checkout\Payments\Destination\PaymentBankAccountDestination;
@@ -70,5 +71,16 @@ class DeprecatedPayoutMembersSerializationTest extends TestCase
 
         $this->assertSame(array("name" => "Lloyds TSB", "branch" => "Bournemouth"), $decoded["bank"]);
         $this->assertSame("bank_account", $decoded["type"]);
+    }
+
+    public function testDeprecatedAccountHolderGenderStillSerializes()
+    {
+        $accountHolder = new AccountHolder();
+        $accountHolder->first_name = "John";
+        $accountHolder->gender = "male";
+
+        $decoded = $this->serialize($accountHolder);
+
+        $this->assertSame(array("first_name" => "John", "gender" => "male"), $decoded);
     }
 }

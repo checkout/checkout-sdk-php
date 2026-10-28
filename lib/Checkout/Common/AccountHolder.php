@@ -155,8 +155,12 @@ class AccountHolder
 
     /**
      * The account holder's gender.
-     * Not part of any payout or unreferenced refund account holder.
      * [Optional]
+     *
+     * @deprecated Not in the request schema of any account holder; the Klarna payment source account_holder
+     * had it until the API removed it. Still returned in the Klarna payment details source account_holder.
+     * Retained for backwards compatibility and will be removed in the next major version. There is no
+     * replacement.
      * @var string
      */
     public $gender;

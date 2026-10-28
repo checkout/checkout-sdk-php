@@ -6,11 +6,15 @@ use Checkout\JsonSerializer;
 use Checkout\Payments\Hosted\HostedPaymentsSessionRequest;
 use Checkout\Payments\Links\PaymentLinkRequest;
 use Checkout\Payments\NetworkTokenType;
+use Checkout\Payments\PaymentInstruction;
 use Checkout\Payments\PaymentPlan;
 use Checkout\Payments\PaymentType;
+use Checkout\Payments\Purpose;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\Source\RequestNetworkTokenSource;
+use Checkout\Payments\Sessions\PaymentSessionCompleteRequest;
 use Checkout\Payments\Sessions\PaymentSessionsRequest;
+use Checkout\Payments\Sessions\PaymentSessionSubmitRequest;
 use PHPUnit\Framework\TestCase;
 
 class PaymentRequestFieldsSerializationTest extends TestCase
@@ -101,5 +105,35 @@ class PaymentRequestFieldsSerializationTest extends TestCase
         $request->payment_type = PaymentType::$pay_later;
         $decoded = json_decode((new JsonSerializer())->serialize($request), true);
         $this->assertSame("PayLater", $decoded['payment_type']);
+    }
+
+    public function testPaymentRequestSerializesInstructionPurpose()
+    {
+        $instruction = new PaymentInstruction();
+        $instruction->purpose = Purpose::$family_support;
+        $request = new PaymentRequest();
+        $request->instruction = $instruction;
+        $serializer = new JsonSerializer();
+
+        $decoded = json_decode($serializer->serialize($request), true);
+
+        $this->assertSame(array("purpose" => "family_support"), $decoded['instruction']);
+        $roundTrip = $serializer->deserialize($serializer->serialize($instruction));
+        $this->assertSame($instruction->purpose, $roundTrip['purpose']);
+    }
+
+    public function testPaymentSessionSubmitAndCompleteSerializeInstructionPurpose()
+    {
+        $instruction = new PaymentInstruction();
+        $instruction->purpose = Purpose::$education;
+        $submit = new PaymentSessionSubmitRequest();
+        $submit->instruction = $instruction;
+        $complete = new PaymentSessionCompleteRequest();
+        $complete->instruction = $instruction;
+        $serializer = new JsonSerializer();
+
+        $expected = array("purpose" => "education");
+        $this->assertSame($expected, json_decode($serializer->serialize($submit), true)['instruction']);
+        $this->assertSame($expected, json_decode($serializer->serialize($complete), true)['instruction']);
     }
 }

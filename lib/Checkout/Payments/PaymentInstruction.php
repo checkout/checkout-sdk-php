@@ -2,6 +2,12 @@
 
 namespace Checkout\Payments;
 
+/**
+ * The instruction of a regular payment (PaymentRequest) and of a payment session submit or complete request.
+ * Regular payments, hosted payments, payment links and payment sessions use purpose only. This class does
+ * not declare purpose; scheme and remittance are the bank payout instruction keys, also available on
+ * Checkout\Payments\Request\PaymentInstruction.
+ */
 class PaymentInstruction
 {
     /**

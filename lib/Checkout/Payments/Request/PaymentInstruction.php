@@ -5,15 +5,19 @@ namespace Checkout\Payments\Request;
 use Checkout\Payments\InstructionRemittance;
 
 /**
- * Additional details about the instruction of a payout or an unreferenced refund.
+ * Additional details about the instruction of a payout, an unreferenced refund or a payment.
  * Card payouts and unreferenced refunds use purpose and funds_transfer_type; bank payouts use scheme and
- * remittance.
+ * remittance. Hosted payments, payment links and payment sessions use purpose only.
+ * Regular payments use Checkout\Payments\PaymentInstruction instead.
  */
 class PaymentInstruction
 {
     /**
-     * The purpose of the card payout or unreferenced refund.
-     * Required if the card's issuer_country is one of AR, BD, CL, CO, EG, IN or MX.
+     * The purpose of the card payout, unreferenced refund or payment.
+     * For card payouts, required if the card's issuer_country is one of AR, BD, CL, CO, EG, IN, MX or SA.
+     * For unreferenced refunds, required if the card's issuer_country is one of AR, BD, CL, CO, EG, IN or MX.
+     * For hosted payments, payment links and payment sessions, it might be required for AFT transactions
+     * depending on the card's issuer_country.
      * [Optional]
      * Enum: "family_support" "expatriation" "travel_and_tourism" "education" "medical_treatment"
      * "emergency_need" "leisure" "savings" "gifts" "donations" "financial_services" "it_services"
@@ -26,8 +30,9 @@ class PaymentInstruction
      * The charge bearer of a bank payout.
      * [Optional]
      *
-     * @deprecated Not in the current request specification; it only appears on the payout details
-     * response. Retained for backwards compatibility and will be removed in a future version.
+     * @deprecated Not in the request schema; still returned in PayoutDetails (instruction.charge_bearer).
+     * Retained for backwards compatibility and will be removed in the next major version. There is no
+     * replacement.
      * @var string
      */
     public $charge_bearer;
@@ -36,8 +41,9 @@ class PaymentInstruction
      * Whether the bank payout may be repaired.
      * [Optional]
      *
-     * @deprecated Not in the current request specification; it only appears on the payout details
-     * response. Retained for backwards compatibility and will be removed in a future version.
+     * @deprecated Not in the request schema; still returned in PayoutDetails (instruction.repair).
+     * Retained for backwards compatibility and will be removed in the next major version. There is no
+     * replacement.
      * @var bool
      */
     public $repair;
@@ -61,8 +67,9 @@ class PaymentInstruction
      * The FX quote identifier of a bank payout.
      * [Optional]
      *
-     * @deprecated Not in the current request specification; it only appears on the payout details
-     * response. Retained for backwards compatibility and will be removed in a future version.
+     * @deprecated Not in the request schema; still returned in PayoutDetails (instruction.quote_id).
+     * Retained for backwards compatibility and will be removed in the next major version. There is no
+     * replacement.
      * @var string
      */
     public $quote_id;

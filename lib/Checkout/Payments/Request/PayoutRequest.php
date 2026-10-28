@@ -45,7 +45,9 @@ class PayoutRequest
 
     /**
      * The three-letter ISO 4217 code for the currency you want to pay out to the recipient.
+     * For bank payouts, the currency should match that of the destination account.
      * [Required]
+     * min 3 characters and max 3 characters for bank payouts
      * @var string value of Currency
      */
     public $currency;
@@ -86,8 +88,7 @@ class PayoutRequest
      * The unique identifier for the processing channel.
      * [Required]
      * ^(pc)_(\w{26})$
-     * min 29 characters
-     * max 29 characters
+     * min 29 characters and max 29 characters for card payouts
      * @var string
      */
     public $processing_channel_id;

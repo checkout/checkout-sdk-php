@@ -116,6 +116,7 @@ class UnreferencedRefundRequest
 
     /**
      * Returns information related to the processing of the payment.
+     * Only processing_speed is part of this position.
      * [Optional]
      * Accepted keys: processing_speed (Enum: "fast").
      * @var CardPayoutProcessing|null

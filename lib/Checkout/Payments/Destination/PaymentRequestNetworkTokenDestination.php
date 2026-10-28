@@ -43,6 +43,7 @@ class PaymentRequestNetworkTokenDestination extends PaymentRequestDestination
     /**
      * The network token type.
      * [Required]
+     * Enum: "vts" "mdes" "applepay" "googlepay"
      * @var string value of NetworkTokenType
      */
     public $token_type;

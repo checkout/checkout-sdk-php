@@ -90,9 +90,9 @@ class PaymentBankAccountDestination extends PaymentRequestDestination
      * The bank details.
      * [Optional]
      *
-     * @deprecated Not in the current specification of the bank account payout destination, so the
-     * API does not define it. Retained for backwards compatibility and will be removed in a future
-     * version.
+     * @deprecated Not in the request schema of the bank account payout destination; bank only exists on the
+     * Instruments bank account schemas. Retained for backwards compatibility and will be removed in the next
+     * major version. There is no replacement.
      * @var BankDetails
      */
     public $bank;

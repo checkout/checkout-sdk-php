@@ -7,14 +7,26 @@ use Checkout\Common\AccountHolderIdentification;
 use Checkout\Common\AccountHolderIdentificationType;
 use Checkout\Common\AccountHolderType;
 use Checkout\Common\Address;
+use Checkout\Common\Country;
+use Checkout\Common\Currency;
 use Checkout\Common\Phone;
 use Checkout\JsonSerializer;
 use Checkout\Payments\Destination\PaymentRequestCardDestination;
+use Checkout\Payments\Destination\PaymentRequestIdDestination;
 use Checkout\Payments\Destination\PaymentRequestNetworkTokenDestination;
 use Checkout\Payments\Destination\PaymentRequestTokenDestination;
+use Checkout\Payments\FundTransferType;
 use Checkout\Payments\NetworkTokenType;
 use Checkout\Payments\PaymentDestinationType;
+use Checkout\Payments\PaymentPurpose;
+use Checkout\Payments\ProductSubType;
+use Checkout\Payments\Request\CardPayoutItem;
+use Checkout\Payments\Request\CardPayoutProcessing;
+use Checkout\Payments\Request\PaymentInstruction;
+use Checkout\Payments\Request\PaymentSegment;
 use Checkout\Payments\Request\PayoutRequest;
+use Checkout\Payments\Request\Source\PayoutRequestCurrencyAccountSource;
+use Checkout\Payments\Sender\PaymentIndividualSender;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -59,6 +71,90 @@ class CardPayoutDestinationSerializationTest extends TestCase
   }
 }
 JSON;
+
+    /**
+     * Spec-shaped card payout request with all 13 CardPayoutRequest properties, built from the
+     * CardPayoutRequest property examples (the schema has no request-level example).
+     */
+    const CARD_PAYOUT_FIXTURE = <<<'JSON'
+{
+  "source": {
+    "type": "currency_account",
+    "id": "ca_y3oqhf46pyzuxjbcn2giaqnb44"
+  },
+  "destination": {
+    "type": "card",
+    "number": "4242424242424242",
+    "expiry_month": 6,
+    "expiry_year": 2030,
+    "account_holder": {
+      "type": "individual",
+      "first_name": "John",
+      "middle_name": "Paul",
+      "last_name": "Smith",
+      "billing_address": {
+        "address_line1": "123 High St.",
+        "address_line2": "Flat 456",
+        "city": "London",
+        "state": "GB",
+        "zip": "SW1A 1AA",
+        "country": "GB"
+      },
+      "phone": { "country_code": "+44", "number": "4155552671" },
+      "identification": {
+        "type": "passport",
+        "number": "E12345678",
+        "issuing_country": "GB",
+        "date_of_expiry": "2030-01-01"
+      },
+      "email": "john.smith@example.com",
+      "date_of_birth": "1985-05-15",
+      "country_of_birth": "GB"
+    }
+  },
+  "amount": 1000,
+  "currency": "GBP",
+  "instruction": {
+    "purpose": "family_support",
+    "funds_transfer_type": "FD"
+  },
+  "items": [
+    { "type": "digital", "sub_type": "stablecoin" }
+  ],
+  "processing_channel_id": "pc_q4dbxom5jbgudnjzjpz7j2z6uq",
+  "sender": {
+    "type": "individual",
+    "reference": "8285282045818",
+    "first_name": "John",
+    "last_name": "Jones",
+    "address": {
+      "address_line1": "123 High St.",
+      "city": "London",
+      "country": "GB"
+    },
+    "reference_type": "other",
+    "source_of_funds": "debit"
+  },
+  "reference": "ORD-5023-4E89",
+  "previous_payment_id": "pay_fun26akvvjjerahhctaq2uzhu4",
+  "metadata": { "coupon_code": "NY2018", "partner_id": 123989 },
+  "segment": {
+    "brand": "Acme Corporation",
+    "business_category": "Inward Payments",
+    "market": "UK"
+  },
+  "processing": {
+    "affiliate_id": "AFF12345",
+    "affiliate_url": "www.mycrypto.com",
+    "purchase_country": "GB"
+  }
+}
+JSON;
+
+    const CARD_PAYOUT_KEYS = array(
+        "source", "destination", "amount", "currency", "instruction", "items", "processing_channel_id",
+        "sender", "reference", "previous_payment_id", "metadata", "segment", "processing"
+    );
 
     private function richAccountHolder()
     {
@@ -115,6 +211,69 @@ JSON;
         $destination->eci = "05";
         $destination->account_holder = $this->richAccountHolder();
         return $destination;
+    }
+
+    private function cardDestination()
+    {
+        $destination = new PaymentRequestCardDestination();
+        $destination->number = "4242424242424242";
+        $destination->expiry_month = 6;
+        $destination->expiry_year = 2030;
+        $destination->account_holder = $this->richAccountHolder();
+        return $destination;
+    }
+
+    private function fullCardPayoutRequest()
+    {
+        $source = new PayoutRequestCurrencyAccountSource();
+        $source->id = "ca_y3oqhf46pyzuxjbcn2giaqnb44";
+
+        $instruction = new PaymentInstruction();
+        $instruction->purpose = PaymentPurpose::$family_support;
+        $instruction->funds_transfer_type = FundTransferType::$FD;
+
+        $item = new CardPayoutItem();
+        $item->type = "digital";
+        $item->sub_type = ProductSubType::$stablecoin;
+
+        $senderAddress = new Address();
+        $senderAddress->address_line1 = "123 High St.";
+        $senderAddress->city = "London";
+        $senderAddress->country = Country::$GB;
+
+        $sender = new PaymentIndividualSender();
+        $sender->reference = "8285282045818";
+        $sender->first_name = "John";
+        $sender->last_name = "Jones";
+        $sender->address = $senderAddress;
+        $sender->reference_type = "other";
+        $sender->source_of_funds = "debit";
+
+        $segment = new PaymentSegment();
+        $segment->brand = "Acme Corporation";
+        $segment->business_category = "Inward Payments";
+        $segment->market = "UK";
+
+        $processing = new CardPayoutProcessing();
+        $processing->affiliate_id = "AFF12345";
+        $processing->affiliate_url = "www.mycrypto.com";
+        $processing->purchase_country = Country::$GB;
+
+        $request = new PayoutRequest();
+        $request->source = $source;
+        $request->destination = $this->cardDestination();
+        $request->amount = 1000;
+        $request->currency = Currency::$GBP;
+        $request->instruction = $instruction;
+        $request->items = array($item);
+        $request->processing_channel_id = "pc_q4dbxom5jbgudnjzjpz7j2z6uq";
+        $request->sender = $sender;
+        $request->reference = "ORD-5023-4E89";
+        $request->previous_payment_id = "pay_fun26akvvjjerahhctaq2uzhu4";
+        $request->metadata = array("coupon_code" => "NY2018", "partner_id" => 123989);
+        $request->segment = $segment;
+        $request->processing = $processing;
+        return $request;
     }
 
     private function serializeToArray($object)
@@ -229,13 +388,7 @@ JSON;
 
     public function testCardDestinationSerializesAllProperties()
     {
-        $destination = new PaymentRequestCardDestination();
-        $destination->number = "4242424242424242";
-        $destination->expiry_month = 6;
-        $destination->expiry_year = 2030;
-        $destination->account_holder = $this->richAccountHolder();
-
-        $decoded = $this->serializeToArray($destination);
+        $decoded = $this->serializeToArray($this->cardDestination());
 
         $this->assertEqualsCanonicalizing(
             array("type", "number", "expiry_month", "expiry_year", "account_holder"),
@@ -271,5 +424,152 @@ JSON;
     public function testNetworkTokenDestinationConstructorSetsType()
     {
         $this->assertSame("network_token", (new PaymentRequestNetworkTokenDestination())->type);
+    }
+
+    public function testCardPayoutRequestSerializesLiteralWireKeys()
+    {
+        $decoded = $this->serializeToArray($this->fullCardPayoutRequest());
+
+        $this->assertEqualsCanonicalizing(self::CARD_PAYOUT_KEYS, array_keys($decoded));
+        foreach (array_keys($decoded) as $key) {
+            $this->assertMatchesRegularExpression('/^[a-z0-9_]+$/', $key);
+        }
+        $this->assertSame(array("type", "id"), array_keys($decoded["source"]));
+        $this->assertEqualsCanonicalizing(array("purpose", "funds_transfer_type"), array_keys($decoded["instruction"]));
+        $this->assertSame(array("type", "sub_type"), array_keys($decoded["items"][0]));
+        $this->assertEqualsCanonicalizing(
+            array(
+                "type", "reference", "first_name", "last_name", "address", "reference_type", "source_of_funds"
+            ),
+            array_keys($decoded["sender"])
+        );
+        $this->assertEqualsCanonicalizing(
+            array("brand", "business_category", "market"),
+            array_keys($decoded["segment"])
+        );
+        $this->assertEqualsCanonicalizing(
+            array("affiliate_id", "affiliate_url", "purchase_country"),
+            array_keys($decoded["processing"])
+        );
+    }
+
+    public function testCardPayoutRequestMatchesSpecFixture()
+    {
+        $expected = json_decode(self::CARD_PAYOUT_FIXTURE, true);
+
+        $decoded = $this->serializeToArray($this->fullCardPayoutRequest());
+
+        $this->assertEquals($expected, $decoded);
+        $this->assertSame(1000, $decoded["amount"]);
+        $this->assertSame(123989, $decoded["metadata"]["partner_id"]);
+    }
+
+    public function testCardPayoutRequestRoundTrip()
+    {
+        $request = $this->fullCardPayoutRequest();
+        $serializer = new JsonSerializer();
+
+        $decoded = $serializer->deserialize($serializer->serialize($request));
+
+        $this->assertSame(array("type" => $request->source->type, "id" => $request->source->id), $decoded["source"]);
+        $this->assertSame($request->destination->type, $decoded["destination"]["type"]);
+        $this->assertSame($request->destination->number, $decoded["destination"]["number"]);
+        $this->assertSame($request->destination->expiry_month, $decoded["destination"]["expiry_month"]);
+        $this->assertSame($request->destination->expiry_year, $decoded["destination"]["expiry_year"]);
+        $this->assertEquals(
+            json_decode(self::CARD_PAYOUT_FIXTURE, true)["destination"]["account_holder"],
+            $decoded["destination"]["account_holder"]
+        );
+        $this->assertSame($request->amount, $decoded["amount"]);
+        $this->assertSame($request->currency, $decoded["currency"]);
+        $this->assertSame($request->instruction->purpose, $decoded["instruction"]["purpose"]);
+        $this->assertSame(
+            $request->instruction->funds_transfer_type,
+            $decoded["instruction"]["funds_transfer_type"]
+        );
+        $this->assertSame(get_object_vars($request->items[0]), $decoded["items"][0]);
+        $this->assertSame($request->processing_channel_id, $decoded["processing_channel_id"]);
+
+        $sender = $request->sender;
+        $decodedSender = $decoded["sender"];
+        $this->assertSame($sender->type, $decodedSender["type"]);
+        $this->assertSame($sender->reference, $decodedSender["reference"]);
+        $this->assertSame($sender->first_name, $decodedSender["first_name"]);
+        $this->assertSame($sender->last_name, $decodedSender["last_name"]);
+        $this->assertSame($sender->reference_type, $decodedSender["reference_type"]);
+        $this->assertSame($sender->source_of_funds, $decodedSender["source_of_funds"]);
+        $this->assertSame(
+            array_filter(get_object_vars($sender->address), function ($value) {
+                return $value !== null;
+            }),
+            $decodedSender["address"]
+        );
+
+        $this->assertSame($request->reference, $decoded["reference"]);
+        $this->assertSame($request->previous_payment_id, $decoded["previous_payment_id"]);
+        $this->assertSame($request->metadata, $decoded["metadata"]);
+        $this->assertSame(get_object_vars($request->segment), $decoded["segment"]);
+        $this->assertSame($request->processing->affiliate_id, $decoded["processing"]["affiliate_id"]);
+        $this->assertSame($request->processing->affiliate_url, $decoded["processing"]["affiliate_url"]);
+        $this->assertSame($request->processing->purchase_country, $decoded["processing"]["purchase_country"]);
+    }
+
+    public function testPayoutRequestSerializesCardDestination()
+    {
+        $request = new PayoutRequest();
+        $request->destination = $this->cardDestination();
+
+        $decoded = $this->serializeToArray($request);
+
+        $this->assertSame(array("destination"), array_keys($decoded));
+        $this->assertEquals(json_decode(self::CARD_PAYOUT_FIXTURE, true)["destination"], $decoded["destination"]);
+    }
+
+    public function testPayoutRequestSerializesIdDestination()
+    {
+        $destination = new PaymentRequestIdDestination();
+        $destination->id = "src_wmlfc3zyhqzehihu7giusaaawu";
+        $destination->account_holder = $this->narrowAccountHolder();
+        $request = new PayoutRequest();
+        $request->destination = $destination;
+        $serializer = new JsonSerializer();
+
+        $decoded = $serializer->deserialize($serializer->serialize($request));
+
+        $this->assertSame(array("destination"), array_keys($decoded));
+        $this->assertEquals(
+            array(
+                "type" => "id",
+                "id" => "src_wmlfc3zyhqzehihu7giusaaawu",
+                "account_holder" => array(
+                    "type" => "individual", "first_name" => "John", "middle_name" => "Paul", "last_name" => "Smith"
+                )
+            ),
+            $decoded["destination"]
+        );
+    }
+
+    public function testPayoutRequestSerializesTokenDestination()
+    {
+        $destination = new PaymentRequestTokenDestination();
+        $destination->token = "tok_ubfj2q76miwundwlk72vxt2i7q";
+        $destination->account_holder = $this->narrowAccountHolder();
+        $request = new PayoutRequest();
+        $request->destination = $destination;
+        $serializer = new JsonSerializer();
+
+        $decoded = $serializer->deserialize($serializer->serialize($request));
+
+        $this->assertSame(array("destination"), array_keys($decoded));
+        $this->assertEquals(
+            array(
+                "type" => "token",
+                "token" => "tok_ubfj2q76miwundwlk72vxt2i7q",
+                "account_holder" => array(
+                    "type" => "individual", "first_name" => "John", "middle_name" => "Paul", "last_name" => "Smith"
+                )
+            ),
+            $decoded["destination"]
+        );
     }
 }

@@ -196,7 +196,10 @@ JSON;
         $this->assertSame(array("type", "id"), array_keys($decoded["source"]));
         $this->assertSame("currency_account", $decoded["source"]["type"]);
         $this->assertEqualsCanonicalizing(array("funds_transfer_type", "purpose"), array_keys($decoded["instruction"]));
-        $this->assertEqualsCanonicalizing(array("brand", "business_category", "market"), array_keys($decoded["segment"]));
+        $this->assertEqualsCanonicalizing(
+            array("brand", "business_category", "market"),
+            array_keys($decoded["segment"])
+        );
         $this->assertSame(array("processing_speed"), array_keys($decoded["processing"]));
     }
 

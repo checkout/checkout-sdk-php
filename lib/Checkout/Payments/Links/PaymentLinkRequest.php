@@ -29,7 +29,7 @@ class PaymentLinkRequest
     public $amount;
 
     /**
-     * The three-letter ISO currency code of the payment.The `currency` and `billing.address.country` fields
+     * The three-letter ISO currency code of the payment. The `currency` and `billing.address.country` fields
      * determine which payment methods are shown on the payment page.
      * [Required]
      * max 3 characters
@@ -279,6 +279,7 @@ class PaymentLinkRequest
     /**
      * The authorization type.
      * [Optional]
+     * Enum: "Final" "Estimated"
      * Default: "Final"
      * @var string|null $authorization_type value of AuthorizationType
      */

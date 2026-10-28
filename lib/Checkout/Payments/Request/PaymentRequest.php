@@ -22,6 +22,12 @@ use DateTime;
 class PaymentRequest
 {
     /**
+     * Payment Context's unique identifier, from a payment context created with POST /payment-contexts.
+     * Required when requesting a payment from a payment context.
+     * [Optional]
+     * ^(pct)_(\w{26})$
+     * max 30 characters
+     * min 30 characters
      * @var string
      */
     public $payment_context_id;
@@ -35,7 +41,7 @@ class PaymentRequest
     public $source;
 
     /**
-     * A card payment source
+     * A card payment source. The fallback source to use if the primary source is unavailable.
      * [Optional]
      * @var AbstractRequestSource|null $fallback_source
      */
@@ -118,6 +124,7 @@ class PaymentRequest
     /**
      * The authorization type
      * [Optional]
+     * Enum: "Final" "Estimated"
      * Default: "Final"
      * @var string value of AuthorizationType
      */

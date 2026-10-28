@@ -280,6 +280,7 @@ class PaymentSessionsRequest
     /**
      * The authorization type.
      * [Optional]
+     * Enum: "Final" "Estimated"
      * Default: "Final"
      * @var string|null $authorization_type value of AuthorizationType
      */

@@ -10,45 +10,73 @@ use Checkout\Payments\Request\CardPayoutItem;
 use Checkout\Payments\Request\CardPayoutProcessing;
 use Checkout\Payments\Request\PaymentSegment;
 
+/**
+ * A card payout or bank payout request, sent to POST /payments.
+ */
 class PayoutRequest
 {
 
     /**
+     * The source of the payout.
+     * [Required]
      * @var PayoutRequestSource
      */
     public $source;
 
     /**
+     * The destination of the payout.
+     * You can encrypt this field by using the Cko-Encryption-Key-Id and Cko-Encrypted-Properties headers.
+     * [Required]
+     * Card payout destinations: PaymentRequestCardDestination, PaymentRequestNetworkTokenDestination,
+     * PaymentRequestIdDestination, PaymentRequestTokenDestination.
+     * Bank payout destinations: PaymentRequestIdDestination, PaymentBankAccountDestination.
+     * All in the Checkout\Payments\Destination namespace.
      * @var PaymentRequestDestination
      */
     public $destination;
 
     /**
+     * The amount to pay out, in minor units.
+     * [Optional] for card payouts, [Required] for bank payouts
+     * min 0
      * @var int
      */
     public $amount;
 
     /**
+     * The three-letter ISO 4217 code for the currency you want to pay out to the recipient.
+     * [Required]
      * @var string value of Currency
      */
     public $currency;
 
     /**
+     * A custom reference to identify the payout. For example, an order number.
+     * [Optional]
+     * max 50 characters for card payouts
      * @var string
      */
     public $reference;
 
     /**
+     * The sender of the payout.
+     * [Optional]
      * @var PaymentSender
      */
     public $sender;
 
     /**
+     * Additional details about the payout instruction.
+     * [Required] for card payouts, [Optional] for bank payouts
      * @var PaymentInstruction
      */
     public $instruction;
 
     /**
+     * The unique identifier for the processing channel.
+     * [Required]
+     * ^(pc)_(\w{26})$
+     * max 29 characters for card payouts
      * @var string
      */
     public $processing_channel_id;

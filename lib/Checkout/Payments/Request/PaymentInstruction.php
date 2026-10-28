@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Request;
 
+use Checkout\Payments\InstructionRemittance;
+
 /**
  * Additional details about the instruction of a payout or an unreferenced refund.
- * Card payouts and unreferenced refunds use purpose and funds_transfer_type; bank payouts use scheme.
+ * Card payouts and unreferenced refunds use purpose and funds_transfer_type; bank payouts use scheme and
+ * remittance.
  */
 class PaymentInstruction
 {
@@ -46,6 +49,13 @@ class PaymentInstruction
      * @var string value of InstructionScheme
      */
     public $scheme;
+
+    /**
+     * The remittance details of a bank payout, used for reconciliation.
+     * [Optional]
+     * @var InstructionRemittance|null
+     */
+    public $remittance;
 
     /**
      * The FX quote identifier of a bank payout.

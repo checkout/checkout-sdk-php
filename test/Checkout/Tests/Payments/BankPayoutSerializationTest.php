@@ -6,6 +6,9 @@ use Checkout\Common\AccountType;
 use Checkout\Common\Country;
 use Checkout\JsonSerializer;
 use Checkout\Payments\Destination\PaymentBankAccountDestination;
+use Checkout\Payments\InstructionRemittance;
+use Checkout\Payments\Request\InstructionScheme;
+use Checkout\Payments\Request\PaymentInstruction;
 use Checkout\Payments\Request\PayoutBillingDescriptor;
 use Checkout\Payments\Request\PayoutRequest;
 use PHPUnit\Framework\TestCase;
@@ -80,5 +83,23 @@ JSON;
 
         $this->assertSame(array("reference" => "Payout INV1"), $decoded["billing_descriptor"]);
         $this->assertSame("bank_account", $decoded["destination"]["type"]);
+    }
+
+    public function testBankPayoutRequestSerializesInstructionSchemeAndRemittance()
+    {
+        $remittance = new InstructionRemittance();
+        $remittance->reference = "INV-2026-0001";
+        $instruction = new PaymentInstruction();
+        $instruction->scheme = InstructionScheme::$local;
+        $instruction->remittance = $remittance;
+        $request = new PayoutRequest();
+        $request->instruction = $instruction;
+
+        $decoded = json_decode((new JsonSerializer())->serialize($request), true);
+
+        $this->assertSame(
+            array("scheme" => "local", "remittance" => array("reference" => "INV-2026-0001")),
+            $decoded["instruction"]
+        );
     }
 }

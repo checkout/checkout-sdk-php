@@ -2,9 +2,11 @@
 
 namespace Checkout\Payments\Setups\Common\Industry;
 
+use Checkout\Common\EmptyAsObject;
 use DateTime;
 use Checkout\Common\DateOnly;
 
+#[EmptyAsObject]
 class AccommodationHost
 {
     /**

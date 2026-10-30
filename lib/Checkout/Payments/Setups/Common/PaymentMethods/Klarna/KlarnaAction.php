@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Klarna;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The next available action for the Klarna payment method (response only).
  */
+#[EmptyAsObject]
 class KlarnaAction
 {
     /**

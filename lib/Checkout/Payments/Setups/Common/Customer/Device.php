@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\Customer;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * Details of the customer's device.
  */
+#[EmptyAsObject]
 class Device
 {
     /**

@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\Industry;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class AirlineInsurance
 {
     /**

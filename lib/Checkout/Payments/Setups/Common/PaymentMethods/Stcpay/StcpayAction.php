@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Stcpay;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The next available action for the stc pay payment method (response only).
  */
+#[EmptyAsObject]
 class StcpayAction
 {
     /**

@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\CardPresent;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class CardPresentPin
 {
     /**

@@ -2,6 +2,7 @@
 
 namespace Checkout\Payments\Setups\Common\Industry;
 
+use Checkout\Common\EmptyAsObject;
 use Checkout\Payments\FlightLegDetails;
 use Checkout\Payments\Passenger;
 use Checkout\Payments\Ticket;
@@ -9,6 +10,7 @@ use Checkout\Payments\Ticket;
 /**
  * Details about the airline ticket and flights the customer booked.
  */
+#[EmptyAsObject]
 class AirlineData
 {
     /**

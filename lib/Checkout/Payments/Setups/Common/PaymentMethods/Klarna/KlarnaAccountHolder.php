@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Klarna;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class KlarnaAccountHolder
 {
     /**

@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\ApplePay;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The Apple Pay payment token data (request only).
  */
+#[EmptyAsObject]
 class ApplePayTokenData
 {
     /**

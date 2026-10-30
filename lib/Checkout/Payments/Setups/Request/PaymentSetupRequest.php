@@ -2,16 +2,19 @@
 
 namespace Checkout\Payments\Setups\Request;
 
+use Checkout\Common\EmptyAsObject;
 use Checkout\Payments\Setups\Common\Settings\Settings;
 use Checkout\Payments\Setups\Common\Customer\Customer;
 use Checkout\Payments\Setups\Common\Order\Order;
 use Checkout\Payments\Setups\Common\Industry\Industry;
 use Checkout\Payments\Setups\Common\PaymentMethods\PaymentMethods;
+use Checkout\Payments\Setups\Common\Billing\PaymentSetupBilling;
 use Checkout\Payments\Setups\Common\BillingDescriptor\PaymentSetupBillingDescriptor;
 use Checkout\Payments\Setups\Common\PresentmentDetails\PaymentSetupPresentmentDetails;
 use Checkout\Payments\Setups\Common\Terminal\PaymentSetupTerminal;
 use Checkout\Payments\Setups\Common\Risk\PaymentSetupRisk;
 
+#[EmptyAsObject]
 class PaymentSetupRequest
 {
     /**
@@ -40,10 +43,10 @@ class PaymentSetupRequest
      * The type of payment. You must provide this field for card payments in which the cardholder is not
      * present, for example a recurring payment or a mail order/telephone order (MOTO) payment.
      * [Optional]
-     * Default: "Regular"
-     * @var string value of PaymentType
+     * Default: "regular"
+     * @var string value of PaymentSetupPaymentType
      */
-    public $payment_type = "Regular";
+    public $payment_type = "regular";
 
     /**
      * A reference you can use to identify the payment. For example, an order number.
@@ -88,6 +91,13 @@ class PaymentSetupRequest
      * @var Order
      */
     public $order;
+
+    /**
+     * The billing details for the payment.
+     * [Optional]
+     * @var PaymentSetupBilling
+     */
+    public $billing;
 
     /**
      * Industry-specific information.

@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Bacs;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class BacsAccountHolder
 {
     /**

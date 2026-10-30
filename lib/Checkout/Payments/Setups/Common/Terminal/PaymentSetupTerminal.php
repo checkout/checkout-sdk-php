@@ -2,6 +2,9 @@
 
 namespace Checkout\Payments\Setups\Common\Terminal;
 
+use Checkout\Common\EmptyAsObject;
+
+#[EmptyAsObject]
 class PaymentSetupTerminal
 {
     /**

@@ -2,9 +2,12 @@
 
 namespace Checkout\Payments\Setups\Common\PaymentMethods\Paypal;
 
+use Checkout\Common\EmptyAsObject;
+
 /**
  * The next available action for the PayPal payment method (response only).
  */
+#[EmptyAsObject]
 class PaypalAction
 {
     /**

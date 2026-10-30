@@ -2,11 +2,13 @@
 
 namespace Checkout\Payments\Setups\Common\Customer;
 
+use Checkout\Common\EmptyAsObject;
 use Checkout\Common\Phone;
 
 /**
  * The customer's details.
  */
+#[EmptyAsObject]
 class Customer
 {
     /**

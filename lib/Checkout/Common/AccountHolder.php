@@ -157,8 +157,8 @@ class AccountHolder
      * The account holder's gender.
      * [Optional]
      *
-     * @deprecated Not in the request schema of any account holder; the Klarna payment source account_holder
-     * had it until the API removed it. Still returned in the Klarna payment details source account_holder.
+     * @deprecated Not in the request schema of any account holder. Still returned in the Klarna payment
+     * details source account_holder.
      * Retained for backwards compatibility and will be removed in the next major version. There is no
      * replacement.
      * @var string

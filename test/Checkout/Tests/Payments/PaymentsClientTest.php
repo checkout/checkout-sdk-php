@@ -2,7 +2,13 @@
 
 namespace Checkout\Tests\Payments;
 
+use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutConfiguration;
+use Checkout\Environment;
+use Checkout\HttpClientBuilderInterface;
+use Checkout\SdkAuthorization;
+use Checkout\SdkCredentialsInterface;
 use Checkout\Common\AccountHolder;
 use Checkout\Payments\AuthorizationRequest;
 use Checkout\Payments\CancelScheduledRetryRequest;
@@ -12,6 +18,7 @@ use Checkout\Payments\PaymentsQueryFilter;
 use Checkout\Payments\Request\PaymentRequest;
 use Checkout\Payments\Request\PayoutRequest;
 use Checkout\Payments\Request\Source\RequestProviderTokenSource;
+use Checkout\Payments\Request\UnreferencedRefundRequest;
 use Checkout\Payments\RefundRequest;
 use Checkout\Payments\ReversePaymentRequest;
 use Checkout\Payments\SearchPaymentRequest;
@@ -70,6 +77,45 @@ class PaymentsClientTest extends UnitTestFixture
             ->willReturn(["response"]);
 
         $response = $this->client->requestPayout(new PayoutRequest());
+        $this->assertNotNull($response);
+    }
+
+    /**
+     * @test
+     * @throws CheckoutApiException
+     */
+    public function shouldRequestUnreferencedRefund()
+    {
+        $request = new UnreferencedRefundRequest();
+        $idempotencyKey = "idempotency_key";
+        $authorization = new SdkAuthorization(PlatformType::$default, "key");
+
+        $credentials = $this->createMock(SdkCredentialsInterface::class);
+        $credentials
+            ->expects($this->once())
+            ->method("getAuthorization")
+            ->with($this->equalTo(AuthorizationType::$secretKeyOrOAuth))
+            ->willReturn($authorization);
+        $configuration = new CheckoutConfiguration(
+            $credentials,
+            Environment::sandbox(),
+            $this->createMock(HttpClientBuilderInterface::class),
+            $this->configuration->getLogger()
+        );
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method("post")
+            ->with(
+                $this->equalTo("payments"),
+                $this->identicalTo($request),
+                $this->identicalTo($authorization),
+                $this->equalTo($idempotencyKey)
+            )
+            ->willReturn(["response"]);
+
+        $client = new PaymentsClient($this->apiClient, $configuration);
+        $response = $client->requestUnreferencedRefund($request, $idempotencyKey);
         $this->assertNotNull($response);
     }
 

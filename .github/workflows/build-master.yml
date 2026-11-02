@@ -39,9 +39,17 @@ jobs:
               if: matrix.os == 'ubuntu-latest'
               shell: bash
               run: |
+                  # PHP comes from packages.sury.org, the maintainer's canonical repository.
+                  # ppa:ondrej/php publishes no release for Ubuntu 26.04 (resolute), which
+                  # ubuntu-latest now resolves to, so add-apt-repository failed there with a 404.
+                  # The keyring .deb is the repository's own signed key package, and apt only
+                  # trusts packages from this source when they are signed with that key.
                   sudo apt-get update
-                  sudo apt-get install -y software-properties-common
-                  sudo add-apt-repository ppa:ondrej/php -y
+                  sudo apt-get install -y lsb-release ca-certificates curl
+                  curl --proto '=https' --tlsv1.2 -sSfLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+                  sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
+                  echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" \
+                      | sudo tee /etc/apt/sources.list.d/php.list
                   sudo apt-get update
 
                   # Install PHP and required extensions (PHP 8.x; json is built-in, no separate package)

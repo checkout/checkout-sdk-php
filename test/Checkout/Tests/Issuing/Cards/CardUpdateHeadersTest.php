@@ -213,7 +213,6 @@ class CardUpdateHeadersTest extends UnitTestFixture
         $apiClient = new ApiClient($this->configuration);
 
         $method = new ReflectionMethod(ApiClient::class, "getHeaders");
-        $method->setAccessible(true);
 
         return $method->invoke(
             $apiClient,

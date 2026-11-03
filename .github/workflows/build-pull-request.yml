@@ -16,7 +16,7 @@ jobs:
                 os: [ ubuntu-latest ]
                 php-version: [ "8.1", "5.6" ]
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v4
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:

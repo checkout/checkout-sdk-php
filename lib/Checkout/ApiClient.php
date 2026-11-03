@@ -308,8 +308,9 @@ class ApiClient
                 $customMappings = $customHeaders->getHeaderMappings();
             }
             
+            // Private properties are readable through reflection since PHP 8.1, the SDK floor,
+            // so no setAccessible(): PHP 8.5 deprecates it and the call has no effect.
             foreach ($reflection->getProperties() as $property) {
-                $property->setAccessible(true);
                 $value = $property->getValue($customHeaders);
                 if ($value !== null && $value !== '') {
                     $propertyName = $property->getName();

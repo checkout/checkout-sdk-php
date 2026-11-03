@@ -81,6 +81,7 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
     }
 
     /**
+     * @throws CheckoutAuthorizationException
      * @throws CheckoutException
      */
     private function getAccessToken()
@@ -90,7 +91,6 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
         }
         try {
             $response = $this->client->request("POST", $this->authorizationUri, [
-                "verify" => false,
                 "headers" => [
                     "Content-Type" => "application/x-www-form-urlencoded"
                 ],
@@ -101,13 +101,30 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
                     "scope" => implode(" ", $this->scopes)
                 ]
             ]);
-            $body = json_decode($response->getBody(), true);
-            $expirationDate = new DateTime();
-            $expirationDate->add(new DateInterval("PT" . $body["expires_in"] . "S"));
-            $this->accessToken = new OAuthAccessToken($body["access_token"], $expirationDate);
-            return $this->accessToken;
         } catch (Exception $e) {
             throw new CheckoutException($e->getMessage());
         }
+        $body = json_decode((string)$response->getBody(), true);
+        if (!self::isValidTokenResponse($body)) {
+            throw CheckoutAuthorizationException::invalidAccessTokenResponse();
+        }
+        $expirationDate = new DateTime();
+        $expirationDate->add(new DateInterval("PT" . (int)$body["expires_in"] . "S"));
+        $this->accessToken = new OAuthAccessToken($body["access_token"], $expirationDate);
+        return $this->accessToken;
+    }
+
+    /**
+     * @param mixed $body decoded token response
+     * @return bool true when it carries a non-empty access_token and a non-negative numeric expires_in
+     */
+    private static function isValidTokenResponse($body)
+    {
+        return is_array($body)
+            && isset($body["access_token"], $body["expires_in"])
+            && is_string($body["access_token"])
+            && $body["access_token"] !== ""
+            && is_numeric($body["expires_in"])
+            && (int)$body["expires_in"] >= 0;
     }
 }

@@ -7,12 +7,21 @@ on:
         paths:
             - version.json
 
+# The release step creates the tag and the GitHub release, so the job needs to write
+# contents; nothing else.
+permissions:
+    contents: write
+
 jobs:
     build:
         runs-on: ubuntu-latest
 
         steps:
+            # The job runs the test dependencies with the sandbox secrets, so the token is not
+            # left in the checkout's git config; the release step reads it from its env.
             - uses: actions/checkout@v2
+              with:
+                  persist-credentials: false
 
             # PHP is pinned, from the same signed packages.sury.org source as build-master.yml.
             # The unversioned Ubuntu packages follow the runner image, so a new runner can move
@@ -37,9 +46,13 @@ jobs:
               run: composer validate
 
             # From composer.lock, like build-master.yml: never re-resolve dependencies in the job
-            # that tags the release.
+            # that tags the release. Composer itself is the runner image's, run by the PHP pinned
+            # above; build-master.yml installs its own with a signature check.
             - name: Composer install
               run: composer install --prefer-dist --no-interaction
+
+            - name: Run PHPStan
+              run: vendor/bin/phpstan analyse --no-progress
 
             - name: Run PHPUnit
               env:

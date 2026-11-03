@@ -140,7 +140,19 @@ jobs:
                   ForEach-Object { $_ -replace ';extension=zip', 'extension=zip' } |
                   ForEach-Object { $_ -replace 'memory_limit = 128M', 'memory_limit = 1G' } |
                   Set-Content "$phpDir\php.ini"
-                  
+
+                  # The Windows PHP zip ships no CA bundle, and the SDK verifies TLS certificates.
+                  # Point cURL and OpenSSL at the bundle Git for Windows already installs on the
+                  # runner image, so nothing is downloaded. Fail loudly if it is missing rather
+                  # than let every HTTPS call fail with cURL error 60.
+                  $caBundle = "C:\Program Files\Git\mingw64\etc\ssl\certs\ca-bundle.crt"
+                  if (-not (Test-Path $caBundle)) {
+                      throw "CA bundle not found at $caBundle. Refusing to run without certificate verification."
+                  }
+                  Add-Content "$phpDir\php.ini" "curl.cainfo = `"$caBundle`""
+                  Add-Content "$phpDir\php.ini" "openssl.cafile = `"$caBundle`""
+                  Write-Host "CA bundle: $caBundle"
+
                   # Add PHP to PATH (at the beginning to override system PHP)
                   echo "$phpDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
                   $env:PATH = "$phpDir;$env:PATH"

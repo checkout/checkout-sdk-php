@@ -182,11 +182,25 @@ class HttpClientOptionsTest extends MockeryTestCase
     }
 
     /**
-     * @test
+     * @return array
      */
-    public function validTokenResponseProducesAuthorization()
+    public function validTokenResponses()
     {
-        $credentials = $this->initOAuth('{"access_token":"tok","token_type":"Bearer","expires_in":"3600"}');
+        return [
+            'numeric string expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":"3600"}'],
+            'decimal expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":3599.5}'],
+            'without token_type' => ['{"access_token":"tok","expires_in":3600}'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider validTokenResponses
+     * @param string $body
+     */
+    public function validTokenResponseProducesAuthorization($body)
+    {
+        $credentials = $this->initOAuth($body);
 
         $authorization = $credentials->getAuthorization(AuthorizationType::$oAuth);
 

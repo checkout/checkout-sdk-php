@@ -44,6 +44,7 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
      * @param $authorizationUri
      * @param array $scopes
      * @return OAuthSdkCredentials
+     * @throws CheckoutAuthorizationException
      * @throws CheckoutException
      */
     public static function init(

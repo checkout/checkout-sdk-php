@@ -14,10 +14,21 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Install PHP from official repositories
+            # PHP is pinned, from the same signed packages.sury.org source as build-master.yml.
+            # The unversioned Ubuntu packages follow the runner image, so a new runner can move
+            # the release job to a PHP version no other job has tested.
+            - name: Install PHP 8.4
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo
+                  sudo apt-get install -y lsb-release ca-certificates curl
+                  curl --proto '=https' --tlsv1.2 -sSfLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+                  sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
+                  echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" \
+                      | sudo tee /etc/apt/sources.list.d/php.list
+                  sudo apt-get update
+                  sudo apt-get install -y php8.4 php8.4-cli php8.4-common php8.4-curl php8.4-mbstring php8.4-xml php8.4-zip
+                  sudo apt-get install -y php8.4-fileinfo 2>/dev/null || true
+                  sudo update-alternatives --set php /usr/bin/php8.4
 
             - name: Installed version
               run: php -v

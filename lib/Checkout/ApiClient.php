@@ -174,7 +174,6 @@ class ApiClient
             $fileStream = new Stream($fileHandle, ["size" => $fileSize]);
 
             $response = $this->client->request("POST", $this->getRequestUrl($path), [
-                "verify" => false,
                 "headers" => $headers,
                 "multipart" => [
                     [
@@ -218,7 +217,6 @@ class ApiClient
             $this->logger->info($method . " " . $path);
             $headers = $this->getHeaders($authorization, "application/json", $idempotencyKey);
             $response = $this->client->request($method, $this->getRequestUrl($path), [
-                "verify" => false,
                 "body" => $body,
                 "headers" => $headers
             ]);

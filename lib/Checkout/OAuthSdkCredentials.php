@@ -9,6 +9,12 @@ use Exception;
 class OAuthSdkCredentials implements SdkCredentialsInterface
 {
 
+    /**
+     * Upper bound accepted for expires_in (one year). Real tokens last about an hour; anything
+     * larger is treated as an invalid response instead of overflowing DateInterval.
+     */
+    private const MAX_EXPIRES_IN_SECONDS = 31536000;
+
     private $client;
     private $clientId;
     private $clientSecret;
@@ -118,7 +124,8 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
 
     /**
      * @param mixed $body decoded token response
-     * @return bool true when it carries a non-empty access_token and a non-negative numeric expires_in
+     * @return bool true when it carries a non-empty access_token and a numeric expires_in
+     *     between 0 and one year, compared as a float so huge values cannot overflow the int cast
      */
     private static function isValidTokenResponse($body)
     {
@@ -127,6 +134,7 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
             && is_string($body["access_token"])
             && $body["access_token"] !== ""
             && is_numeric($body["expires_in"])
-            && (int)$body["expires_in"] >= 0;
+            && (float)$body["expires_in"] >= 0
+            && (float)$body["expires_in"] <= self::MAX_EXPIRES_IN_SECONDS;
     }
 }

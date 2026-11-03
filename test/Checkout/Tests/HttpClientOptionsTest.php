@@ -190,6 +190,7 @@ class HttpClientOptionsTest extends MockeryTestCase
             'numeric string expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":"3600"}'],
             'decimal expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":3599.5}'],
             'without token_type' => ['{"access_token":"tok","expires_in":3600}'],
+            'expires_in of exactly one year' => ['{"access_token":"tok","token_type":"Bearer","expires_in":31536000}'],
         ];
     }
 
@@ -222,6 +223,9 @@ class HttpClientOptionsTest extends MockeryTestCase
             'missing expires_in' => ['{"access_token":"tok","token_type":"Bearer"}'],
             'non numeric expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":"soon"}'],
             'negative expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":-1}'],
+            'expires_in above one year' => ['{"access_token":"tok","token_type":"Bearer","expires_in":31536001}'],
+            'expires_in beyond int range' => ['{"access_token":"tok","token_type":"Bearer","expires_in":9e18}'],
+            'expires_in float overflow' => ['{"access_token":"tok","token_type":"Bearer","expires_in":1e30}'],
         ];
     }
 

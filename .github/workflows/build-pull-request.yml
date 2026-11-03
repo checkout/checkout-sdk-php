@@ -5,6 +5,7 @@ on:
             - master
             - 'integration/**'
             - 'feature/**'
+            - 'maintenance/**'
 jobs:
     build:
         runs-on: ${{ matrix.os }}

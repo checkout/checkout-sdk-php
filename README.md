@@ -13,9 +13,9 @@
 ## Getting started
 
 > **Version 4.0.0 is here!**
->  <br/><br/>
-> We improved the initialization of SDK making it easier to understand the available options. <br/>
-> Now `NAS` accounts are the default instance for the SDK and `ABC` structure was moved to a `previous` prefixes. <br/>
+>
+> We improved the initialization of SDK making it easier to understand the available options.
+> Now `NAS` accounts are the default instance for the SDK and `ABC` structure was moved to a `previous` prefixes.
 > If you have been using this SDK before, you may find the following important changes:
 > * Marketplace module was moved to Accounts module, same for classes and references.
 > * In most cases, IDE can help you determine from where to import, but if you’re still having issues don't hesitate to open a [ticket](https://github.com/checkout/checkout-sdk-php/issues/new/choose).

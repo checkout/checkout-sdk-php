@@ -6,6 +6,7 @@ on:
             - master
             - 'integration/**'
             - 'feature/**'
+            - 'maintenance/**'
 
 jobs:
     build:
@@ -20,16 +21,13 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Install PHP from official repositories
-              run: |
-                  sudo apt-get update
-                  if [[ "${{ matrix.php-version }}" == "7.1" || "${{ matrix.php-version }}" == "7.4" ]]; then
-                    # For older versions, use system default
-                    sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo php-xdebug
-                  else
-                    # For newer versions, install available system packages
-                    sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo
-                  fi
+            # setup-php installs the matrix version itself; the runner's own packages only
+            # offer the image's current PHP, so every matrix entry ran that one version.
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  coverage: none
 
             - name: Composer validate
               run: composer validate

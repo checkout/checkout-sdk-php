@@ -3,9 +3,12 @@ name: build-release
 on:
     push:
         branches:
-            - master
+            - maintenance/4.3.x
         paths:
             - version.json
+
+permissions:
+    contents: write
 
 jobs:
     build:
@@ -14,10 +17,11 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Install PHP 7.1 from official repositories
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo
+            - name: Setup PHP 8.1
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "8.1"
+                  coverage: none
 
             - name: Installed version
               run: php -v
@@ -57,13 +61,15 @@ jobs:
             - name: Print release version
               run: echo "Releasing $CURRENT_VERSION"
 
+            # Patch releases on a maintenance line must never become the repository's
+            # latest release, which stays on the current major.
             - name: Create GitHub release
-              uses: actions/create-release@v1
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  tag_name: ${{ env.CURRENT_VERSION }}
-                  release_name: ${{ env.CURRENT_VERSION }}
-                  body: ${{ github.event.head_commit.message }}
-                  draft: false
-                  prerelease: false
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  RELEASE_NOTES: ${{ github.event.head_commit.message }}
+              run: |
+                  gh release create "$CURRENT_VERSION" \
+                      --target "$GITHUB_SHA" \
+                      --title "$CURRENT_VERSION" \
+                      --notes "$RELEASE_NOTES" \
+                      --latest=false

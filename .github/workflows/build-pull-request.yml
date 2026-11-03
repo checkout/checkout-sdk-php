@@ -19,7 +19,7 @@ jobs:
                 php-version: ["7.1", "7.4", "8.1", "8.4"]
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
 
             # setup-php installs the matrix version itself; the runner's own packages only
             # offer the image's current PHP, so every matrix entry ran that one version.

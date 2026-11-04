@@ -141,17 +141,14 @@ jobs:
                   ForEach-Object { $_ -replace 'memory_limit = 128M', 'memory_limit = 1G' } |
                   Set-Content "$phpDir\php.ini"
 
-                  # The Windows PHP zip ships no CA bundle, and the SDK verifies TLS certificates.
-                  # Point cURL and OpenSSL at the bundle Git for Windows already installs on the
-                  # runner image, so nothing is downloaded. Fail loudly if it is missing rather
-                  # than let every HTTPS call fail with cURL error 60.
-                  # The bundle's folder differs between Git for Windows releases, so look it up
-                  # under the Git install instead of hard-coding one path.
+                  # The Windows PHP zip ships no CA bundle. Point cURL and OpenSSL at the one Git
+                  # for Windows installs on the runner image; its folder differs between Git
+                  # releases, so look it up under the Git install. Nothing is downloaded.
                   $gitRoot  = Split-Path (Split-Path (Get-Command git).Source -Parent) -Parent
                   $caBundle = Get-ChildItem -Path $gitRoot -Recurse -Filter "ca-bundle.crt" -ErrorAction SilentlyContinue |
                       Select-Object -First 1 -ExpandProperty FullName
                   if (-not $caBundle) {
-                      throw "No ca-bundle.crt under $gitRoot. Refusing to run without certificate verification."
+                      throw "No ca-bundle.crt under $gitRoot."
                   }
                   Add-Content "$phpDir\php.ini" "curl.cainfo = `"$caBundle`""
                   Add-Content "$phpDir\php.ini" "openssl.cafile = `"$caBundle`""

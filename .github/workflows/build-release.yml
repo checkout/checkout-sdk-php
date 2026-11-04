@@ -16,26 +16,12 @@ jobs:
 
         steps:
             - uses: actions/checkout@v4
-
-            - name: Setup PHP 7.1 (lowest supported; the PR matrix covers 7.4, 8.1 and 8.4)
-              uses: shivammathur/setup-php@v2
               with:
-                  php-version: "7.1"
-                  coverage: none
-
-            - name: Installed version
-              run: php -v
-
-            - name: Composer validate
-              run: composer validate
-
-            - name: Composer update with promises:^1.5
-              run: |
-                  composer remove guzzlehttp/promises --no-update
-                  composer require guzzlehttp/promises:^1.5 --no-update
-                  composer update --prefer-dist --no-interaction
-
-            - name: Run PHPUnit
+                  persist-credentials: false
+            # Workflows using a third-party setup action fail to start in this repository, and
+            # the runner image no longer ships these PHP versions, so the checks run in the
+            # official PHP image.
+            - name: Tests on PHP 7.1, the lowest supported (pull requests cover the rest)
               env:
                   CHECKOUT_PROCESSING_CHANNEL_ID: ${{ secrets.IT_CHECKOUT_PROCESSING_CHANNEL_ID }}
                   CHECKOUT_PREVIOUS_SECRET_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_SECRET_KEY }}
@@ -51,7 +37,7 @@ jobs:
                   CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
                   CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
                   CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
-              run: vendor/bin/phpunit --verbose
+              run: .github/scripts/phpunit-in-docker.sh 7.1
 
             - name: Read release version
               run: |

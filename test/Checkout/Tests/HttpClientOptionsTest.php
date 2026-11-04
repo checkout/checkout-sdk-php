@@ -135,7 +135,7 @@ class HttpClientOptionsTest extends MockeryTestCase
      */
     public function apiRequestsHonourVerifyConfiguredOnCustomClient()
     {
-        $caBundle = __DIR__ . DIRECTORY_SEPARATOR . 'ca-bundle.pem';
+        $caBundle = '/path/to/custom-ca.pem';
         $apiClient = $this->createApiClient($this->createCapturingClient(['verify' => $caBundle]));
 
         $apiClient->get('payments/pay_123', $this->authorization());
@@ -163,7 +163,7 @@ class HttpClientOptionsTest extends MockeryTestCase
      */
     public function tokenRequestHonoursVerifyConfiguredOnCustomClient()
     {
-        $caBundle = __DIR__ . DIRECTORY_SEPARATOR . 'ca-bundle.pem';
+        $caBundle = '/path/to/custom-ca.pem';
         $this->initOAuth(
             '{"access_token":"tok","token_type":"Bearer","expires_in":3600}',
             ['verify' => $caBundle]

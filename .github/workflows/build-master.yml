@@ -142,14 +142,12 @@ jobs:
                   Set-Content "$phpDir\php.ini"
 
                   # The Windows PHP zip ships no CA bundle. Point cURL and OpenSSL at the one Git
-                  # for Windows installs on the runner image; its folder differs between Git
-                  # releases, so look it up under the Git install. Nothing is downloaded.
-                  $gitRoot  = Split-Path (Split-Path (Get-Command git).Source -Parent) -Parent
-                  $caBundle = Get-ChildItem -Path $gitRoot -Recurse -Filter "ca-bundle.crt" -ErrorAction SilentlyContinue |
-                      Select-Object -First 1 -ExpandProperty FullName
-                  if (-not $caBundle) {
-                      throw "No ca-bundle.crt under $gitRoot."
+                  # for Windows uses itself, as configured in its system config. Nothing is downloaded.
+                  $caBundle = git config --system --get http.sslcainfo
+                  if (-not $caBundle -or -not (Test-Path $caBundle)) {
+                      throw "Git has no usable http.sslcainfo: '$caBundle'."
                   }
+                  $caBundle = (Resolve-Path $caBundle).Path
                   Add-Content "$phpDir\php.ini" "curl.cainfo = `"$caBundle`""
                   Add-Content "$phpDir\php.ini" "openssl.cafile = `"$caBundle`""
                   Write-Host "CA bundle: $caBundle"

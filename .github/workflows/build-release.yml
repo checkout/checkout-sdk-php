@@ -19,7 +19,7 @@ jobs:
         steps:
             # The job runs the test dependencies with the sandbox secrets, so the token is not
             # left in the checkout's git config; the release step reads it from its env.
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
               with:
                   persist-credentials: false
 
@@ -31,6 +31,9 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y lsb-release ca-certificates curl
                   curl --proto '=https' --tlsv1.2 -sSfLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+                  # The keyring package is pinned by SHA-256: a substituted key would make apt trust
+                  # whatever that key signs. Update the hash when sury rotates the package.
+                  echo "7511384559c9ddf1d5ce5f60be429ae9d4e7d01d9480d6f1b7a30c0810cf8b60  /tmp/debsuryorg-archive-keyring.deb" | sha256sum -c -
                   sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
                   echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" \
                       | sudo tee /etc/apt/sources.list.d/php.list
@@ -42,12 +45,28 @@ jobs:
             - name: Installed version
               run: php -v
 
+            # Composer is installed like in build-master.yml: the installer is checked against the
+            # signature Composer publishes before it runs, because this job holds repository secrets.
+            - name: Install Composer
+              run: |
+                  curl -sS https://getcomposer.org/installer -o composer-setup.php
+                  EXPECTED_SIG="$(curl -sS https://composer.github.io/installer.sig)"
+                  ACTUAL_SIG="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+                  if [ "$EXPECTED_SIG" != "$ACTUAL_SIG" ]; then
+                      echo "Composer installer signature mismatch. Expected $EXPECTED_SIG, got $ACTUAL_SIG. Refusing to run it."
+                      rm -f composer-setup.php
+                      exit 1
+                  fi
+                  php composer-setup.php --quiet
+                  rm -f composer-setup.php
+                  sudo mv composer.phar /usr/local/bin/composer
+                  sudo chmod +x /usr/local/bin/composer
+
             - name: Composer validate
               run: composer validate
 
             # From composer.lock, like build-master.yml: never re-resolve dependencies in the job
-            # that tags the release. Composer itself is the runner image's, run by the PHP pinned
-            # above; build-master.yml installs its own with a signature check.
+            # that tags the release.
             - name: Composer install
               run: composer install --prefer-dist --no-interaction
 
@@ -80,13 +99,15 @@ jobs:
             - name: Print release version
               run: echo "Releasing $CURRENT_VERSION"
 
+            # gh ships with the runner image; actions/create-release is archived. The notes go
+            # through an env var, so the commit message is never evaluated by the shell.
             - name: Create GitHub release
-              uses: actions/create-release@v1
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  tag_name: ${{ env.CURRENT_VERSION }}
-                  release_name: ${{ env.CURRENT_VERSION }}
-                  body: ${{ github.event.head_commit.message }}
-                  draft: false
-                  prerelease: false
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  RELEASE_NOTES: ${{ github.event.head_commit.message }}
+              run: |
+                  gh release create "$CURRENT_VERSION" \
+                      --repo "$GITHUB_REPOSITORY" \
+                      --target "$GITHUB_SHA" \
+                      --title "$CURRENT_VERSION" \
+                      --notes "$RELEASE_NOTES"

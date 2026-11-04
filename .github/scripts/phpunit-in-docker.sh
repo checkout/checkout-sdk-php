@@ -21,16 +21,17 @@ esac
 # composer:2.2, the LTS line that still installs for PHP 5.3 to 7.1 projects.
 COMPOSER_IMAGE="composer@sha256:4c156e03ca848b69528dde30996d8922b47a9946e76d5cc563cf7f0898e8aa86"
 
-# Dependencies are resolved for the target PHP version, then run on that version.
+# Dependencies are resolved for the target PHP version, then run on that version. No
+# dependency plugin or script runs while resolving.
 REMOVE_PHPSTAN=""
 if [ "$PHP_VERSION" = "5.6" ]; then
-    REMOVE_PHPSTAN="composer remove --dev --no-update phpstan/phpstan &&"
+    REMOVE_PHPSTAN="composer remove --dev --no-update --no-plugins phpstan/phpstan &&"
 fi
 docker run --rm -u "$(id -u):$(id -g)" -e COMPOSER_HOME=/tmp/composer -v "$PWD":/app -w /app "$COMPOSER_IMAGE" sh -c "
     composer validate &&
-    composer config platform.php $PLATFORM &&
+    composer config --no-plugins platform.php $PLATFORM &&
     $REMOVE_PHPSTAN
-    composer update --no-interaction --no-progress --no-scripts"
+    composer update --no-interaction --no-progress --no-scripts --no-plugins"
 
 # Only the variable names are listed here; docker reads the values from this environment.
 ENV_ARGS=()

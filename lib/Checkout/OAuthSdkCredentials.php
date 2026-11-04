@@ -11,9 +11,10 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
 
     /**
      * Upper bound accepted for expires_in (one year). Real tokens last about an hour; anything
-     * larger is treated as an invalid response instead of overflowing DateInterval.
+     * larger is treated as an invalid response instead of overflowing DateInterval. A private
+     * static property rather than a constant, because PHP 5.6 has no constant visibility.
      */
-    const MAX_EXPIRES_IN_SECONDS = 31536000;
+    private static $maxExpiresInSeconds = 31536000;
 
     private $client;
     private $clientId;
@@ -134,6 +135,6 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
             && $body["access_token"] !== ""
             && is_numeric($body["expires_in"])
             && (float)$body["expires_in"] >= 0
-            && (float)$body["expires_in"] <= self::MAX_EXPIRES_IN_SECONDS;
+            && (float)$body["expires_in"] <= self::$maxExpiresInSeconds;
     }
 }

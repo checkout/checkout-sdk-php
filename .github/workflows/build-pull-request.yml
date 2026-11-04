@@ -16,7 +16,7 @@ jobs:
                 os: [ ubuntu-latest ]
                 php-version: [ "8.1", "5.6" ]
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
             # Workflows using a third-party setup action fail to start in this repository, and
             # the runner image no longer ships these PHP versions, so the checks run in the
             # official PHP image.

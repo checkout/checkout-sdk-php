@@ -113,6 +113,93 @@ class HttpClientOptionsTest extends MockeryTestCase
     }
 
     /**
+     * TLS options belong to the HTTP client the merchant configures. The library may not
+     * name any request option, cURL, stream or socket setting, CA override or transport that
+     * could change or bypass them, and may only use the Guzzle classes listed below. Every
+     * file under lib/ must be PHP and is tokenized; comments are skipped, string literals are
+     * decoded and trimmed, and names are compared in full and by their last part. This guards
+     * against reintroducing such code; deliberately obfuscated code is left to review, and
+     * the runtime tests above cover the options actually sent.
+     *
+     * @test
+     */
+    public function libraryNeverSetsTlsVerificationOptions()
+    {
+        $libDir = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'lib';
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($libDir, \FilesystemIterator::SKIP_DOTS)
+        );
+        $forbiddenStrings = [
+            'verify', 'verify_peer', 'verify_peer_name', 'verify_host', 'peer_name', 'peer_fingerprint',
+            'allow_self_signed', 'crypto_method', 'ssl_method', 'cafile', 'capath', 'local_cert',
+            'local_pk', 'cert', 'ssl_cert', 'certificate', 'ssl_key', 'sslkey', 'curl', 'stream_context',
+            'ssl', 'handler', 'proxy',
+        ];
+        $forbiddenStringPattern = '/^curlopt_|^curle_|ssl_cert_file|curl_ca_bundle|openssl\.ca|curl\.ca'
+            . '|^(tls|ssl|sslv\d|tlsv[\d.]+):\/\//';
+        $forbiddenNames = '/^(VERIFY|CURLOPT_\w+|CURLE_\w+|curl_\w+|stream_context_\w+|stream_socket_\w+'
+            . '|STREAM_CRYPTO_METHOD_\w+|SOAP_SSL_METHOD_\w+|fsockopen|pfsockopen|file_get_contents'
+            . '|SoapClient|setDefaultOption|chooseHandler|HandlerStack|CurlHandler|CurlMultiHandler'
+            . '|RequestOptions|constant|ini_set|ini_alter|putenv|stream_wrapper_\\w+|libxml_set_streams_context)$/i';
+        $allowedGuzzle = [
+            'guzzlehttp\\exception\\requestexception',
+            'guzzlehttp\\psr7\\response',
+            'guzzlehttp\\psr7\\stream',
+        ];
+        $nameTokens = [T_STRING, T_NS_SEPARATOR];
+        foreach (['T_NAME_QUALIFIED', 'T_NAME_FULLY_QUALIFIED', 'T_NAME_RELATIVE'] as $name) {
+            if (defined($name)) {
+                $nameTokens[] = constant($name);
+            }
+        }
+        $offending = [];
+        $count = 0;
+        foreach ($files as $file) {
+            $count++;
+            $fileName = $file->getFilename();
+            if (strtolower($file->getExtension()) !== 'php') {
+                $offending[] = $fileName . ' is not a PHP file';
+                continue;
+            }
+            $tokens = token_get_all(file_get_contents($file->getPathname()));
+            $tokens[] = ';';
+            $name = '';
+            foreach ($tokens as $token) {
+                if (is_array($token) && in_array($token[0], $nameTokens, true)) {
+                    $name .= $token[1];
+                    $lastPart = substr(strrchr('\\' . $token[1], '\\'), 1);
+                    if (preg_match($forbiddenNames, $lastPart) === 1) {
+                        $offending[] = $fileName . ':' . $token[2] . ' ' . $token[1];
+                    }
+                    continue;
+                }
+                $qualified = strtolower(ltrim($name, '\\'));
+                $name = '';
+                if ($qualified === 'guzzlehttp'
+                    || strpos($qualified, 'guzzlehttp\\') === 0 && !in_array($qualified, $allowedGuzzle, true)
+                    && !($qualified === 'guzzlehttp\\client' && $fileName === 'DefaultHttpClientBuilder.php')
+                ) {
+                    $offending[] = $fileName . ' ' . $qualified;
+                }
+                if (!is_array($token)) {
+                    continue;
+                }
+                if ($token[0] === T_CONSTANT_ENCAPSED_STRING || $token[0] === T_ENCAPSED_AND_WHITESPACE) {
+                    $value = strtolower(trim(stripcslashes(trim(ltrim($token[1], 'bB'), "'\""))));
+                    if (in_array($value, $forbiddenStrings, true)
+                        || preg_match($forbiddenStringPattern, $value) === 1
+                    ) {
+                        $offending[] = $fileName . ':' . $token[2] . ' ' . $token[1];
+                    }
+                }
+            }
+        }
+
+        $this->assertGreaterThan(100, $count);
+        $this->assertSame([], $offending);
+    }
+
+    /**
      * @test
      */
     public function apiRequestsUseClientDefaultVerifyOption()

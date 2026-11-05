@@ -124,16 +124,18 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
 
     /**
      * @param mixed $body decoded token response
-     * @return bool true when it carries a non-empty access_token and a numeric expires_in
-     *     between 0 and one year, compared as a float so huge values cannot overflow the int cast
+     * @return bool true when it carries a non-empty access_token made of visible ASCII characters
+     *     only (no whitespace or control characters, so it is safe in a header) and an expires_in
+     *     JSON number between 0 and one year, compared as a float so huge values cannot overflow
+     *     the int cast
      */
     private static function isValidTokenResponse($body)
     {
         return is_array($body)
             && isset($body["access_token"], $body["expires_in"])
             && is_string($body["access_token"])
-            && $body["access_token"] !== ""
-            && is_numeric($body["expires_in"])
+            && preg_match('/^[\x21-\x7E]+$/D', $body["access_token"]) === 1
+            && (is_int($body["expires_in"]) || is_float($body["expires_in"]))
             && (float)$body["expires_in"] >= 0
             && (float)$body["expires_in"] <= self::MAX_EXPIRES_IN_SECONDS;
     }

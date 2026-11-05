@@ -47,6 +47,9 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y lsb-release ca-certificates curl
                   curl --proto '=https' --tlsv1.2 -sSfLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+                  # The keyring package is pinned by SHA-256: a substituted key would make apt trust
+                  # whatever that key signs. Update the hash when sury rotates the package.
+                  echo "7511384559c9ddf1d5ce5f60be429ae9d4e7d01d9480d6f1b7a30c0810cf8b60  /tmp/debsuryorg-archive-keyring.deb" | sha256sum -c -
                   sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
                   echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" \
                       | sudo tee /etc/apt/sources.list.d/php.list

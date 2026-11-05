@@ -2,29 +2,24 @@ name: build-release
 on:
     push:
         branches:
-            - master
+            - maintenance/3.2.x
         paths:
             - version.json
+
+permissions:
+    contents: write
 
 jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v2
-            -   name: Setup PHP 5.6
-                uses: shivammathur/setup-php@v2
+            -   uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
                 with:
-                    php-version: "5.6"
-                    coverage: none
-            -   name: Installed version
-                run: php -v
-            -   name: Remove PHPStan
-                run: composer remove --dev phpstan/phpstan
-            -   name: Composer validate
-                run: composer validate
-            -   name: Composer install
-                run: composer install
-            -   name: Run PHPUnit
+                    persist-credentials: false
+            # Workflows using a third-party setup action fail to start in this repository, and
+            # the runner image no longer ships these PHP versions, so the checks run in the
+            # official PHP image.
+            -   name: Tests on PHP 5.6, the lowest supported (pull requests cover the rest)
                 env:
                     CHECKOUT_PROCESSING_CHANNEL_ID: ${{ secrets.IT_CHECKOUT_PROCESSING_CHANNEL_ID }}
                     CHECKOUT_PREVIOUS_SECRET_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_SECRET_KEY }}
@@ -40,22 +35,28 @@ jobs:
                     CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
                     CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
                     CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
-                run: vendor/bin/phpunit --verbose
+                run: .github/scripts/phpunit-in-docker.sh 5.6
             -   name: Read release version
-                uses: HardNorth/github-version-generate@v1.1.1
-                with:
-                    version-source: file
-                    version-file: 'version.json'
-                    version-file-extraction-pattern: '"version":\s*"([^"]+)"'
+                run: |
+                    set -euo pipefail
+                    VERSION=$(grep -o '"version":\s*"[^"]*"' version.json | grep -o '"[^"]*"$' | tr -d '"')
+                    # This branch only releases its own line; refuse anything else before tagging.
+                    if ! [[ "$VERSION" =~ ^3\.2\.[0-9]+$ ]]; then
+                        echo "version.json has '$VERSION', expected 3.2.x on this branch" >&2
+                        exit 1
+                    fi
+                    echo "CURRENT_VERSION=$VERSION" >> $GITHUB_ENV
             -   name: Print release version
                 run: echo "Releasing $CURRENT_VERSION"
+            # Patch releases on a maintenance line must never become the repository's
+            # latest release, which stays on the current major.
             -   name: Create GitHub release
-                uses: actions/create-release@v1
                 env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                with:
-                    tag_name: ${{ env.CURRENT_VERSION }}
-                    release_name: ${{ env.CURRENT_VERSION }}
-                    body: ${{ github.event.head_commit.message }}
-                    draft: false
-                    prerelease: false
+                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    RELEASE_NOTES: ${{ github.event.head_commit.message }}
+                run: |
+                    gh release create "$CURRENT_VERSION" \
+                        --target "$GITHUB_SHA" \
+                        --title "$CURRENT_VERSION" \
+                        --notes "$RELEASE_NOTES" \
+                        --latest=false

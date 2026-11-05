@@ -178,7 +178,6 @@ class HttpClientOptionsTest extends MockeryTestCase
     public static function validTokenResponses()
     {
         return [
-            'numeric string expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":"3600"}'],
             'decimal expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":3599.5}'],
             'without token_type' => ['{"access_token":"tok","expires_in":3600}'],
             'expires_in of exactly one year' => ['{"access_token":"tok","token_type":"Bearer","expires_in":31536000}'],
@@ -217,6 +216,14 @@ class HttpClientOptionsTest extends MockeryTestCase
             'expires_in above one year' => ['{"access_token":"tok","token_type":"Bearer","expires_in":31536001}'],
             'expires_in beyond int range' => ['{"access_token":"tok","token_type":"Bearer","expires_in":9e18}'],
             'expires_in float overflow' => ['{"access_token":"tok","token_type":"Bearer","expires_in":1e30}'],
+            'numeric string expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":"3600"}'],
+            'padded numeric string expires_in' => ['{"access_token":"tok","token_type":"Bearer","expires_in":" 3600"}'],
+            'whitespace access_token' => ['{"access_token":" ","token_type":"Bearer","expires_in":3600}'],
+            'access_token with space' => ['{"access_token":"to k","token_type":"Bearer","expires_in":3600}'],
+            'access_token with CRLF' => ['{"access_token":"tok\\r\\nX: 1","token_type":"Bearer","expires_in":3600}'],
+            'access_token with trailing LF' => ['{"access_token":"tok\\n","token_type":"Bearer","expires_in":3600}'],
+            'access_token with NUL' => ['{"access_token":"tok\\u0000","token_type":"Bearer","expires_in":3600}'],
+            'access_token with non ASCII' => ['{"access_token":"t\\u00f6k","token_type":"Bearer","expires_in":3600}'],
         ];
     }
 

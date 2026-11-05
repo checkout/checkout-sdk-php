@@ -140,7 +140,25 @@ jobs:
                   ForEach-Object { $_ -replace ';extension=zip', 'extension=zip' } |
                   ForEach-Object { $_ -replace 'memory_limit = 128M', 'memory_limit = 1G' } |
                   Set-Content "$phpDir\php.ini"
-                  
+
+                  # The Windows PHP zip ships no CA bundle. Point cURL and OpenSSL at the one Git
+                  # for Windows installs on the runner image. The runner's Git uses schannel, so
+                  # http.sslcainfo is unset; the known locations are checked in a fixed order
+                  # instead, so every run picks the same file. Nothing is downloaded.
+                  $gitRoot  = Split-Path (Split-Path (Get-Command git).Source -Parent) -Parent
+                  $caBundle = @(
+                      "ucrt64\etc\ssl\certs\ca-bundle.crt",
+                      "mingw64\etc\ssl\certs\ca-bundle.crt",
+                      "clangarm64\etc\ssl\certs\ca-bundle.crt",
+                      "usr\ssl\certs\ca-bundle.crt"
+                  ) | ForEach-Object { Join-Path $gitRoot $_ } | Where-Object { Test-Path $_ } | Select-Object -First 1
+                  if (-not $caBundle) {
+                      throw "No ca-bundle.crt in the known locations under $gitRoot."
+                  }
+                  Add-Content "$phpDir\php.ini" "curl.cainfo = `"$caBundle`""
+                  Add-Content "$phpDir\php.ini" "openssl.cafile = `"$caBundle`""
+                  Write-Host "CA bundle: $caBundle"
+
                   # Add PHP to PATH (at the beginning to override system PHP)
                   echo "$phpDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
                   $env:PATH = "$phpDir;$env:PATH"

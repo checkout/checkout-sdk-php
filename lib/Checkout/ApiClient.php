@@ -182,7 +182,6 @@ class ApiClient
             $fileStream = new Stream($fileHandle, ["size" => $fileSize]);
 
             $response = $this->client->request("POST", $this->getRequestUrl($path), [
-                "verify" => false,
                 "headers" => $headers,
                 "multipart" => [
                     [
@@ -253,7 +252,6 @@ class ApiClient
 
             // Make the call
             $response = $this->client->request($method, $this->getRequestUrl($path), [
-                "verify" => false,
                 "body" => $body,
                 "headers" => $requestHeaders
             ]);

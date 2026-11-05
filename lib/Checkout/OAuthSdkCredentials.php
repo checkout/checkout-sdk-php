@@ -9,6 +9,12 @@ use Exception;
 class OAuthSdkCredentials implements SdkCredentialsInterface
 {
 
+    /**
+     * Upper bound accepted for expires_in (one year). Real tokens last about an hour; anything
+     * larger is treated as an invalid response instead of overflowing DateInterval.
+     */
+    private const MAX_EXPIRES_IN_SECONDS = 31536000;
+
     private $client;
     private $clientId;
     private $clientSecret;
@@ -44,6 +50,7 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
      * @param $authorizationUri
      * @param array $scopes
      * @return OAuthSdkCredentials
+     * @throws CheckoutAuthorizationException
      * @throws CheckoutException
      */
     public static function init(
@@ -81,6 +88,7 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
     }
 
     /**
+     * @throws CheckoutAuthorizationException
      * @throws CheckoutException
      */
     private function getAccessToken()
@@ -90,7 +98,6 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
         }
         try {
             $response = $this->client->request("POST", $this->authorizationUri, [
-                "verify" => false,
                 "headers" => [
                     "Content-Type" => "application/x-www-form-urlencoded"
                 ],
@@ -101,13 +108,35 @@ class OAuthSdkCredentials implements SdkCredentialsInterface
                     "scope" => implode(" ", $this->scopes)
                 ]
             ]);
-            $body = json_decode($response->getBody(), true);
-            $expirationDate = new DateTime();
-            $expirationDate->add(new DateInterval("PT" . $body["expires_in"] . "S"));
-            $this->accessToken = new OAuthAccessToken($body["access_token"], $body["token_type"], $expirationDate);
-            return $this->accessToken;
         } catch (Exception $e) {
             throw new CheckoutException($e->getMessage());
         }
+        $body = json_decode((string)$response->getBody(), true);
+        if (!self::isValidTokenResponse($body)) {
+            throw CheckoutAuthorizationException::invalidAccessTokenResponse();
+        }
+        $expirationDate = new DateTime();
+        $expirationDate->add(new DateInterval("PT" . (int)$body["expires_in"] . "S"));
+        $tokenType = $body["token_type"] ?? null;
+        $this->accessToken = new OAuthAccessToken($body["access_token"], $tokenType, $expirationDate);
+        return $this->accessToken;
+    }
+
+    /**
+     * @param mixed $body decoded token response
+     * @return bool true when it carries a non-empty access_token made of visible ASCII characters
+     *     only (no whitespace or control characters, so it is safe in a header) and an expires_in
+     *     JSON number between 0 and one year, compared as a float so huge values cannot overflow
+     *     the int cast
+     */
+    private static function isValidTokenResponse($body)
+    {
+        return is_array($body)
+            && isset($body["access_token"], $body["expires_in"])
+            && is_string($body["access_token"])
+            && preg_match('/^[\x21-\x7E]+$/D', $body["access_token"]) === 1
+            && (is_int($body["expires_in"]) || is_float($body["expires_in"]))
+            && (float)$body["expires_in"] >= 0
+            && (float)$body["expires_in"] <= self::MAX_EXPIRES_IN_SECONDS;
     }
 }

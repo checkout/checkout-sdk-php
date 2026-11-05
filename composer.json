@@ -27,7 +27,8 @@
     ],
     "require": {
         "php": ">=8.1.0",
-        "guzzlehttp/guzzle": "^7.4",
+        "guzzlehttp/guzzle": "^7.15.2",
+        "guzzlehttp/psr7": "^2.12.3",
         "monolog/monolog": "^2.4 || ^3.0.0" ,
         "ext-json": "*",
         "ext-fileinfo": "*"

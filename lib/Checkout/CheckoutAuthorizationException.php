@@ -31,6 +31,16 @@ class CheckoutAuthorizationException extends CheckoutException
     }
 
     /**
+     * @return CheckoutAuthorizationException
+     */
+    public static function invalidAccessTokenResponse()
+    {
+        return new CheckoutAuthorizationException(
+            "The authorization server returned an invalid access token response"
+        );
+    }
+
+    /**
      * @param $keyType
      * @return CheckoutAuthorizationException
      */

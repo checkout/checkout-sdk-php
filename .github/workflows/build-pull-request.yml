@@ -6,6 +6,7 @@ on:
             - master
             - 'integration/**'
             - 'feature/**'
+            - 'maintenance/**'
 
 jobs:
     build:
@@ -18,34 +19,11 @@ jobs:
                 php-version: ["7.1", "7.4", "8.1", "8.4"]
 
         steps:
-            - uses: actions/checkout@v2
-
-            - name: Install PHP from official repositories
-              run: |
-                  sudo apt-get update
-                  if [[ "${{ matrix.php-version }}" == "7.1" || "${{ matrix.php-version }}" == "7.4" ]]; then
-                    # For older versions, use system default
-                    sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo php-xdebug
-                  else
-                    # For newer versions, install available system packages
-                    sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo
-                  fi
-
-            - name: Composer validate
-              run: composer validate
-
-            - name: Composer install (conditional)
-              run: |
-                  if [[ "${{ matrix.php-version }}" == "7.1" ]]; then
-                    composer install;
-                  else
-                    composer require guzzlehttp/guzzle:"^7.4" guzzlehttp/promises:"^2.0" phpunit/phpunit:"^9.5" --dev --with-all-dependencies;
-                  fi
-
-            - name: Run PHPStan
-              run: vendor/bin/phpstan analyse --no-progress
-
-            - name: Run PHPUnit
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+            # Workflows using a third-party setup action fail to start in this repository, and
+            # the runner image no longer ships these PHP versions, so the checks run in the
+            # official PHP image.
+            - name: Tests in the official PHP image
               env:
                   CHECKOUT_PROCESSING_CHANNEL_ID: ${{ secrets.IT_CHECKOUT_PROCESSING_CHANNEL_ID }}
                   CHECKOUT_PREVIOUS_SECRET_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_SECRET_KEY }}
@@ -61,4 +39,4 @@ jobs:
                   CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
                   CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
                   CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
-              run: vendor/bin/phpunit --verbose
+              run: .github/scripts/phpunit-in-docker.sh ${{ matrix.php-version }}

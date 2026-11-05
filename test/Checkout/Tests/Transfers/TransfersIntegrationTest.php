@@ -35,11 +35,11 @@ class TransfersIntegrationTest extends SandboxTestFixture
     {
         $transferSource = new TransferSource();
         $transferSource->id = "ent_kidtcgc3ge5unf4a5i6enhnr5m";
-        $transferSource->amount = 100;
+        $transferSource->amount = 1;
         $transferSource->currency = Currency::$GBP;
 
         $transferDestination = new TransferDestination();
-        $transferDestination->id = "ent_w4jelhppmfiufdnatam37wrfc4";
+        $transferDestination->id = "ent_ocw5i74vowfg2edpy66izhts2u";
 
         $transferRequest = new CreateTransferRequest();
         $transferRequest->transfer_type = TransferType::$commission;

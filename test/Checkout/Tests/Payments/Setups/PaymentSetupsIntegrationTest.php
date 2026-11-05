@@ -18,7 +18,6 @@ use Checkout\Payments\Setups\Common\Settings\Settings;
 use Checkout\Payments\Setups\Common\Customer\Customer;
 use Checkout\Payments\Setups\Common\Customer\Email;
 use Checkout\Payments\Setups\Common\Customer\Device;
-use Checkout\Payments\PaymentType;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 
@@ -147,7 +146,9 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $request->processing_channel_id = getenv("CHECKOUT_PROCESSING_CHANNEL_ID");
         $request->amount = 1000;
         $request->currency = Currency::$GBP;
-        $request->payment_type = PaymentType::$regular;
+        // Payment setups define payment_type in lower case. PaymentType::$regular is "Regular",
+        // the payments value, so the setup value is sent as the spec defines it.
+        $request->payment_type = "regular";
         $request->reference = "TEST-REF-" . substr(uniqid(), -6);
         $request->description = "Integration test payment setup";
 

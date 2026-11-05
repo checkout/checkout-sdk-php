@@ -3,35 +3,25 @@ name: build-release
 on:
     push:
         branches:
-            - master
+            - maintenance/4.3.x
         paths:
             - version.json
+
+permissions:
+    contents: write
 
 jobs:
     build:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v2
-
-            - name: Install PHP 7.1 from official repositories
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y php php-cli php-common php-curl php-json php-mbstring php-xml php-zip php-fileinfo
-
-            - name: Installed version
-              run: php -v
-
-            - name: Composer validate
-              run: composer validate
-
-            - name: Composer update with promises:^1.5
-              run: |
-                  composer remove guzzlehttp/promises --no-update
-                  composer require guzzlehttp/promises:^1.5 --no-update
-                  composer update --prefer-dist --no-interaction
-
-            - name: Run PHPUnit
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+              with:
+                  persist-credentials: false
+            # Workflows using a third-party setup action fail to start in this repository, and
+            # the runner image no longer ships these PHP versions, so the checks run in the
+            # official PHP image.
+            - name: Tests on PHP 7.1, the lowest supported (pull requests cover the rest)
               env:
                   CHECKOUT_PROCESSING_CHANNEL_ID: ${{ secrets.IT_CHECKOUT_PROCESSING_CHANNEL_ID }}
                   CHECKOUT_PREVIOUS_SECRET_KEY: ${{ secrets.IT_CHECKOUT_PREVIOUS_SECRET_KEY }}
@@ -47,23 +37,31 @@ jobs:
                   CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_ID }}
                   CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET: ${{ secrets.IT_CHECKOUT_DEFAULT_OAUTH_ISSUING_CLIENT_SECRET }}
                   CHECKOUT_MERCHANT_SUBDOMAIN: ${{ secrets.IT_CHECKOUT_MERCHANT_SUBDOMAIN }}
-              run: vendor/bin/phpunit --verbose
+              run: .github/scripts/phpunit-in-docker.sh 7.1
 
             - name: Read release version
               run: |
+                  set -euo pipefail
                   VERSION=$(cat version.json | grep -o '"version":\s*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"')
+                  # This branch only releases its own line; refuse anything else before tagging.
+                  if ! [[ "$VERSION" =~ ^4\.3\.[0-9]+$ ]]; then
+                      echo "version.json has '$VERSION', expected 4.3.x on this branch" >&2
+                      exit 1
+                  fi
                   echo "CURRENT_VERSION=$VERSION" >> $GITHUB_ENV
 
             - name: Print release version
               run: echo "Releasing $CURRENT_VERSION"
 
+            # Patch releases on a maintenance line must never become the repository's
+            # latest release, which stays on the current major.
             - name: Create GitHub release
-              uses: actions/create-release@v1
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  tag_name: ${{ env.CURRENT_VERSION }}
-                  release_name: ${{ env.CURRENT_VERSION }}
-                  body: ${{ github.event.head_commit.message }}
-                  draft: false
-                  prerelease: false
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  RELEASE_NOTES: ${{ github.event.head_commit.message }}
+              run: |
+                  gh release create "$CURRENT_VERSION" \
+                      --target "$GITHUB_SHA" \
+                      --title "$CURRENT_VERSION" \
+                      --notes "$RELEASE_NOTES" \
+                      --latest=false

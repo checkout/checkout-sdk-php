@@ -18,7 +18,6 @@ use Checkout\Payments\Setups\Common\Settings\Settings;
 use Checkout\Payments\Setups\Common\Customer\Customer;
 use Checkout\Payments\Setups\Common\Customer\Email;
 use Checkout\Payments\Setups\Common\Customer\Device;
-use Checkout\Payments\PaymentType;
 use Checkout\PlatformType;
 use Checkout\Tests\SandboxTestFixture;
 
@@ -53,8 +52,7 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $this->assertEquals($request->processing_channel_id, $response["processing_channel_id"]);
         $this->assertEquals($request->amount, $response["amount"]);
         $this->assertEquals($request->currency, $response["currency"]);
-        // The API returns payment_type in lower case; it accepts either case on requests.
-        $this->assertEquals(strtolower($request->payment_type), strtolower($response["payment_type"]));
+        $this->assertEquals($request->payment_type, $response["payment_type"]);
         $this->assertEquals($request->reference, $response["reference"]);
         $this->assertEquals($request->description, $response["description"]);
     }
@@ -103,8 +101,7 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $this->assertEquals($paymentSetupsRequest->processing_channel_id, $response["processing_channel_id"]);
         $this->assertEquals($paymentSetupsRequest->amount, $response["amount"]);
         $this->assertEquals($paymentSetupsRequest->currency, $response["currency"]);
-        // The API returns payment_type in lower case; it accepts either case on requests.
-        $this->assertEquals(strtolower($paymentSetupsRequest->payment_type), strtolower($response["payment_type"]));
+        $this->assertEquals($paymentSetupsRequest->payment_type, $response["payment_type"]);
         $this->assertEquals($paymentSetupsRequest->reference, $response["reference"]);
         $this->assertEquals($paymentSetupsRequest->description, $response["description"]);
     }
@@ -149,7 +146,9 @@ class PaymentSetupsIntegrationTest extends SandboxTestFixture
         $request->processing_channel_id = getenv("CHECKOUT_PROCESSING_CHANNEL_ID");
         $request->amount = 1000;
         $request->currency = Currency::$GBP;
-        $request->payment_type = PaymentType::$regular;
+        // Payment setups define payment_type in lower case. PaymentType::$regular is "Regular",
+        // the payments value, so the setup value is sent as the spec defines it.
+        $request->payment_type = "regular";
         $request->reference = "TEST-REF-" . substr(uniqid(), -6);
         $request->description = "Integration test payment setup";
 

@@ -39,6 +39,8 @@ As of **v5.0.0**, this SDK requires **PHP 8.1 or newer**. Support for PHP 7.1 an
 
 This change is required because the SDK now depends on `guzzlehttp/guzzle:^7.4` (and `guzzlehttp/promises:^2.0`), which require PHP 8.0+. Older Guzzle and PHPUnit releases that supported PHP 7.x are affected by security advisories that make them unsuitable for a payment SDK.
 
+As of **v6.10.0**, the minimum versions are `guzzlehttp/guzzle:^7.15.2` and `guzzlehttp/psr7:^2.12.3`.
+
 If you are still on PHP 7.x, remain on the latest `4.x` release until you can upgrade your runtime to PHP 8.1+.
 
 #### Composer

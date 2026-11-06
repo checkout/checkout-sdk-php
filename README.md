@@ -49,10 +49,10 @@ This is caused by older dependencies (e.g. guzzlehttp/promises:^1.x or phpunit/p
 composer require phpunit/phpunit:^9.5 --dev --with-all-dependencies
 ```
 
-And if you’re using PHP 8+ and no longer need to support PHP 7.1, you may also upgrade Guzzle:
+And if you’re using PHP 7.2.5+ and no longer need to support PHP 7.1, you may also upgrade Guzzle:
 
 ```bash
-composer require guzzlehttp/guzzle:^7.4 guzzlehttp/promises:^2.0 --with-all-dependencies
+composer require guzzlehttp/guzzle:^7.15.2 guzzlehttp/promises:^2.0 --with-all-dependencies
 ```
 
 These updates ensure compatibility with modern PHP versions but drop support for PHP 7.1.
@@ -144,6 +144,32 @@ $paymentsClient->refundPayment("payment_id");
 ### PHP Settings
 
 For operations that require file upload (Disputes or Marketplace) the configuration `extension=fileinfo` must be enabled in the `php.ini`. File paths passed to the SDK must be controlled by your application (e.g. from validated uploads); do not use paths taken directly from untrusted user input.
+
+### TLS certificate verification
+
+The SDK always verifies the TLS certificate of the Checkout.com API, using the CA bundle configured for PHP (`curl.cainfo` or `openssl.cafile` in `php.ini`). If your environment uses a custom CA bundle, for example behind a TLS-intercepting proxy, pass it through a custom HTTP client instead of disabling verification:
+
+```php
+use Checkout\HttpClientBuilderInterface;
+use GuzzleHttp\Client;
+
+class CustomCaHttpClientBuilder implements HttpClientBuilderInterface
+{
+    public function getClient()
+    {
+        return new Client(['verify' => '/path/to/ca-bundle.pem']);
+    }
+}
+
+$checkoutApi = CheckoutSdk::builder()->staticKeys()
+                    ->secretKey("secret_key")
+                    ->environment(Environment::sandbox())
+                    ->environmentSubdomain("subdomain")
+                    ->httpClientBuilder(new CustomCaHttpClientBuilder())
+                    ->build();
+```
+
+A `cURL error 60` means PHP cannot find a CA bundle that trusts the API certificate; fix the CA configuration rather than turning verification off.
 
 ## Exception handling
 

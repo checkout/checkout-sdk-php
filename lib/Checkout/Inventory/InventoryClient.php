@@ -5,6 +5,7 @@ namespace Checkout\Inventory;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Inventory\Requests\InventoryAdjustmentRequest;
@@ -92,11 +93,12 @@ class InventoryClient extends Client
      * @param string $reservationId (Required) - the reservation identifier
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getInventoryReservation(string $reservationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::INVENTORY_PATH, self::RESERVATIONS_PATH, $reservationId),
+            $this->buildPath(self::INVENTORY_PATH, self::RESERVATIONS_PATH, $this->encodePathSegment($reservationId)),
             $this->sdkAuthorization()
         );
     }
@@ -110,11 +112,17 @@ class InventoryClient extends Client
      * @param string $reservationId (Required) - the reservation identifier
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function commitInventoryReservation(string $reservationId): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::INVENTORY_PATH, self::RESERVATIONS_PATH, $reservationId, self::COMMIT_PATH),
+            $this->buildPath(
+                self::INVENTORY_PATH,
+                self::RESERVATIONS_PATH,
+                $this->encodePathSegment($reservationId),
+                self::COMMIT_PATH
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -129,11 +137,17 @@ class InventoryClient extends Client
      * @param string $reservationId (Required) - the reservation identifier
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function releaseInventoryReservation(string $reservationId): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::INVENTORY_PATH, self::RESERVATIONS_PATH, $reservationId, self::RELEASE_PATH),
+            $this->buildPath(
+                self::INVENTORY_PATH,
+                self::RESERVATIONS_PATH,
+                $this->encodePathSegment($reservationId),
+                self::RELEASE_PATH
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -149,12 +163,13 @@ class InventoryClient extends Client
      * @param string|null $expand (Optional) - pass "product" to embed product knowledge
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getInventoryLevels(string $variantId, ?string $expand = null): array
     {
-        $path = $this->buildPath(self::INVENTORY_PATH, $variantId);
+        $path = $this->buildPath(self::INVENTORY_PATH, $this->encodePathSegment($variantId));
         if (!empty($expand)) {
-            $path .= "?expand=" . urlencode($expand);
+            $path .= "?" . http_build_query(["expand" => $expand], "", "&", PHP_QUERY_RFC3986);
         }
         return $this->apiClient->get($path, $this->sdkAuthorization());
     }
@@ -171,13 +186,14 @@ class InventoryClient extends Client
      * @param InventorySetLevelsRequest $inventorySetLevelsRequest (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function setInventoryLevels(
         string $variantId,
         InventorySetLevelsRequest $inventorySetLevelsRequest
     ): array {
         return $this->apiClient->put(
-            $this->buildPath(self::INVENTORY_PATH, $variantId),
+            $this->buildPath(self::INVENTORY_PATH, $this->encodePathSegment($variantId)),
             $inventorySetLevelsRequest,
             $this->sdkAuthorization()
         );
@@ -192,11 +208,12 @@ class InventoryClient extends Client
      * @param string $variantId (Required) - the variant identifier
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getInventoryProduct(string $variantId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::INVENTORY_PATH, $variantId, self::PRODUCT_PATH),
+            $this->buildPath(self::INVENTORY_PATH, $this->encodePathSegment($variantId), self::PRODUCT_PATH),
             $this->sdkAuthorization()
         );
     }
@@ -212,13 +229,14 @@ class InventoryClient extends Client
      * @param InventorySetProductRequest $inventorySetProductRequest (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function setInventoryProduct(
         string $variantId,
         InventorySetProductRequest $inventorySetProductRequest
     ): array {
         return $this->apiClient->put(
-            $this->buildPath(self::INVENTORY_PATH, $variantId, self::PRODUCT_PATH),
+            $this->buildPath(self::INVENTORY_PATH, $this->encodePathSegment($variantId), self::PRODUCT_PATH),
             $inventorySetProductRequest,
             $this->sdkAuthorization()
         );
@@ -234,11 +252,12 @@ class InventoryClient extends Client
      * @param string $variantId (Required) - the variant identifier
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function deleteInventoryProduct(string $variantId): array
     {
         return $this->apiClient->delete(
-            $this->buildPath(self::INVENTORY_PATH, $variantId, self::PRODUCT_PATH),
+            $this->buildPath(self::INVENTORY_PATH, $this->encodePathSegment($variantId), self::PRODUCT_PATH),
             $this->sdkAuthorization()
         );
     }

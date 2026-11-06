@@ -5,6 +5,7 @@ namespace Checkout\Accounts;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Files\FilesClient;
@@ -76,11 +77,18 @@ class AccountsClient extends Client
      * @param string $paymentInstrumentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrievePaymentInstrumentDetails($entityId, $paymentInstrumentId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $paymentInstrumentId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYMENT_INSTRUMENTS_PATH,
+                $this->encodePathSegment($paymentInstrumentId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -90,11 +98,12 @@ class AccountsClient extends Client
      * @param string $schemaVersion The Accounts API schema version to request (default: latest, 3.0)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getEntity($entityId, $schemaVersion = self::DEFAULT_SCHEMA_VERSION)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId),
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $this->encodePathSegment($entityId)),
             $this->sdkAuthorization(),
             $this->buildSchemaVersionHeaders($schemaVersion)
         );
@@ -106,6 +115,7 @@ class AccountsClient extends Client
      * @param string $schemaVersion The Accounts API schema version to request (default: latest, 3.0)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateEntity(
         $entityId,
@@ -113,7 +123,7 @@ class AccountsClient extends Client
         $schemaVersion = self::DEFAULT_SCHEMA_VERSION
     ) {
         return $this->apiClient->put(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId),
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $this->encodePathSegment($entityId)),
             $entityRequest,
             $this->sdkAuthorization(),
             $this->buildSchemaVersionHeaders($schemaVersion)
@@ -125,12 +135,18 @@ class AccountsClient extends Client
      * @param AccountsPaymentInstrument $accountsPaymentInstrument
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      * @deprecated Use {@link createBankPaymentInstrument} instead
      */
     public function createPaymentInstrument($entityId, AccountsPaymentInstrument $accountsPaymentInstrument)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::INSTRUMENT_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::INSTRUMENT_PATH
+            ),
             $accountsPaymentInstrument,
             $this->sdkAuthorization()
         );
@@ -141,11 +157,17 @@ class AccountsClient extends Client
      * @param PaymentInstrumentRequest $instrumentRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function createBankPaymentInstrument($entityId, PaymentInstrumentRequest $instrumentRequest)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYMENT_INSTRUMENTS_PATH
+            ),
             $instrumentRequest,
             $this->sdkAuthorization()
         );
@@ -157,6 +179,7 @@ class AccountsClient extends Client
      * @param UpdatePaymentInstrumentRequest $instrumentRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateBankPaymentInstrumentDetails(
         $entityId,
@@ -166,7 +189,13 @@ class AccountsClient extends Client
         // The API reads the ETag only from the If-Match HTTP header and answers 428 without it, so the
         // request's headers are sent as HTTP headers.
         return $this->apiClient->patch(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $instrumentId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYMENT_INSTRUMENTS_PATH,
+                $this->encodePathSegment($instrumentId)
+            ),
             $instrumentRequest,
             $this->sdkAuthorization(),
             $instrumentRequest->headers
@@ -178,11 +207,17 @@ class AccountsClient extends Client
      * @param PaymentInstrumentsQuery $query
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function queryPaymentInstruments($entityId, PaymentInstrumentsQuery $query)
     {
         return $this->apiClient->query(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYMENT_INSTRUMENTS_PATH
+            ),
             $query,
             $this->sdkAuthorization()
         );
@@ -208,11 +243,17 @@ class AccountsClient extends Client
      * @param UpdateScheduleRequest $updateScheduleRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updatePayoutSchedule($entityId, $currency, UpdateScheduleRequest $updateScheduleRequest)
     {
         return $this->apiClient->put(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYOUT_SCHEDULES_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYOUT_SCHEDULES_PATH
+            ),
             [$currency => $updateScheduleRequest],
             $this->sdkAuthorization()
         );
@@ -222,11 +263,17 @@ class AccountsClient extends Client
      * @param string $entityId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrievePayoutSchedule($entityId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYOUT_SCHEDULES_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYOUT_SCHEDULES_PATH
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -239,11 +286,17 @@ class AccountsClient extends Client
      * @param string $entityId The ID of the sub-entity (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getSubEntityMembers($entityId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::MEMBERS_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::MEMBERS_PATH
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -257,11 +310,18 @@ class AccountsClient extends Client
      * @param string $userId The ID of the invited user (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function reinviteSubEntityMember($entityId, $userId)
     {
         return $this->apiClient->put(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::MEMBERS_PATH, $userId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::MEMBERS_PATH,
+                $this->encodePathSegment($userId)
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -276,11 +336,17 @@ class AccountsClient extends Client
      * @param CreateReserveRuleRequest $createRequest The create request
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function createReserveRule($entityId, CreateReserveRuleRequest $createRequest)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::RESERVE_RULES_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::RESERVE_RULES_PATH
+            ),
             $createRequest,
             $this->sdkAuthorization()
         );
@@ -294,11 +360,17 @@ class AccountsClient extends Client
      * @param string $entityId The sub-entity's ID (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getReserveRules($entityId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::RESERVE_RULES_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::RESERVE_RULES_PATH
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -312,11 +384,18 @@ class AccountsClient extends Client
      * @param string $reserveRuleId The reserve rule ID (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getReserveRuleDetails($entityId, $reserveRuleId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::RESERVE_RULES_PATH, $reserveRuleId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::RESERVE_RULES_PATH,
+                $this->encodePathSegment($reserveRuleId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -332,6 +411,7 @@ class AccountsClient extends Client
      * @param UpdateReserveRuleRequest $updateRequest The update request (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateReserveRule($entityId, $reserveRuleId, $etag, UpdateReserveRuleRequest $updateRequest)
     {
@@ -342,7 +422,13 @@ class AccountsClient extends Client
         }
         
         return $this->apiClient->put(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::RESERVE_RULES_PATH, $reserveRuleId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::RESERVE_RULES_PATH,
+                $this->encodePathSegment($reserveRuleId)
+            ),
             $updateRequest,
             $this->sdkAuthorization(),
             $headers
@@ -358,11 +444,12 @@ class AccountsClient extends Client
      * @param UploadFileRequest $fileRequest The file upload request (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function uploadFile($entityId, UploadFileRequest $fileRequest)
     {
         return $this->filesApiClient->post(
-            $this->buildPath(self::ENTITIES_PATH, $entityId, self::FILES_PATH),
+            $this->buildPath(self::ENTITIES_PATH, $this->encodePathSegment($entityId), self::FILES_PATH),
             $fileRequest,
             $this->sdkAuthorization()
         );
@@ -377,11 +464,17 @@ class AccountsClient extends Client
      * @param string $fileId The file ID (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveFile($entityId, $fileId)
     {
         return $this->filesApiClient->get(
-            $this->buildPath(self::ENTITIES_PATH, $entityId, self::FILES_PATH, $fileId),
+            $this->buildPath(
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::FILES_PATH,
+                $this->encodePathSegment($fileId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -395,11 +488,17 @@ class AccountsClient extends Client
      * @param string $schemaVersion The Accounts API schema version to request (default: latest, 3.0)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getEntityRequirements($entityId, $schemaVersion = self::DEFAULT_SCHEMA_VERSION)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::REQUIREMENTS_PATH
+            ),
             $this->sdkAuthorization(),
             $this->buildSchemaVersionHeaders($schemaVersion)
         );
@@ -414,11 +513,18 @@ class AccountsClient extends Client
      * @param string $requirementId The requirement ID (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getEntityRequirementDetails($entityId, $requirementId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH, $requirementId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::REQUIREMENTS_PATH,
+                $this->encodePathSegment($requirementId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -433,11 +539,18 @@ class AccountsClient extends Client
      * @param EntityRequirementUpdateRequest $request The requirement resolution request (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function resolveEntityRequirement($entityId, $requirementId, EntityRequirementUpdateRequest $request)
     {
         return $this->apiClient->put(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_PATH, $requirementId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::REQUIREMENTS_PATH,
+                $this->encodePathSegment($requirementId)
+            ),
             $request,
             $this->sdkAuthorization()
         );

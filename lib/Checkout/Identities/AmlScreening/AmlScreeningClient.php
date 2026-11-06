@@ -5,6 +5,7 @@ namespace Checkout\Identities\AmlScreening;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Identities\AmlScreening\Requests\AmlScreeningRequest;
@@ -38,11 +39,12 @@ class AmlScreeningClient extends Client
      * @param string $amlVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getAmlScreening(string $amlVerificationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::AML_VERIFICATIONS_PATH, $amlVerificationId),
+            $this->buildPath(self::AML_VERIFICATIONS_PATH, $this->encodePathSegment($amlVerificationId)),
             $this->sdkAuthorization()
         );
     }

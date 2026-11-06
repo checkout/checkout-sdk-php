@@ -5,6 +5,7 @@ namespace Checkout\Identities\FaceAuthentication;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Identities\Entities\AttemptsQueryFilter;
@@ -44,11 +45,12 @@ class FaceAuthenticationClient extends Client
      * @param string $faceAuthenticationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getFaceAuthentication(string $faceAuthenticationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId),
+            $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $this->encodePathSegment($faceAuthenticationId)),
             $this->sdkAuthorization()
         );
     }
@@ -59,11 +61,16 @@ class FaceAuthenticationClient extends Client
      * @param string $faceAuthenticationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function anonymizeFaceAuthentication(string $faceAuthenticationId): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ANONYMIZE_PATH),
+            $this->buildPath(
+                self::FACE_AUTHENTICATIONS_PATH,
+                $this->encodePathSegment($faceAuthenticationId),
+                self::ANONYMIZE_PATH
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -76,13 +83,18 @@ class FaceAuthenticationClient extends Client
      * @param FaceAuthenticationAttemptRequest $faceAuthenticationAttemptRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function createFaceAuthenticationAttempt(
         string $faceAuthenticationId,
         FaceAuthenticationAttemptRequest $faceAuthenticationAttemptRequest
     ): array {
         return $this->apiClient->post(
-            $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ATTEMPTS_PATH),
+            $this->buildPath(
+                self::FACE_AUTHENTICATIONS_PATH,
+                $this->encodePathSegment($faceAuthenticationId),
+                self::ATTEMPTS_PATH
+            ),
             $faceAuthenticationAttemptRequest,
             $this->sdkAuthorization()
         );
@@ -99,13 +111,18 @@ class FaceAuthenticationClient extends Client
      * @param AttemptsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getFaceAuthenticationAttempts(
         string $faceAuthenticationId,
         ?AttemptsQueryFilter $query = null
     ): array {
         return $this->apiClient->query(
-            $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ATTEMPTS_PATH),
+            $this->buildPath(
+                self::FACE_AUTHENTICATIONS_PATH,
+                $this->encodePathSegment($faceAuthenticationId),
+                self::ATTEMPTS_PATH
+            ),
             $query,
             $this->sdkAuthorization()
         );
@@ -119,11 +136,17 @@ class FaceAuthenticationClient extends Client
      * @param string $attemptId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getFaceAuthenticationAttempt(string $faceAuthenticationId, string $attemptId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ATTEMPTS_PATH, $attemptId),
+            $this->buildPath(
+                self::FACE_AUTHENTICATIONS_PATH,
+                $this->encodePathSegment($faceAuthenticationId),
+                self::ATTEMPTS_PATH,
+                $this->encodePathSegment($attemptId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -142,6 +165,7 @@ class FaceAuthenticationClient extends Client
      * @param AttemptAssetsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getFaceAuthenticationAttemptAssets(
         string $faceAuthenticationId,
@@ -149,7 +173,13 @@ class FaceAuthenticationClient extends Client
         ?AttemptAssetsQueryFilter $query = null
     ): array {
         return $this->apiClient->query(
-            $this->buildPath(self::FACE_AUTHENTICATIONS_PATH, $faceAuthenticationId, self::ATTEMPTS_PATH, $attemptId, self::ASSETS_PATH),
+            $this->buildPath(
+                self::FACE_AUTHENTICATIONS_PATH,
+                $this->encodePathSegment($faceAuthenticationId),
+                self::ATTEMPTS_PATH,
+                $this->encodePathSegment($attemptId),
+                self::ASSETS_PATH
+            ),
             $query,
             $this->sdkAuthorization()
         );

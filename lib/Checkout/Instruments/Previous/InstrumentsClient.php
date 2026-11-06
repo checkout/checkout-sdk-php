@@ -5,6 +5,7 @@ namespace Checkout\Instruments\Previous;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -31,10 +32,14 @@ class InstrumentsClient extends Client
      * @param $instrumentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function get($instrumentId): array
     {
-        return $this->apiClient->get($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::INSTRUMENTS_PATH,
+            $this->encodePathSegment($instrumentId)
+        ), $this->sdkAuthorization());
     }
 
     /**
@@ -42,20 +47,28 @@ class InstrumentsClient extends Client
      * @param UpdateInstrumentRequest $updateInstrumentRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function update($instrumentId, UpdateInstrumentRequest $updateInstrumentRequest): array
     {
-        return $this->apiClient->patch($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $updateInstrumentRequest, $this->sdkAuthorization());
+        return $this->apiClient->patch($this->buildPath(
+            self::INSTRUMENTS_PATH,
+            $this->encodePathSegment($instrumentId)
+        ), $updateInstrumentRequest, $this->sdkAuthorization());
     }
 
     /**
      * @param $instrumentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function delete($instrumentId): array
     {
-        return $this->apiClient->delete($this->buildPath(self::INSTRUMENTS_PATH, $instrumentId), $this->sdkAuthorization());
+        return $this->apiClient->delete($this->buildPath(
+            self::INSTRUMENTS_PATH,
+            $this->encodePathSegment($instrumentId)
+        ), $this->sdkAuthorization());
     }
 
 }

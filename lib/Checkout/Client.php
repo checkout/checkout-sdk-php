@@ -49,6 +49,25 @@ abstract class Client
     }
 
     /**
+     * Encodes a caller-supplied value (an id or a name) as a single path segment for buildPath.
+     * Path constants are passed to buildPath unchanged.
+     *
+     * @param string|int $segment the value to place in the path
+     * @return string the value percent-encoded as defined in RFC 3986
+     * @throws CheckoutArgumentException if the value is not a string or an integer, or is empty, "." or ".."
+     */
+    protected function encodePathSegment($segment)
+    {
+        if (is_int($segment)) {
+            $segment = (string)$segment;
+        }
+        if (!is_string($segment) || $segment === "" || $segment === "." || $segment === "..") {
+            throw new CheckoutArgumentException("invalid path segment");
+        }
+        return rawurlencode($segment);
+    }
+
+    /**
      * Convert request object to form-urlencoded string
      *
      * @param $request

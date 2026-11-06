@@ -5,6 +5,7 @@ namespace Checkout\Events\Previous;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -28,7 +29,7 @@ class EventsClient extends Client
     {
         $path = "event-types";
         if (!empty($version)) {
-            $path = $path . "?version=" . $version;
+            $path = "event-types?" . http_build_query(["version" => $version], "", "&", PHP_QUERY_RFC3986);
         }
         return $this->apiClient->get($path, $this->sdkAuthorization());
     }
@@ -37,6 +38,7 @@ class EventsClient extends Client
      * @param RetrieveEventsRequest|null $eventsRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveEvents(?RetrieveEventsRequest $eventsRequest = null): array
     {
@@ -47,10 +49,14 @@ class EventsClient extends Client
      * @param string $eventId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveEvent(string $eventId): array
     {
-        return $this->apiClient->get($this->buildPath(self::EVENTS_PATH, $eventId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::EVENTS_PATH,
+            $this->encodePathSegment($eventId)
+        ), $this->sdkAuthorization());
     }
 
     /**
@@ -58,11 +64,16 @@ class EventsClient extends Client
      * @param string $notificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveEventNotification(string $eventId, string $notificationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::EVENTS_PATH, $eventId, $notificationId),
+            $this->buildPath(
+                self::EVENTS_PATH,
+                $this->encodePathSegment($eventId),
+                $this->encodePathSegment($notificationId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -72,14 +83,15 @@ class EventsClient extends Client
      * @param string $webhookId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retryWebhook(string $eventId, string $webhookId): array
     {
         return $this->apiClient->post($this->buildPath(
             self::EVENTS_PATH,
-            $eventId,
+            $this->encodePathSegment($eventId),
             self::WEBHOOKS_PATH,
-            $webhookId,
+            $this->encodePathSegment($webhookId),
             self::RETRY_PATH
         ), null, $this->sdkAuthorization());
     }
@@ -88,12 +100,13 @@ class EventsClient extends Client
      * @param $eventId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retryAllWebhooks($eventId)
     {
         return $this->apiClient->post($this->buildPath(
             self::EVENTS_PATH,
-            $eventId,
+            $this->encodePathSegment($eventId),
             self::WEBHOOKS_PATH,
             self::RETRY_PATH
         ), null, $this->sdkAuthorization());

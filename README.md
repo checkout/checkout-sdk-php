@@ -121,6 +121,32 @@ $paymentsClient->refundPayment("payment_id");
 
 For operations that require file upload (Disputes or Marketplace) the configuration `extension=fileinfo` must be enabled in the `php.ini`.
 
+### TLS certificate verification
+
+The SDK always verifies the TLS certificate of the Checkout.com API, using the CA bundle configured for PHP (`curl.cainfo` or `openssl.cafile` in `php.ini`). If your environment uses a custom CA bundle, for example behind a TLS-intercepting proxy, pass it through a custom HTTP client instead of disabling verification:
+
+```php
+use Checkout\HttpClientBuilderInterface;
+use GuzzleHttp\Client;
+
+class CustomCaHttpClientBuilder implements HttpClientBuilderInterface
+{
+    public function getClient()
+    {
+        return new Client(['verify' => '/path/to/ca-bundle.pem']);
+    }
+}
+
+$checkoutApi = CheckoutSdk::builder()->staticKeys()
+                    ->secretKey("secret_key")
+                    ->environment(Environment::sandbox())
+                    ->environmentSubdomain("subdomain")
+                    ->httpClientBuilder(new CustomCaHttpClientBuilder())
+                    ->build();
+```
+
+A `cURL error 60` means PHP cannot find a CA bundle that trusts the API certificate; fix the CA configuration rather than turning verification off.
+
 ## Exception handling
 
 All the API responses that do not fall in the 2** status codes, the SDK will throw a `CheckoutApiException`.

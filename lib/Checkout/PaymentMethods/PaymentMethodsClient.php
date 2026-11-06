@@ -5,6 +5,7 @@ namespace Checkout\PaymentMethods;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -27,6 +28,7 @@ class PaymentMethodsClient extends Client
      * @param PaymentMethodsQuery $query Query parameters including processing_channel_id (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getAvailablePaymentMethods(PaymentMethodsQuery $query): array
     {

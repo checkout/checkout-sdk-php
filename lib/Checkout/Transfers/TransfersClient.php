@@ -5,6 +5,7 @@ namespace Checkout\Transfers;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -37,11 +38,12 @@ class TransfersClient extends Client
      * @param $transferId string
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveATransfer($transferId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::TRANSFERS_PATH, $transferId),
+            $this->buildPath(self::TRANSFERS_PATH, $this->encodePathSegment($transferId)),
             $this->sdkAuthorization()
         );
     }

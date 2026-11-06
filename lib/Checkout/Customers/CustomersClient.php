@@ -3,6 +3,7 @@
 namespace Checkout\Customers;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\Client;
 
 class CustomersClient extends Client
@@ -13,10 +14,14 @@ class CustomersClient extends Client
      * @param $customerId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function get($customerId)
     {
-        return $this->apiClient->get($this->buildPath(self::CUSTOMERS_PATH, $customerId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::CUSTOMERS_PATH,
+            $this->encodePathSegment($customerId)
+        ), $this->sdkAuthorization());
     }
 
     /**
@@ -34,19 +39,27 @@ class CustomersClient extends Client
      * @param CustomerRequest $customerRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function update($customerId, CustomerRequest $customerRequest)
     {
-        return $this->apiClient->patch($this->buildPath(self::CUSTOMERS_PATH, $customerId), $customerRequest, $this->sdkAuthorization());
+        return $this->apiClient->patch($this->buildPath(
+            self::CUSTOMERS_PATH,
+            $this->encodePathSegment($customerId)
+        ), $customerRequest, $this->sdkAuthorization());
     }
 
     /**
      * @param $customerId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function delete($customerId)
     {
-        return $this->apiClient->delete($this->buildPath(self::CUSTOMERS_PATH, $customerId), $this->sdkAuthorization());
+        return $this->apiClient->delete($this->buildPath(
+            self::CUSTOMERS_PATH,
+            $this->encodePathSegment($customerId)
+        ), $this->sdkAuthorization());
     }
 }

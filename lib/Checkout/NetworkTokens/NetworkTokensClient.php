@@ -5,6 +5,7 @@ namespace Checkout\NetworkTokens;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\NetworkTokens\Requests\ProvisionNetworkTokenRequest;
@@ -51,11 +52,12 @@ class NetworkTokensClient extends Client
      * @param string $networkTokenId (Required) - Unique token ID assigned by Checkout.com for each token
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getNetworkToken(string $networkTokenId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::NETWORK_TOKENS_PATH, $networkTokenId),
+            $this->buildPath(self::NETWORK_TOKENS_PATH, $this->encodePathSegment($networkTokenId)),
             $this->sdkAuthorization()
         );
     }
@@ -69,13 +71,18 @@ class NetworkTokensClient extends Client
      * @param RequestCryptogramRequest $requestCryptogramRequest (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function requestCryptogram(
         string $networkTokenId,
         RequestCryptogramRequest $requestCryptogramRequest
     ): array {
         return $this->apiClient->post(
-            $this->buildPath(self::NETWORK_TOKENS_PATH, $networkTokenId, self::CRYPTOGRAMS_PATH),
+            $this->buildPath(
+                self::NETWORK_TOKENS_PATH,
+                $this->encodePathSegment($networkTokenId),
+                self::CRYPTOGRAMS_PATH
+            ),
             $requestCryptogramRequest,
             $this->sdkAuthorization()
         );
@@ -91,13 +98,14 @@ class NetworkTokensClient extends Client
      * @param DeleteNetworkTokenRequest $deleteNetworkTokenRequest (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function deleteNetworkToken(
         string $networkTokenId,
         DeleteNetworkTokenRequest $deleteNetworkTokenRequest
     ): array {
         return $this->apiClient->patch(
-            $this->buildPath(self::NETWORK_TOKENS_PATH, $networkTokenId, self::DELETE_PATH),
+            $this->buildPath(self::NETWORK_TOKENS_PATH, $this->encodePathSegment($networkTokenId), self::DELETE_PATH),
             $deleteNetworkTokenRequest,
             $this->sdkAuthorization()
         );

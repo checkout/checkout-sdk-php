@@ -5,6 +5,7 @@ namespace Checkout\Forward;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Forward\Requests\ForwardRequest;
@@ -47,11 +48,12 @@ class ForwardClient extends Client
      * @param $forwardId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getForwardRequest($forwardId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::FORWARD_PATH, $forwardId),
+            $this->buildPath(self::FORWARD_PATH, $this->encodePathSegment($forwardId)),
             $this->sdkAuthorization()
         );
     }
@@ -96,11 +98,12 @@ class ForwardClient extends Client
      * @param UpdateSecretRequest $updateSecretRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateSecret(string $name, UpdateSecretRequest $updateSecretRequest): array
     {
         return $this->apiClient->patch(
-            $this->buildPath(self::SECRETS_PATH, $name),
+            $this->buildPath(self::SECRETS_PATH, $this->encodePathSegment($name)),
             $updateSecretRequest,
             $this->sdkAuthorization()
         );
@@ -113,11 +116,12 @@ class ForwardClient extends Client
      * @param string $name Secret name
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function deleteSecret(string $name): array
     {
         return $this->apiClient->delete(
-            $this->buildPath(self::SECRETS_PATH, $name),
+            $this->buildPath(self::SECRETS_PATH, $this->encodePathSegment($name)),
             $this->sdkAuthorization()
         );
     }

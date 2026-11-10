@@ -14,6 +14,7 @@ class PaymentSessionsClient extends Client
 
     const PAYMENT_SESSIONS = "payment-sessions";
     const SUBMIT = "submit";
+    const COMPLETE = "complete";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -37,7 +38,11 @@ class PaymentSessionsClient extends Client
      */
     public function completePaymentSession(PaymentSessionCompleteRequest $paymentSessionCompleteRequest)
     {
-        return $this->apiClient->post(self::PAYMENT_SESSIONS . "/complete", $paymentSessionCompleteRequest, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath(self::PAYMENT_SESSIONS, self::COMPLETE),
+            $paymentSessionCompleteRequest,
+            $this->sdkAuthorization()
+        );
     }
 
     /**

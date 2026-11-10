@@ -14,6 +14,7 @@ use Checkout\HttpClientBuilderInterface;
 use Checkout\Instruments\Get\BankAccountFieldQuery;
 use Checkout\Instruments\InstrumentsClient;
 use Checkout\Inventory\InventoryClient;
+use Checkout\Payments\Sessions\PaymentSessionCompleteRequest;
 use Checkout\Payments\Sessions\PaymentSessionsClient;
 use Checkout\Payments\Sessions\PaymentSessionSubmitRequest;
 use Checkout\PlatformType;
@@ -112,6 +113,20 @@ class RequestBuildingTest extends MockeryTestCase
 
         $request = $this->onlyRequest();
         $this->assertSame("/payment-sessions/ps_1%3Fz%3D1%23w/submit", $request->getUri()->getPath());
+        $this->assertSame("", $request->getUri()->getQuery());
+    }
+
+    /**
+     * @test
+     */
+    public function completePaymentSessionPathIsBuiltFromConstants()
+    {
+        $client = new PaymentSessionsClient($this->apiClient, $this->configuration);
+
+        $client->completePaymentSession(new PaymentSessionCompleteRequest());
+
+        $request = $this->onlyRequest();
+        $this->assertSame("/payment-sessions/complete", $request->getUri()->getPath());
         $this->assertSame("", $request->getUri()->getQuery());
     }
 
@@ -446,6 +461,9 @@ class RequestBuildingTest extends MockeryTestCase
             'getencodedqueryparameters' => ['AbstractQueryFilter.php', 'BankAccountFieldQuery.php'],
         ];
         $offending = [];
+        // Allowlist entries that matched code; an entry that matches nothing is reported too, so a
+        // stale entry cannot let a new use through.
+        $usedEntries = [];
         $calls = 0;
         $requests = 0;
         foreach ($files as $file) {
@@ -473,9 +491,13 @@ class RequestBuildingTest extends MockeryTestCase
                 if ($token[0] === T_CONSTANT_ENCAPSED_STRING
                     && preg_match('/[\/?=&#]/', substr($token[1], 1, -1)) === 1
                     && $this->concatenatedWithVariable($tokens, $i)
-                    && !in_array($fileName . ' ' . $token[1], $notUrlOrAlreadyEncoded, true)
                 ) {
-                    $offending[] = $fileName . ':' . $token[2] . ' ' . $token[1] . ' concatenated with a variable';
+                    $entry = $fileName . ' ' . $token[1];
+                    if (in_array($entry, $notUrlOrAlreadyEncoded, true)) {
+                        $usedEntries[$entry] = true;
+                    } else {
+                        $offending[] = $fileName . ':' . $token[2] . ' ' . $token[1] . ' concatenated with a variable';
+                    }
                 }
                 if ($token[0] === T_ENCAPSED_AND_WHITESPACE && preg_match('/[\/?=&#]/', $token[1]) === 1) {
                     $offending[] = $fileName . ':' . $token[2] . ' interpolated string ' . $token[1];
@@ -521,9 +543,12 @@ class RequestBuildingTest extends MockeryTestCase
                 }
                 if ($token[0] === T_STRING && $this->isTokenOf($tokens, $i - 1, T_FUNCTION)
                     && isset($ownedFunctions[strtolower($token[1])])
-                    && !in_array($fileName, $ownedFunctions[strtolower($token[1])], true)
                 ) {
-                    $offending[] = $fileName . ':' . $token[2] . ' declares ' . $token[1];
+                    if (in_array($fileName, $ownedFunctions[strtolower($token[1])], true)) {
+                        $usedEntries[strtolower($token[1]) . ' ' . $fileName] = true;
+                    } else {
+                        $offending[] = $fileName . ':' . $token[2] . ' declares ' . $token[1];
+                    }
                 }
                 if ($token[0] === T_STRING && isset($tokens[$i + 1]) && $tokens[$i + 1] === '('
                     && in_array(strtolower($token[1]), $stringBuilders, true)
@@ -532,7 +557,9 @@ class RequestBuildingTest extends MockeryTestCase
                     && !$this->isTokenOf($tokens, $i - 1, T_FUNCTION)
                 ) {
                     $use = $fileName . ' ' . strtolower($token[1]);
-                    if (!in_array($use, $allowedStringBuilders, true)) {
+                    if (in_array($use, $allowedStringBuilders, true)) {
+                        $usedEntries[$use] = true;
+                    } else {
                         $offending[] = $fileName . ':' . $token[2] . ' ' . $token[1] . '()';
                     }
                 }
@@ -542,6 +569,13 @@ class RequestBuildingTest extends MockeryTestCase
         $this->assertGreaterThan(200, $calls);
         $this->assertGreaterThan(250, $requests);
         $this->assertSame([], $offending);
+        $entries = array_merge($notUrlOrAlreadyEncoded, $allowedStringBuilders);
+        foreach ($ownedFunctions as $function => $owners) {
+            foreach ($owners as $owner) {
+                $entries[] = $function . ' ' . $owner;
+            }
+        }
+        $this->assertSame([], array_values(array_diff($entries, array_keys($usedEntries))));
     }
 
     /**

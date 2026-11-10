@@ -5,6 +5,7 @@ namespace Checkout\Webhooks\Previous;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -30,10 +31,14 @@ class WebhooksClient extends Client
      * @param $webhookId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveWebhook($webhookId)
     {
-        return $this->apiClient->get($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::WEBHOOKS_PATH,
+            $this->encodePathSegment($webhookId)
+        ), $this->sdkAuthorization());
     }
 
     /**
@@ -52,10 +57,14 @@ class WebhooksClient extends Client
      * @param WebhookRequest $webhookRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateWebhook($webhookId, WebhookRequest $webhookRequest)
     {
-        return $this->apiClient->put($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $webhookRequest, $this->sdkAuthorization());
+        return $this->apiClient->put($this->buildPath(
+            self::WEBHOOKS_PATH,
+            $this->encodePathSegment($webhookId)
+        ), $webhookRequest, $this->sdkAuthorization());
     }
 
     /**
@@ -63,20 +72,28 @@ class WebhooksClient extends Client
      * @param WebhookRequest $webhookRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function patchWebhook($webhookId, WebhookRequest $webhookRequest)
     {
-        return $this->apiClient->patch($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $webhookRequest, $this->sdkAuthorization());
+        return $this->apiClient->patch($this->buildPath(
+            self::WEBHOOKS_PATH,
+            $this->encodePathSegment($webhookId)
+        ), $webhookRequest, $this->sdkAuthorization());
     }
 
     /**
      * @param $webhookId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function removeWebhook($webhookId)
     {
-        return $this->apiClient->delete($this->buildPath(self::WEBHOOKS_PATH, $webhookId), $this->sdkAuthorization());
+        return $this->apiClient->delete($this->buildPath(
+            self::WEBHOOKS_PATH,
+            $this->encodePathSegment($webhookId)
+        ), $this->sdkAuthorization());
     }
 
 }

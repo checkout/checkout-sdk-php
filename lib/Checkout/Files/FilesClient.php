@@ -3,6 +3,7 @@
 namespace Checkout\Files;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\Client;
 
 class FilesClient extends Client
@@ -30,10 +31,14 @@ class FilesClient extends Client
      * @param $fileId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getFileDetails($fileId)
     {
-        return $this->apiClient->get($this->buildPath(self::FILES_PATH, $fileId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::FILES_PATH,
+            $this->encodePathSegment($fileId)
+        ), $this->sdkAuthorization());
     }
 
     /**

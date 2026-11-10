@@ -5,6 +5,7 @@ namespace Checkout\Reports;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -22,6 +23,7 @@ class ReportsClient extends Client
      * @param ReportsQuery $filter
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getAllReports(ReportsQuery $filter)
     {
@@ -32,10 +34,14 @@ class ReportsClient extends Client
      * @param $reportId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getReportDetails($reportId)
     {
-        return $this->apiClient->get($this->buildPath(self::REPORTS_PATH, $reportId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::REPORTS_PATH,
+            $this->encodePathSegment($reportId)
+        ), $this->sdkAuthorization());
     }
 
     /**
@@ -43,9 +49,15 @@ class ReportsClient extends Client
      * @param $fileId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getReportFile($reportId, $fileId)
     {
-        return $this->apiClient->get($this->buildPath(self::REPORTS_PATH, $reportId, self::FILES_PATH, $fileId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::REPORTS_PATH,
+            $this->encodePathSegment($reportId),
+            self::FILES_PATH,
+            $this->encodePathSegment($fileId)
+        ), $this->sdkAuthorization());
     }
 }

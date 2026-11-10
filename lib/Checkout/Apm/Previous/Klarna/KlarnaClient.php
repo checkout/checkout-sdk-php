@@ -5,6 +5,7 @@ namespace Checkout\Apm\Previous\Klarna;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Payments\VoidRequest;
@@ -39,13 +40,14 @@ class KlarnaClient extends Client
      * @param $sessionId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getCreditSession($sessionId)
     {
         return $this->apiClient->get($this->buildPath(
             $this->getBaseUrl(),
             self::CREDIT_SESSIONS_PATH,
-            $sessionId
+            $this->encodePathSegment($sessionId)
         ), $this->sdkAuthorization());
     }
 
@@ -54,11 +56,17 @@ class KlarnaClient extends Client
      * @param OrderCaptureRequest $orderCaptureRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function capturePayment($paymentId, OrderCaptureRequest $orderCaptureRequest)
     {
         return $this->apiClient->post(
-            $this->buildPath($this->getBaseUrl(), self::ORDERS_PATH, $paymentId, self::CAPTURES_PATH),
+            $this->buildPath(
+                $this->getBaseUrl(),
+                self::ORDERS_PATH,
+                $this->encodePathSegment($paymentId),
+                self::CAPTURES_PATH
+            ),
             $orderCaptureRequest,
             $this->sdkAuthorization()
         );
@@ -69,11 +77,17 @@ class KlarnaClient extends Client
      * @param VoidRequest $voidRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function voidPayment($paymentId, VoidRequest $voidRequest)
     {
         return $this->apiClient->post(
-            $this->buildPath($this->getBaseUrl(), self::ORDERS_PATH, $paymentId, self::VOIDS_PATH),
+            $this->buildPath(
+                $this->getBaseUrl(),
+                self::ORDERS_PATH,
+                $this->encodePathSegment($paymentId),
+                self::VOIDS_PATH
+            ),
             $voidRequest,
             $this->sdkAuthorization()
         );

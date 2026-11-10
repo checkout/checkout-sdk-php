@@ -5,6 +5,7 @@ namespace Checkout\Accounts;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Files\FilesClient;
@@ -48,11 +49,18 @@ class AccountsClient extends Client
      * @param string $paymentInstrumentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrievePaymentInstrumentDetails($entityId, $paymentInstrumentId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $paymentInstrumentId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYMENT_INSTRUMENTS_PATH,
+                $this->encodePathSegment($paymentInstrumentId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -61,11 +69,12 @@ class AccountsClient extends Client
      * @param $entityId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getEntity($entityId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId),
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $this->encodePathSegment($entityId)),
             $this->sdkAuthorization()
         );
     }
@@ -75,11 +84,12 @@ class AccountsClient extends Client
      * @param OnboardEntityRequest $entityRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateEntity($entityId, OnboardEntityRequest $entityRequest)
     {
         return $this->apiClient->put(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId),
+            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $this->encodePathSegment($entityId)),
             $entityRequest,
             $this->sdkAuthorization()
         );
@@ -90,12 +100,18 @@ class AccountsClient extends Client
      * @param AccountsPaymentInstrument $accountsPaymentInstrument
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      * @deprecated Use {@link createBankPaymentInstrument} instead
      */
     public function createPaymentInstrument($entityId, AccountsPaymentInstrument $accountsPaymentInstrument)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::INSTRUMENT_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::INSTRUMENT_PATH
+            ),
             $accountsPaymentInstrument,
             $this->sdkAuthorization()
         );
@@ -106,11 +122,17 @@ class AccountsClient extends Client
      * @param PaymentInstrumentRequest $instrumentRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function createBankPaymentInstrument($entityId, PaymentInstrumentRequest $instrumentRequest)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYMENT_INSTRUMENTS_PATH
+            ),
             $instrumentRequest,
             $this->sdkAuthorization()
         );
@@ -122,6 +144,7 @@ class AccountsClient extends Client
      * @param UpdatePaymentInstrumentRequest $instrumentRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateBankPaymentInstrumentDetails(
         $entityId,
@@ -129,7 +152,13 @@ class AccountsClient extends Client
         UpdatePaymentInstrumentRequest $instrumentRequest
     ) {
         return $this->apiClient->patch(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH, $instrumentId),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYMENT_INSTRUMENTS_PATH,
+                $this->encodePathSegment($instrumentId)
+            ),
             $instrumentRequest,
             $this->sdkAuthorization()
         );
@@ -140,11 +169,17 @@ class AccountsClient extends Client
      * @param PaymentInstrumentsQuery $query
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function queryPaymentInstruments($entityId, PaymentInstrumentsQuery $query)
     {
         return $this->apiClient->query(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYMENT_INSTRUMENTS_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYMENT_INSTRUMENTS_PATH
+            ),
             $query,
             $this->sdkAuthorization()
         );
@@ -170,11 +205,17 @@ class AccountsClient extends Client
      * @param UpdateScheduleRequest $updateScheduleRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updatePayoutSchedule($entityId, $currency, UpdateScheduleRequest $updateScheduleRequest)
     {
         return $this->apiClient->put(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYOUT_SCHEDULES_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYOUT_SCHEDULES_PATH
+            ),
             [$currency => $updateScheduleRequest],
             $this->sdkAuthorization()
         );
@@ -184,11 +225,17 @@ class AccountsClient extends Client
      * @param string $entityId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrievePayoutSchedule($entityId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ACCOUNTS_PATH, self::ENTITIES_PATH, $entityId, self::PAYOUT_SCHEDULES_PATH),
+            $this->buildPath(
+                self::ACCOUNTS_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::PAYOUT_SCHEDULES_PATH
+            ),
             $this->sdkAuthorization()
         );
     }

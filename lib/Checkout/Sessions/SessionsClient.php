@@ -5,6 +5,7 @@ namespace Checkout\Sessions;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutAuthorizationException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
@@ -45,11 +46,12 @@ class SessionsClient extends Client
      * @return array
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
      */
     public function getSessionDetails(string $sessionId, ?string $sessionSecret = null): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::SESSIONS_PATH, $sessionId),
+            $this->buildPath(self::SESSIONS_PATH, $this->encodePathSegment($sessionId)),
             $this->getSdkAuthorization($sessionSecret)
         );
     }
@@ -61,6 +63,7 @@ class SessionsClient extends Client
      * @return array
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
      */
     public function updateSession(
         string $sessionId,
@@ -68,7 +71,7 @@ class SessionsClient extends Client
         ?string $sessionSecret = null
     ): array {
         return $this->apiClient->put(
-            $this->buildPath(self::SESSIONS_PATH, $sessionId, self::COLLECT_DATA_PATH),
+            $this->buildPath(self::SESSIONS_PATH, $this->encodePathSegment($sessionId), self::COLLECT_DATA_PATH),
             $channelData,
             $this->getSdkAuthorization($sessionSecret)
         );
@@ -80,11 +83,12 @@ class SessionsClient extends Client
      * @return array
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
      */
     public function completeSession(string $sessionId, ?string $sessionSecret = null): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::SESSIONS_PATH, $sessionId, self::COMPLETE_PATH),
+            $this->buildPath(self::SESSIONS_PATH, $this->encodePathSegment($sessionId), self::COMPLETE_PATH),
             null,
             $this->getSdkAuthorization($sessionSecret)
         );
@@ -97,6 +101,7 @@ class SessionsClient extends Client
      * @return array
      * @throws CheckoutApiException
      * @throws CheckoutAuthorizationException
+     * @throws CheckoutArgumentException
      */
     public function updateThreeDsMethodCompletionIndicator(
         string $sessionId,
@@ -104,7 +109,7 @@ class SessionsClient extends Client
         ?string $sessionSecret = null
     ): array {
         return $this->apiClient->put(
-            $this->buildPath(self::SESSIONS_PATH, $sessionId, self::ISSUER_FINGERPRINT_PATH),
+            $this->buildPath(self::SESSIONS_PATH, $this->encodePathSegment($sessionId), self::ISSUER_FINGERPRINT_PATH),
             $threeDsMethodCompletionRequest,
             $this->getSdkAuthorization($sessionSecret)
         );

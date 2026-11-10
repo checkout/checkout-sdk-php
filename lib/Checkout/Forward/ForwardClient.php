@@ -5,6 +5,7 @@ namespace Checkout\Forward;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Forward\Requests\ForwardRequest;
@@ -45,11 +46,12 @@ class ForwardClient extends Client
      * @param $forwardId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getForwardRequest($forwardId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::FORWARD_PATH, $forwardId),
+            $this->buildPath(self::FORWARD_PATH, $this->encodePathSegment($forwardId)),
             $this->sdkAuthorization()
         );
     }

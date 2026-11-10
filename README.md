@@ -168,6 +168,8 @@ All the API responses that do not fall in the 2** status codes, the SDK will thr
 
 The exception encapsulates `http_metadata` and `$error_details`, if available.
 
+A request argument that cannot be sent as given (for example an empty id, or a query filter value that is not a string, number, boolean or `DateTime`) throws a `CheckoutArgumentException` before any request is sent. Both exceptions extend `CheckoutException`: catch `CheckoutException` to handle the two.
+
 ## Building from source
 
 Once you check out the code from GitHub, the project can be built using composer:

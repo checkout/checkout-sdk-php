@@ -5,6 +5,7 @@ namespace Checkout\Reconciliation\Previous;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Common\QueryFilterDateRange;
@@ -25,6 +26,7 @@ class ReconciliationClient extends Client
      * @param ReconciliationQueryPaymentsFilter $reconciliationQueryPaymentsFilter
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function queryPaymentsReport(ReconciliationQueryPaymentsFilter $reconciliationQueryPaymentsFilter)
     {
@@ -35,16 +37,22 @@ class ReconciliationClient extends Client
      * @param $paymentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function singlePaymentReport($paymentId)
     {
-        return $this->apiClient->get($this->buildPath(self::REPORTING_PATH, self::PAYMENTS_PATH, $paymentId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::REPORTING_PATH,
+            self::PAYMENTS_PATH,
+            $this->encodePathSegment($paymentId)
+        ), $this->sdkAuthorization());
     }
 
     /**
      * @param QueryFilterDateRange $dateRange
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function queryStatementsReport(QueryFilterDateRange $dateRange)
     {
@@ -55,6 +63,7 @@ class ReconciliationClient extends Client
      * @param QueryFilterDateRange $dateRange
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveCsvPaymentReport(QueryFilterDateRange $dateRange)
     {
@@ -65,16 +74,24 @@ class ReconciliationClient extends Client
      * @param $statementId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveCsvSingleStatementReport($statementId)
     {
-        return $this->apiClient->get($this->buildPath(self::REPORTING_PATH, self::STATEMENT_PATH, $statementId, self::PAYMENTS_PATH, self::DOWNLOAD_PATH), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::REPORTING_PATH,
+            self::STATEMENT_PATH,
+            $this->encodePathSegment($statementId),
+            self::PAYMENTS_PATH,
+            self::DOWNLOAD_PATH
+        ), $this->sdkAuthorization());
     }
 
     /**
      * @param QueryFilterDateRange $dateRange
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveCsvStatementsReport(QueryFilterDateRange $dateRange)
     {

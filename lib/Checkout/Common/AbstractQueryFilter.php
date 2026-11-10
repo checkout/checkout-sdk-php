@@ -2,27 +2,22 @@
 
 namespace Checkout\Common;
 
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutUtils;
-use DateTime;
 
 abstract class AbstractQueryFilter
 {
 
+    /**
+     * Builds the query string from every property that is not null, each value percent-encoded
+     * as defined in RFC 3986. false, 0 and empty strings are sent.
+     *
+     * @return string
+     * @throws CheckoutArgumentException if a property holds a value that is not a string, a number,
+     *     a boolean or a DateTime
+     */
     public function getEncodedQueryParameters()
     {
-        $url = "";
-        $vars = get_object_vars($this);
-        if (!empty($vars)) {
-            foreach ($vars as $key => $value) {
-                if (!empty($value)) {
-                    $url .= $key . "=";
-                    $url .= $value instanceof DateTime ? urlencode(CheckoutUtils::formatDate($value)) : $value;
-                    if ($key != array_keys($vars)[count($vars) - 1]) {
-                        $url .= "&";
-                    }
-                }
-            }
-        }
-        return $url;
+        return CheckoutUtils::buildQuery(get_object_vars($this));
     }
 }

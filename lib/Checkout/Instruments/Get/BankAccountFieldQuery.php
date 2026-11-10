@@ -26,7 +26,7 @@ class BankAccountFieldQuery extends AbstractQueryFilter
         $normalized = new BankAccountFieldQuery();
         foreach (self::KEYS_TRANSFORMATIONS as $originalKey => $modifiedKey) {
             unset($normalized->$originalKey);
-            if ($this->{$originalKey}) {
+            if ($this->{$originalKey} !== null) {
                 $normalized->$modifiedKey = $this->$originalKey;
             }
         }

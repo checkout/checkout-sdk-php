@@ -5,6 +5,7 @@ namespace Checkout\Financial;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -21,6 +22,7 @@ class FinancialClient extends Client
      * @param FinancialActionsQuery $filter
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function query(FinancialActionsQuery $filter)
     {

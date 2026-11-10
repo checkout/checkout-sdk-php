@@ -5,6 +5,7 @@ namespace Checkout\Tokens;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -43,11 +44,12 @@ class TokensClient extends Client
      * @param string $tokenId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getTokenMetadata($tokenId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::TOKENS_PATH, $tokenId, "metadata"),
+            $this->buildPath(self::TOKENS_PATH, $this->encodePathSegment($tokenId), "metadata"),
             $this->sdkSpecificAuthorization(AuthorizationType::$secretKeyOrOAuth)
         );
     }

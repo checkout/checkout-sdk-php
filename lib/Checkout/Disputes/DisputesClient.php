@@ -3,6 +3,7 @@
 namespace Checkout\Disputes;
 
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\Files\FilesClient;
 
 class DisputesClient extends FilesClient
@@ -18,6 +19,7 @@ class DisputesClient extends FilesClient
      * @param DisputesQueryFilter $filter
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function query(DisputesQueryFilter $filter): array
     {
@@ -32,11 +34,12 @@ class DisputesClient extends FilesClient
      * @param $disputeId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getDisputeDetails($disputeId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId),
+            $this->buildPath(self::DISPUTES_PATH, $this->encodePathSegment($disputeId)),
             $this->sdkAuthorization()
         );
     }
@@ -45,11 +48,12 @@ class DisputesClient extends FilesClient
      * @param $disputeId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function accept($disputeId): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::ACCEPT_PATH),
+            $this->buildPath(self::DISPUTES_PATH, $this->encodePathSegment($disputeId), self::ACCEPT_PATH),
             null,
             $this->sdkAuthorization()
         );
@@ -60,11 +64,12 @@ class DisputesClient extends FilesClient
      * @param DisputeEvidenceRequest $disputeEvidenceRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function putEvidence($disputeId, DisputeEvidenceRequest $disputeEvidenceRequest): array
     {
         return $this->apiClient->put(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH),
+            $this->buildPath(self::DISPUTES_PATH, $this->encodePathSegment($disputeId), self::EVIDENCE_PATH),
             $disputeEvidenceRequest,
             $this->sdkAuthorization()
         );
@@ -74,11 +79,12 @@ class DisputesClient extends FilesClient
      * @param $disputeId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getEvidence($disputeId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH),
+            $this->buildPath(self::DISPUTES_PATH, $this->encodePathSegment($disputeId), self::EVIDENCE_PATH),
             $this->sdkAuthorization()
         );
     }
@@ -87,11 +93,12 @@ class DisputesClient extends FilesClient
      * @param $disputeId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function submitEvidence($disputeId): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH),
+            $this->buildPath(self::DISPUTES_PATH, $this->encodePathSegment($disputeId), self::EVIDENCE_PATH),
             null,
             $this->sdkAuthorization()
         );
@@ -101,11 +108,17 @@ class DisputesClient extends FilesClient
      * @param string $disputeId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getCompiledSubmittedEvidence($disputeId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::SUBMITTED_PATH),
+            $this->buildPath(
+                self::DISPUTES_PATH,
+                $this->encodePathSegment($disputeId),
+                self::EVIDENCE_PATH,
+                self::SUBMITTED_PATH
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -114,11 +127,12 @@ class DisputesClient extends FilesClient
      * @param string $disputeId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getDisputeSchemeFiles($disputeId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::SCHEME_FILES_PATH),
+            $this->buildPath(self::DISPUTES_PATH, $this->encodePathSegment($disputeId), self::SCHEME_FILES_PATH),
             $this->sdkAuthorization()
         );
     }
@@ -127,11 +141,17 @@ class DisputesClient extends FilesClient
      * @param string $disputeId - The dispute identifier. (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function submitArbitrationEvidence($disputeId): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::ARBITRATION_PATH),
+            $this->buildPath(
+                self::DISPUTES_PATH,
+                $this->encodePathSegment($disputeId),
+                self::EVIDENCE_PATH,
+                self::ARBITRATION_PATH
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -141,11 +161,18 @@ class DisputesClient extends FilesClient
      * @param string $disputeId - The dispute identifier. (Required)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getCompiledSubmittedArbitrationEvidence($disputeId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::DISPUTES_PATH, $disputeId, self::EVIDENCE_PATH, self::ARBITRATION_PATH, self::SUBMITTED_PATH),
+            $this->buildPath(
+                self::DISPUTES_PATH,
+                $this->encodePathSegment($disputeId),
+                self::EVIDENCE_PATH,
+                self::ARBITRATION_PATH,
+                self::SUBMITTED_PATH
+            ),
             $this->sdkAuthorization()
         );
     }

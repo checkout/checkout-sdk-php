@@ -5,6 +5,7 @@ namespace Checkout\Workflows;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Workflows\Actions\WorkflowActionRequest;
@@ -52,20 +53,28 @@ class WorkflowsClient extends Client
      * @param $workflowId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getWorkflow($workflowId)
     {
-        return $this->apiClient->get($this->buildPath(self::WORKFLOWS_PATH, $workflowId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::WORKFLOWS_PATH,
+            $this->encodePathSegment($workflowId)
+        ), $this->sdkAuthorization());
     }
 
     /**
      * @param $workflowId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function removeWorkflow($workflowId)
     {
-        return $this->apiClient->delete($this->buildPath(self::WORKFLOWS_PATH, $workflowId), $this->sdkAuthorization());
+        return $this->apiClient->delete($this->buildPath(
+            self::WORKFLOWS_PATH,
+            $this->encodePathSegment($workflowId)
+        ), $this->sdkAuthorization());
     }
 
     /**
@@ -73,11 +82,12 @@ class WorkflowsClient extends Client
      * @param UpdateWorkflowRequest $updateWorkflowRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateWorkflow($workflowId, UpdateWorkflowRequest $updateWorkflowRequest)
     {
         return $this->apiClient->patch(
-            $this->buildPath(self::WORKFLOWS_PATH, $workflowId),
+            $this->buildPath(self::WORKFLOWS_PATH, $this->encodePathSegment($workflowId)),
             $updateWorkflowRequest,
             $this->sdkAuthorization()
         );
@@ -88,11 +98,12 @@ class WorkflowsClient extends Client
      * @param WorkflowActionRequest $workflowActionRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function addWorkflowAction($workflowId, WorkflowActionRequest $workflowActionRequest)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::ACTIONS_PATH),
+            $this->buildPath(self::WORKFLOWS_PATH, $this->encodePathSegment($workflowId), self::ACTIONS_PATH),
             $workflowActionRequest,
             $this->sdkAuthorization()
         );
@@ -104,11 +115,17 @@ class WorkflowsClient extends Client
      * @param WorkflowActionRequest $workflowActionRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateWorkflowAction($workflowId, $actionId, WorkflowActionRequest $workflowActionRequest)
     {
         return $this->apiClient->put(
-            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::ACTIONS_PATH, $actionId),
+            $this->buildPath(
+                self::WORKFLOWS_PATH,
+                $this->encodePathSegment($workflowId),
+                self::ACTIONS_PATH,
+                $this->encodePathSegment($actionId)
+            ),
             $workflowActionRequest,
             $this->sdkAuthorization()
         );
@@ -119,11 +136,17 @@ class WorkflowsClient extends Client
      * @param $actionId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function removeWorkflowAction($workflowId, $actionId)
     {
         return $this->apiClient->delete(
-            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::ACTIONS_PATH, $actionId),
+            $this->buildPath(
+                self::WORKFLOWS_PATH,
+                $this->encodePathSegment($workflowId),
+                self::ACTIONS_PATH,
+                $this->encodePathSegment($actionId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -133,11 +156,12 @@ class WorkflowsClient extends Client
      * @param WorkflowConditionRequest $workflowConditionRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function addWorkflowCondition($workflowId, WorkflowConditionRequest $workflowConditionRequest)
     {
         return$this->apiClient->post(
-            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::CONDITIONS_PATH),
+            $this->buildPath(self::WORKFLOWS_PATH, $this->encodePathSegment($workflowId), self::CONDITIONS_PATH),
             $workflowConditionRequest,
             $this->sdkAuthorization()
         );
@@ -149,6 +173,7 @@ class WorkflowsClient extends Client
      * @param WorkflowConditionRequest $workflowConditionRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function updateWorkflowCondition(
         $workflowId,
@@ -156,7 +181,12 @@ class WorkflowsClient extends Client
         WorkflowConditionRequest $workflowConditionRequest
     ) {
         return$this->apiClient->put(
-            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::CONDITIONS_PATH, $conditionId),
+            $this->buildPath(
+                self::WORKFLOWS_PATH,
+                $this->encodePathSegment($workflowId),
+                self::CONDITIONS_PATH,
+                $this->encodePathSegment($conditionId)
+            ),
             $workflowConditionRequest,
             $this->sdkAuthorization()
         );
@@ -167,11 +197,17 @@ class WorkflowsClient extends Client
      * @param $conditionId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function removeWorkflowCondition($workflowId, $conditionId)
     {
         return$this->apiClient->delete(
-            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::CONDITIONS_PATH, $conditionId),
+            $this->buildPath(
+                self::WORKFLOWS_PATH,
+                $this->encodePathSegment($workflowId),
+                self::CONDITIONS_PATH,
+                $this->encodePathSegment($conditionId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -181,11 +217,12 @@ class WorkflowsClient extends Client
      * @param EventTypesRequest $eventTypesRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function testWorkflow($workflowId, EventTypesRequest $eventTypesRequest)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::WORKFLOWS_PATH, $workflowId, self::TEST_PATH),
+            $this->buildPath(self::WORKFLOWS_PATH, $this->encodePathSegment($workflowId), self::TEST_PATH),
             $eventTypesRequest,
             $this->sdkAuthorization()
         );
@@ -207,11 +244,12 @@ class WorkflowsClient extends Client
      * @param $eventId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getEvent($eventId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::WORKFLOWS_PATH, self::EVENTS_PATH, $eventId),
+            $this->buildPath(self::WORKFLOWS_PATH, self::EVENTS_PATH, $this->encodePathSegment($eventId)),
             $this->sdkAuthorization()
         );
     }
@@ -221,15 +259,16 @@ class WorkflowsClient extends Client
      * @param $actionId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getActionInvocations($eventId, $actionId)
     {
         return $this->apiClient->get($this->buildPath(
             self::WORKFLOWS_PATH,
             self::EVENTS_PATH,
-            $eventId,
+            $this->encodePathSegment($eventId),
             self::ACTIONS_PATH,
-            $actionId
+            $this->encodePathSegment($actionId)
         ), $this->sdkAuthorization());
     }
 
@@ -237,11 +276,17 @@ class WorkflowsClient extends Client
      * @param $eventId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function reflowByEvent($eventId)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::WORKFLOWS_PATH, self::EVENTS_PATH, $eventId, self::REFLOW_PATH),
+            $this->buildPath(
+                self::WORKFLOWS_PATH,
+                self::EVENTS_PATH,
+                $this->encodePathSegment($eventId),
+                self::REFLOW_PATH
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -252,6 +297,7 @@ class WorkflowsClient extends Client
      * @param $workflowId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function reflowByEventAndWorkflow($eventId, $workflowId)
     {
@@ -259,9 +305,9 @@ class WorkflowsClient extends Client
             $this->buildPath(
                 self::WORKFLOWS_PATH,
                 self::EVENTS_PATH,
-                $eventId,
+                $this->encodePathSegment($eventId),
                 self::WORKFLOW_PATH,
-                $workflowId,
+                $this->encodePathSegment($workflowId),
                 self::REFLOW_PATH
             ),
             null,
@@ -287,6 +333,7 @@ class WorkflowsClient extends Client
      * @param $subjectId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getSubjectEvents($subjectId)
     {
@@ -294,7 +341,7 @@ class WorkflowsClient extends Client
             self::WORKFLOWS_PATH,
             self::EVENTS_PATH,
             self::SUBJECT_PATH,
-            $subjectId
+            $this->encodePathSegment($subjectId)
         ), $this->sdkAuthorization());
     }
 
@@ -302,6 +349,7 @@ class WorkflowsClient extends Client
      * @param $subjectId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function reflowBySubject($subjectId)
     {
@@ -310,7 +358,7 @@ class WorkflowsClient extends Client
                 self::WORKFLOWS_PATH,
                 self::EVENTS_PATH,
                 self::SUBJECT_PATH,
-                $subjectId,
+                $this->encodePathSegment($subjectId),
                 self::REFLOW_PATH
             ),
             null,
@@ -323,6 +371,7 @@ class WorkflowsClient extends Client
      * @param $workflowId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function reflowBySubjectAndWorkflow($subjectId, $workflowId)
     {
@@ -331,9 +380,9 @@ class WorkflowsClient extends Client
                 self::WORKFLOWS_PATH,
                 self::EVENTS_PATH,
                 self::SUBJECT_PATH,
-                $subjectId,
+                $this->encodePathSegment($subjectId),
                 self::WORKFLOW_PATH,
-                $workflowId,
+                $this->encodePathSegment($workflowId),
                 self::REFLOW_PATH
             ),
             null,

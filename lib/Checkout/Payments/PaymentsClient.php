@@ -5,6 +5,7 @@ namespace Checkout\Payments;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Payments\Request\PaymentRequest;
@@ -66,6 +67,7 @@ class PaymentsClient extends Client
      * @param PaymentsQueryFilter $queryFilter
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getPaymentsList(PaymentsQueryFilter $queryFilter): array
     {
@@ -76,23 +78,28 @@ class PaymentsClient extends Client
      * @param string $paymentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getPaymentDetails(string $paymentId): array
     {
-        return $this->apiClient->get($this->buildPath(self::PAYMENTS_PATH, $paymentId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::PAYMENTS_PATH,
+            $this->encodePathSegment($paymentId)
+        ), $this->sdkAuthorization());
     }
 
     /**
      * @param string $paymentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getPaymentActions(string $paymentId): array
     {
         return $this->apiClient->get(
             $this->buildPath(
                 self::PAYMENTS_PATH,
-                $paymentId,
+                $this->encodePathSegment($paymentId),
                 "actions"
             ),
             $this->sdkAuthorization()
@@ -105,6 +112,7 @@ class PaymentsClient extends Client
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function capturePayment(
         string $paymentId,
@@ -114,7 +122,7 @@ class PaymentsClient extends Client
         return $this->apiClient->post(
             $this->buildPath(
                 self::PAYMENTS_PATH,
-                $paymentId,
+                $this->encodePathSegment($paymentId),
                 "captures"
             ),
             $captureRequest,
@@ -129,6 +137,7 @@ class PaymentsClient extends Client
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function refundPayment(
         string $paymentId,
@@ -138,7 +147,7 @@ class PaymentsClient extends Client
         return $this->apiClient->post(
             $this->buildPath(
                 self::PAYMENTS_PATH,
-                $paymentId,
+                $this->encodePathSegment($paymentId),
                 "refunds"
             ),
             $refundRequest,
@@ -153,6 +162,7 @@ class PaymentsClient extends Client
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function voidPayment(
         string $paymentId,
@@ -162,7 +172,7 @@ class PaymentsClient extends Client
         return $this->apiClient->post(
             $this->buildPath(
                 self::PAYMENTS_PATH,
-                $paymentId,
+                $this->encodePathSegment($paymentId),
                 "voids"
             ),
             $voidRequest,
@@ -177,6 +187,7 @@ class PaymentsClient extends Client
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function incrementPaymentAuthorization(
         string $paymentId,
@@ -186,7 +197,7 @@ class PaymentsClient extends Client
         return $this->apiClient->post(
             $this->buildPath(
                 self::PAYMENTS_PATH,
-                $paymentId,
+                $this->encodePathSegment($paymentId),
                 "authorizations"
             ),
             $authorizationRequest,
@@ -201,6 +212,7 @@ class PaymentsClient extends Client
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function cancelAScheduledRetry(
         string $paymentId,
@@ -210,7 +222,7 @@ class PaymentsClient extends Client
         return $this->apiClient->post(
             $this->buildPath(
                 self::PAYMENTS_PATH,
-                $paymentId,
+                $this->encodePathSegment($paymentId),
                 "cancellations"
             ),
             $cancelScheduledRetryRequest,
@@ -225,6 +237,7 @@ class PaymentsClient extends Client
      * @param string|null $idempotencyKey
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function reversePayment(
         string $paymentId,
@@ -234,7 +247,7 @@ class PaymentsClient extends Client
         return $this->apiClient->post(
             $this->buildPath(
                 self::PAYMENTS_PATH,
-                $paymentId,
+                $this->encodePathSegment($paymentId),
                 "reversals"
             ),
             $reversePaymentRequest,

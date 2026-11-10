@@ -5,6 +5,7 @@ namespace Checkout\Payments\Links;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -22,10 +23,14 @@ class PaymentLinksClient extends Client
      * @param $id
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getPaymentLink($id)
     {
-        return $this->apiClient->get($this->buildPath(self::PAYMENT_LINKS, $id), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::PAYMENT_LINKS,
+            $this->encodePathSegment($id)
+        ), $this->sdkAuthorization());
     }
 
     /**

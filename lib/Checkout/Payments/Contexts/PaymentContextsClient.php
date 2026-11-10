@@ -5,6 +5,7 @@ namespace Checkout\Payments\Contexts;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -32,10 +33,14 @@ class PaymentContextsClient extends Client
      * @param $id
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getPaymentContextDetails($id)
     {
-        return $this->apiClient->get($this->buildPath(self::PAYMENT_CONTEXTS, $id), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::PAYMENT_CONTEXTS,
+            $this->encodePathSegment($id)
+        ), $this->sdkAuthorization());
     }
 
 }

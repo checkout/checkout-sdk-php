@@ -5,6 +5,7 @@ namespace Checkout\Identities\AddressDocumentVerification;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
@@ -46,11 +47,15 @@ class AddressDocumentVerificationClient extends Client
      * @param string $addressDocumentVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getAddressDocumentVerification(string $addressDocumentVerificationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH, $addressDocumentVerificationId),
+            $this->buildPath(
+                self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
+                $this->encodePathSegment($addressDocumentVerificationId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -61,13 +66,14 @@ class AddressDocumentVerificationClient extends Client
      * @param string $addressDocumentVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function anonymizeAddressDocumentVerification(string $addressDocumentVerificationId): array
     {
         return $this->apiClient->post(
             $this->buildPath(
                 self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
-                $addressDocumentVerificationId,
+                $this->encodePathSegment($addressDocumentVerificationId),
                 self::ANONYMIZE_PATH
             ),
             null,
@@ -82,6 +88,7 @@ class AddressDocumentVerificationClient extends Client
      * @param AddressDocumentVerificationAttemptRequest $addressDocumentVerificationAttemptRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function createAddressDocumentVerificationAttempt(
         string $addressDocumentVerificationId,
@@ -90,7 +97,7 @@ class AddressDocumentVerificationClient extends Client
         return $this->apiClient->post(
             $this->buildPath(
                 self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
-                $addressDocumentVerificationId,
+                $this->encodePathSegment($addressDocumentVerificationId),
                 self::ATTEMPTS_PATH
             ),
             $addressDocumentVerificationAttemptRequest,
@@ -109,6 +116,7 @@ class AddressDocumentVerificationClient extends Client
      * @param AttemptsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getAddressDocumentVerificationAttempts(
         string $addressDocumentVerificationId,
@@ -117,7 +125,7 @@ class AddressDocumentVerificationClient extends Client
         return $this->apiClient->query(
             $this->buildPath(
                 self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
-                $addressDocumentVerificationId,
+                $this->encodePathSegment($addressDocumentVerificationId),
                 self::ATTEMPTS_PATH
             ),
             $query,
@@ -133,6 +141,7 @@ class AddressDocumentVerificationClient extends Client
      * @param string $attemptId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getAddressDocumentVerificationAttempt(
         string $addressDocumentVerificationId,
@@ -141,9 +150,9 @@ class AddressDocumentVerificationClient extends Client
         return $this->apiClient->get(
             $this->buildPath(
                 self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
-                $addressDocumentVerificationId,
+                $this->encodePathSegment($addressDocumentVerificationId),
                 self::ATTEMPTS_PATH,
-                $attemptId
+                $this->encodePathSegment($attemptId)
             ),
             $this->sdkAuthorization()
         );
@@ -155,13 +164,14 @@ class AddressDocumentVerificationClient extends Client
      * @param string $addressDocumentVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getAddressDocumentVerificationReport(string $addressDocumentVerificationId): array
     {
         return $this->apiClient->get(
             $this->buildPath(
                 self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
-                $addressDocumentVerificationId,
+                $this->encodePathSegment($addressDocumentVerificationId),
                 self::PDF_REPORT_PATH
             ),
             $this->sdkAuthorization()
@@ -181,6 +191,7 @@ class AddressDocumentVerificationClient extends Client
      * @param AttemptAssetsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getAddressDocumentVerificationAttemptAssets(
         string $addressDocumentVerificationId,
@@ -190,9 +201,9 @@ class AddressDocumentVerificationClient extends Client
         return $this->apiClient->query(
             $this->buildPath(
                 self::ADDRESS_DOCUMENT_VERIFICATIONS_PATH,
-                $addressDocumentVerificationId,
+                $this->encodePathSegment($addressDocumentVerificationId),
                 self::ATTEMPTS_PATH,
-                $attemptId,
+                $this->encodePathSegment($attemptId),
                 self::ASSETS_PATH
             ),
             $query,

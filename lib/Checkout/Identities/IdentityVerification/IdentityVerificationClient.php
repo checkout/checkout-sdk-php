@@ -5,6 +5,7 @@ namespace Checkout\Identities\IdentityVerification;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Identities\Entities\AttemptsQueryFilter;
@@ -62,11 +63,12 @@ class IdentityVerificationClient extends Client
      * @param string $identityVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdentityVerification(string $identityVerificationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId),
+            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $this->encodePathSegment($identityVerificationId)),
             $this->sdkAuthorization()
         );
     }
@@ -77,11 +79,16 @@ class IdentityVerificationClient extends Client
      * @param string $identityVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function anonymizeIdentityVerification(string $identityVerificationId): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ANONYMIZE_PATH),
+            $this->buildPath(
+                self::IDENTITY_VERIFICATIONS_PATH,
+                $this->encodePathSegment($identityVerificationId),
+                self::ANONYMIZE_PATH
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -94,13 +101,18 @@ class IdentityVerificationClient extends Client
      * @param IdentityVerificationAttemptRequest $identityVerificationAttemptRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function createIdentityVerificationAttempt(
         string $identityVerificationId,
         IdentityVerificationAttemptRequest $identityVerificationAttemptRequest
     ): array {
         return $this->apiClient->post(
-            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ATTEMPTS_PATH),
+            $this->buildPath(
+                self::IDENTITY_VERIFICATIONS_PATH,
+                $this->encodePathSegment($identityVerificationId),
+                self::ATTEMPTS_PATH
+            ),
             $identityVerificationAttemptRequest,
             $this->sdkAuthorization()
         );
@@ -117,13 +129,18 @@ class IdentityVerificationClient extends Client
      * @param AttemptsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdentityVerificationAttempts(
         string $identityVerificationId,
         ?AttemptsQueryFilter $query = null
     ): array {
         return $this->apiClient->query(
-            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ATTEMPTS_PATH),
+            $this->buildPath(
+                self::IDENTITY_VERIFICATIONS_PATH,
+                $this->encodePathSegment($identityVerificationId),
+                self::ATTEMPTS_PATH
+            ),
             $query,
             $this->sdkAuthorization()
         );
@@ -137,11 +154,17 @@ class IdentityVerificationClient extends Client
      * @param string $attemptId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdentityVerificationAttempt(string $identityVerificationId, string $attemptId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ATTEMPTS_PATH, $attemptId),
+            $this->buildPath(
+                self::IDENTITY_VERIFICATIONS_PATH,
+                $this->encodePathSegment($identityVerificationId),
+                self::ATTEMPTS_PATH,
+                $this->encodePathSegment($attemptId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -152,11 +175,16 @@ class IdentityVerificationClient extends Client
      * @param string $identityVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdentityVerificationPdfReport(string $identityVerificationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::PDF_REPORT_PATH),
+            $this->buildPath(
+                self::IDENTITY_VERIFICATIONS_PATH,
+                $this->encodePathSegment($identityVerificationId),
+                self::PDF_REPORT_PATH
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -176,6 +204,7 @@ class IdentityVerificationClient extends Client
      * @param AttemptAssetsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdentityVerificationAttemptAssets(
         string $identityVerificationId,
@@ -183,7 +212,13 @@ class IdentityVerificationClient extends Client
         ?AttemptAssetsQueryFilter $query = null
     ): array {
         return $this->apiClient->query(
-            $this->buildPath(self::IDENTITY_VERIFICATIONS_PATH, $identityVerificationId, self::ATTEMPTS_PATH, $attemptId, self::ASSETS_PATH),
+            $this->buildPath(
+                self::IDENTITY_VERIFICATIONS_PATH,
+                $this->encodePathSegment($identityVerificationId),
+                self::ATTEMPTS_PATH,
+                $this->encodePathSegment($attemptId),
+                self::ASSETS_PATH
+            ),
             $query,
             $this->sdkAuthorization()
         );

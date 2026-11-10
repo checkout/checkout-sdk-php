@@ -43,4 +43,59 @@ class DisputesQueryFilterTest extends TestCase
 
         $this->assertEquals($expected, $disputesQueryFilter->getEncodedQueryParameters());
     }
+
+    /**
+     * @test
+     */
+    public function shouldKeepEachValueInItsOwnParameter()
+    {
+        $disputesQueryFilter = new DisputesQueryFilter();
+        $disputesQueryFilter->statuses = "a&entity_ids=x#b";
+        $disputesQueryFilter->entity_ids = "ent_1";
+        $disputesQueryFilter->payment_reference = "ref 1/2?+";
+
+        $encoded = $disputesQueryFilter->getEncodedQueryParameters();
+
+        $this->assertSame(
+            "statuses=a%26entity_ids%3Dx%23b&payment_reference=ref%201%2F2%3F%2B&entity_ids=ent_1",
+            $encoded
+        );
+        parse_str($encoded, $parsed);
+        $this->assertSame(
+            ["statuses" => "a&entity_ids=x#b", "payment_reference" => "ref 1/2?+", "entity_ids" => "ent_1"],
+            $parsed
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSendFalseZeroAndEmptyValues()
+    {
+        $disputesQueryFilter = new DisputesQueryFilter();
+        $disputesQueryFilter->skip = 0;
+        $disputesQueryFilter->id = "";
+        $disputesQueryFilter->this_channel_only = false;
+
+        $this->assertSame("skip=0&id=&this_channel_only=false", $disputesQueryFilter->getEncodedQueryParameters());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldRenderTrueAsText()
+    {
+        $disputesQueryFilter = new DisputesQueryFilter();
+        $disputesQueryFilter->this_channel_only = true;
+
+        $this->assertSame("this_channel_only=true", $disputesQueryFilter->getEncodedQueryParameters());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSendNothingWhenNoValueIsSet()
+    {
+        $this->assertSame("", (new DisputesQueryFilter())->getEncodedQueryParameters());
+    }
 }

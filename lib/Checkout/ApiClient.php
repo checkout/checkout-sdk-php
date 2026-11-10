@@ -108,6 +108,7 @@ class ApiClient
      * @param mixed $headers
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException if a filter property holds a value that cannot be sent as a query value
      */
     public function query(
         string $path,

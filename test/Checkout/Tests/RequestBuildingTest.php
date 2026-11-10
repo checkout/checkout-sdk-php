@@ -266,6 +266,21 @@ class RequestBuildingTest extends MockeryTestCase
     }
 
     /**
+     * @test
+     */
+    public function bankAccountFieldQuerySendsEmptyAndZeroValues()
+    {
+        $query = new BankAccountFieldQuery();
+        $query->account_holder_type = "";
+        $query->payment_network = "0";
+        $client = new InstrumentsClient($this->apiClient, $this->configuration);
+
+        $client->getBankAccountFieldFormatting("GB", "GBP", $query);
+
+        $this->assertSame("account-holder-type=&payment-network=0", $this->onlyRequest()->getUri()->getQuery());
+    }
+
+    /**
      * @return array[]
      */
     public static function invalidQueryValues()
@@ -332,11 +347,9 @@ class RequestBuildingTest extends MockeryTestCase
         $allowedArgument = '/^(self::[A-Z][A-Z0-9_]*|\'[^\'\\\\]*\'|"[^"\\\\$]*"|\$this->getBaseUrl\(\)'
             . '|\$this->encodePathSegment\(\$[A-Za-z_][A-Za-z0-9_]*\))$/';
         // ApiClient: "?" joins the output of AbstractQueryFilter, already encoded.
-        // AccountsClient: Accept header value, not part of the URL.
         // EnvironmentSubdomain: host built from a subdomain checked against SUBDOMAIN_PATTERN.
         $notUrlOrAlreadyEncoded = [
             'ApiClient.php "?"',
-            'AccountsClient.php "application/json;schema_version="',
             "EnvironmentSubdomain.php '://'",
         ];
         // First argument of every apiClient or filesApiClient request: built by buildPath, a constant,
@@ -357,13 +370,10 @@ class RequestBuildingTest extends MockeryTestCase
         ];
         $allowedStringBuilders = [
             'CheckoutApiException.php sprintf',     // exception message
-            'ApiClient.php implode',                // header name casing
             'OAuthSdkCredentials.php implode',      // OAuth scope list in the token request body
             'Client.php join',                      // buildPath
             'Client.php rawurlencode',              // encodePathSegment
-            'Client.php http_build_query',          // form-urlencoded request body
             'CheckoutUtils.php http_build_query',   // buildQuery, the one query builder
-            'Client.php preg_replace',              // camelCase to snake_case for the form body keys
         ];
         // Functions that build or encode request URLs may only be declared where they are today.
         $ownedFunctions = [
@@ -375,6 +385,9 @@ class RequestBuildingTest extends MockeryTestCase
             'getencodedqueryparameters' => ['AbstractQueryFilter.php'],
         ];
         $offending = [];
+        // Allowlist entries that matched code; an entry that matches nothing is reported too, so a
+        // stale entry cannot let a new use through.
+        $usedEntries = [];
         $calls = 0;
         $requests = 0;
         foreach ($files as $file) {
@@ -402,9 +415,13 @@ class RequestBuildingTest extends MockeryTestCase
                 if ($token[0] === T_CONSTANT_ENCAPSED_STRING
                     && preg_match('/[\/?=&#]/', substr($token[1], 1, -1)) === 1
                     && $this->concatenatedWithVariable($tokens, $i)
-                    && !in_array($fileName . ' ' . $token[1], $notUrlOrAlreadyEncoded, true)
                 ) {
-                    $offending[] = $fileName . ':' . $token[2] . ' ' . $token[1] . ' concatenated with a variable';
+                    $entry = $fileName . ' ' . $token[1];
+                    if (in_array($entry, $notUrlOrAlreadyEncoded, true)) {
+                        $usedEntries[$entry] = true;
+                    } else {
+                        $offending[] = $fileName . ':' . $token[2] . ' ' . $token[1] . ' concatenated with a variable';
+                    }
                 }
                 if ($token[0] === T_ENCAPSED_AND_WHITESPACE && preg_match('/[\/?=&#]/', $token[1]) === 1) {
                     $offending[] = $fileName . ':' . $token[2] . ' interpolated string ' . $token[1];
@@ -450,9 +467,12 @@ class RequestBuildingTest extends MockeryTestCase
                 }
                 if ($token[0] === T_STRING && $this->isTokenOf($tokens, $i - 1, T_FUNCTION)
                     && isset($ownedFunctions[strtolower($token[1])])
-                    && !in_array($fileName, $ownedFunctions[strtolower($token[1])], true)
                 ) {
-                    $offending[] = $fileName . ':' . $token[2] . ' declares ' . $token[1];
+                    if (in_array($fileName, $ownedFunctions[strtolower($token[1])], true)) {
+                        $usedEntries[strtolower($token[1]) . ' ' . $fileName] = true;
+                    } else {
+                        $offending[] = $fileName . ':' . $token[2] . ' declares ' . $token[1];
+                    }
                 }
                 if ($token[0] === T_STRING && isset($tokens[$i + 1]) && $tokens[$i + 1] === '('
                     && in_array(strtolower($token[1]), $stringBuilders, true)
@@ -461,7 +481,9 @@ class RequestBuildingTest extends MockeryTestCase
                     && !$this->isTokenOf($tokens, $i - 1, T_FUNCTION)
                 ) {
                     $use = $fileName . ' ' . strtolower($token[1]);
-                    if (!in_array($use, $allowedStringBuilders, true)) {
+                    if (in_array($use, $allowedStringBuilders, true)) {
+                        $usedEntries[$use] = true;
+                    } else {
                         $offending[] = $fileName . ':' . $token[2] . ' ' . $token[1] . '()';
                     }
                 }
@@ -471,6 +493,13 @@ class RequestBuildingTest extends MockeryTestCase
         $this->assertGreaterThan(100, $calls);
         $this->assertGreaterThan(100, $requests);
         $this->assertSame([], $offending);
+        $entries = array_merge($notUrlOrAlreadyEncoded, $allowedStringBuilders);
+        foreach ($ownedFunctions as $function => $owners) {
+            foreach ($owners as $owner) {
+                $entries[] = $function . ' ' . $owner;
+            }
+        }
+        $this->assertSame([], array_values(array_diff($entries, array_keys($usedEntries))));
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Checkout\Identities\IdDocumentVerification;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Identities\Entities\AttemptAssetsQueryFilter;
@@ -45,11 +46,12 @@ class IdDocumentVerificationClient extends Client
      * @param string $idDocumentVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdDocumentVerification(string $idDocumentVerificationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ID_DOCUMENT_VERIFICATIONS_PATH, $idDocumentVerificationId),
+            $this->buildPath(self::ID_DOCUMENT_VERIFICATIONS_PATH, $this->encodePathSegment($idDocumentVerificationId)),
             $this->sdkAuthorization()
         );
     }
@@ -60,11 +62,16 @@ class IdDocumentVerificationClient extends Client
      * @param string $idDocumentVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function anonymizeIdDocumentVerification(string $idDocumentVerificationId): array
     {
         return $this->apiClient->post(
-            $this->buildPath(self::ID_DOCUMENT_VERIFICATIONS_PATH, $idDocumentVerificationId, self::ANONYMIZE_PATH),
+            $this->buildPath(
+                self::ID_DOCUMENT_VERIFICATIONS_PATH,
+                $this->encodePathSegment($idDocumentVerificationId),
+                self::ANONYMIZE_PATH
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -77,13 +84,18 @@ class IdDocumentVerificationClient extends Client
      * @param IdDocumentVerificationAttemptRequest $idDocumentVerificationAttemptRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function createIdDocumentVerificationAttempt(
         string $idDocumentVerificationId,
         IdDocumentVerificationAttemptRequest $idDocumentVerificationAttemptRequest
     ): array {
         return $this->apiClient->post(
-            $this->buildPath(self::ID_DOCUMENT_VERIFICATIONS_PATH, $idDocumentVerificationId, self::ATTEMPTS_PATH),
+            $this->buildPath(
+                self::ID_DOCUMENT_VERIFICATIONS_PATH,
+                $this->encodePathSegment($idDocumentVerificationId),
+                self::ATTEMPTS_PATH
+            ),
             $idDocumentVerificationAttemptRequest,
             $this->sdkAuthorization()
         );
@@ -100,13 +112,18 @@ class IdDocumentVerificationClient extends Client
      * @param AttemptsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdDocumentVerificationAttempts(
         string $idDocumentVerificationId,
         ?AttemptsQueryFilter $query = null
     ): array {
         return $this->apiClient->query(
-            $this->buildPath(self::ID_DOCUMENT_VERIFICATIONS_PATH, $idDocumentVerificationId, self::ATTEMPTS_PATH),
+            $this->buildPath(
+                self::ID_DOCUMENT_VERIFICATIONS_PATH,
+                $this->encodePathSegment($idDocumentVerificationId),
+                self::ATTEMPTS_PATH
+            ),
             $query,
             $this->sdkAuthorization()
         );
@@ -120,11 +137,17 @@ class IdDocumentVerificationClient extends Client
      * @param string $attemptId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdDocumentVerificationAttempt(string $idDocumentVerificationId, string $attemptId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ID_DOCUMENT_VERIFICATIONS_PATH, $idDocumentVerificationId, self::ATTEMPTS_PATH, $attemptId),
+            $this->buildPath(
+                self::ID_DOCUMENT_VERIFICATIONS_PATH,
+                $this->encodePathSegment($idDocumentVerificationId),
+                self::ATTEMPTS_PATH,
+                $this->encodePathSegment($attemptId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -135,11 +158,16 @@ class IdDocumentVerificationClient extends Client
      * @param string $idDocumentVerificationId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdDocumentVerificationReport(string $idDocumentVerificationId): array
     {
         return $this->apiClient->get(
-            $this->buildPath(self::ID_DOCUMENT_VERIFICATIONS_PATH, $idDocumentVerificationId, self::PDF_REPORT_PATH),
+            $this->buildPath(
+                self::ID_DOCUMENT_VERIFICATIONS_PATH,
+                $this->encodePathSegment($idDocumentVerificationId),
+                self::PDF_REPORT_PATH
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -158,6 +186,7 @@ class IdDocumentVerificationClient extends Client
      * @param AttemptAssetsQueryFilter|null $query the pagination query parameters (skip and limit)
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getIdDocumentVerificationAttemptAssets(
         string $idDocumentVerificationId,
@@ -167,9 +196,9 @@ class IdDocumentVerificationClient extends Client
         return $this->apiClient->query(
             $this->buildPath(
                 self::ID_DOCUMENT_VERIFICATIONS_PATH,
-                $idDocumentVerificationId,
+                $this->encodePathSegment($idDocumentVerificationId),
                 self::ATTEMPTS_PATH,
-                $attemptId,
+                $this->encodePathSegment($attemptId),
                 self::ASSETS_PATH
             ),
             $query,

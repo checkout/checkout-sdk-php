@@ -5,6 +5,7 @@ namespace Checkout\OnboardingSimulator;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\OnboardingSimulator\Requests\SimulatorSetRequirementsDueRequest;
@@ -33,11 +34,17 @@ class OnboardingSimulatorClient extends Client
      * @param SimulatorSetRequirementsDueRequest $request
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function setRequirementsDue($entityId, SimulatorSetRequirementsDueRequest $request)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::SIMULATE_PATH, self::ENTITIES_PATH, $entityId, self::REQUIREMENTS_DUE_PATH),
+            $this->buildPath(
+                self::SIMULATE_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::REQUIREMENTS_DUE_PATH
+            ),
             $request,
             $this->sdkAuthorization()
         );
@@ -50,11 +57,18 @@ class OnboardingSimulatorClient extends Client
      * @param string $scenarioId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function runScenario($entityId, $scenarioId)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::SIMULATE_PATH, self::ENTITIES_PATH, $entityId, self::SCENARIOS_PATH, $scenarioId),
+            $this->buildPath(
+                self::SIMULATE_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::SCENARIOS_PATH,
+                $this->encodePathSegment($scenarioId)
+            ),
             null,
             $this->sdkAuthorization()
         );
@@ -67,11 +81,17 @@ class OnboardingSimulatorClient extends Client
      * @param SimulatorSetStatusRequest $request
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function setEntityStatus($entityId, SimulatorSetStatusRequest $request)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::SIMULATE_PATH, self::ENTITIES_PATH, $entityId, self::STATUS_PATH),
+            $this->buildPath(
+                self::SIMULATE_PATH,
+                self::ENTITIES_PATH,
+                $this->encodePathSegment($entityId),
+                self::STATUS_PATH
+            ),
             $request,
             $this->sdkAuthorization()
         );

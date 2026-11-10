@@ -24,7 +24,7 @@ class BalancesQuerySerializationTest extends TestCase
         $filter = new BalancesQuery();
         $filter->query = "currency:GBP";
 
-        $this->assertSame("query=currency:GBP", $filter->getEncodedQueryParameters());
+        $this->assertSame("query=currency%3AGBP", $filter->getEncodedQueryParameters());
     }
 
     public function testEncodesWithCurrencyAccountIdInCamelCase()
@@ -62,7 +62,7 @@ class BalancesQuerySerializationTest extends TestCase
 
         $encoded = $filter->getEncodedQueryParameters();
 
-        $this->assertStringContainsString("query=currency:GBP", $encoded);
+        $this->assertStringContainsString("query=currency%3AGBP", $encoded);
         $this->assertStringContainsString("withCurrencyAccountId=", $encoded);
         $this->assertStringContainsString("balancesAt=", $encoded);
         $this->assertSame(2, substr_count($encoded, "&"));

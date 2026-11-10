@@ -5,6 +5,7 @@ namespace Checkout\Balances;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -27,11 +28,12 @@ class BalancesClient extends Client
      * @param BalancesQuery $balancesQuery
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveEntityBalances($entityId, BalancesQuery $balancesQuery)
     {
         return $this->apiClient->query(
-            $this->buildPath(self::BALANCES_PATH, $entityId),
+            $this->buildPath(self::BALANCES_PATH, $this->encodePathSegment($entityId)),
             $balancesQuery,
             $this->sdkAuthorization()
         );
@@ -83,15 +85,16 @@ class BalancesClient extends Client
      * @param string $currencyAccountId the ID of the sub-account to retrieve top-up instructions for
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function retrieveTopUpInstructions(string $entityId, string $currencyAccountId)
     {
         return $this->apiClient->get(
             $this->buildPath(
                 self::ENTITIES_PATH,
-                $entityId,
+                $this->encodePathSegment($entityId),
                 self::CURRENCY_ACCOUNTS_PATH,
-                $currencyAccountId,
+                $this->encodePathSegment($currencyAccountId),
                 self::TOP_UP_INSTRUCTIONS_PATH
             ),
             $this->sdkAuthorization()

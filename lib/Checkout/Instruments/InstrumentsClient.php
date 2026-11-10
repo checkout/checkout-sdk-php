@@ -5,6 +5,7 @@ namespace Checkout\Instruments;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 use Checkout\Instruments\Create\CreateInstrumentRequest;
@@ -35,12 +36,13 @@ class InstrumentsClient extends Client
      * @param $instrumentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function get($instrumentId)
     {
         return $this->apiClient->get($this->buildPath(
             self::INSTRUMENTS_PATH,
-            $instrumentId
+            $this->encodePathSegment($instrumentId)
         ), $this->sdkAuthorization());
     }
 
@@ -49,12 +51,13 @@ class InstrumentsClient extends Client
      * @param UpdateInstrumentRequest $updateInstrumentRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function update($instrumentId, UpdateInstrumentRequest $updateInstrumentRequest): array
     {
         return $this->apiClient->patch($this->buildPath(
             self::INSTRUMENTS_PATH,
-            $instrumentId
+            $this->encodePathSegment($instrumentId)
         ), $updateInstrumentRequest, $this->sdkAuthorization());
     }
 
@@ -62,12 +65,13 @@ class InstrumentsClient extends Client
      * @param $instrumentId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function delete($instrumentId): array
     {
         return $this->apiClient->delete($this->buildPath(
             self::INSTRUMENTS_PATH,
-            $instrumentId
+            $this->encodePathSegment($instrumentId)
         ), $this->sdkAuthorization());
     }
 
@@ -77,14 +81,15 @@ class InstrumentsClient extends Client
      * @param BankAccountFieldQuery $query
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getBankAccountFieldFormatting($country_code, $currency, BankAccountFieldQuery $query): array
     {
         return $this->apiClient->query(
             $this->buildPath(
                 self::VALIDATION_PATH,
-                $country_code,
-                $currency
+                $this->encodePathSegment($country_code),
+                $this->encodePathSegment($currency)
             ),
             $query,
             $this->sdkSpecificAuthorization(AuthorizationType::$oAuth)

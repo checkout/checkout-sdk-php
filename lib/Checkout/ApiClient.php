@@ -103,6 +103,7 @@ class ApiClient
      * @param SdkAuthorization $authorization
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException if a filter property holds a value that cannot be sent as a query value
      */
     public function query(
         string $path,

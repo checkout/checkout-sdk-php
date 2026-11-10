@@ -5,6 +5,7 @@ namespace Checkout\Payments\Sessions;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -12,6 +13,7 @@ class PaymentSessionsClient extends Client
 {
 
     const PAYMENT_SESSIONS = "payment-sessions";
+    const SUBMIT = "submit";
 
     public function __construct(ApiClient $apiClient, CheckoutConfiguration $configuration)
     {
@@ -43,10 +45,15 @@ class PaymentSessionsClient extends Client
      * @param PaymentSessionSubmitRequest $paymentSessionSubmitRequest
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function submitPaymentSession($sessionId, PaymentSessionSubmitRequest $paymentSessionSubmitRequest)
     {
-        return $this->apiClient->post(self::PAYMENT_SESSIONS . "/" . $sessionId . "/submit", $paymentSessionSubmitRequest, $this->sdkAuthorization());
+        return $this->apiClient->post(
+            $this->buildPath(self::PAYMENT_SESSIONS, $this->encodePathSegment($sessionId), self::SUBMIT),
+            $paymentSessionSubmitRequest,
+            $this->sdkAuthorization()
+        );
     }
 
 }

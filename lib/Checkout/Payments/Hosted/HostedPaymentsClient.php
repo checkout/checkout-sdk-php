@@ -5,6 +5,7 @@ namespace Checkout\Payments\Hosted;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -22,10 +23,14 @@ class HostedPaymentsClient extends Client
      * @param $id
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getHostedPaymentsPageDetails($id)
     {
-        return $this->apiClient->get($this->buildPath(self::HOSTED_PAYMENTS, $id), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::HOSTED_PAYMENTS,
+            $this->encodePathSegment($id)
+        ), $this->sdkAuthorization());
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Checkout\Apm\Previous\Sepa;
 use Checkout\ApiClient;
 use Checkout\AuthorizationType;
 use Checkout\CheckoutApiException;
+use Checkout\CheckoutArgumentException;
 use Checkout\CheckoutConfiguration;
 use Checkout\Client;
 
@@ -24,21 +25,26 @@ class SepaClient extends Client
      * @param $mandateId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getMandate($mandateId)
     {
-        return $this->apiClient->get($this->buildPath(self::SEPA_MANDATES_PATH, $mandateId), $this->sdkAuthorization());
+        return $this->apiClient->get($this->buildPath(
+            self::SEPA_MANDATES_PATH,
+            $this->encodePathSegment($mandateId)
+        ), $this->sdkAuthorization());
     }
 
     /**
      * @param $mandateId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function cancelMandate($mandateId)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
+            $this->buildPath(self::SEPA_MANDATES_PATH, $this->encodePathSegment($mandateId), self::CANCEL_PATH),
             null,
             $this->sdkAuthorization()
         );
@@ -48,11 +54,17 @@ class SepaClient extends Client
      * @param $mandateId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function getMandateViaPPro($mandateId)
     {
         return $this->apiClient->get(
-            $this->buildPath(self::APMS_PATH, self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId),
+            $this->buildPath(
+                self::APMS_PATH,
+                self::PPRO_PATH,
+                self::SEPA_MANDATES_PATH,
+                $this->encodePathSegment($mandateId)
+            ),
             $this->sdkAuthorization()
         );
     }
@@ -61,11 +73,18 @@ class SepaClient extends Client
      * @param $mandateId
      * @return array
      * @throws CheckoutApiException
+     * @throws CheckoutArgumentException
      */
     public function cancelMandateViaPPro($mandateId)
     {
         return $this->apiClient->post(
-            $this->buildPath(self::APMS_PATH, self::PPRO_PATH, self::SEPA_MANDATES_PATH, $mandateId, self::CANCEL_PATH),
+            $this->buildPath(
+                self::APMS_PATH,
+                self::PPRO_PATH,
+                self::SEPA_MANDATES_PATH,
+                $this->encodePathSegment($mandateId),
+                self::CANCEL_PATH
+            ),
             null,
             $this->sdkAuthorization()
         );

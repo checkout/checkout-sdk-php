@@ -21,16 +21,24 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    # Ubuntu builds
+                    # Ubuntu builds: every supported PHP branch, from the composer.json floor (8.1)
+                    # to the latest release.
                     - os: ubuntu-latest
                       php-version: "8.1"
                     - os: ubuntu-latest
+                      php-version: "8.2"
+                    - os: ubuntu-latest
+                      php-version: "8.3"
+                    - os: ubuntu-latest
                       php-version: "8.4"
-                    # Windows builds
+                    - os: ubuntu-latest
+                      php-version: "8.5"
+                    # Windows builds: the lowest and the highest branch. The legs run one at a
+                    # time (max-parallel: 1), so every extra leg adds about four minutes.
                     - os: windows-latest
                       php-version: "8.1"
                     - os: windows-latest
-                      php-version: "8.4"
+                      php-version: "8.5"
 
         steps:
             - uses: actions/checkout@v2
@@ -114,6 +122,10 @@ jobs:
                       "8.4" {
                           $downloadUrl  = "https://windows.php.net/downloads/releases/archives/php-8.4.23-Win32-vs17-x64.zip"
                           $expectedHash = "6cb93c23c5e87237881f2b3d8b93fdd70ff04a4a32bc16c9cf846aeb17f518dc"
+                      }
+                      "8.5" {
+                          $downloadUrl  = "https://windows.php.net/downloads/releases/archives/php-8.5.12-1-Win32-vs17-x64.zip"
+                          $expectedHash = "0dacd6484b092b5e9ae9fa3d7f96a937caf9d874eee2d980b68ed3129741144a"
                       }
                       default { throw "Unsupported PHP version: $phpVersion" }
                   }

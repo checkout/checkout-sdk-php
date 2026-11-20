@@ -99,6 +99,25 @@ class JsonSerializerTest extends TestCase
         $this->assertEquals($expected, $serializer->serialize($input));
     }
 
+    public function testSerializePreservesMerchantMetadataKeys()
+    {
+        $metadata = [
+            'three_ds' => 'merchant-value',
+            '3ds' => 'another-value',
+            'if_match' => 'merchant-etag',
+            'if-match' => 'another-etag',
+            'nested' => ['three_ds' => 'nested-value']
+        ];
+        $request = new \Checkout\Payments\Request\PaymentRequest();
+        $request->metadata = $metadata;
+        $request->three_ds = (object)['enabled' => true];
+
+        $decoded = json_decode((new JsonSerializer())->serialize($request), true);
+
+        $this->assertSame($metadata, $decoded['metadata']);
+        $this->assertSame(['enabled' => true], $decoded['3ds']);
+    }
+
     public function testSerializeWithIterableObject()
     {
         $serializer = new JsonSerializer();

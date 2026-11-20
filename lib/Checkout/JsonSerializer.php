@@ -49,28 +49,33 @@ class JsonSerializer
      * @param array $props properties to normalize
      * @param object|null $owner the object $props came from, or null when normalizing a raw
      *                           array. Needed to resolve #[DateOnly] by reflection.
+     * @param bool $transformKeys whether SDK property aliases should be applied
      * @return array
      */
-    private function normalize(array $props, $owner = null)
+    private function normalize(array $props, $owner = null, $transformKeys = true)
     {
         $array = array_filter($props, function ($value) {
             return !is_null($value);
         });
         foreach ($array as $key => $value) {
+            // Metadata keys belong to the merchant, including in nested values.
+            $transformValueKeys = $transformKeys && $key !== 'metadata';
             if ($value instanceof DateTime) {
                 $array[$key] = $this->isDateOnly($owner, $key)
                     ? CheckoutUtils::formatDateOnly($value)
                     : CheckoutUtils::formatDate($value);
             } elseif (is_array($value)) {
-                $array[$key] = $this->normalize($value, null);
+                $array[$key] = $this->normalize($value, null, $transformValueKeys);
             } elseif (is_object($value)) {
                 if (PHP_VERSION_ID >= 70100 && is_iterable($value)) {
-                    $array[$key] = $this->normalize(iterator_to_array($value), null);
+                    $array[$key] = $this->normalize(iterator_to_array($value), null, $transformValueKeys);
                 } else {
-                    $array[$key] = $this->normalizeObject($value);
+                    $array[$key] = $this->normalizeObject($value, $transformValueKeys);
                 }
             }
-            $array = $this->applyKeysTransformations($array, $key);
+            if ($transformKeys) {
+                $array = $this->applyKeysTransformations($array, $key);
+            }
         }
         return $array;
     }
@@ -80,11 +85,12 @@ class JsonSerializer
      * becomes an empty stdClass, so it is written as {} instead of [].
      *
      * @param object $value
+     * @param bool $transformKeys whether SDK property aliases should be applied
      * @return array|\stdClass
      */
-    private function normalizeObject($value)
+    private function normalizeObject($value, $transformKeys = true)
     {
-        $normalized = $this->normalize(get_object_vars($value), $value);
+        $normalized = $this->normalize(get_object_vars($value), $value, $transformKeys);
         if (empty($normalized) && $this->isEmptyAsObject($value)) {
             return new \stdClass();
         }
